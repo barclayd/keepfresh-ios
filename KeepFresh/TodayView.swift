@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-let groceryItem = GroceryItem(icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", foodStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+let groceryItem = GroceryItem(icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pts", foodStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
 
 struct StatsView: View {
     var body: some View {
@@ -75,26 +75,25 @@ struct TodayView: View {
                     VStack(spacing: 5) {
                         Text(groceryItem.name).font(.title2).fontWeight(.bold).frame(maxWidth: .infinity, alignment: .leading)
                         HStack {
-                            Text(groceryItem.category).font(.footnote)
+                            Text(groceryItem.category).font(.footnote).foregroundColor(.gray500)
                             Circle()
                                 .frame(width: 4, height: 4)
-                                .foregroundColor(.brandSainsburys)
-                            Text(groceryItem.brand).font(.footnote).foregroundColor(.orange)
+                                .foregroundColor(.gray500)
+                            Text(groceryItem.brand).font(.footnote).foregroundColor(.brandSainsburys)
                             Circle()
                                 .frame(width: 4, height: 4)
-                                .foregroundColor(Color.black)
-                                Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)").font(.footnote)
-                            
+                                .foregroundColor(.gray500)
+                                Text("\(String(format: "%.0f", groceryItem.amount))\(groceryItem.unit)").font(.footnote).foregroundColor(.gray500)
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
                     Spacer()
-                }.padding(.vertical, 10).padding(.horizontal, 10).background(Color.white).cornerRadius(20)
+                }.padding(.vertical, 10).padding(.horizontal, 10).background(.white).cornerRadius(20)
                 ViewThatFits {
                     WideStatsView()
                     StatsView()
                 }
             }.padding(.bottom, 4).padding(.horizontal, 4).background(Color.white).cornerRadius(20).frame(maxWidth: .infinity, alignment: .center).padding(.horizontal, 10).shadow(color: .shadow, radius: 2, x: 0, y: 4)
             
-        }.background(Color("white-200"))
+        }.padding(.vertical, 10).background(Color("white-200"))
     }
 }
