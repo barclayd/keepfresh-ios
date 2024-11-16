@@ -1,10 +1,3 @@
-//
-//  KeepFreshTests.swift
-//  KeepFreshTests
-//
-//  Created by Dan Barclay on 13/11/2024.
-//
-
 import Testing
 
 struct KeepFreshTests {

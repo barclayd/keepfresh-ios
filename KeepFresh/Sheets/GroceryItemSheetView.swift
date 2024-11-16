@@ -41,9 +41,6 @@ struct GroceryItemSheetStatsGrid: View {
             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
                 GroceryItemSheetStatsGridRows()
             }
-            Grid(horizontalSpacing: 20, verticalSpacing: 10) {
-                GroceryItemSheetStatsGridRows()
-            }
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
                 GroceryItemSheetStatsGridRows()
             }

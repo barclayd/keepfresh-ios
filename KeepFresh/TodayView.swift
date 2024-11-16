@@ -1,10 +1,3 @@
-//
-//  TodayView.swift
-//  KeepFresh
-//
-//  Created by Dan Barclay on 13/11/2024.
-//
-
 import SwiftUI
 
 let groceryItem: GroceryItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", foodStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())

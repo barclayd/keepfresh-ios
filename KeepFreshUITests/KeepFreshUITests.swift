@@ -1,10 +1,3 @@
-//
-//  KeepFreshUITests.swift
-//  KeepFreshUITests
-//
-//  Created by Dan Barclay on 13/11/2024.
-//
-
 import XCTest
 
 final class KeepFreshUITests: XCTestCase {

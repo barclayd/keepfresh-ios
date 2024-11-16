@@ -1,10 +1,3 @@
-//
-//  Data.swift
-//  KeepFresh
-//
-//  Created by Dan Barclay on 13/11/2024.
-//
-
 import Foundation
 
 enum FoodStore: String, Codable {
