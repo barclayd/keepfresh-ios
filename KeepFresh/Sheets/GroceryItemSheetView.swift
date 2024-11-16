@@ -38,6 +38,9 @@ struct GroceryItemSheetStatsGrid: View {
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
+            Grid(horizontalSpacing: 30, verticalSpacing: 10) {
+                GroceryItemSheetStatsGridRows()
+            }
             Grid(horizontalSpacing: 20, verticalSpacing: 10) {
                 GroceryItemSheetStatsGridRows()
             }
