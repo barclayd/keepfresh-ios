@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-let groceryItem: GroceryItem = .init(icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", foodStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+let groceryItem: GroceryItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", foodStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
 
 struct StatsView: View {
     var body: some View {
@@ -15,11 +15,11 @@ struct StatsView: View {
             VStack {
                 Text("Location")
                     .textCase(.uppercase)
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text(groceryItem.foodStore.rawValue)
                     .fontWeight(.bold)
-                    .foregroundColor(.green600)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -27,11 +27,11 @@ struct StatsView: View {
             VStack {
                 Text("Status")
                     .textCase(.uppercase)
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text(groceryItem.status.rawValue)
                     .fontWeight(.bold)
-                    .foregroundColor(.green600)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -39,15 +39,15 @@ struct StatsView: View {
             VStack {
                 Text("Expiry")
                     .textCase(.uppercase)
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 HStack(spacing: 3) {
                     Image(systemName: "hourglass")
                         .font(.system(size: 18))
-                        .foregroundColor(.green600)
+                        .foregroundStyle(.green600)
                     Text("3 days")
                         .fontWeight(.bold)
-                        .foregroundColor(.green600)
+                        .foregroundStyle(.green600)
                         .font(.headline)
                 }
             }
@@ -63,23 +63,23 @@ struct StatsView: View {
                 style: .continuous
             )
         )
-        .foregroundColor(.green300)
+        .foregroundStyle(.green300)
     }
 }
 
 struct WideStatsView: View {
-    @State private var showFoodItemSheet = false
+    @State private var selectedGroceryItem: GroceryItem? = nil
 
     var body: some View {
         HStack {
             VStack {
                 Text("Location")
                     .textCase(.uppercase)
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text(groceryItem.foodStore.rawValue)
                     .fontWeight(.bold)
-                    .foregroundColor(.green600)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -87,11 +87,11 @@ struct WideStatsView: View {
             VStack {
                 Text("Status")
                     .textCase(.uppercase)
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text(groceryItem.status.rawValue)
                     .fontWeight(.bold)
-                    .foregroundColor(.green600)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -99,11 +99,11 @@ struct WideStatsView: View {
             VStack {
                 Text("Waste %")
                     .textCase(.uppercase)
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text("\(String(format: "%.0f", groceryItem.amount))")
                     .fontWeight(.bold)
-                    .foregroundColor(.green600)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -111,15 +111,15 @@ struct WideStatsView: View {
             VStack {
                 Text("EXPIRY")
                     .textCase(.uppercase)
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 HStack(spacing: 3) {
                     Image(systemName: "hourglass")
                         .font(.system(size: 18))
-                        .foregroundColor(.green600)
+                        .foregroundStyle(.green600)
                     Text("3 days")
                         .fontWeight(.bold)
-                        .foregroundColor(.green600)
+                        .foregroundStyle(.green600)
                         .font(.headline)
                 }
             }
@@ -135,14 +135,15 @@ struct WideStatsView: View {
                 style: .continuous
             )
         )
-        .foregroundColor(.green300)
+        .foregroundStyle(.green300)
         .onTapGesture {
-            showFoodItemSheet = true
+            selectedGroceryItem = groceryItem
         }
-        .sheet(isPresented: $showFoodItemSheet) {
-            Text("Food Item")
+        .sheet(item: $selectedGroceryItem) { _ in
+            GroceryItemSheetView(groceryItem: $selectedGroceryItem)
                 .presentationDetents([.fraction(0.75)])
                 .presentationDragIndicator(.visible)
+                .presentationCornerRadius(25)
         }
     }
 }
@@ -162,16 +163,16 @@ struct TodayView: View {
 
                         HStack {
                             Text(groceryItem.category)
-                                .font(.footnote)
+                                .font(.footnote).foregroundStyle(.gray600)
                             Circle()
                                 .frame(width: 4, height: 4)
-                                .foregroundColor(.brandSainsburys)
+                                .foregroundStyle(.gray600)
                             Text(groceryItem.brand)
                                 .font(.footnote)
-                                .foregroundColor(.orange)
+                                .foregroundStyle(.brandSainsburys)
                             Circle()
                                 .frame(width: 4, height: 4)
-                                .foregroundColor(Color.black)
+                                .foregroundStyle(.gray600)
                             Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)")
                                 .font(.footnote)
                         }

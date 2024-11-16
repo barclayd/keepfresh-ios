@@ -20,7 +20,8 @@ enum FoodStatus: String, Codable {
     case unopened = "Unopened"
 }
 
-struct GroceryItem {
+struct GroceryItem: Identifiable {
+    let id: UUID
     let icon: String
     let name: String
     let category: String
