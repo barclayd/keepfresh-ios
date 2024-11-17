@@ -1,14 +1,6 @@
-//
-//  KeepFreshUITestsLaunchTests.swift
-//  KeepFreshUITests
-//
-//  Created by Dan Barclay on 13/11/2024.
-//
-
 import XCTest
 
 final class KeepFreshUITestsLaunchTests: XCTestCase {
-
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }

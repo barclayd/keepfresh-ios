@@ -1,14 +1,6 @@
-//
-//  KeepFreshUITests.swift
-//  KeepFreshUITests
-//
-//  Created by Dan Barclay on 13/11/2024.
-//
-
 import XCTest
 
 final class KeepFreshUITests: XCTestCase {
-
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
 
