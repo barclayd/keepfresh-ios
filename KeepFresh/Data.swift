@@ -1,10 +1,3 @@
-//
-//  Data.swift
-//  KeepFresh
-//
-//  Created by Dan Barclay on 13/11/2024.
-//
-
 import Foundation
 
 enum FoodStore: String, Codable {
@@ -20,7 +13,8 @@ enum FoodStatus: String, Codable {
     case unopened = "Unopened"
 }
 
-struct GroceryItem {
+struct GroceryItem: Identifiable {
+    let id: UUID
     let icon: String
     let name: String
     let category: String
