@@ -61,24 +61,22 @@ struct GroceryItemSheetView: View {
             HStack {
                 Button(action: {
                     dismiss()
-                    UISelectionFeedbackGenerator.modalDismiss()
                 }) {
-                    Text("Close")
-                        .foregroundStyle(.black800)
-                        .font(.callout)
-                        .fontWeight(.bold)
-                        .padding(.horizontal, 25)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 50)
-                                .fill(.gray100)
-                        )
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 24))
+                        .foregroundStyle(.gray600)
                 }
-                .buttonStyle(.borderless)
                 Spacer()
-            }
+                Button(action: {
+                    print("More options")
+                }) {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 24))
+                        .foregroundStyle(.gray600)
+                }
+            }.padding(.top, 10)
             Image(systemName: groceryItem.icon)
-                .font(.system(size: 80)).padding(0)
+                .font(.system(size: 80)).padding(.bottom, -8)
             Text(groceryItem.name).font(.title).fontWeight(.bold).foregroundStyle(.black).lineSpacing(0).padding(.bottom, -8)
             HStack {
                 Text(groceryItem.category)
@@ -114,11 +112,12 @@ struct GroceryItemSheetView: View {
                     Spacer()
                 }
             }.padding(.vertical, 10)
+            Spacer()
             Button(action: {
                 print("Mark as no waste")
             }) {
                 HStack(spacing: 5) {
-                    Text("Mark as no waste")
+                    Text("Finish with no waste")
                         .font(.headline)
                     Image(systemName: "takeoutbag.and.cup.and.straw.fill")
                         .font(.system(size: 18))
@@ -133,10 +132,10 @@ struct GroceryItemSheetView: View {
                 )
             }
             Button(action: {
-                print("Mark as some waste")
+                print("Mark as waste")
             }) {
                 HStack(spacing: 5) {
-                    Text("Mark as no waste")
+                    Text("Finish with waste")
                         .font(.headline)
                     Image(systemName: "trash")
                         .font(.system(size: 18))
@@ -166,6 +165,7 @@ struct GroceryItemSheetView: View {
                         .fill(.gray200)
                 )
             }
-        }.padding(.horizontal, 10).frame(maxWidth: .infinity, alignment: .center).padding(.horizontal, 10)
+            Spacer()
+        }.padding(10).frame(maxWidth: .infinity, alignment: .center).padding(.horizontal, 10)
     }
 }
