@@ -212,6 +212,6 @@ struct TodayView: View {
             }.onAppear {
                 print(UIScreen.main.bounds.size.height)
             }
-        }.background(.white200)
+        }.padding(.vertical, 10).background(.white200)
     }
 }
