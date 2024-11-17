@@ -61,8 +61,6 @@ struct StatsView: View {
 }
 
 struct WideStatsView: View {
-    @State private var selectedGroceryItem: GroceryItem? = nil
-
     var body: some View {
         HStack {
             VStack {
@@ -129,19 +127,12 @@ struct WideStatsView: View {
             )
         )
         .foregroundStyle(.green300)
-        .onTapGesture {
-            selectedGroceryItem = groceryItem
-        }
-        .sheet(item: $selectedGroceryItem) { _ in
-            GroceryItemSheetView(groceryItem: $selectedGroceryItem)
-                .presentationDetents([.fraction(0.75)])
-                .presentationDragIndicator(.visible)
-                .presentationCornerRadius(25)
-        }
     }
 }
 
 struct TodayView: View {
+    @State private var selectedGroceryItem: GroceryItem? = nil
+
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 0) {
@@ -190,7 +181,17 @@ struct TodayView: View {
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.horizontal, 10)
             .shadow(color: .shadow, radius: 2, x: 0, y: 4)
+            .onTapGesture {
+                UISelectionFeedbackGenerator.listSelection()
+                selectedGroceryItem = groceryItem
+            }
+            .sheet(item: $selectedGroceryItem) { _ in
+                GroceryItemSheetView(groceryItem: $selectedGroceryItem)
+                    .presentationDetents([.fraction(0.9)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+            }
         }
-        .background(Color("white-200"))
+        .background(.white200)
     }
 }

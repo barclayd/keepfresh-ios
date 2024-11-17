@@ -22,7 +22,7 @@ struct ContentView: View {
             InventoryView().tabItem {
                 Label("Inventory", systemImage: "refrigerator")
             }
-        }.accentColor(Color("blue-600"))
+        }.accentColor(.blue600)
     }
 }
 

@@ -44,7 +44,7 @@ struct GroceryItemSheetStatsGrid: View {
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
                 GroceryItemSheetStatsGridRows()
             }
-        }.padding().frame(maxWidth: .infinity, alignment: .center).padding(.horizontal, 10).background(.white300).cornerRadius(20)
+        }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.white300).cornerRadius(20)
     }
 }
 
@@ -57,24 +57,29 @@ struct GroceryItemSheetView: View {
             return EmptyView()
         }
 
-        return VStack {
+        return VStack(spacing: 10) {
             HStack {
-                Button("Close") {
+                Button(action: {
                     dismiss()
+                    UISelectionFeedbackGenerator.modalDismiss()
+                }) {
+                    Text("Close")
+                        .foregroundStyle(.black800)
+                        .font(.callout)
+                        .fontWeight(.bold)
+                        .padding(.horizontal, 25)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 50)
+                                .fill(.gray100)
+                        )
                 }
                 .buttonStyle(.borderless)
-                .padding(.horizontal, 25)
-                .foregroundStyle(.black800)
-                .font(.callout)
-                .fontWeight(.bold)
-                .padding(.vertical, 8)
-                .background(.gray100)
-                .cornerRadius(50)
                 Spacer()
-            }.padding(.top, 5)
+            }
             Image(systemName: groceryItem.icon)
-                .font(.system(size: 98))
-            Text(groceryItem.name).font(.title).fontWeight(.bold).foregroundStyle(.black)
+                .font(.system(size: 80)).padding(0)
+            Text(groceryItem.name).font(.title).fontWeight(.bold).foregroundStyle(.black).lineSpacing(0).padding(.bottom, -8)
             HStack {
                 Text(groceryItem.category)
                     .font(.callout)
@@ -86,7 +91,81 @@ struct GroceryItemSheetView: View {
                     .font(.callout)
                     .foregroundStyle(.gray600)
             }
-            GroceryItemSheetStatsGrid(groceryItem: groceryItem)
+            GroceryItemSheetStatsGrid(groceryItem: groceryItem).padding(.vertical, 5)
+            Grid(horizontalSpacing: 16, verticalSpacing: 20) {
+                GridRow {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundStyle(.gold500)
+                        .font(.system(size: 32))
+                    Text("Great work, you're on track to finish this before it expires")
+                        .font(.callout)
+                        .foregroundStyle(.gray600)
+                        .multilineTextAlignment(.center)
+                    Spacer()
+                }
+                GridRow {
+                    Image(systemName: "cart.circle.fill")
+                        .foregroundStyle(.blue600)
+                        .font(.system(size: 32))
+                    Text("Based on food waste history for this item, you should buy this again")
+                        .font(.callout)
+                        .foregroundStyle(.gray600)
+                        .multilineTextAlignment(.center)
+                    Spacer()
+                }
+            }.padding(.vertical, 10)
+            Button(action: {
+                print("Mark as no waste")
+            }) {
+                HStack(spacing: 5) {
+                    Text("Mark as no waste")
+                        .font(.headline)
+                    Image(systemName: "takeoutbag.and.cup.and.straw.fill")
+                        .font(.system(size: 18))
+                }
+                .foregroundStyle(.blue600)
+                .fontWeight(.bold)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(.green300)
+                )
+            }
+            Button(action: {
+                print("Mark as some waste")
+            }) {
+                HStack(spacing: 5) {
+                    Text("Mark as no waste")
+                        .font(.headline)
+                    Image(systemName: "trash")
+                        .font(.system(size: 18))
+                }
+                .foregroundStyle(.blue600)
+                .fontWeight(.bold)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(.red200)
+                )
+            }
+            Button(action: {
+                print("Mark as opened")
+            }) {
+                HStack(spacing: 5) {
+                    Text("Mark as opened")
+                        .font(.headline)
+                }
+                .foregroundStyle(.blue600)
+                .fontWeight(.bold)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(.gray200)
+                )
+            }
         }.padding(.horizontal, 10).frame(maxWidth: .infinity, alignment: .center).padding(.horizontal, 10)
     }
 }
