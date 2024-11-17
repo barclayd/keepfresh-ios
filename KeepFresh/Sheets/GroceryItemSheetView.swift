@@ -52,6 +52,8 @@ struct GroceryItemSheetView: View {
     @Binding var groceryItem: GroceryItem?
     @Environment(\.dismiss) private var dismiss
 
+    @State private var currentPage = 0
+
     var body: some View {
         guard let groceryItem: GroceryItem = groceryItem else {
             return EmptyView()
@@ -89,7 +91,17 @@ struct GroceryItemSheetView: View {
                     .font(.callout)
                     .foregroundStyle(.gray600)
             }
-            GroceryItemSheetStatsGrid(groceryItem: groceryItem).padding(.vertical, 5)
+            TabView(selection: $currentPage) {
+                ForEach(0 ..< 2, id: \.self) { page in
+                    GroceryItemSheetStatsGrid(groceryItem: groceryItem)
+                        .tag(page)
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .always))
+            .frame(height: 170)
+            .padding(.bottom, 20)
+            .indexViewStyle(.page(backgroundDisplayMode: .always))
+            .tint(.black)
             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                 GridRow {
                     Image(systemName: "checkmark.seal.fill")
