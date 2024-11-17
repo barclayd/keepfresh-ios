@@ -54,6 +54,13 @@ struct GroceryItemSheetView: View {
 
     @State private var currentPage = 0
 
+    init(groceryItem: Binding<GroceryItem?>) {
+        _groceryItem = groceryItem
+
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
+    }
+
     var body: some View {
         guard let groceryItem: GroceryItem = groceryItem else {
             return EmptyView()
@@ -95,13 +102,14 @@ struct GroceryItemSheetView: View {
                 ForEach(0 ..< 2, id: \.self) { page in
                     GroceryItemSheetStatsGrid(groceryItem: groceryItem)
                         .tag(page)
+                        .padding(.horizontal, 16)
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .frame(height: 170)
-            .padding(.bottom, 20)
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
-            .tint(.black)
+            .padding(-16)
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+            .frame(maxWidth: .infinity, maxHeight: 165)
+            .border(.red)
+            .offset(x: 0, y: -22)
             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                 GridRow {
                     Image(systemName: "checkmark.seal.fill")
@@ -123,8 +131,7 @@ struct GroceryItemSheetView: View {
                         .multilineTextAlignment(.center)
                     Spacer()
                 }
-            }.padding(.vertical, 10)
-            Spacer()
+            }.offset(x: 0, y: -22)
             Button(action: {
                 print("Mark as no waste")
             }) {
@@ -177,7 +184,6 @@ struct GroceryItemSheetView: View {
                         .fill(.gray200)
                 )
             }
-            Spacer()
         }.padding(10).frame(maxWidth: .infinity, alignment: .center).padding(.horizontal, 10)
     }
 }
