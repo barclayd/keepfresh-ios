@@ -94,6 +94,7 @@ struct GroceryItemSheetView: View {
                 Circle()
                     .frame(width: 4, height: 4)
                     .foregroundStyle(.gray600)
+                    .padding(.horizontal, 4)
                 Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)")
                     .font(.callout)
                     .foregroundStyle(.gray600)
@@ -105,11 +106,11 @@ struct GroceryItemSheetView: View {
                         .padding(.horizontal, 16)
                 }
             }
-            .padding(-16)
+            .padding(.vertical, -24)
+            .padding(.horizontal, -16)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-            .frame(maxWidth: .infinity, maxHeight: 165)
-            .border(.red)
-            .offset(x: 0, y: -22)
+            .frame(maxWidth: .infinity, maxHeight: 200)
+            .offset(x: 0, y: -8)
             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                 GridRow {
                     Image(systemName: "checkmark.seal.fill")
@@ -131,7 +132,7 @@ struct GroceryItemSheetView: View {
                         .multilineTextAlignment(.center)
                     Spacer()
                 }
-            }.offset(x: 0, y: -22)
+            }.padding(.bottom, 8)
             Button(action: {
                 print("Mark as no waste")
             }) {

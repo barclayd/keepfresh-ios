@@ -187,7 +187,7 @@ struct TodayView: View {
             }
             .sheet(item: $selectedGroceryItem) { _ in
                 GroceryItemSheetView(groceryItem: $selectedGroceryItem)
-                    .presentationDetents([.fraction(0.9)])
+                    .presentationDetents([.fraction(0.8)])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
             }
