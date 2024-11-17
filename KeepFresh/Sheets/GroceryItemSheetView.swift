@@ -109,30 +109,50 @@ struct GroceryItemSheetView: View {
             .padding(.vertical, -24)
             .padding(.horizontal, -16)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-            .frame(maxWidth: .infinity, maxHeight: 200)
+            .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
             .offset(x: 0, y: -8)
-            Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                GridRow {
-                    Image(systemName: "checkmark.seal.fill")
-                        .foregroundStyle(.gold500)
-                        .font(.system(size: 32))
-                    Text("Great work, you're on track to finish this before it expires")
-                        .font(.callout)
-                        .foregroundStyle(.gray600)
-                        .multilineTextAlignment(.center)
-                    Spacer()
-                }
-                GridRow {
-                    Image(systemName: "cart.circle.fill")
-                        .foregroundStyle(.blue600)
-                        .font(.system(size: 32))
-                    Text("Based on food waste history for this item, you should buy this again")
-                        .font(.callout)
-                        .foregroundStyle(.gray600)
-                        .multilineTextAlignment(.center)
-                    Spacer()
-                }
-            }.padding(.bottom, 8)
+            ViewThatFits(in: .vertical) {
+                Grid(horizontalSpacing: 16, verticalSpacing: 20) {
+                    GridRow {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundStyle(.gold500)
+                            .font(.system(size: 32))
+                        Text("Great work, you're on track to finish this before it expires")
+                            .font(.callout)
+                            .foregroundStyle(.gray600)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2 ... 2)
+
+                        Spacer()
+                    }
+                    GridRow {
+                        Image(systemName: "cart.circle.fill")
+                            .foregroundStyle(.blue600)
+                            .font(.system(size: 32))
+                        Text("Based on food waste history for this item, you should buy this again")
+                            .font(.callout)
+                            .foregroundStyle(.gray600)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2 ... 2)
+                        Spacer()
+                    }
+
+                }.padding(.bottom, 8)
+                Grid(horizontalSpacing: 16, verticalSpacing: 0) {
+                    GridRow {
+                        Image(systemName: "cart.circle.fill")
+                            .foregroundStyle(.blue600)
+                            .font(.system(size: 32))
+                        Text("Based on food waste history for this item, you should buy this again")
+                            .font(.callout)
+                            .foregroundStyle(.gray600)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2 ... 2)
+                        Spacer()
+                    }
+
+                }.padding(.bottom, 8)
+            }
             Button(action: {
                 print("Mark as no waste")
             }) {
@@ -185,6 +205,7 @@ struct GroceryItemSheetView: View {
                         .fill(.gray200)
                 )
             }
-        }.padding(10).frame(maxWidth: .infinity, alignment: .center).padding(.horizontal, 10)
+        }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
+            .padding(.horizontal, 10)
     }
 }

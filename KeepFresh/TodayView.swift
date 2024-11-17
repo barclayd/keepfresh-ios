@@ -133,6 +133,25 @@ struct WideStatsView: View {
 struct TodayView: View {
     @State private var selectedGroceryItem: GroceryItem? = nil
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private func getSheetFraction(height: CGFloat) -> CGFloat {
+        if dynamicTypeSize >= .xxLarge {
+            return 0.8
+        }
+
+        switch height {
+        case ..<668:
+            return 1 // iPhone SE
+        case ..<845:
+            return 0.9 // iPhone 13
+        case ..<957:
+            return 0.8 // iPhone 16 Pro Max
+        default:
+            return 0.7
+        }
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 0) {
@@ -187,11 +206,12 @@ struct TodayView: View {
             }
             .sheet(item: $selectedGroceryItem) { _ in
                 GroceryItemSheetView(groceryItem: $selectedGroceryItem)
-                    .presentationDetents([.fraction(0.8)])
+                    .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
+            }.onAppear {
+                print(UIScreen.main.bounds.size.height)
             }
-        }
-        .background(.white200)
+        }.background(.white200)
     }
 }
