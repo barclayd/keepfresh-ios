@@ -1,33 +1,66 @@
 import SwiftUI
 
 struct GroceryItemSheetStatsGridRows: View {
+    let pageIndex: Int
+
     var body: some View {
-        Group {
+        if pageIndex == 0 {
+            return Group {
+                GridRow {
+                    VStack(spacing: 0) {
+                        Text("3").fontWeight(.bold).font(.headline)
+                        Text("Days to expiry").fontWeight(.light).font(.subheadline).lineLimit(1)
+                    }
+                    Image(systemName: "hourglass")
+                        .font(.system(size: 28)).fontWeight(.bold)
+                        .foregroundStyle(.black800)
+                    Image(systemName: "percent")
+                        .font(.system(size: 28)).fontWeight(.bold)
+                        .foregroundStyle(.black800)
+                    VStack(spacing: 0) {
+                        Text("17").fontWeight(.bold).font(.headline)
+                        Text("Waste score").fontWeight(.light).font(.subheadline)
+                    }
+                }
+                GridRow {
+                    Text("Fridge").fontWeight(.bold).font(.headline)
+                    Image(systemName: "refrigerator")
+                        .font(.system(size: 28)).fontWeight(.bold)
+                        .foregroundStyle(.black800)
+                    Image(systemName: "circle.bottomrighthalf.pattern.checkered")
+                        .font(.system(size: 28)).fontWeight(.bold)
+                        .foregroundStyle(.black800)
+                    Text("Sainsburys").fontWeight(.bold).foregroundStyle(.brandSainsburys).font(.headline).lineLimit(1)
+                }
+            }
+        }
+
+        return Group {
             GridRow {
                 VStack(spacing: 0) {
                     Text("3").fontWeight(.bold).font(.headline)
-                    Text("Days to expiry").fontWeight(.light).font(.subheadline).lineLimit(1)
+                    Text("Days since added").fontWeight(.light).font(.subheadline).lineLimit(1)
                 }
-                Image(systemName: "hourglass")
-                    .font(.system(size: 28)).fontWeight(.bold)
-                    .foregroundStyle(.black800)
-                Image(systemName: "percent")
-                    .font(.system(size: 28)).fontWeight(.bold)
+                Image(systemName: "calendar.badge.plus")
+                    .font(.system(size: 32)).fontWeight(.bold)
                     .foregroundStyle(.black800)
                 VStack(spacing: 0) {
-                    Text("17").fontWeight(.bold).font(.headline)
-                    Text("Waste score").fontWeight(.light).font(.subheadline)
+                    Text("3").fontWeight(.bold).font(.headline)
+                    Text("Days since opened").fontWeight(.light).font(.subheadline)
                 }
             }
             GridRow {
-                Text("Fridge").fontWeight(.bold).font(.headline)
-                Image(systemName: "refrigerator")
-                    .font(.system(size: 28)).fontWeight(.bold)
+                VStack(spacing: 0) {
+                    Text("2").fontWeight(.bold).font(.headline)
+                    Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
+                }
+                Image(systemName: "house")
+                    .font(.system(size: 32)).fontWeight(.bold)
                     .foregroundStyle(.black800)
-                Image(systemName: "circle.bottomrighthalf.pattern.checkered")
-                    .font(.system(size: 28)).fontWeight(.bold)
-                    .foregroundStyle(.black800)
-                Text("Sainsburys").fontWeight(.bold).foregroundStyle(.brandSainsburys).font(.headline).lineLimit(1)
+                VStack(spacing: 0) {
+                    Text("3").fontWeight(.bold).font(.headline)
+                    Text("Located in Freezer").fontWeight(.light).font(.subheadline)
+                }
             }
         }
     }
@@ -36,13 +69,15 @@ struct GroceryItemSheetStatsGridRows: View {
 struct GroceryItemSheetStatsGrid: View {
     let groceryItem: GroceryItem
 
+    let pageIndex: Int
+
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
-                GroceryItemSheetStatsGridRows()
+                GroceryItemSheetStatsGridRows(pageIndex: pageIndex)
             }
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
-                GroceryItemSheetStatsGridRows()
+                GroceryItemSheetStatsGridRows(pageIndex: pageIndex)
             }
         }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.white300).cornerRadius(20)
     }
@@ -101,7 +136,7 @@ struct GroceryItemSheetView: View {
             }
             TabView(selection: $currentPage) {
                 ForEach(0 ..< 2, id: \.self) { page in
-                    GroceryItemSheetStatsGrid(groceryItem: groceryItem)
+                    GroceryItemSheetStatsGrid(groceryItem: groceryItem, pageIndex: page)
                         .tag(page)
                         .padding(.horizontal, 16)
                 }
@@ -156,11 +191,13 @@ struct GroceryItemSheetView: View {
             Button(action: {
                 print("Mark as no waste")
             }) {
-                HStack(spacing: 5) {
-                    Text("Finish with no waste")
-                        .font(.headline)
+                HStack(spacing: 10) {
                     Image(systemName: "takeoutbag.and.cup.and.straw.fill")
                         .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
+                    Text("Finish with no waste")
+                        .font(.headline)
+                        .frame(width: 175, alignment: .center)
                 }
                 .foregroundStyle(.blue600)
                 .fontWeight(.bold)
@@ -174,16 +211,18 @@ struct GroceryItemSheetView: View {
             Button(action: {
                 print("Mark as waste")
             }) {
-                HStack(spacing: 5) {
-                    Text("Finish with waste")
-                        .font(.headline)
+                HStack(spacing: 10) {
                     Image(systemName: "trash")
                         .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
+                    Text("Finish with waste")
+                        .font(.headline)
+                        .frame(width: 175, alignment: .center)
                 }
                 .foregroundStyle(.blue600)
                 .fontWeight(.bold)
                 .padding()
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .center)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.red200)
@@ -192,9 +231,13 @@ struct GroceryItemSheetView: View {
             Button(action: {
                 print("Mark as opened")
             }) {
-                HStack(spacing: 5) {
+                HStack(spacing: 10) {
+                    Image(systemName: "door.right.hand.open")
+                        .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
                     Text("Mark as opened")
                         .font(.headline)
+                        .frame(width: 175, alignment: .center)
                 }
                 .foregroundStyle(.blue600)
                 .fontWeight(.bold)
