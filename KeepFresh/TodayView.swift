@@ -209,8 +209,6 @@ struct TodayView: View {
                     .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
-            }.onAppear {
-                print(UIScreen.main.bounds.size.height)
             }
         }.padding(.vertical, 10).background(.white200)
     }
