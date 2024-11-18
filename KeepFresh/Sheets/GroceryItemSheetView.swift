@@ -191,11 +191,13 @@ struct GroceryItemSheetView: View {
             Button(action: {
                 print("Mark as no waste")
             }) {
-                HStack(spacing: 5) {
-                    Text("Finish with no waste")
-                        .font(.headline)
+                HStack(spacing: 10) {
                     Image(systemName: "takeoutbag.and.cup.and.straw.fill")
                         .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
+                    Text("Finish with no waste")
+                        .font(.headline)
+                        .frame(width: 175, alignment: .center)
                 }
                 .foregroundStyle(.blue600)
                 .fontWeight(.bold)
@@ -209,16 +211,18 @@ struct GroceryItemSheetView: View {
             Button(action: {
                 print("Mark as waste")
             }) {
-                HStack(spacing: 5) {
-                    Text("Finish with waste")
-                        .font(.headline)
+                HStack(spacing: 10) {
                     Image(systemName: "trash")
                         .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
+                    Text("Finish with waste")
+                        .font(.headline)
+                        .frame(width: 175, alignment: .center)
                 }
                 .foregroundStyle(.blue600)
                 .fontWeight(.bold)
                 .padding()
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .center)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.red200)
@@ -227,9 +231,13 @@ struct GroceryItemSheetView: View {
             Button(action: {
                 print("Mark as opened")
             }) {
-                HStack(spacing: 5) {
+                HStack(spacing: 10) {
+                    Image(systemName: "door.right.hand.open")
+                        .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
                     Text("Mark as opened")
                         .font(.headline)
+                        .frame(width: 175, alignment: .center)
                 }
                 .foregroundStyle(.blue600)
                 .fontWeight(.bold)
