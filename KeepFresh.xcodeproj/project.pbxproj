@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4EEC70F92D1211FD005574D0 /* SearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEC70F82D1211FD005574D0 /* SearchUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		4EC880412CE5523800C331AF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,7 @@
 		4EC8802F2CE5523700C331AF /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EC880402CE5523800C331AF /* KeepFreshTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeepFreshTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EC8804A2CE5523800C331AF /* KeepFreshUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeepFreshUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4EEC70F62D120C88005574D0 /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Features; path = Packages/Features; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -48,16 +53,6 @@
 			path = KeepFresh;
 			sourceTree = "<group>";
 		};
-		4EC880432CE5523800C331AF /* KeepFreshTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = KeepFreshTests;
-			sourceTree = "<group>";
-		};
-		4EC8804D2CE5523800C331AF /* KeepFreshUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = KeepFreshUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4EEC70F92D1211FD005574D0 /* SearchUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,8 +85,8 @@
 			isa = PBXGroup;
 			children = (
 				4EC880312CE5523700C331AF /* KeepFresh */,
-				4EC880432CE5523800C331AF /* KeepFreshTests */,
-				4EC8804D2CE5523800C331AF /* KeepFreshUITests */,
+				4EEC70F62D120C88005574D0 /* Features */,
+				4EEC70F72D1211FD005574D0 /* Frameworks */,
 				4EC880302CE5523700C331AF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,6 +99,13 @@
 				4EC8804A2CE5523800C331AF /* KeepFreshUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4EEC70F72D1211FD005574D0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,6 +128,7 @@
 			);
 			name = KeepFresh;
 			packageProductDependencies = (
+				4EEC70F82D1211FD005574D0 /* SearchUI */,
 			);
 			productName = KeepFresh;
 			productReference = 4EC8802F2CE5523700C331AF /* KeepFresh.app */;
@@ -142,9 +146,6 @@
 			);
 			dependencies = (
 				4EC880422CE5523800C331AF /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				4EC880432CE5523800C331AF /* KeepFreshTests */,
 			);
 			name = KeepFreshTests;
 			packageProductDependencies = (
@@ -165,9 +166,6 @@
 			);
 			dependencies = (
 				4EC8804C2CE5523800C331AF /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				4EC8804D2CE5523800C331AF /* KeepFreshUITests */,
 			);
 			name = KeepFreshUITests;
 			packageProductDependencies = (
@@ -608,6 +606,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4EEC70F82D1211FD005574D0 /* SearchUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SearchUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4EC880272CE5523700C331AF /* Project object */;
 }
