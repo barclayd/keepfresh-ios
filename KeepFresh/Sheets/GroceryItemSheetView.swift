@@ -8,28 +8,28 @@ struct GroceryItemSheetStatsGridRows: View {
             return Group {
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("3").fontWeight(.bold).font(.headline)
+                        Text("3").foregroundStyle(.blue800).fontWeight(.bold).font(.headline)
                         Text("Days to expiry").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }
                     Image(systemName: "hourglass")
+                        .foregroundStyle(.blue800)
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.black800)
                     Image(systemName: "percent")
+                        .foregroundStyle(.blue800)
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.black800)
                     VStack(spacing: 0) {
-                        Text("17").fontWeight(.bold).font(.headline)
+                        Text("17").foregroundStyle(.blue800).fontWeight(.bold).font(.headline)
                         Text("Waste score").fontWeight(.light).font(.subheadline)
                     }
                 }
                 GridRow {
-                    Text("Fridge").fontWeight(.bold).font(.headline)
+                    Text("Fridge").foregroundStyle(.blue800).fontWeight(.bold).font(.headline)
                     Image(systemName: "refrigerator")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.black800)
+                        .foregroundStyle(.blue800)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
+                        .foregroundStyle(.blue800)
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.black800)
                     Text("Sainsburys").fontWeight(.bold).foregroundStyle(.brandSainsburys).font(.headline).lineLimit(1)
                 }
             }
@@ -38,27 +38,27 @@ struct GroceryItemSheetStatsGridRows: View {
         return Group {
             GridRow {
                 VStack(spacing: 0) {
-                    Text("3").fontWeight(.bold).font(.headline)
-                    Text("Days since added").fontWeight(.light).font(.subheadline).lineLimit(1)
+                    Text("3 days ago").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
+                    Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
                 }
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: 32)).fontWeight(.bold)
-                    .foregroundStyle(.black800)
+                    .foregroundStyle(.blue800)
                 VStack(spacing: 0) {
-                    Text("3").fontWeight(.bold).font(.headline)
-                    Text("Days since opened").fontWeight(.light).font(.subheadline)
+                    Text("3 days ago").fontWeight(.bold).font(.headline)
+                    Text("Opened").fontWeight(.light).font(.subheadline)
                 }
             }
             GridRow {
                 VStack(spacing: 0) {
-                    Text("2").fontWeight(.bold).font(.headline)
-                    Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
+                    Text("2").fontWeight(.bold).foregroundStyle(.blue800).font(.headline)
+                    Text("Located in Fridge").fontWeight(.light).foregroundStyle(.blue800).font(.subheadline).lineLimit(1)
                 }
                 Image(systemName: "house")
-                    .font(.system(size: 32)).fontWeight(.bold)
-                    .foregroundStyle(.black800)
+                    .font(.system(size: 32)).fontWeight(.bold).foregroundStyle(.blue800)
+                    .foregroundStyle(.blue800)
                 VStack(spacing: 0) {
-                    Text("3").fontWeight(.bold).font(.headline)
+                    Text("3").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
                     Text("Located in Freezer").fontWeight(.light).font(.subheadline)
                 }
             }
@@ -119,9 +119,9 @@ struct GroceryItemSheetView: View {
                         .foregroundStyle(.gray600)
                 }
             }.padding(.top, 10)
-            Image(systemName: groceryItem.icon)
+            Image(systemName: groceryItem.icon).foregroundStyle(.blue800)
                 .font(.system(size: 80)).padding(.bottom, -8)
-            Text(groceryItem.name).font(.title).fontWeight(.bold).foregroundStyle(.black).lineSpacing(0).padding(.bottom, -8)
+            Text(groceryItem.name).foregroundStyle(.blue800).font(.title).fontWeight(.bold).lineSpacing(0).padding(.bottom, -8)
             HStack {
                 Text(groceryItem.category)
                     .font(.callout)

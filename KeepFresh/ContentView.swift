@@ -1,3 +1,4 @@
+import SearchUI
 import SwiftUI
 
 struct ContentView: View {
@@ -14,14 +15,14 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             TabView {
-                TodayView().tabItem {
-                    Label("Today", systemImage: "text.rectangle.page").environment(\.symbolVariants, .none)
+                Tab("Search", systemImage: "text.rectangle.page") {
+                    TodayView()
                 }
-                SearchView().tabItem {
-                    Label("Today", systemImage: "magnifyingglass")
+                Tab("Search", systemImage: "magnifyingglass") {
+                    SearchView()
                 }
-                InventoryView().tabItem {
-                    Label("Inventory", systemImage: "refrigerator")
+                Tab("Search", systemImage: "refrigerator") {
+                    InventoryView()
                 }
             }.accentColor(Color("blue-600"))
                 .toolbarRole(.browser)

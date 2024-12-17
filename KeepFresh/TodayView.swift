@@ -1,6 +1,18 @@
 import SwiftUI
 
-let groceryItem: GroceryItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", foodStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+let groceryItem: GroceryItem = .init(
+    id: UUID(),
+    icon: "waterbottle",
+    name: "Semi Skimmed Milk",
+    category: "Dairy",
+    brand: "Sainburys",
+    amount: 4,
+    unit: "pints",
+    foodStore: .fridge,
+    status: .open,
+    wasteScore: 17,
+    expiryDate: Date()
+)
 
 struct StatsView: View {
     var body: some View {
@@ -157,10 +169,12 @@ struct TodayView: View {
             VStack(alignment: .center, spacing: 0) {
                 HStack {
                     Image(systemName: groceryItem.icon)
+                        .foregroundStyle(.blue800)
                         .font(.system(size: 36))
                     VStack(spacing: 5) {
                         Text(groceryItem.name)
                             .font(.title2)
+                            .foregroundStyle(.blue800)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -176,7 +190,7 @@ struct TodayView: View {
                             Circle()
                                 .frame(width: 4, height: 4)
                                 .foregroundStyle(.gray600)
-                            Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)")
+                            Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)").foregroundStyle(.gray600)
                                 .font(.footnote)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
