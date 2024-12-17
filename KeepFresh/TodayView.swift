@@ -190,7 +190,9 @@ struct TodayView: View {
                             Circle()
                                 .frame(width: 4, height: 4)
                                 .foregroundStyle(.gray600)
-                            Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)").foregroundStyle(.gray600)
+                            Text(
+                                "\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)"
+                            ).foregroundStyle(.gray600)
                                 .font(.footnote)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -220,7 +222,11 @@ struct TodayView: View {
             }
             .sheet(item: $selectedGroceryItem) { _ in
                 GroceryItemSheetView(groceryItem: $selectedGroceryItem)
-                    .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))])
+                    .presentationDetents([
+                        .fraction(
+                            getSheetFraction(
+                                height: UIScreen.main.bounds.size.height))
+                    ])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
             }
