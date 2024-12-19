@@ -3,20 +3,32 @@
 
 import PackageDescription
 
+let baseDeps: [PackageDescription.Target.Dependency] = [
+  .product(name: "Models", package: "Model"),
+  .product(name: "Router", package: "Model"),
+  "DesignSystem",
+]
+
 let package = Package(
-    name: "Features",
-    platforms: [.iOS(.v18), .macOS(.v15)],
-    products: [
-        .library(
-            name: "SearchUI",
-            targets: ["SearchUI"]
-        )
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "SearchUI", dependencies: []
-        )
-    ]
+  name: "Features",
+  platforms: [.iOS(.v18), .macOS(.v15)],
+  products: [
+    .library(name: "SearchUI", targets: ["SearchUI"]),
+    .library(name: "DesignSystem", targets: ["DesignSystem"]),
+  ],
+  dependencies: [
+    .package(name: "Model", path: "../Model"),
+  ],
+  targets: [
+    .target(
+      name: "SearchUI",
+      dependencies: baseDeps
+    ),
+    .target(
+      name: "DesignSystem",
+      dependencies: [
+        .product(name: "Router", package: "Model"),
+      ]
+    ),
+  ]
 )
