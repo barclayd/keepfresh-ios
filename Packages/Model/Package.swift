@@ -4,21 +4,21 @@
 import PackageDescription
 
 let package = Package(
-  name: "Model",
-  platforms: [.iOS(.v18), .macOS(.v15)],
-  products: [
-    .library(name: "Models", targets: ["Models"]),
-    .library(name: "Router", targets: ["Router"]),
-  ],
-  dependencies: [],
-  targets: [
-    .target(
-      name: "Models",
-      dependencies: []
-    ),
-    .target(
-      name: "Router",
-      dependencies: ["Models"]
-    ),
-  ]
+    name: "Model",
+    platforms: [.iOS(.v18), .macOS(.v15)],
+    products: [
+        .library(name: "Models", targets: ["Models"]),
+        .library(name: "Router", targets: ["Router"]),
+    ],
+    dependencies: [],
+    targets: [
+        .target(
+            name: "Models",
+            dependencies: []
+        ),
+        .target(
+            name: "Router",
+            dependencies: ["Models"]
+        ),
+    ]
 )

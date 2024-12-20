@@ -1,18 +1,18 @@
 import SearchUI
 import SwiftUI
+import TodayUI
 
 public class FontRegistration {
     public static func registerFonts() {
         let bundle = Bundle(for: FontRegistration.self)
-                        
+
         print("Bundle path: \(bundle.bundlePath)")
-        
+
         guard let bundleURL = bundle.url(forResource: "Shrikhand-Regular", withExtension: "ttf") else {
-            
             print("Fell in here")
             return
         }
-        
+
         CTFontManagerRegisterFontsForURL(bundleURL as CFURL, .process, nil)
     }
 }
@@ -35,7 +35,7 @@ struct KeepFreshApp: App {
             NavigationStack {
                 TabView {
                     Tab(content: {
-                        Text("Today")
+                        TodayView()
                     }, label: { Label("Today", systemImage: "text.rectangle.page").environment(\.symbolVariants, .none) })
                     Tab("Search", systemImage: "magnifyingglass") {
                         SearchView()

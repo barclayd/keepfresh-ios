@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5892962CEC703B00798943 /* DesignSystem */; };
 		4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552E72CEF35B200DD9F6E /* Models */; };
-		4E8E8B512D14ED00009177AA /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E8E8B502D14ED00009177AA /* Shrikhand-Regular.ttf */; };
+		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
+		4E8E8B682D163720009177AA /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */; };
 		4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF1853A2D14E70900961F35 /* SearchUI */; };
 		9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552EE2CEF35C000DD9F6E /* DesignSystem */; };
 		9F58939F2CEDF04200798943 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F58939E2CEDF04200798943 /* Models */; };
@@ -17,7 +18,7 @@
 
 /* Begin PBXFileReference section */
 		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4E8E8B502D14ED00009177AA /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/Features/Sources/DesignSystem/Base/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
+		4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/Features/Sources/DesignSystem/Base/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
 		9F2142232CE9DAA1004167D7 /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FAEE3A72CF0994400F86CDC /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Features; path = Packages/Features; sourceTree = "<group>"; };
 		9FAEE3A82CF0994C00F86CDC /* Model */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Model; path = Packages/Model; sourceTree = "<group>"; };
@@ -37,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */,
 				4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */,
 				4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
@@ -51,7 +53,7 @@
 		9F21421A2CE9DAA1004167D7 = {
 			isa = PBXGroup;
 			children = (
-				4E8E8B502D14ED00009177AA /* Shrikhand-Regular.ttf */,
+				4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
 				9F2142252CE9DAA1004167D7 /* App */,
@@ -102,6 +104,7 @@
 				9F1552E72CEF35B200DD9F6E /* Models */,
 				9F1552EE2CEF35C000DD9F6E /* DesignSystem */,
 				4EF1853A2D14E70900961F35 /* SearchUI */,
+				4E8E8B5E2D162E7E009177AA /* TodayUI */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -148,7 +151,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E8E8B512D14ED00009177AA /* Shrikhand-Regular.ttf in Resources */,
+				4E8E8B682D163720009177AA /* Shrikhand-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,6 +400,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4E8E8B5E2D162E7E009177AA /* TodayUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TodayUI;
+		};
 		4EF1853A2D14E70900961F35 /* SearchUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SearchUI;
