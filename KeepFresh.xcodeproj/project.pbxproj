@@ -7,13 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5892962CEC703B00798943 /* DesignSystem */; };
+		4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552E72CEF35B200DD9F6E /* Models */; };
+		4E8E8B512D14ED00009177AA /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E8E8B502D14ED00009177AA /* Shrikhand-Regular.ttf */; };
 		4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF1853A2D14E70900961F35 /* SearchUI */; };
 		9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552EE2CEF35C000DD9F6E /* DesignSystem */; };
 		9F58939F2CEDF04200798943 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F58939E2CEDF04200798943 /* Models */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9F2142232CE9DAA1004167D7 /* IcySky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IcySky.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4E8E8B502D14ED00009177AA /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/Features/Sources/DesignSystem/Base/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
+		9F2142232CE9DAA1004167D7 /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FAEE3A72CF0994400F86CDC /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Features; path = Packages/Features; sourceTree = "<group>"; };
 		9FAEE3A82CF0994C00F86CDC /* Model */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Model; path = Packages/Model; sourceTree = "<group>"; };
 		9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PackageTests.xctestplan; sourceTree = "<group>"; };
@@ -32,6 +37,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */,
+				4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
 				9F58939F2CEDF04200798943 /* Models in Frameworks */,
 				9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */,
@@ -44,6 +51,8 @@
 		9F21421A2CE9DAA1004167D7 = {
 			isa = PBXGroup;
 			children = (
+				4E8E8B502D14ED00009177AA /* Shrikhand-Regular.ttf */,
+				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
 				9F2142252CE9DAA1004167D7 /* App */,
 				9FAEE3A82CF0994C00F86CDC /* Model */,
@@ -56,7 +65,7 @@
 		9F2142242CE9DAA1004167D7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9F2142232CE9DAA1004167D7 /* IcySky.app */,
+				9F2142232CE9DAA1004167D7 /* KeepFresh.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -71,9 +80,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9F2142222CE9DAA1004167D7 /* IcySky */ = {
+		9F2142222CE9DAA1004167D7 /* KeepFresh */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9F2142482CE9DAA3004167D7 /* Build configuration list for PBXNativeTarget "IcySky" */;
+			buildConfigurationList = 9F2142482CE9DAA3004167D7 /* Build configuration list for PBXNativeTarget "KeepFresh" */;
 			buildPhases = (
 				9F21421F2CE9DAA1004167D7 /* Sources */,
 				9F2142202CE9DAA1004167D7 /* Frameworks */,
@@ -86,7 +95,7 @@
 			fileSystemSynchronizedGroups = (
 				9F2142252CE9DAA1004167D7 /* App */,
 			);
-			name = IcySky;
+			name = KeepFresh;
 			packageProductDependencies = (
 				9F5892962CEC703B00798943 /* DesignSystem */,
 				9F58939E2CEDF04200798943 /* Models */,
@@ -95,7 +104,7 @@
 				4EF1853A2D14E70900961F35 /* SearchUI */,
 			);
 			productName = IcySky;
-			productReference = 9F2142232CE9DAA1004167D7 /* IcySky.app */;
+			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -113,7 +122,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9F21421E2CE9DAA1004167D7 /* Build configuration list for PBXProject "IcySky" */;
+			buildConfigurationList = 9F21421E2CE9DAA1004167D7 /* Build configuration list for PBXProject "KeepFresh" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -129,7 +138,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9F2142222CE9DAA1004167D7 /* IcySky */,
+				9F2142222CE9DAA1004167D7 /* KeepFresh */,
 			);
 		};
 /* End PBXProject section */
@@ -139,6 +148,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E8E8B512D14ED00009177AA /* Shrikhand-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,17 +286,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = App/IcySky.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/KeepFresh.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"App/Preview Content\"";
-				DEVELOPMENT_TEAM = R2GGK3VN2C;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "IcySky-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Keep Fresh";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save images to your photo library";
@@ -323,17 +332,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = App/IcySky.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/KeepFresh.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"App/Preview Content\"";
-				DEVELOPMENT_TEAM = R2GGK3VN2C;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "IcySky-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Keep Fresh";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save images to your photo library";
@@ -368,7 +376,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9F21421E2CE9DAA1004167D7 /* Build configuration list for PBXProject "IcySky" */ = {
+		9F21421E2CE9DAA1004167D7 /* Build configuration list for PBXProject "KeepFresh" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9F2142462CE9DAA3004167D7 /* Debug */,
@@ -377,7 +385,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9F2142482CE9DAA3004167D7 /* Build configuration list for PBXNativeTarget "IcySky" */ = {
+		9F2142482CE9DAA3004167D7 /* Build configuration list for PBXNativeTarget "KeepFresh" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9F2142492CE9DAA3004167D7 /* Debug */,

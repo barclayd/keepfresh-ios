@@ -1,6 +1,22 @@
 import SearchUI
 import SwiftUI
 
+public class FontRegistration {
+    public static func registerFonts() {
+        let bundle = Bundle(for: FontRegistration.self)
+                        
+        print("Bundle path: \(bundle.bundlePath)")
+        
+        guard let bundleURL = bundle.url(forResource: "Shrikhand-Regular", withExtension: "ttf") else {
+            
+            print("Fell in here")
+            return
+        }
+        
+        CTFontManagerRegisterFontsForURL(bundleURL as CFURL, .process, nil)
+    }
+}
+
 @main
 struct KeepFreshApp: App {
     init() {
@@ -11,6 +27,7 @@ struct KeepFreshApp: App {
             UITabBar.appearance().standardAppearance = tabBarAppearance
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
+        FontRegistration.registerFonts()
     }
 
     var body: some Scene {

@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9F2142222CE9DAA1004167D7"
-               BuildableName = "IcySky.app"
-               BlueprintName = "IcySky"
-               ReferencedContainer = "container:IcySky.xcodeproj">
+               BuildableName = "KeepFresh.app"
+               BlueprintName = "KeepFresh"
+               ReferencedContainer = "container:KeepFresh.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,7 +46,7 @@
                BlueprintIdentifier = "9F2142332CE9DAA3004167D7"
                BuildableName = "IcySkyTests.xctest"
                BlueprintName = "IcySkyTests"
-               ReferencedContainer = "container:IcySky.xcodeproj">
+               ReferencedContainer = "container:KeepFresh.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9F2142222CE9DAA1004167D7"
-            BuildableName = "IcySky.app"
-            BlueprintName = "IcySky"
-            ReferencedContainer = "container:IcySky.xcodeproj">
+            BuildableName = "KeepFresh.app"
+            BlueprintName = "KeepFresh"
+            ReferencedContainer = "container:KeepFresh.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -83,9 +83,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9F2142222CE9DAA1004167D7"
-            BuildableName = "IcySky.app"
-            BlueprintName = "IcySky"
-            ReferencedContainer = "container:IcySky.xcodeproj">
+            BuildableName = "KeepFresh.app"
+            BlueprintName = "KeepFresh"
+            ReferencedContainer = "container:KeepFresh.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

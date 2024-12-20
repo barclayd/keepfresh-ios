@@ -28,7 +28,10 @@ let package = Package(
       name: "DesignSystem",
       dependencies: [
         .product(name: "Router", package: "Model"),
+      ],
+      resources: [
+          .process("Base/Shrikhand-Regular.ttf") // If directly referencing the font file
       ]
-    ),
+    )
   ]
 )
