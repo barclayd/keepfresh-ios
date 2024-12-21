@@ -1,3 +1,4 @@
+import DesignSystem
 import Models
 import SwiftUI
 
@@ -9,11 +10,11 @@ struct StatsView: View {
             VStack {
                 Text("Location")
                     .textCase(.uppercase)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text(groceryItem.foodStore.rawValue)
                     .fontWeight(.bold)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -21,11 +22,11 @@ struct StatsView: View {
             VStack {
                 Text("Status")
                     .textCase(.uppercase)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text(groceryItem.status.rawValue)
                     .fontWeight(.bold)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -33,15 +34,15 @@ struct StatsView: View {
             VStack {
                 Text("Expiry")
                     .textCase(.uppercase)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 HStack(spacing: 3) {
                     Image(systemName: "hourglass")
                         .font(.system(size: 18))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.green600)
                     Text("3 days")
                         .fontWeight(.bold)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.green600)
                         .font(.headline)
                 }
             }
@@ -57,7 +58,7 @@ struct StatsView: View {
                 style: .continuous
             )
         )
-        .foregroundStyle(.blue)
+        .foregroundStyle(.green300)
     }
 }
 
@@ -67,11 +68,11 @@ struct WideStatsView: View {
             VStack {
                 Text("Location")
                     .textCase(.uppercase)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text(groceryItem.foodStore.rawValue)
                     .fontWeight(.bold)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -79,11 +80,11 @@ struct WideStatsView: View {
             VStack {
                 Text("Status")
                     .textCase(.uppercase)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text(groceryItem.status.rawValue)
                     .fontWeight(.bold)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -91,11 +92,11 @@ struct WideStatsView: View {
             VStack {
                 Text("Waste %")
                     .textCase(.uppercase)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 Text("\(String(format: "%.0f", groceryItem.amount))")
                     .fontWeight(.bold)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.green600)
                     .font(.headline)
             }
             Spacer()
@@ -103,15 +104,15 @@ struct WideStatsView: View {
             VStack {
                 Text("EXPIRY")
                     .textCase(.uppercase)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray400)
                     .font(.caption)
                 HStack(spacing: 3) {
                     Image(systemName: "hourglass")
                         .font(.system(size: 18))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.green600)
                     Text("3 days")
                         .fontWeight(.bold)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.green600)
                         .font(.headline)
                 }
             }
@@ -127,7 +128,7 @@ struct WideStatsView: View {
                 style: .continuous
             )
         )
-        .foregroundStyle(.blue)
+        .foregroundStyle(.green300)
     }
 }
 
@@ -169,16 +170,16 @@ public struct TodayView: View {
 
                         HStack {
                             Text(groceryItem.category)
-                                .font(.footnote).foregroundStyle(.blue)
+                                .font(.footnote).foregroundStyle(.gray600)
                             Circle()
                                 .frame(width: 4, height: 4)
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(.gray600)
                             Text(groceryItem.brand)
                                 .font(.footnote)
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(.brandSainsburys)
                             Circle()
                                 .frame(width: 4, height: 4)
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(.gray600)
                             Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)")
                                 .font(.footnote)
                         }
@@ -202,7 +203,7 @@ public struct TodayView: View {
             .cornerRadius(20)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.horizontal, 10)
-            .shadow(color: .blue, radius: 2, x: 0, y: 4)
+            .shadow(color: .shadow, radius: 2, x: 0, y: 4)
             .onTapGesture {
 //                UISelectionFeedbackGenerator.listSelection()
                 selectedGroceryItem = groceryItem
@@ -213,6 +214,6 @@ public struct TodayView: View {
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
             }
-        }.padding(.vertical, 10).background(.blue)
+        }.padding(.vertical, 10).background(.white200)
     }
 }

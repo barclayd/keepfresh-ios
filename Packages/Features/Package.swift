@@ -36,7 +36,7 @@ let package = Package(
                 .product(name: "Router", package: "Model"),
             ],
             resources: [
-                .process("Base/Shrikhand-Regular.ttf"), // If directly referencing the font file
+                .process("Base/Shrikhand-Regular.ttf"),
             ]
         ),
     ]
