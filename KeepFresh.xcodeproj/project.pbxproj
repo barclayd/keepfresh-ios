@@ -6,260 +6,162 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXContainerItemProxy section */
-		4EC880412CE5523800C331AF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4EC880272CE5523700C331AF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4EC8802E2CE5523700C331AF;
-			remoteInfo = KeepFresh;
-		};
-		4EC8804B2CE5523800C331AF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4EC880272CE5523700C331AF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4EC8802E2CE5523700C331AF;
-			remoteInfo = KeepFresh;
-		};
-/* End PBXContainerItemProxy section */
+/* Begin PBXBuildFile section */
+		4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5892962CEC703B00798943 /* DesignSystem */; };
+		4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552E72CEF35B200DD9F6E /* Models */; };
+		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
+		4E8E8B682D163720009177AA /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */; };
+		4E8E8B6A2D1645AC009177AA /* InventoryUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B692D1645AC009177AA /* InventoryUI */; };
+		4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF1853A2D14E70900961F35 /* SearchUI */; };
+		9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552EE2CEF35C000DD9F6E /* DesignSystem */; };
+		9F58939F2CEDF04200798943 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F58939E2CEDF04200798943 /* Models */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4EC8802F2CE5523700C331AF /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4EC880402CE5523800C331AF /* KeepFreshTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeepFreshTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4EC8804A2CE5523800C331AF /* KeepFreshUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeepFreshUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/Features/Sources/DesignSystem/Base/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
+		9F2142232CE9DAA1004167D7 /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FAEE3A72CF0994400F86CDC /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Features; path = Packages/Features; sourceTree = "<group>"; };
+		9FAEE3A82CF0994C00F86CDC /* Model */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Model; path = Packages/Model; sourceTree = "<group>"; };
+		9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PackageTests.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4EAE3FBF2CE6D06900D24BF0 /* Exceptions for "KeepFresh" folder in "KeepFresh" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 4EC8802E2CE5523700C331AF /* KeepFresh */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		4EC880312CE5523700C331AF /* KeepFresh */ = {
+		9F2142252CE9DAA1004167D7 /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				4EAE3FBF2CE6D06900D24BF0 /* Exceptions for "KeepFresh" folder in "KeepFresh" target */,
-			);
-			path = KeepFresh;
-			sourceTree = "<group>";
-		};
-		4EC880432CE5523800C331AF /* KeepFreshTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = KeepFreshTests;
-			sourceTree = "<group>";
-		};
-		4EC8804D2CE5523800C331AF /* KeepFreshUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = KeepFreshUITests;
+			path = App;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4EC8802C2CE5523700C331AF /* Frameworks */ = {
+		9F2142202CE9DAA1004167D7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EC8803D2CE5523800C331AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EC880472CE5523800C331AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */,
+				4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */,
+				4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */,
+				4E8E8B6A2D1645AC009177AA /* InventoryUI in Frameworks */,
+				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
+				9F58939F2CEDF04200798943 /* Models in Frameworks */,
+				9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4EC880262CE5523700C331AF = {
+		9F21421A2CE9DAA1004167D7 = {
 			isa = PBXGroup;
 			children = (
-				4EC880312CE5523700C331AF /* KeepFresh */,
-				4EC880432CE5523800C331AF /* KeepFreshTests */,
-				4EC8804D2CE5523800C331AF /* KeepFreshUITests */,
-				4EC880302CE5523700C331AF /* Products */,
+				4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */,
+				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
+				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
+				9F2142252CE9DAA1004167D7 /* App */,
+				9FAEE3A82CF0994C00F86CDC /* Model */,
+				9FAEE3A72CF0994400F86CDC /* Features */,
+				9FAEE3B82CF09BB400F86CDC /* Frameworks */,
+				9F2142242CE9DAA1004167D7 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		4EC880302CE5523700C331AF /* Products */ = {
+		9F2142242CE9DAA1004167D7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4EC8802F2CE5523700C331AF /* KeepFresh.app */,
-				4EC880402CE5523800C331AF /* KeepFreshTests.xctest */,
-				4EC8804A2CE5523800C331AF /* KeepFreshUITests.xctest */,
+				9F2142232CE9DAA1004167D7 /* KeepFresh.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9FAEE3B82CF09BB400F86CDC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4EC8802E2CE5523700C331AF /* KeepFresh */ = {
+		9F2142222CE9DAA1004167D7 /* KeepFresh */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4EC880542CE5523800C331AF /* Build configuration list for PBXNativeTarget "KeepFresh" */;
+			buildConfigurationList = 9F2142482CE9DAA3004167D7 /* Build configuration list for PBXNativeTarget "KeepFresh" */;
 			buildPhases = (
-				4EC8802B2CE5523700C331AF /* Sources */,
-				4EC8802C2CE5523700C331AF /* Frameworks */,
-				4EC8802D2CE5523700C331AF /* Resources */,
+				9F21421F2CE9DAA1004167D7 /* Sources */,
+				9F2142202CE9DAA1004167D7 /* Frameworks */,
+				9F2142212CE9DAA1004167D7 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				4EC880312CE5523700C331AF /* KeepFresh */,
+				9F2142252CE9DAA1004167D7 /* App */,
 			);
 			name = KeepFresh;
 			packageProductDependencies = (
+				9F5892962CEC703B00798943 /* DesignSystem */,
+				9F58939E2CEDF04200798943 /* Models */,
+				9F1552E72CEF35B200DD9F6E /* Models */,
+				9F1552EE2CEF35C000DD9F6E /* DesignSystem */,
+				4EF1853A2D14E70900961F35 /* SearchUI */,
+				4E8E8B5E2D162E7E009177AA /* TodayUI */,
+				4E8E8B692D1645AC009177AA /* InventoryUI */,
 			);
-			productName = KeepFresh;
-			productReference = 4EC8802F2CE5523700C331AF /* KeepFresh.app */;
+			productName = IcySky;
+			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
 			productType = "com.apple.product-type.application";
-		};
-		4EC8803F2CE5523800C331AF /* KeepFreshTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4EC880572CE5523800C331AF /* Build configuration list for PBXNativeTarget "KeepFreshTests" */;
-			buildPhases = (
-				4EC8803C2CE5523800C331AF /* Sources */,
-				4EC8803D2CE5523800C331AF /* Frameworks */,
-				4EC8803E2CE5523800C331AF /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4EC880422CE5523800C331AF /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				4EC880432CE5523800C331AF /* KeepFreshTests */,
-			);
-			name = KeepFreshTests;
-			packageProductDependencies = (
-			);
-			productName = KeepFreshTests;
-			productReference = 4EC880402CE5523800C331AF /* KeepFreshTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		4EC880492CE5523800C331AF /* KeepFreshUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4EC8805A2CE5523800C331AF /* Build configuration list for PBXNativeTarget "KeepFreshUITests" */;
-			buildPhases = (
-				4EC880462CE5523800C331AF /* Sources */,
-				4EC880472CE5523800C331AF /* Frameworks */,
-				4EC880482CE5523800C331AF /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4EC8804C2CE5523800C331AF /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				4EC8804D2CE5523800C331AF /* KeepFreshUITests */,
-			);
-			name = KeepFreshUITests;
-			packageProductDependencies = (
-			);
-			productName = KeepFreshUITests;
-			productReference = 4EC8804A2CE5523800C331AF /* KeepFreshUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		4EC880272CE5523700C331AF /* Project object */ = {
+		9F21421B2CE9DAA1004167D7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1610;
-				LastUpgradeCheck = 1610;
+				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-					4EC8802E2CE5523700C331AF = {
+					9F2142222CE9DAA1004167D7 = {
 						CreatedOnToolsVersion = 16.1;
-					};
-					4EC8803F2CE5523800C331AF = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = 4EC8802E2CE5523700C331AF;
-					};
-					4EC880492CE5523800C331AF = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = 4EC8802E2CE5523700C331AF;
 					};
 				};
 			};
-			buildConfigurationList = 4EC8802A2CE5523700C331AF /* Build configuration list for PBXProject "KeepFresh" */;
+			buildConfigurationList = 9F21421E2CE9DAA1004167D7 /* Build configuration list for PBXProject "KeepFresh" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 4EC880262CE5523700C331AF;
+			mainGroup = 9F21421A2CE9DAA1004167D7;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 4EC880302CE5523700C331AF /* Products */;
+			productRefGroup = 9F2142242CE9DAA1004167D7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4EC8802E2CE5523700C331AF /* KeepFresh */,
-				4EC8803F2CE5523800C331AF /* KeepFreshTests */,
-				4EC880492CE5523800C331AF /* KeepFreshUITests */,
+				9F2142222CE9DAA1004167D7 /* KeepFresh */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		4EC8802D2CE5523700C331AF /* Resources */ = {
+		9F2142212CE9DAA1004167D7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EC8803E2CE5523800C331AF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EC880482CE5523800C331AF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				4E8E8B682D163720009177AA /* Shrikhand-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		4EC8802B2CE5523700C331AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EC8803C2CE5523800C331AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EC880462CE5523800C331AF /* Sources */ = {
+		9F21421F2CE9DAA1004167D7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -268,21 +170,8 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		4EC880422CE5523800C331AF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4EC8802E2CE5523700C331AF /* KeepFresh */;
-			targetProxy = 4EC880412CE5523800C331AF /* PBXContainerItemProxy */;
-		};
-		4EC8804C2CE5523800C331AF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4EC8802E2CE5523700C331AF /* KeepFresh */;
-			targetProxy = 4EC8804B2CE5523800C331AF /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		4EC880522CE5523800C331AF /* Debug */ = {
+		9F2142462CE9DAA3004167D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -316,6 +205,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -343,7 +233,7 @@
 			};
 			name = Debug;
 		};
-		4EC880532CE5523800C331AF /* Release */ = {
+		9F2142472CE9DAA3004167D7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -377,6 +267,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -396,27 +287,31 @@
 			};
 			name = Release;
 		};
-		4EC880552CE5523800C331AF /* Debug */ = {
+		9F2142492CE9DAA3004167D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = KeepFresh/KeepFresh.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/KeepFresh.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"KeepFresh/Preview Content\"";
-				DEVELOPMENT_TEAM = R2GGK3VN2C;
-				ENABLE_HARDENED_RUNTIME = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"App/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = KeepFresh/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_CFBundleDisplayName = "Keep Fresh";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save images to your photo library";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -426,38 +321,43 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barclayd.KeepFresh;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Debug;
 		};
-		4EC880562CE5523800C331AF /* Release */ = {
+		9F21424A2CE9DAA3004167D7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = KeepFresh/KeepFresh.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/KeepFresh.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"KeepFresh/Preview Content\"";
-				DEVELOPMENT_TEAM = R2GGK3VN2C;
-				ENABLE_HARDENED_RUNTIME = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"App/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = KeepFresh/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_CFBundleDisplayName = "Keep Fresh";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save images to your photo library";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -467,103 +367,14 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barclayd.KeepFresh;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Release;
-		};
-		4EC880582CE5523800C331AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R2GGK3VN2C;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barclayd.KeepFreshTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KeepFresh.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KeepFresh";
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Debug;
-		};
-		4EC880592CE5523800C331AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R2GGK3VN2C;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barclayd.KeepFreshTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KeepFresh.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KeepFresh";
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Release;
-		};
-		4EC8805B2CE5523800C331AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R2GGK3VN2C;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barclayd.KeepFreshUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = KeepFresh;
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Debug;
-		};
-		4EC8805C2CE5523800C331AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R2GGK3VN2C;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.barclayd.KeepFreshUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = KeepFresh;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Release;
@@ -571,43 +382,56 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4EC8802A2CE5523700C331AF /* Build configuration list for PBXProject "KeepFresh" */ = {
+		9F21421E2CE9DAA1004167D7 /* Build configuration list for PBXProject "KeepFresh" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4EC880522CE5523800C331AF /* Debug */,
-				4EC880532CE5523800C331AF /* Release */,
+				9F2142462CE9DAA3004167D7 /* Debug */,
+				9F2142472CE9DAA3004167D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4EC880542CE5523800C331AF /* Build configuration list for PBXNativeTarget "KeepFresh" */ = {
+		9F2142482CE9DAA3004167D7 /* Build configuration list for PBXNativeTarget "KeepFresh" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4EC880552CE5523800C331AF /* Debug */,
-				4EC880562CE5523800C331AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4EC880572CE5523800C331AF /* Build configuration list for PBXNativeTarget "KeepFreshTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4EC880582CE5523800C331AF /* Debug */,
-				4EC880592CE5523800C331AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4EC8805A2CE5523800C331AF /* Build configuration list for PBXNativeTarget "KeepFreshUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4EC8805B2CE5523800C331AF /* Debug */,
-				4EC8805C2CE5523800C331AF /* Release */,
+				9F2142492CE9DAA3004167D7 /* Debug */,
+				9F21424A2CE9DAA3004167D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4E8E8B5E2D162E7E009177AA /* TodayUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TodayUI;
+		};
+		4E8E8B692D1645AC009177AA /* InventoryUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = InventoryUI;
+		};
+		4EF1853A2D14E70900961F35 /* SearchUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SearchUI;
+		};
+		9F1552E72CEF35B200DD9F6E /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+		9F1552EE2CEF35C000DD9F6E /* DesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignSystem;
+		};
+		9F5892962CEC703B00798943 /* DesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignSystem;
+		};
+		9F58939E2CEDF04200798943 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 4EC880272CE5523700C331AF /* Project object */;
+	rootObject = 9F21421B2CE9DAA1004167D7 /* Project object */;
 }
