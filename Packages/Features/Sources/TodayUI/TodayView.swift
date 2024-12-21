@@ -180,7 +180,7 @@ public struct TodayView: View {
                             Circle()
                                 .frame(width: 4, height: 4)
                                 .foregroundStyle(.gray600)
-                            Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)")
+                            Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)").foregroundStyle(.gray600)
                                 .font(.footnote)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -205,7 +205,7 @@ public struct TodayView: View {
             .padding(.horizontal, 10)
             .shadow(color: .shadow, radius: 2, x: 0, y: 4)
             .onTapGesture {
-//                UISelectionFeedbackGenerator.listSelection()
+                // need to add haptics
                 selectedGroceryItem = groceryItem
             }
             .sheet(item: $selectedGroceryItem) { _ in

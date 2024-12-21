@@ -1,10 +1,15 @@
 import SwiftUI
 
 public struct SearchView: View {
-    public init() {}
+    public init(searchText: Binding<String>) {
+        _searchText = searchText
+    }
+
+    @Binding var searchText: String
 
     public var body: some View {
-        Text("Recent View").font(.headline).fontWeight(.bold)
-        Spacer()
+        VStack {
+            Text("Recent Searches" + searchText).font(.headline).fontWeight(.bold).foregroundStyle(.black)
+        }
     }
 }

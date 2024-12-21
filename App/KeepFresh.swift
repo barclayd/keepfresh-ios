@@ -1,6 +1,7 @@
 import DesignSystem
 import Router
 import SwiftUI
+import SwiftUIIntrospect
 
 public class FontRegistration {
     public static func registerFonts() {
@@ -33,43 +34,15 @@ struct KeepFreshApp: App {
         WindowGroup {
             NavigationStack {
                 AppTabRootView()
-                    .accentColor(Color(.blue600))
                     .toolbarRole(.browser)
                     .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button(action: {
-                                print("Profile click")
-                            }) {
-                                Image(systemName: "person.crop.circle.fill").resizable()
-                                    .frame(width: 24, height: 24).foregroundColor(.blue600)
-                            }
-                        }
-
-                        ToolbarItem(placement: .principal) {
-                            Text("Fresh")
-                                .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
-                        }
-
-                        ToolbarItemGroup {
-                            Button(action: {
-                                print("Add item")
-                            }) {
-                                Image(systemName: "plus.app").resizable()
-                                    .frame(width: 24, height: 24).foregroundColor(.blue600)
-                            }
-                            Button(action: {
-                                print("Scan barcode")
-                            }) {
-                                Image(systemName: "barcode.viewfinder").resizable()
-                                    .frame(width: 24, height: 24).foregroundColor(.blue600)
-                            }
-                        }
+                        router.selectedTab.toolbarContent
                     }
-                    .toolbarBackground(.white, for: .navigationBar)
+                    .toolbarBackground(router.selectedTab.toolbarBackground, for: .navigationBar)
                     .toolbarBackgroundVisibility(.visible, for: .navigationBar)
                     .navigationBarTitleDisplayMode(.inline)
                     .environment(router)
             }
-        }
+        }.environment(router)
     }
 }

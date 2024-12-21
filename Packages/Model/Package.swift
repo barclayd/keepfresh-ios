@@ -10,7 +10,6 @@ let package = Package(
         .library(name: "Models", targets: ["Models"]),
         .library(name: "Router", targets: ["Router"]),
     ],
-    dependencies: [],
     targets: [
         .target(
             name: "Models",

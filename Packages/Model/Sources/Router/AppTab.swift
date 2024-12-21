@@ -25,9 +25,11 @@ public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
         }
     }
 
-    @ViewBuilder
-    public var label: some View {
-        Label(title, systemImage: icon)
-            .environment(\.symbolVariants, self == .today ? .none : .fill)
+    public var toolbarBackground: Color {
+        switch self {
+        case .today: return .white
+        case .search: return Color(red: 47 / 255, green: 133 / 255, blue: 226 / 255)
+        case .kitchen: return .white
+        }
     }
 }

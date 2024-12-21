@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public extension ShapeStyle where Self == Color {
     static var white200: Color {
@@ -9,12 +10,20 @@ public extension ShapeStyle where Self == Color {
         Color("white-300", bundle: .module)
     }
 
+    static var white400: Color {
+        Color("white-400", bundle: .module)
+    }
+
     static var black800: Color {
         Color("black-800", bundle: .module)
     }
 
     static var blue200: Color {
         Color("blue-200", bundle: .module)
+    }
+
+    static var blue400: Color {
+        Color("blue-400", bundle: .module)
     }
 
     static var blue600: Color {
@@ -75,5 +84,31 @@ public extension ShapeStyle where Self == Color {
 
     static var shadow: Color {
         Color("shadow", bundle: .module)
+    }
+}
+
+public extension UIColor {
+    static var white200: UIColor {
+        UIColor(named: "white-200", in: .module, compatibleWith: nil) ?? .white
+    }
+
+    static var white400: UIColor {
+        UIColor(named: "white-400", in: .module, compatibleWith: nil) ?? .white
+    }
+
+    static var gray150: UIColor {
+        UIColor(named: "gray-150", in: .module, compatibleWith: nil) ?? .gray
+    }
+
+    static var gray200: UIColor {
+        UIColor(named: "gray-200", in: .module, compatibleWith: nil) ?? .gray
+    }
+
+    static var blue400: UIColor {
+        UIColor(named: "blue-400", in: .module, compatibleWith: nil) ?? .blue
+    }
+
+    static var blue600: UIColor {
+        UIColor(named: "blue-600", in: .module, compatibleWith: nil) ?? .blue
     }
 }
