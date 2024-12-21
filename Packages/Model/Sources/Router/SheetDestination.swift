@@ -4,5 +4,5 @@ import SwiftUI
 public enum SheetDestination: Hashable, Identifiable {
     public var id: Int { hashValue }
 
-    case auth
+    case groceryItem(groceryItemId: String)
 }

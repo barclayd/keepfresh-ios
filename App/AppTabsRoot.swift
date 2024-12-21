@@ -1,21 +1,27 @@
+import DesignSystem
+import InventoryUI
 import Router
+import SearchUI
 import SwiftUI
+import TodayUI
 
 struct AppTabRootView: View {
     @Environment(Router.self) var router
 
-    let tab: AppTab
-
     var body: some View {
         @Bindable var router = router
 
-        GeometryReader { _ in
-            NavigationStack(path: $router[tab]) {
-                tab.rootView
-                    .navigationBarHidden(true)
+        TabView(selection: $router.selectedTab) {
+            ForEach(AppTab.allCases) { tab in
+                NavigationStack(path: $router[tab]) {
+                    tab.rootView
+                        .withAppRouter()
+                        .environment(\.currentTab, tab)
+                }
+                .tabItem { tab.label }
+                .tag(tab)
             }
         }
-        .ignoresSafeArea()
     }
 }
 
@@ -25,7 +31,11 @@ private extension AppTab {
     var rootView: some View {
         switch self {
         case .search:
-            Text("Hello")
+            SearchView()
+        case .today:
+            TodayView()
+        case .kitchen:
+            InventoryView()
         }
     }
 }
