@@ -15,6 +15,7 @@ let package = Package(
     products: [
         .library(name: "SearchUI", targets: ["SearchUI"]),
         .library(name: "TodayUI", targets: ["TodayUI"]),
+        .library(name: "InventoryUI", targets: ["InventoryUI"]),
         .library(name: "DesignSystem", targets: ["DesignSystem"]),
     ],
     dependencies: [
@@ -29,7 +30,10 @@ let package = Package(
             name: "TodayUI",
             dependencies: baseDeps
         ),
-
+        .target(
+            name: "InventoryUI",
+            dependencies: baseDeps
+        ),
         .target(
             name: "DesignSystem",
             dependencies: [

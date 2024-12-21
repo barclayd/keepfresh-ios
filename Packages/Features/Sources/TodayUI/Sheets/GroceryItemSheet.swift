@@ -1,3 +1,4 @@
+import DesignSystem
 import Models
 import SwiftUI
 
@@ -14,10 +15,10 @@ struct GroceryItemSheetStatsGridRows: View {
                     }
                     Image(systemName: "hourglass")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.black800)
                     Image(systemName: "percent")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.black800)
                     VStack(spacing: 0) {
                         Text("17").fontWeight(.bold).font(.headline)
                         Text("Waste score").fontWeight(.light).font(.subheadline)
@@ -27,11 +28,11 @@ struct GroceryItemSheetStatsGridRows: View {
                     Text("Fridge").fontWeight(.bold).font(.headline)
                     Image(systemName: "refrigerator")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.black800)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue)
-                    Text("Sainsburys").fontWeight(.bold).foregroundStyle(.blue).font(.headline).lineLimit(1)
+                        .foregroundStyle(.black800)
+                    Text("Sainsburys").fontWeight(.bold).foregroundStyle(.brandSainsburys).font(.headline).lineLimit(1)
                 }
             }
         }
@@ -44,7 +45,7 @@ struct GroceryItemSheetStatsGridRows: View {
                 }
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: 32)).fontWeight(.bold)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.black800)
                 VStack(spacing: 0) {
                     Text("3").fontWeight(.bold).font(.headline)
                     Text("Days since opened").fontWeight(.light).font(.subheadline)
@@ -57,7 +58,7 @@ struct GroceryItemSheetStatsGridRows: View {
                 }
                 Image(systemName: "house")
                     .font(.system(size: 32)).fontWeight(.bold)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.black800)
                 VStack(spacing: 0) {
                     Text("3").fontWeight(.bold).font(.headline)
                     Text("Located in Freezer").fontWeight(.light).font(.subheadline)
@@ -80,11 +81,11 @@ struct GroceryItemSheetStatsGrid: View {
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
                 GroceryItemSheetStatsGridRows(pageIndex: pageIndex)
             }
-        }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.blue).cornerRadius(20)
+        }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.white300).cornerRadius(20)
     }
 }
 
-public struct GroceryItemSheetView: View {
+struct GroceryItemSheetView: View {
     @Binding var groceryItem: GroceryItem?
     @Environment(\.dismiss) private var dismiss
 
@@ -93,11 +94,11 @@ public struct GroceryItemSheetView: View {
     init(groceryItem: Binding<GroceryItem?>) {
         _groceryItem = groceryItem
 
-        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue)
-        UIPageControl.appearance().pageIndicatorTintColor = UIColor(.blue)
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
 
-    public var body: some View {
+    var body: some View {
         guard let groceryItem: GroceryItem = groceryItem else {
             return EmptyView()
         }
@@ -109,7 +110,7 @@ public struct GroceryItemSheetView: View {
                 }) {
                     Image(systemName: "chevron.down")
                         .font(.system(size: 24))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.gray600)
                 }
                 Spacer()
                 Button(action: {
@@ -117,7 +118,7 @@ public struct GroceryItemSheetView: View {
                 }) {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 24))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.gray600)
                 }
             }.padding(.top, 10)
             Image(systemName: groceryItem.icon)
@@ -126,14 +127,14 @@ public struct GroceryItemSheetView: View {
             HStack {
                 Text(groceryItem.category)
                     .font(.callout)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray600)
                 Circle()
                     .frame(width: 4, height: 4)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray600)
                     .padding(.horizontal, 4)
                 Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)")
                     .font(.callout)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.gray600)
             }
             TabView(selection: $currentPage) {
                 ForEach(0 ..< 2, id: \.self) { page in
@@ -151,11 +152,11 @@ public struct GroceryItemSheetView: View {
                 Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                     GridRow {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.gold500)
                             .font(.system(size: 32))
                         Text("Great work, you're on track to finish this before it expires")
                             .font(.callout)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.gray600)
                             .multilineTextAlignment(.center)
                             .lineLimit(2 ... 2)
 
@@ -163,11 +164,11 @@ public struct GroceryItemSheetView: View {
                     }
                     GridRow {
                         Image(systemName: "cart.circle.fill")
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.blue600)
                             .font(.system(size: 32))
                         Text("Based on food waste history for this item, you should buy this again")
                             .font(.callout)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.gray600)
                             .multilineTextAlignment(.center)
                             .lineLimit(2 ... 2)
                         Spacer()
@@ -177,11 +178,11 @@ public struct GroceryItemSheetView: View {
                 Grid(horizontalSpacing: 16, verticalSpacing: 0) {
                     GridRow {
                         Image(systemName: "cart.circle.fill")
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.blue600)
                             .font(.system(size: 32))
                         Text("Based on food waste history for this item, you should buy this again")
                             .font(.callout)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(.gray600)
                             .multilineTextAlignment(.center)
                             .lineLimit(2 ... 2)
                         Spacer()
@@ -200,13 +201,13 @@ public struct GroceryItemSheetView: View {
                         .font(.headline)
                         .frame(width: 175, alignment: .center)
                 }
-                .foregroundStyle(.blue)
+                .foregroundStyle(.blue600)
                 .fontWeight(.bold)
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(.blue)
+                        .fill(.green300)
                 )
             }
             Button(action: {
@@ -220,13 +221,13 @@ public struct GroceryItemSheetView: View {
                         .font(.headline)
                         .frame(width: 175, alignment: .center)
                 }
-                .foregroundStyle(.blue)
+                .foregroundStyle(.blue600)
                 .fontWeight(.bold)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .center)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(.blue)
+                        .fill(.red200)
                 )
             }
             Button(action: {
@@ -240,13 +241,13 @@ public struct GroceryItemSheetView: View {
                         .font(.headline)
                         .frame(width: 175, alignment: .center)
                 }
-                .foregroundStyle(.blue)
+                .foregroundStyle(.blue600)
                 .fontWeight(.bold)
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(.blue)
+                        .fill(.gray200)
                 )
             }
         }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()

@@ -1,3 +1,5 @@
+import DesignSystem
+import InventoryUI
 import SearchUI
 import SwiftUI
 import TodayUI
@@ -6,10 +8,7 @@ public class FontRegistration {
     public static func registerFonts() {
         let bundle = Bundle(for: FontRegistration.self)
 
-        print("Bundle path: \(bundle.bundlePath)")
-
         guard let bundleURL = bundle.url(forResource: "Shrikhand-Regular", withExtension: "ttf") else {
-            print("Fell in here")
             return
         }
 
@@ -41,10 +40,10 @@ struct KeepFreshApp: App {
                         SearchView()
                     }
                     Tab("Kitchen", systemImage: "refrigerator") {
-                        Text("Inventory")
+                        InventoryView()
                     }
                 }
-                .accentColor(.blue)
+                .accentColor(Color(.blue600))
                 .toolbarRole(.browser)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -52,13 +51,13 @@ struct KeepFreshApp: App {
                             print("Profile click")
                         }) {
                             Image(systemName: "person.crop.circle.fill").resizable()
-                                .frame(width: 24, height: 24).foregroundColor(.blue)
+                                .frame(width: 24, height: 24).foregroundColor(.blue600)
                         }
                     }
 
                     ToolbarItem(placement: .principal) {
                         Text("Fresh")
-                            .foregroundColor(.blue).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
+                            .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
                     }
 
                     ToolbarItemGroup {
@@ -66,13 +65,13 @@ struct KeepFreshApp: App {
                             print("Add item")
                         }) {
                             Image(systemName: "plus.app").resizable()
-                                .frame(width: 24, height: 24).foregroundColor(.blue)
+                                .frame(width: 24, height: 24).foregroundColor(.blue600)
                         }
                         Button(action: {
                             print("Scan barcode")
                         }) {
                             Image(systemName: "barcode.viewfinder").resizable()
-                                .frame(width: 24, height: 24).foregroundColor(.blue)
+                                .frame(width: 24, height: 24).foregroundColor(.blue600)
                         }
                     }
                 }.toolbarBackground(.white, for: .navigationBar)
