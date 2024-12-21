@@ -1,5 +1,5 @@
 import DesignSystem
-import InventoryUI
+import KitchenUI
 import Router
 import SearchUI
 import SwiftUI
@@ -30,12 +30,12 @@ private extension AppTab {
     @ViewBuilder
     var rootView: some View {
         switch self {
-        case .search:
-            SearchView()
         case .today:
             TodayView()
+        case .search:
+            SearchView()
         case .kitchen:
-            InventoryView()
+            KitchenView()
         }
     }
 }

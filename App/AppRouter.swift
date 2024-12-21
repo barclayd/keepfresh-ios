@@ -1,4 +1,4 @@
-import InventoryUI
+import KitchenUI
 import Router
 import SearchUI
 import SwiftUI
@@ -10,7 +10,7 @@ public struct AppRouter: ViewModifier {
             .navigationDestination(for: RouterDestination.self) { destination in
                 switch destination {
                 case .kitchen:
-                    InventoryView()
+                    KitchenView()
                 case .search:
                     SearchView()
                 case .today:

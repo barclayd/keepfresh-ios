@@ -1,9 +1,6 @@
 import DesignSystem
-import InventoryUI
 import Router
-import SearchUI
 import SwiftUI
-import TodayUI
 
 public class FontRegistration {
     public static func registerFonts() {

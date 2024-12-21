@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747F772D16F7A000DDCE17 /* KitchenUI */; };
 		4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5892962CEC703B00798943 /* DesignSystem */; };
 		4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552E72CEF35B200DD9F6E /* Models */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
 		4E8E8B682D163720009177AA /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */; };
-		4E8E8B6A2D1645AC009177AA /* InventoryUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B692D1645AC009177AA /* InventoryUI */; };
 		4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF1853A2D14E70900961F35 /* SearchUI */; };
 		9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552EE2CEF35C000DD9F6E /* DesignSystem */; };
 		9F58939F2CEDF04200798943 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F58939E2CEDF04200798943 /* Models */; };
@@ -42,8 +42,8 @@
 				4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */,
 				4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */,
 				4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */,
-				4E8E8B6A2D1645AC009177AA /* InventoryUI in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
+				4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */,
 				9F58939F2CEDF04200798943 /* Models in Frameworks */,
 				9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */,
 			);
@@ -107,7 +107,7 @@
 				9F1552EE2CEF35C000DD9F6E /* DesignSystem */,
 				4EF1853A2D14E70900961F35 /* SearchUI */,
 				4E8E8B5E2D162E7E009177AA /* TodayUI */,
-				4E8E8B692D1645AC009177AA /* InventoryUI */,
+				4E747F772D16F7A000DDCE17 /* KitchenUI */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -403,13 +403,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4E747F772D16F7A000DDCE17 /* KitchenUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KitchenUI;
+		};
 		4E8E8B5E2D162E7E009177AA /* TodayUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TodayUI;
-		};
-		4E8E8B692D1645AC009177AA /* InventoryUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = InventoryUI;
 		};
 		4EF1853A2D14E70900961F35 /* SearchUI */ = {
 			isa = XCSwiftPackageProductDependency;
