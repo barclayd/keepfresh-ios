@@ -8,11 +8,10 @@ let searchTabItems = ["All", "Foods", "Categories", "My Foods"]
 public struct SearchView: View {
     @State var searchText: String = ""
     @State var currentPage: Int = 0
+    @State private var previousPage: Int = 0
 
-    @State private var dragOffset: CGFloat = 0 // Track the drag offset
+    @State private var dragOffset: CGFloat = 0
     @Namespace private var animationNamespace
-    @State private var proxy: ScrollViewProxy?
-    @State private var horizontalScrollWidth: CGFloat = 0
 
     public init() {
         UIScrollView.appearance().bounces = false
@@ -29,8 +28,8 @@ public struct SearchView: View {
     }
 
     public var body: some View {
-        ScrollViewReader { scrollProxy in
-            VStack(spacing: 0){
+        ScrollViewReader { _ in
+            VStack(spacing: 0) {
                 if isSearching {
                     HStack(spacing: 0) {
                         ForEach(0 ..< searchTabItems.count, id: \.self) { index in
@@ -54,6 +53,7 @@ public struct SearchView: View {
                                             Capsule(style: .continuous)
                                                 .fill(.white)
                                                 .frame(width: 30, height: 3)
+                                                .offset(x: dragOffset)
                                                 .matchedGeometryEffect(id: "indicator", in: animationNamespace)
                                         }
                                     }
@@ -63,7 +63,6 @@ public struct SearchView: View {
                             Spacer()
                         }
                     }
-
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
                     .background(Rectangle().fill(.blue600))
@@ -84,10 +83,22 @@ public struct SearchView: View {
                     .simultaneousGesture(
                         DragGesture()
                             .onChanged { value in
-                                dragOffset = value.translation.width / UIScreen.main.bounds.width
+                                let screenWidth = UIScreen.main.bounds.width
+                                let tabWidth = screenWidth / CGFloat(searchTabItems.count)
+                                let translation = value.translation.width
+
+                                let progress = -translation / screenWidth
+
+                                // If we've moved past 50% and the page has changed, reset the offset
+                                if abs(progress) > 0.5, currentPage != Int(round(progress)) {
+                                    dragOffset = 0
+                                } else {
+                                    let capsuleOffset = progress * tabWidth
+                                    dragOffset = capsuleOffset
+                                }
                             }
                             .onEnded { _ in
-                                dragOffset = 0 // Reset after swipe ends
+                                dragOffset = 0
                             }
                     )
                 } else {
