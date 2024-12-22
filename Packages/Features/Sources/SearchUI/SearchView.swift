@@ -72,11 +72,12 @@ public struct SearchView: View {
 //                                    .font(.headline)
 //                            }
 //                        }
-                        SearchResultView()
+                        SearchResultView().frame(maxWidth: .infinity)
                             .tag(index)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(maxWidth: .infinity)
                 .onChange(of: currentPage) { _, _ in
                     canDrag = false
                     withAnimation(.smooth) {
@@ -87,8 +88,12 @@ public struct SearchView: View {
                     }
                 }
                 .simultaneousGesture(canDrag ?
-                    DragGesture()
+                    DragGesture(minimumDistance: 10)
                     .onChanged { value in
+                        if abs(value.translation.height) > abs(value.translation.width) {
+                            return // Ignore primarily vertical drags
+                        }
+
                         let screenWidth = UIScreen.main.bounds.width
                         let tabWidth = screenWidth / CGFloat(searchTabItems.count)
                         let translation = value.translation.width
@@ -115,8 +120,8 @@ public struct SearchView: View {
             } else {
                 RecentSearchView(searchText: $searchText)
             }
-        }
-        .navigationBarSearch(searchText: $searchText)
+        }.background(.red).frame(maxWidth: .infinity)
+            .navigationBarSearch(searchText: $searchText)
     }
 }
 
