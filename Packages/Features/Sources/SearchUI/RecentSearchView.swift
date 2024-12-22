@@ -2,7 +2,7 @@ import DesignSystem
 import SwiftUI
 
 public struct RecentSearchItem: View {
-    let previousSearchText: String
+    let currentSearchText: String
     let onTap: (String) -> Void
     let onDelete: () -> Void
     let colorConfiguration: ColorConfiguration
@@ -14,12 +14,12 @@ public struct RecentSearchItem: View {
     }
 
     public var body: some View {
-        Button(action: { onTap(previousSearchText) }) {
+        Button(action: { onTap(currentSearchText) }) {
             HStack {
                 HStack(spacing: 10) {
                     Image(systemName: "waterbottle.fill")
                         .font(.system(size: 35))
-                    Text(previousSearchText)
+                    Text(currentSearchText)
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundStyle(colorConfiguration.text)
@@ -62,7 +62,7 @@ public struct RecentSearchView: View {
 
             ForEach(0 ..< 20) { _ in
                 RecentSearchItem(
-                    previousSearchText: "Semi Skimmed Mik",
+                    currentSearchText: "Semi Skimmed Milk",
                     onTap: { previousSearchText in
                         searchText = previousSearchText
                     },
