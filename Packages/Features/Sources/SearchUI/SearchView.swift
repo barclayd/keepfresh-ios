@@ -25,7 +25,7 @@ public struct SearchView: View {
         VStack(spacing: 0) {
             if isSearching {
                 HStack(spacing: 0) {
-                    ForEach(0..<searchTabItems.count, id: \.self) { index in
+                    ForEach(0 ..< searchTabItems.count, id: \.self) { index in
                         Spacer()
                         Button {
                             withAnimation(.smooth(duration: 0.3)) {
@@ -62,17 +62,18 @@ public struct SearchView: View {
                 .background(Rectangle().fill(.blue600))
 
                 TabView(selection: $currentPage) {
-                    ForEach(0..<searchTabItems.count, id: \.self) { index in
-                        ScrollView {
-                            VStack {
-                                Spacer()
-                                Text(searchTabItems[index])
-                                    .foregroundStyle(.blue800)
-                                    .fontWeight(.bold)
-                                    .font(.headline)
-                            }
-                        }
-                        .tag(index)
+                    ForEach(0 ..< searchTabItems.count, id: \.self) { index in
+//                        ScrollView {
+//                            VStack {
+//                                Spacer()
+//                                Text(searchTabItems[index])
+//                                    .foregroundStyle(.blue800)
+//                                    .fontWeight(.bold)
+//                                    .font(.headline)
+//                            }
+//                        }
+                        SearchResultView()
+                            .tag(index)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))

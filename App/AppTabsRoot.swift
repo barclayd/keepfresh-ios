@@ -17,6 +17,7 @@ struct AppTabRootView: View {
             ForEach(AppTab.allCases) { tab in
                 NavigationStack(path: $router[tab]) {
                     tab.rootView()
+                        .withAppRouter()
                         .environment(\.currentTab, tab)
                 }
                 .tint(.white200)
