@@ -10,8 +10,8 @@ struct GroceryItemSheetStatsGridRows: View {
             return Group {
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("3").fontWeight(.bold).font(.headline)
-                        Text("Days to expiry").fontWeight(.light).font(.subheadline).lineLimit(1)
+                        Text("3").foregroundStyle(.green600).fontWeight(.bold).font(.headline)
+                        Text("Days to expiry").foregroundStyle(.green600).fontWeight(.light).font(.subheadline).lineLimit(1)
                     }
                     Image(systemName: "hourglass")
                         .font(.system(size: 28)).fontWeight(.bold)
@@ -40,15 +40,15 @@ struct GroceryItemSheetStatsGridRows: View {
         return Group {
             GridRow {
                 VStack(spacing: 0) {
-                    Text("3").fontWeight(.bold).font(.headline)
-                    Text("Days since added").fontWeight(.light).font(.subheadline).lineLimit(1)
+                    Text("3 weeks ago").fontWeight(.bold).font(.headline)
+                    Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
                 }
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: 32)).fontWeight(.bold)
                     .foregroundStyle(.black800)
                 VStack(spacing: 0) {
-                    Text("3").fontWeight(.bold).font(.headline)
-                    Text("Days since opened").fontWeight(.light).font(.subheadline)
+                    Text("3 days ago").fontWeight(.bold).font(.headline)
+                    Text("Opened").fontWeight(.light).font(.subheadline)
                 }
             }
             GridRow {
@@ -129,7 +129,7 @@ struct GroceryItemSheetView: View {
                     .font(.callout)
                     .foregroundStyle(.gray600)
                 Circle()
-                    .frame(width: 4, height: 4)
+                    .frame(width: 6, height: 6)
                     .foregroundStyle(.gray600)
                     .padding(.horizontal, 4)
                 Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)")

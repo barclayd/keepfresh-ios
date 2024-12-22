@@ -1,9 +1,9 @@
 import SwiftUI
 
-public struct InventoryView: View {
+public struct KitchenView: View {
     public init() {}
 
     public var body: some View {
-        Text("Hello from InventoryUI!")
+        Text("Hello from KitchenView!")
     }
 }

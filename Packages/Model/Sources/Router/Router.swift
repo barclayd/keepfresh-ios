@@ -9,7 +9,7 @@ public final class Router {
         set { paths[tab] = newValue }
     }
 
-    public var selectedTab: AppTab = .search
+    public var selectedTab: AppTab = .today
 
     public var presentedSheet: SheetDestination?
 
