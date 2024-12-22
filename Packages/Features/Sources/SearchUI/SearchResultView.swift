@@ -10,7 +10,7 @@ public struct SearchResultCard: View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
                 Image(systemName: groceryItem.icon)
-                    .font(.system(size: 28)).foregroundStyle(.blue800)
+                    .font(.system(size: 28)).foregroundStyle(.white200)
                 Text(groceryItem.name)
                     .font(.title3)
                     .fontWeight(.bold)
@@ -32,24 +32,24 @@ public struct SearchResultCard: View {
             VStack {
                 HStack {
                     Text(groceryItem.category)
-                        .font(.footnote).foregroundStyle(.gray600)
+                        .font(.subheadline).foregroundStyle(.gray500)
                     Spacer()
                 }
                 HStack {
                     Text(groceryItem.brand)
-                        .font(.footnote)
+                        .font(.subheadline)
                         .foregroundStyle(.brandSainsburys)
                     Circle()
                         .frame(width: 4, height: 4)
-                        .foregroundStyle(.gray600)
-                    Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)").foregroundStyle(.gray600)
-                        .font(.footnote)
+                        .foregroundStyle(.blue800)
+                    Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)").foregroundStyle(.gray500)
+                        .font(.subheadline)
                     Spacer()
                     Image(systemName: "clock")
                         .font(.system(size: 16))
                         .foregroundStyle(.blue800)
                 }
-            }.padding(.horizontal, 5).padding(10)
+            }.padding(.horizontal, 5).padding(10).padding(.bottom, 5)
                 .background(
                     UnevenRoundedRectangle(
                         topLeadingRadius: 0,
@@ -60,8 +60,6 @@ public struct SearchResultCard: View {
                     ).fill(.white)
                 )
         }
-//        .padding(.bottom, 4)
-//        .padding(.horizontal, 4)
         .background(.blue400)
         .cornerRadius(20)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
@@ -70,18 +68,17 @@ public struct SearchResultCard: View {
 
 public struct SearchResultView: View {
     public var body: some View {
-        List {
-            ForEach(0 ..< 20) { _ in
-                NavigationLink(value: RouterDestination.today) {
-                    SearchResultCard()
-                        .frame(maxWidth: .infinity)
+        ScrollView {
+            LazyVStack(spacing: 20) {
+                ForEach(0 ..< 20) { _ in
+                    NavigationLink(value: RouterDestination.today) {
+                        SearchResultCard()
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .buttonStyle(PlainButtonStyle())
-                .listRowInsets(EdgeInsets())
-            }
-            .listRowSeparator(.hidden)
+            }.padding(.top, 15)
+            .padding(.horizontal, 16)
         }
-        .listStyle(.plain)
-        .frame(maxWidth: .infinity)
     }
 }

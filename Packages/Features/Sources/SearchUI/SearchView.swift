@@ -120,7 +120,7 @@ public struct SearchView: View {
             } else {
                 RecentSearchView(searchText: $searchText)
             }
-        }.background(.red).frame(maxWidth: .infinity)
+        }.background(.white200).frame(maxWidth: .infinity)
             .navigationBarSearch(searchText: $searchText)
     }
 }
