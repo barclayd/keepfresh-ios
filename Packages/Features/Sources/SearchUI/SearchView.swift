@@ -7,10 +7,10 @@ let searchTabItems = ["All", "Foods", "Categories", "My Foods"]
 @MainActor
 public struct SearchView: View {
     @State var searchText: String = ""
-    @State var currentPage: Int = 0
-    @State private var previousPage: Int = 0
-
+    @State private var currentPage: Int = 0
     @State private var dragOffset: CGFloat = 0
+
+    @State private var canDrag: Bool = true
     @Namespace private var animationNamespace
 
     public init() {
@@ -21,54 +21,49 @@ public struct SearchView: View {
         !searchText.isEmpty
     }
 
-    private func calculateIndicatorOffset(geometry: GeometryProxy) -> CGFloat {
-        let screenWidth = geometry.size.width
-        let offsetPerTab = screenWidth / 2
-        return offsetPerTab * CGFloat(currentPage) - (dragOffset / screenWidth * offsetPerTab)
-    }
-
     public var body: some View {
-        ScrollViewReader { _ in
-            VStack(spacing: 0) {
-                if isSearching {
-                    HStack(spacing: 0) {
-                        ForEach(0 ..< searchTabItems.count, id: \.self) { index in
-                            Spacer()
-                            Button {
-                                withAnimation(.smooth(duration: 0.3)) {
-                                    currentPage = index
-                                }
-                            } label: {
-                                VStack(spacing: 3) {
-                                    Text(searchTabItems[index])
-                                        .fontWeight(.bold)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.blue800)
-                                        .opacity(currentPage == index ? 1 : 0.5)
-                                    ZStack {
-                                        Capsule()
-                                            .fill(.clear)
-                                            .frame(height: 4)
-                                        if currentPage == index {
-                                            Capsule(style: .continuous)
-                                                .fill(.white)
-                                                .frame(width: 30, height: 3)
-                                                .offset(x: dragOffset)
-                                                .matchedGeometryEffect(id: "indicator", in: animationNamespace)
-                                        }
-                                    }
-                                }.fixedSize(horizontal: true, vertical: false)
+        VStack(spacing: 0) {
+            if isSearching {
+                HStack(spacing: 0) {
+                    ForEach(0..<searchTabItems.count, id: \.self) { index in
+                        Spacer()
+                        Button {
+                            withAnimation(.smooth(duration: 0.3)) {
+                                currentPage = index
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            Spacer()
+                        } label: {
+                            VStack(spacing: 3) {
+                                Text(searchTabItems[index])
+                                    .fontWeight(.bold)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.blue800)
+                                    .opacity(currentPage == index ? 1 : 0.5)
+                                ZStack {
+                                    Capsule()
+                                        .fill(.clear)
+                                        .frame(height: 4)
+                                    if currentPage == index {
+                                        Capsule(style: .continuous)
+                                            .fill(.white)
+                                            .frame(width: 30, height: 3)
+                                            .offset(x: dragOffset)
+                                            .transition(.slide)
+                                            .matchedGeometryEffect(id: "indicator", in: animationNamespace)
+                                    }
+                                }
+                            }.fixedSize(horizontal: true, vertical: false)
                         }
+                        .buttonStyle(PlainButtonStyle())
+                        Spacer()
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(Rectangle().fill(.blue600))
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .background(Rectangle().fill(.blue600))
 
-                    TabView(selection: $currentPage) {
-                        ForEach(0 ..< searchTabItems.count, id: \.self) { index in
+                TabView(selection: $currentPage) {
+                    ForEach(0..<searchTabItems.count, id: \.self) { index in
+                        ScrollView {
                             VStack {
                                 Spacer()
                                 Text(searchTabItems[index])
@@ -76,38 +71,51 @@ public struct SearchView: View {
                                     .fontWeight(.bold)
                                     .font(.headline)
                             }
-                            .tag(index)
                         }
+                        .tag(index)
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    .simultaneousGesture(
-                        DragGesture()
-                            .onChanged { value in
-                                let screenWidth = UIScreen.main.bounds.width
-                                let tabWidth = screenWidth / CGFloat(searchTabItems.count)
-                                let translation = value.translation.width
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .onChange(of: currentPage) { _, _ in
+                    canDrag = false
+                    withAnimation(.smooth) {
+                        dragOffset = 0
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        canDrag = true
+                    }
+                }
+                .simultaneousGesture(canDrag ?
+                    DragGesture()
+                    .onChanged { value in
+                        let screenWidth = UIScreen.main.bounds.width
+                        let tabWidth = screenWidth / CGFloat(searchTabItems.count)
+                        let translation = value.translation.width
+                        let progress = (-translation / screenWidth)
 
-                                let progress = -translation / screenWidth
-
-                                // If we've moved past 50% and the page has changed, reset the offset
-                                if abs(progress) > 0.5, currentPage != Int(round(progress)) {
-                                    dragOffset = 0
-                                } else {
-                                    let capsuleOffset = progress * tabWidth
-                                    dragOffset = capsuleOffset
-                                }
-                            }
-                            .onEnded { _ in
+                        if (progress * tabWidth) > 57 || (progress * tabWidth) < -57 {
+                            canDrag = false
+                            withAnimation(.smooth) {
                                 dragOffset = 0
                             }
-                    )
-                } else {
-                    Text("Recent Searches" + searchText).font(.headline).fontWeight(.bold).foregroundStyle(.black)
-                    Spacer()
-                }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                canDrag = true
+                            }
+                        } else {
+                            dragOffset = progress * tabWidth
+                        }
+                    }
+                    .onEnded { _ in
+                        withAnimation(.smooth) {
+                            dragOffset = 0
+                        }
+                    }
+                    : nil)
+            } else {
+                RecentSearchView(searchText: $searchText)
             }
-            .navigationBarSearch(searchText: $searchText)
         }
+        .navigationBarSearch(searchText: $searchText)
     }
 }
 
