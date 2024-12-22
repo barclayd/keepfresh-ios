@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747F772D16F7A000DDCE17 /* KitchenUI */; };
+		4E747F8A2D177FA500DDCE17 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747F892D177FA500DDCE17 /* SwiftUIIntrospect */; };
 		4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5892962CEC703B00798943 /* DesignSystem */; };
 		4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552E72CEF35B200DD9F6E /* Models */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
@@ -46,6 +47,7 @@
 				4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */,
 				9F58939F2CEDF04200798943 /* Models in Frameworks */,
 				9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */,
+				4E747F8A2D177FA500DDCE17 /* SwiftUIIntrospect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +110,7 @@
 				4EF1853A2D14E70900961F35 /* SearchUI */,
 				4E8E8B5E2D162E7E009177AA /* TodayUI */,
 				4E747F772D16F7A000DDCE17 /* KitchenUI */,
+				4E747F892D177FA500DDCE17 /* SwiftUIIntrospect */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -138,6 +141,7 @@
 			mainGroup = 9F21421A2CE9DAA1004167D7;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				4E747F882D177FA500DDCE17 /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9F2142242CE9DAA1004167D7 /* Products */;
@@ -402,10 +406,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		4E747F882D177FA500DDCE17 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/swiftui-introspect";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		4E747F772D16F7A000DDCE17 /* KitchenUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KitchenUI;
+		};
+		4E747F892D177FA500DDCE17 /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E747F882D177FA500DDCE17 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
+			productName = SwiftUIIntrospect;
 		};
 		4E8E8B5E2D162E7E009177AA /* TodayUI */ = {
 			isa = XCSwiftPackageProductDependency;

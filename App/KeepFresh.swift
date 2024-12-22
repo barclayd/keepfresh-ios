@@ -1,6 +1,7 @@
 import DesignSystem
 import Router
 import SwiftUI
+import SwiftUIIntrospect
 
 public class FontRegistration {
     public static func registerFonts() {

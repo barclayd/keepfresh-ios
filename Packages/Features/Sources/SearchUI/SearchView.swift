@@ -2,15 +2,66 @@ import DesignSystem
 import Router
 import SwiftUI
 
+let searchTabItems = ["All", "Foods", "Categories", "My Foods"]
+
 public struct SearchView: View {
     @State var searchText: String = ""
+    @State var currentPage: Int = 0
 
-    public init() {}
+    public init() {
+        UIScrollView.appearance().bounces = false
+    }
+
+    private var isSearching: Bool {
+        !searchText.isEmpty
+    }
 
     public var body: some View {
-        VStack {
-            Text("Recent Searches" + searchText).font(.headline).fontWeight(.bold).foregroundStyle(.black)
-        }.navigationBarSearch(searchText: $searchText)
+        VStack(spacing: 0) {
+            if isSearching {
+                HStack(spacing: 0) {
+                    ForEach(searchTabItems, id: \.self) { item in
+                        Spacer()
+                        Button {
+                            withAnimation(.spring(duration: 0.3)) {
+                                currentPage = searchTabItems.firstIndex(of: item)!
+                            }
+                        } label: {
+                            VStack(spacing: 3) {
+                                Text(item)
+                                    .fontWeight(.bold)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.blue800)
+                                    .fixedSize(horizontal: true, vertical: false)
+                            }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        Spacer()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .background(Rectangle().fill(.blue600))
+
+                TabView(selection: $currentPage) {
+                    ForEach(0 ..< searchTabItems.count, id: \.self) { index in
+                        VStack {
+                            Spacer()
+                            Text(searchTabItems[index])
+                                .foregroundStyle(.blue800)
+                                .fontWeight(.bold)
+                                .font(.headline)
+                        }
+                        .tag(index)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+            } else {
+                Text("Recent Searches" + searchText).font(.headline).fontWeight(.bold).foregroundStyle(.black)
+                Spacer()
+            }
+        }
+        .navigationBarSearch(searchText: $searchText)
     }
 }
 
@@ -70,7 +121,7 @@ public struct NavigatationBarSearch: ViewModifier {
                 UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self])
                     .setTitleTextAttributes([.foregroundColor: UIColor.white400], for: .normal)
             }.foregroundColor(.white200)
-        case .today, .kitchen:
+        default:
             content
         }
     }
