@@ -19,45 +19,94 @@ struct CheckToggleStyle: ToggleStyle {
     }
 }
 
-public struct ConsumableCategory: View {
+struct ConsumableCategoryOverview: View {
     @Binding var isExpiryDateToggled: Bool
-
-    public var body: some View {
-        HStack {
-            Image(systemName: "hourglass")
-                .font(.system(size: 21))
-                .fontWeight(.bold)
-                .foregroundColor(.blue800)
-                .frame(width: 40, height: 40)
-                .background(Circle().fill(.blue200))
-
-            Text("Expiry Date")
-                .fontWeight(.bold)
-                .foregroundStyle(.blue800)
-                .font(.headline)
-                .lineLimit(1)
-                .padding(.trailing, 10)
-
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 0) {
-                    Text("22nd December").foregroundStyle(.gray600)
-                    Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
-                        .offset(y: -10)
-                }
-                Text("Expires in 7 days").foregroundStyle(.black800).font(.footnote).fontWeight(
-                    .thin)
+    
+    let details: ConsumableCategoryDetails
+    
+    var body: some View {
+        Image(systemName: "hourglass")
+            .font(.system(size: 21))
+            .fontWeight(.bold)
+            .foregroundColor(.blue800)
+            .frame(width: 40, height: 40)
+            .background(Circle().fill(.blue200))
+        
+        Text(details.title)
+            .fontWeight(.bold)
+            .foregroundStyle(.blue800)
+            .font(.headline)
+            .lineLimit(1)
+            .frame(width: 105, alignment: .leading)
+        
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 0) {
+                Text("22nd December").foregroundStyle(.gray600)
+                Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
+                    .offset(y: -10)
             }
+            Text("Expires in 7 days").foregroundStyle(.black800).font(.footnote).fontWeight(
+                .thin)
+        }
+        .frame(width: 150, alignment: .leading)
+        
+        Spacer()
+        
+        Toggle("Selected Expiry Date", isOn: $isExpiryDateToggled)
+            .toggleStyle(CheckToggleStyle())
+            .labelsHidden()
+    }
+}
+
+struct ConsumableCategoryContent: View {
+    var body: some View {
+        Image(systemName: "calendar.badge.exclamationmark")
+            .font(.system(size: 21))
+            .fontWeight(.bold)
+            .foregroundColor(.blue800)
+            .frame(width: 40, height: 40)
+        
+        Text("Expiry type")
+            .foregroundStyle(.blue800)
+            .font(.callout)
+            .lineLimit(1)
+            .frame(width: 105, alignment: .leading)
+        
+        Text("Use By")
+            .foregroundStyle(.gray600)
+            .font(.callout)
+            .lineLimit(1)
             .frame(width: 150, alignment: .leading)
+        
+        Spacer()
+    }
+    
+}
 
-            Spacer()
+struct ConsumableCategoryDetails {
+    let title: String
+}
 
-            Toggle("Selected Expiry Date", isOn: $isExpiryDateToggled)
-                .toggleStyle(CheckToggleStyle())
-                .labelsHidden()
-
-        }.padding(.vertical, 14).padding(.horizontal, 10).frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 20).fill(.gray200)
-            )
+public struct ConsumableCategory: View {
+    @Binding var isExpandedToggled: Bool
+    @Binding var isExpiryDateToggled: Bool
+    
+    let details: ConsumableCategoryDetails
+    
+    public var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                ConsumableCategoryOverview(isExpiryDateToggled: $isExpiryDateToggled, details: details)
+            }.padding(.vertical, 14).padding(.horizontal, 10).frame(maxWidth: .infinity).background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 20, bottomLeading: isExpandedToggled ? 0 : 20, bottomTrailing: isExpandedToggled ? 0 : 20, topTrailing: 20)).fill(.gray200)).onTapGesture {
+                withAnimation(.easeInOut) {
+                    isExpandedToggled.toggle()
+                }
+            }
+            if isExpandedToggled {
+                HStack {
+                    ConsumableCategoryContent()
+                }.padding(.vertical, 14).padding(.horizontal, 10).frame(maxWidth: .infinity).background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0)).fill(.white))
+            }
+        }.transition(.move(edge: .top))
     }
 }

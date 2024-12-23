@@ -3,6 +3,7 @@ import Models
 import SwiftUI
 
 public struct AddFoodView: View {
+    @State private var isExpandedToggled: Bool = false
     @State private var isExpiryDateSet: Bool = false
     @State private var isStorageSet: Bool = false
     @State private var isOpenedSet: Bool = false
@@ -28,6 +29,7 @@ public struct AddFoodView: View {
                         )
                         .ignoresSafeArea(edges: .top)
                         .offset(y: -geometry.safeAreaInsets.top)
+                        
 
                         VStack(spacing: 5) {
                             Image(systemName: grocerySearchItem.icon).font(.system(size: 78)).foregroundColor(
@@ -57,7 +59,7 @@ public struct AddFoodView: View {
                                     Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                                         .offset(x: -2, y: -10)
                                 }.offset(y: -5)
-                            }.padding(.vertical, 10)
+                            }.padding(.top, 10)
 
                             Grid {
                                 GridRow {
@@ -93,7 +95,7 @@ public struct AddFoodView: View {
                                 }
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                 maxWidth: .infinity, alignment: .center
-                            ).background(.blue100).cornerRadius(20).padding(.vertical, 10)
+                            ).background(.blue100).cornerRadius(20).padding(.bottom, 10)
 
                             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                                 GridRow {
@@ -120,13 +122,13 @@ public struct AddFoodView: View {
                                     Spacer()
                                 }
 
-                            }.padding(.vertical, 5).padding(.horizontal, 20)
+                            }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
 
                             VStack(spacing: 10) {
-                                ConsumableCategory(isExpiryDateToggled: $isExpiryDateSet)
-                                ConsumableCategory(isExpiryDateToggled: $isStorageSet)
-                                ConsumableCategory(isExpiryDateToggled: $isOpenedSet)
-                                ConsumableCategory(isExpiryDateToggled: $isQuantitySet)
+                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isExpiryDateSet, details: .init(title: "Expiry Date"))
+                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isStorageSet, details: .init(title: "Storage"))
+                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isOpenedSet, details: .init(title: "Status"))
+                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isQuantitySet, details: .init(title: "Quantity"))
                             }
                         }
                         .padding(.bottom, 100)
