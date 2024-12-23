@@ -63,15 +63,6 @@ public struct SearchView: View {
 
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< searchTabItems.count, id: \.self) { index in
-//                        ScrollView {
-//                            VStack {
-//                                Spacer()
-//                                Text(searchTabItems[index])
-//                                    .foregroundStyle(.blue800)
-//                                    .fontWeight(.bold)
-//                                    .font(.headline)
-//                            }
-//                        }
                         SearchResultView().frame(maxWidth: .infinity)
                             .tag(index)
                     }
