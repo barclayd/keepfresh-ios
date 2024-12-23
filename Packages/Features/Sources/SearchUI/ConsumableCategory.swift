@@ -21,7 +21,7 @@ struct CheckToggleStyle: ToggleStyle {
 
 public struct ConsumableCategory: View {
     @Binding var isExpiryDateToggled: Bool
-    
+
     public var body: some View {
         HStack {
             Image(systemName: "hourglass")
@@ -30,14 +30,14 @@ public struct ConsumableCategory: View {
                 .foregroundColor(.blue800)
                 .frame(width: 40, height: 40)
                 .background(Circle().fill(.blue200))
-                                        
+
             Text("Expiry Date")
                 .fontWeight(.bold)
                 .foregroundStyle(.blue800)
                 .font(.headline)
                 .lineLimit(1)
                 .padding(.trailing, 10)
-                
+
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {
                     Text("22nd December").foregroundStyle(.gray600)
@@ -48,13 +48,13 @@ public struct ConsumableCategory: View {
                     .thin)
             }
             .frame(width: 150, alignment: .leading)
-            
+
             Spacer()
-            
+
             Toggle("Selected Expiry Date", isOn: $isExpiryDateToggled)
                 .toggleStyle(CheckToggleStyle())
                 .labelsHidden()
-                
+
         }.padding(.vertical, 14).padding(.horizontal, 10).frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 20).fill(.gray200)
