@@ -24,12 +24,13 @@ public struct AddFoodView: View {
                             stops: [
                                 Gradient.Stop(color: .blue700, location: 0),
                                 Gradient.Stop(color: .blue500, location: 0.2),
-                                Gradient.Stop(color: .white200, location: 0.35),
+                                Gradient.Stop(color: .white200, location: 0.375),
                             ], startPoint: .top, endPoint: .bottom
                         )
                         .ignoresSafeArea(edges: .top)
                         .offset(y: -geometry.safeAreaInsets.top)
-                        
+                        .frame(height: geometry.size.height)
+                        .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 5) {
                             Image(systemName: grocerySearchItem.icon).font(.system(size: 78)).foregroundColor(

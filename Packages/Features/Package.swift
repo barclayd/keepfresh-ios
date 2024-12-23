@@ -33,6 +33,6 @@ let package = Package(
         .target(
             name: "KitchenUI",
             dependencies: baseDeps
-        )
+        ),
     ]
 )
