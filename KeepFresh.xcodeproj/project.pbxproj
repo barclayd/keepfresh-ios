@@ -56,9 +56,9 @@
 			children = (
 				4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */,
 				9F2142252CE9DAA1004167D7 /* App */,
-				4E747FB62D19F28D00DDCE17 /* DesignSystem */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
+				4E747FB62D19F28D00DDCE17 /* DesignSystem */,
 				9FAEE3A82CF0994C00F86CDC /* Model */,
 				9FAEE3A72CF0994400F86CDC /* Features */,
 				9FAEE3B82CF09BB400F86CDC /* Frameworks */,
