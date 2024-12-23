@@ -144,7 +144,7 @@ public struct AddFoodView: View {
                             HStack(spacing: 0) {
                                 Text("22nd December").foregroundStyle(.gray600)
                                 Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
-                                    .offset(x: -2, y: -10)
+                                    .offset(y: -10)
                             }
                             Text("Expires in 7 days").foregroundStyle(.black800).font(.footnote).fontWeight(
                                 .thin)
