@@ -152,7 +152,7 @@ struct GroceryItemSheetView: View {
                 Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                     GridRow {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundStyle(.gold500)
+                            .foregroundStyle(.yellow500)
                             .font(.system(size: 32))
                         Text("Great work, you're on track to finish this before it expires")
                             .font(.callout)

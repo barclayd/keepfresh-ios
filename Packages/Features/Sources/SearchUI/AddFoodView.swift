@@ -27,8 +27,73 @@ public struct AddFoodView: View {
                     Text(grocerySearchItem.brand)
                         .font(.callout).fontWeight(.bold)
                         .foregroundStyle(.brandSainsburys)
+
+                    VStack {
+                        Text("3%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(0)
+                        HStack(spacing: 0) {
+                            Text("Predicted waste score").font(.subheadline).foregroundStyle(.black800).fontWeight(.light)
+                            Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500).offset(x: -2, y: -10)
+                        }.offset(y: -5)
+                    }
+
+                    Grid {
+                        GridRow {
+                            VStack(spacing: 0) {
+                                Text("32").fontWeight(.bold).font(.headline)
+                                Text("Previously addded").fontWeight(.light).font(.subheadline).lineLimit(1)
+                            }
+                            Image(systemName: "calendar.badge.plus")
+                                .font(.system(size: 32)).fontWeight(.bold)
+                                .foregroundStyle(.black800)
+                            VStack(spacing: 0) {
+                                Text("31").fontWeight(.bold).font(.headline)
+                                Text("Previously consumed").fontWeight(.light).font(.subheadline)
+                            }
+                        }
+                        GridRow {
+                            VStack(spacing: 0) {
+                                Text("2").fontWeight(.bold).font(.headline)
+                                Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
+                            }
+                            Image(systemName: "house")
+                                .font(.system(size: 32)).fontWeight(.bold)
+                                .foregroundStyle(.black800)
+                            VStack(spacing: 0) {
+                                Text("2").fontWeight(.bold).font(.headline)
+                                Text("Located in Freezer").fontWeight(.light).font(.subheadline)
+                            }
+                        }
+                    }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.blue100).cornerRadius(20).padding(.vertical, 10)
+                    
+                    Grid(horizontalSpacing: 16, verticalSpacing: 20) {
+                        GridRow {
+                            Image(systemName: "checkmark.seal.fill")
+                                .foregroundStyle(.yellow500)
+                                .font(.system(size: 32))
+                            Text("Looks like a good choice, you’re unlikely to waste any of this item")
+                                .font(.callout)
+                                .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2 ... 2)
+
+                            Spacer()
+                        }
+                        GridRow {
+                            Image(systemName: "beach.umbrella.fill")
+                                .foregroundStyle(.blue600)
+                                .font(.system(size: 32))
+                            Text("You should only need to buy one of these before your next holiday")
+                                .font(.callout)
+                                .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2 ... 2)
+                            Spacer()
+                        }
+
+                    }.padding(.top, 5)
+                    
                 }
-            }.frame(maxWidth: .infinity).frame(maxHeight: .infinity)
+            }.padding(.horizontal, 20).frame(maxWidth: .infinity).frame(maxHeight: .infinity)
                 .background(
                     LinearGradient(
                         stops: [
@@ -38,7 +103,7 @@ public struct AddFoodView: View {
                         ], startPoint: .top, endPoint: .bottom
                     )
                 ).toolbarRole(.editor)
-            
+
             ZStack {
                 UnevenRoundedRectangle(
                     cornerRadii: RectangleCornerRadii(
