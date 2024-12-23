@@ -1,4 +1,3 @@
-import DesignSystem
 import SwiftUI
 
 public extension EnvironmentValues {
@@ -29,7 +28,7 @@ public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
     public var toolbarBackground: Color {
         switch self {
         case .today: return .white
-        case .search: return .blue600
+        case .search: return Color(red: 47 / 255, green: 133 / 255, blue: 226 / 255) // refactor this to be .blue600
         case .kitchen: return .white
         }
     }
