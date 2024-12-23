@@ -3,7 +3,7 @@ import Models
 import Router
 import SwiftUI
 
-@MainActor let grocerySearchItem: GrocerySearchItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints")
+@MainActor let grocerySearchItem: GrocerySearchItem = .init(id: UUID(), icon: "waterbottle.fill", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints")
 
 public struct SearchResultCard: View {
     public var body: some View {
