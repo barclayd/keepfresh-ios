@@ -15,6 +15,8 @@ public struct AppRouter: ViewModifier {
                     SearchView()
                 case .today:
                     TodayView()
+                case let .addGroceryItem(grocerySearchItem):
+                    AddFoodView(grocerySearchItem: grocerySearchItem)
                 }
             }
     }
