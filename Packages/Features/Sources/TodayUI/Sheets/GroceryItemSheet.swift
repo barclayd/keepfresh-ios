@@ -15,10 +15,10 @@ struct GroceryItemSheetStatsGridRows: View {
                     }
                     Image(systemName: "hourglass")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.black800)
+                        .foregroundStyle(.blue800)
                     Image(systemName: "percent")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.black800)
+                        .foregroundStyle(.blue800)
                     VStack(spacing: 0) {
                         Text("17").fontWeight(.bold).font(.headline)
                         Text("Waste score").fontWeight(.light).font(.subheadline)
@@ -28,10 +28,10 @@ struct GroceryItemSheetStatsGridRows: View {
                     Text("Fridge").fontWeight(.bold).font(.headline)
                     Image(systemName: "refrigerator")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.black800)
+                        .foregroundStyle(.blue800)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.black800)
+                        .foregroundStyle(.blue800)
                     Text("Sainsburys").fontWeight(.bold).foregroundStyle(.brandSainsburys).font(.headline).lineLimit(1)
                 }
             }
@@ -152,6 +152,7 @@ struct GroceryItemSheetView: View {
                 Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                     GridRow {
                         Image(systemName: "checkmark.seal.fill")
+                            .fontWeight(.bold)
                             .foregroundStyle(.yellow500)
                             .font(.system(size: 32))
                         Text("Great work, you're on track to finish this before it expires")
@@ -164,6 +165,7 @@ struct GroceryItemSheetView: View {
                     }
                     GridRow {
                         Image(systemName: "cart.circle.fill")
+                            .fontWeight(.bold)
                             .foregroundStyle(.blue600)
                             .font(.system(size: 32))
                         Text("Based on food waste history for this item, you should buy this again")
