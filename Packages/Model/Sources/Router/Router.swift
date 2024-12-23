@@ -19,6 +19,10 @@ public final class Router {
         paths[selectedTab] ?? []
     }
 
+    public var currentTabPathTint: Color? {
+        selectedTabPath.last?.tint
+    }
+
     public func popToRoot(for tab: AppTab? = nil) {
         paths[tab ?? selectedTab] = []
     }

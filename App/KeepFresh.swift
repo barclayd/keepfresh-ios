@@ -42,7 +42,7 @@ struct KeepFreshApp: App {
                     .toolbarBackgroundVisibility(.visible, for: .navigationBar)
                     .navigationBarTitleDisplayMode(.inline)
                     .environment(router)
-            }
+            }.tint(router.currentTabPathTint)
         }.environment(router)
     }
 }
