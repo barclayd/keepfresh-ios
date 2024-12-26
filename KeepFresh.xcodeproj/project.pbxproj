@@ -8,19 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747F772D16F7A000DDCE17 /* KitchenUI */; };
-		4E747F8A2D177FA500DDCE17 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747F892D177FA500DDCE17 /* SwiftUIIntrospect */; };
-		4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F5892962CEC703B00798943 /* DesignSystem */; };
+		4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747FB92D19F66900DDCE17 /* DesignSystem */; };
+		4E747FC12D19F7F000DDCE17 /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */; };
 		4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552E72CEF35B200DD9F6E /* Models */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
-		4E8E8B682D163720009177AA /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */; };
 		4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF1853A2D14E70900961F35 /* SearchUI */; };
-		9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1552EE2CEF35C000DD9F6E /* DesignSystem */; };
 		9F58939F2CEDF04200798943 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 9F58939E2CEDF04200798943 /* Models */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4E747FB62D19F28D00DDCE17 /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = Packages/DesignSystem; sourceTree = "<group>"; };
+		4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/DesignSystem/Sources/DesignSystem/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
 		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/Features/Sources/DesignSystem/Base/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
 		9F2142232CE9DAA1004167D7 /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FAEE3A72CF0994400F86CDC /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Features; path = Packages/Features; sourceTree = "<group>"; };
 		9FAEE3A82CF0994C00F86CDC /* Model */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Model; path = Packages/Model; sourceTree = "<group>"; };
@@ -42,12 +41,10 @@
 			files = (
 				4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */,
 				4E8E8B3C2D14E7CE009177AA /* Models in Frameworks */,
-				4E8E8B3B2D14E7CE009177AA /* DesignSystem in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
+				4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */,
 				4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */,
 				9F58939F2CEDF04200798943 /* Models in Frameworks */,
-				9F1552EF2CEF35C000DD9F6E /* DesignSystem in Frameworks */,
-				4E747F8A2D177FA500DDCE17 /* SwiftUIIntrospect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,10 +54,11 @@
 		9F21421A2CE9DAA1004167D7 = {
 			isa = PBXGroup;
 			children = (
-				4E8E8B672D163720009177AA /* Shrikhand-Regular.ttf */,
+				4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */,
+				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
-				9F2142252CE9DAA1004167D7 /* App */,
+				4E747FB62D19F28D00DDCE17 /* DesignSystem */,
 				9FAEE3A82CF0994C00F86CDC /* Model */,
 				9FAEE3A72CF0994400F86CDC /* Features */,
 				9FAEE3B82CF09BB400F86CDC /* Frameworks */,
@@ -103,14 +101,12 @@
 			);
 			name = KeepFresh;
 			packageProductDependencies = (
-				9F5892962CEC703B00798943 /* DesignSystem */,
 				9F58939E2CEDF04200798943 /* Models */,
 				9F1552E72CEF35B200DD9F6E /* Models */,
-				9F1552EE2CEF35C000DD9F6E /* DesignSystem */,
 				4EF1853A2D14E70900961F35 /* SearchUI */,
 				4E8E8B5E2D162E7E009177AA /* TodayUI */,
 				4E747F772D16F7A000DDCE17 /* KitchenUI */,
-				4E747F892D177FA500DDCE17 /* SwiftUIIntrospect */,
+				4E747FB92D19F66900DDCE17 /* DesignSystem */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -141,7 +137,6 @@
 			mainGroup = 9F21421A2CE9DAA1004167D7;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				4E747F882D177FA500DDCE17 /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9F2142242CE9DAA1004167D7 /* Products */;
@@ -158,7 +153,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E8E8B682D163720009177AA /* Shrikhand-Regular.ttf in Resources */,
+				4E747FC12D19F7F000DDCE17 /* Shrikhand-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,26 +401,14 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		4E747F882D177FA500DDCE17 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/swiftui-introspect";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
 		4E747F772D16F7A000DDCE17 /* KitchenUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KitchenUI;
 		};
-		4E747F892D177FA500DDCE17 /* SwiftUIIntrospect */ = {
+		4E747FB92D19F66900DDCE17 /* DesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4E747F882D177FA500DDCE17 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
-			productName = SwiftUIIntrospect;
+			productName = DesignSystem;
 		};
 		4E8E8B5E2D162E7E009177AA /* TodayUI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -438,14 +421,6 @@
 		9F1552E72CEF35B200DD9F6E /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Models;
-		};
-		9F1552EE2CEF35C000DD9F6E /* DesignSystem */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignSystem;
-		};
-		9F5892962CEC703B00798943 /* DesignSystem */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignSystem;
 		};
 		9F58939E2CEDF04200798943 /* Models */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -6,7 +6,7 @@ import PackageDescription
 let baseDeps: [PackageDescription.Target.Dependency] = [
     .product(name: "Models", package: "Model"),
     .product(name: "Router", package: "Model"),
-    "DesignSystem",
+    .product(name: "DesignSystem", package: "DesignSystem"),
 ]
 
 let package = Package(
@@ -16,10 +16,10 @@ let package = Package(
         .library(name: "SearchUI", targets: ["SearchUI"]),
         .library(name: "TodayUI", targets: ["TodayUI"]),
         .library(name: "KitchenUI", targets: ["KitchenUI"]),
-        .library(name: "DesignSystem", targets: ["DesignSystem"]),
     ],
     dependencies: [
         .package(name: "Model", path: "../Model"),
+        .package(name: "DesignSystem", path: "../DesignSystem"),
     ],
     targets: [
         .target(
@@ -33,15 +33,6 @@ let package = Package(
         .target(
             name: "KitchenUI",
             dependencies: baseDeps
-        ),
-        .target(
-            name: "DesignSystem",
-            dependencies: [
-                .product(name: "Router", package: "Model"),
-            ],
-            resources: [
-                .process("Base/Shrikhand-Regular.ttf"),
-            ]
         ),
     ]
 )

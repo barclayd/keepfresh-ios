@@ -3,12 +3,19 @@
 
 import PackageDescription
 
+let baseDeps: [PackageDescription.Target.Dependency] = [
+    .product(name: "DesignSystem", package: "DesignSystem"),
+]
+
 let package = Package(
     name: "Model",
     platforms: [.iOS(.v18), .macOS(.v15)],
     products: [
         .library(name: "Models", targets: ["Models"]),
         .library(name: "Router", targets: ["Router"]),
+    ],
+    dependencies: [
+        .package(name: "DesignSystem", path: "../DesignSystem"),
     ],
     targets: [
         .target(
@@ -17,7 +24,7 @@ let package = Package(
         ),
         .target(
             name: "Router",
-            dependencies: ["Models"]
+            dependencies: baseDeps
         ),
     ]
 )
