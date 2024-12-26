@@ -138,7 +138,7 @@ public struct AddFoodView: View {
                     }
                 }.background(.white200)
 
-                ZStack {
+                ZStack(alignment: .bottom) {
                     UnevenRoundedRectangle(
                         cornerRadii: RectangleCornerRadii(
                             topLeading: 0,

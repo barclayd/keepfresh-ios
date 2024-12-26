@@ -43,7 +43,7 @@ struct ConsumableCategoryOverview: View {
             HStack(spacing: 0) {
                 Text("22nd December").foregroundStyle(.gray600)
                 Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
-                    .offset(y: -10)
+                    .offset(y: -8)
             }
             Text("Expires in 7 days").foregroundStyle(.black800).font(.footnote).fontWeight(
                 .thin)
@@ -121,14 +121,14 @@ public struct ConsumableCategory: View {
         VStack(spacing: 0) {
             HStack {
                 ConsumableCategoryOverview(isExpiryDateToggled: $isExpiryDateToggled, details: details)
-            }.padding(.vertical, 14).padding(.horizontal, 10).frame(maxWidth: .infinity).background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 20, bottomLeading: isExpandedToggled ? 0 : 20, bottomTrailing: isExpandedToggled ? 0 : 20, topTrailing: 20)).fill(.gray200)).onTapGesture {
-                withAnimation(.easeInOut) {
-                    isExpandedToggled.toggle()
-                }
-            }
+            }.padding(.vertical, 14).padding(.horizontal, 10).frame(maxWidth: .infinity).background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 20, bottomLeading: isExpandedToggled ? 0 : 20, bottomTrailing: isExpandedToggled ? 0 : 20, topTrailing: 20)).fill(.gray200))
             if isExpandedToggled {
                 ConsumableCategoryContent()
             }
-        }.transition(.move(edge: .top))
+        }.transition(.move(edge: .top)).onTapGesture {
+            withAnimation(.easeInOut) {
+                isExpandedToggled.toggle()
+            }
+        }
     }
 }
