@@ -3,15 +3,15 @@ import Models
 import Router
 import SwiftUI
 
-@MainActor let grocerySearchItem: GrocerySearchItem = .init(id: UUID(), icon: "waterbottle.fill", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints")
+@MainActor let consumableSearchItem: ConsumableSearchItem = .init(id: UUID(), icon: "waterbottle.fill", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints")
 
 public struct SearchResultCard: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                Image(systemName: grocerySearchItem.icon)
+                Image(systemName: consumableSearchItem.icon)
                     .font(.system(size: 28)).foregroundStyle(.white200)
-                Text(grocerySearchItem.name)
+                Text(consumableSearchItem.name)
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundStyle(.blue800)
@@ -31,18 +31,18 @@ public struct SearchResultCard: View {
 
             VStack {
                 HStack {
-                    Text(grocerySearchItem.category)
+                    Text(consumableSearchItem.category)
                         .font(.subheadline).foregroundStyle(.gray500)
                     Spacer()
                 }
                 HStack {
-                    Text(grocerySearchItem.brand)
+                    Text(consumableSearchItem.brand)
                         .font(.subheadline)
                         .foregroundStyle(.brandSainsburys)
                     Circle()
                         .frame(width: 4, height: 4)
                         .foregroundStyle(.blue800)
-                    Text("\(String(format: "%.0f", grocerySearchItem.amount)) \(grocerySearchItem.unit)").foregroundStyle(.gray500)
+                    Text("\(String(format: "%.0f", consumableSearchItem.amount)) \(consumableSearchItem.unit)").foregroundStyle(.gray500)
                         .font(.subheadline)
                     Spacer()
                     Image(systemName: "clock")
@@ -71,7 +71,7 @@ public struct SearchResultView: View {
         ScrollView {
             LazyVStack(spacing: 20) {
                 ForEach(0 ..< 20) { _ in
-                    NavigationLink(value: RouterDestination.addGroceryItem(grocerySearchItem: grocerySearchItem)) {
+                    NavigationLink(value: RouterDestination.addConsumableItem(consumableSearchItem: consumableSearchItem)) {
                         SearchResultCard()
                             .frame(maxWidth: .infinity)
                     }

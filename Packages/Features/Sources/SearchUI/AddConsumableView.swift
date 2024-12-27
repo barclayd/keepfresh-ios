@@ -2,17 +2,17 @@ import DesignSystem
 import Models
 import SwiftUI
 
-public struct AddFoodView: View {
+public struct AddConsumableView: View {
     @State private var isExpandedToggled: Bool = false
     @State private var isExpiryDateSet: Bool = false
     @State private var isStorageSet: Bool = false
     @State private var isOpenedSet: Bool = false
     @State private var isQuantitySet: Bool = false
 
-    public let grocerySearchItem: GrocerySearchItem
+    public let consumableItem: ConsumableSearchItem
 
-    public init(grocerySearchItem: GrocerySearchItem) {
-        self.grocerySearchItem = grocerySearchItem
+    public init(consumableSearchItem: ConsumableSearchItem) {
+        self.consumableItem = consumableSearchItem
     }
 
     public var body: some View {
@@ -33,22 +33,22 @@ public struct AddFoodView: View {
                         .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 5) {
-                            Image(systemName: grocerySearchItem.icon).font(.system(size: 78)).foregroundColor(
+                            Image(systemName: consumableItem.icon).font(.system(size: 78)).foregroundColor(
                                 .white200)
-                            Text("\(grocerySearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
+                            Text("\(consumableItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue800
                             ).fontWeight(.bold)
                             HStack {
-                                Text(grocerySearchItem.category)
+                                Text(consumableItem.category)
                                     .font(.callout).foregroundStyle(.gray600)
                                 Circle()
                                     .frame(width: 4, height: 4)
                                     .foregroundStyle(.gray600)
-                                Text("\(String(format: "%.0f", grocerySearchItem.amount)) \(grocerySearchItem.unit)")
+                                Text("\(String(format: "%.0f", consumableItem.amount)) \(consumableItem.unit)")
                                     .foregroundStyle(.gray600)
                                     .font(.callout)
                             }
-                            Text(grocerySearchItem.brand)
+                            Text(consumableItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
 
