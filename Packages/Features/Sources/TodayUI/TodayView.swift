@@ -2,7 +2,7 @@ import DesignSystem
 import Models
 import SwiftUI
 
-@MainActor let groceryItem: GroceryItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", foodStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+@MainActor let consumableItem: ConsumableItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
 
 struct StatsView: View {
     var body: some View {
@@ -12,7 +12,7 @@ struct StatsView: View {
                     .textCase(.uppercase)
                     .foregroundStyle(.gray400)
                     .font(.caption)
-                Text(groceryItem.foodStore.rawValue)
+                Text(consumableItem.inventoryStore.rawValue)
                     .fontWeight(.bold)
                     .foregroundStyle(.green600)
                     .font(.headline)
@@ -24,7 +24,7 @@ struct StatsView: View {
                     .textCase(.uppercase)
                     .foregroundStyle(.gray400)
                     .font(.caption)
-                Text(groceryItem.status.rawValue)
+                Text(consumableItem.status.rawValue)
                     .fontWeight(.bold)
                     .foregroundStyle(.green600)
                     .font(.headline)
@@ -70,7 +70,7 @@ struct WideStatsView: View {
                     .textCase(.uppercase)
                     .foregroundStyle(.gray400)
                     .font(.caption)
-                Text(groceryItem.foodStore.rawValue)
+                Text(consumableItem.inventoryStore.rawValue)
                     .fontWeight(.bold)
                     .foregroundStyle(.green600)
                     .font(.headline)
@@ -82,7 +82,7 @@ struct WideStatsView: View {
                     .textCase(.uppercase)
                     .foregroundStyle(.gray400)
                     .font(.caption)
-                Text(groceryItem.status.rawValue)
+                Text(consumableItem.status.rawValue)
                     .fontWeight(.bold)
                     .foregroundStyle(.green600)
                     .font(.headline)
@@ -94,7 +94,7 @@ struct WideStatsView: View {
                     .textCase(.uppercase)
                     .foregroundStyle(.gray400)
                     .font(.caption)
-                Text("\(String(format: "%.0f", groceryItem.amount))")
+                Text("\(String(format: "%.0f", consumableItem.amount))")
                     .fontWeight(.bold)
                     .foregroundStyle(.green600)
                     .font(.headline)
@@ -135,7 +135,7 @@ struct WideStatsView: View {
 public struct TodayView: View {
     public init() {}
 
-    @State private var selectedGroceryItem: GroceryItem? = nil
+    @State private var selectedConsumableItem: ConsumableItem? = nil
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -160,27 +160,27 @@ public struct TodayView: View {
         ScrollView {
             VStack(alignment: .center, spacing: 0) {
                 HStack {
-                    Image(systemName: groceryItem.icon)
+                    Image(systemName: consumableItem.icon)
                         .font(.system(size: 36))
                     VStack(spacing: 5) {
-                        Text(groceryItem.name)
+                        Text(consumableItem.name)
                             .font(.title2)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         HStack {
-                            Text(groceryItem.category)
+                            Text(consumableItem.category)
                                 .font(.footnote).foregroundStyle(.gray600)
                             Circle()
                                 .frame(width: 4, height: 4)
                                 .foregroundStyle(.gray600)
-                            Text(groceryItem.brand)
+                            Text(consumableItem.brand)
                                 .font(.footnote)
                                 .foregroundStyle(.brandSainsburys)
                             Circle()
                                 .frame(width: 4, height: 4)
                                 .foregroundStyle(.gray600)
-                            Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)").foregroundStyle(.gray600)
+                            Text("\(String(format: "%.0f", consumableItem.amount)) \(consumableItem.unit)").foregroundStyle(.gray600)
                                 .font(.footnote)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -206,10 +206,10 @@ public struct TodayView: View {
             .shadow(color: .shadow, radius: 2, x: 0, y: 4)
             .onTapGesture {
                 // need to add haptics
-                selectedGroceryItem = groceryItem
+                selectedConsumableItem = consumableItem
             }
-            .sheet(item: $selectedGroceryItem) { _ in
-                GroceryItemSheetView(groceryItem: $selectedGroceryItem)
+            .sheet(item: $selectedConsumableItem) { _ in
+                ConsumableItemSheetView(consumableItem: $selectedConsumableItem)
                     .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)

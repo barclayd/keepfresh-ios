@@ -6,11 +6,11 @@ public enum RouterDestination: Hashable {
     case today
     case search
     case kitchen
-    case addGroceryItem(grocerySearchItem: GrocerySearchItem)
+    case addConsumableItem(consumableSearchItem: ConsumableSearchItem)
 
     public var tint: Color? {
         switch self {
-        case .addGroceryItem:
+        case .addConsumableItem:
             return .white200
         case .today, .kitchen, .search:
             return nil

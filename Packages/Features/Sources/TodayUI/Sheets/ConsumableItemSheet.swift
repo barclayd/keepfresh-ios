@@ -2,7 +2,7 @@ import DesignSystem
 import Models
 import SwiftUI
 
-struct GroceryItemSheetStatsGridRows: View {
+struct ConsumableSheetStatsGridRows: View {
     let pageIndex: Int
 
     var body: some View {
@@ -68,38 +68,38 @@ struct GroceryItemSheetStatsGridRows: View {
     }
 }
 
-struct GroceryItemSheetStatsGrid: View {
-    let groceryItem: GroceryItem
+struct ConsumableItemSheetStatsGrid: View {
+    let consumableItem: ConsumableItem
 
     let pageIndex: Int
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
-                GroceryItemSheetStatsGridRows(pageIndex: pageIndex)
+                ConsumableSheetStatsGridRows(pageIndex: pageIndex)
             }
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
-                GroceryItemSheetStatsGridRows(pageIndex: pageIndex)
+                ConsumableSheetStatsGridRows(pageIndex: pageIndex)
             }
         }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.white300).cornerRadius(20)
     }
 }
 
-struct GroceryItemSheetView: View {
-    @Binding var groceryItem: GroceryItem?
+struct ConsumableItemSheetView: View {
+    @Binding var consumableItem: ConsumableItem?
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
 
-    init(groceryItem: Binding<GroceryItem?>) {
-        _groceryItem = groceryItem
+    init(consumableItem: Binding<ConsumableItem?>) {
+        _consumableItem = consumableItem
 
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
 
     var body: some View {
-        guard let groceryItem: GroceryItem = groceryItem else {
+        guard let consumableItem: ConsumableItem = consumableItem else {
             return EmptyView()
         }
 
@@ -121,24 +121,24 @@ struct GroceryItemSheetView: View {
                         .foregroundStyle(.gray600)
                 }
             }.padding(.top, 10)
-            Image(systemName: groceryItem.icon)
+            Image(systemName: consumableItem.icon)
                 .font(.system(size: 80)).padding(.bottom, -8)
-            Text(groceryItem.name).font(.title).fontWeight(.bold).foregroundStyle(.black).lineSpacing(0).padding(.bottom, -8)
+            Text(consumableItem.name).font(.title).fontWeight(.bold).foregroundStyle(.black).lineSpacing(0).padding(.bottom, -8)
             HStack {
-                Text(groceryItem.category)
+                Text(consumableItem.category)
                     .font(.callout)
                     .foregroundStyle(.gray600)
                 Circle()
                     .frame(width: 6, height: 6)
                     .foregroundStyle(.gray600)
                     .padding(.horizontal, 4)
-                Text("\(String(format: "%.0f", groceryItem.amount)) \(groceryItem.unit)")
+                Text("\(String(format: "%.0f", consumableItem.amount)) \(consumableItem.unit)")
                     .font(.callout)
                     .foregroundStyle(.gray600)
             }
             TabView(selection: $currentPage) {
                 ForEach(0 ..< 2, id: \.self) { page in
-                    GroceryItemSheetStatsGrid(groceryItem: groceryItem, pageIndex: page)
+                    ConsumableItemSheetStatsGrid(consumableItem: consumableItem, pageIndex: page)
                         .tag(page)
                         .padding(.horizontal, 16)
                 }
@@ -168,7 +168,7 @@ struct GroceryItemSheetView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.blue600)
                             .font(.system(size: 32))
-                        Text("Based on food waste history for this item, you should buy this again")
+                        Text("Based on your waste history for this item, you should buy this again")
                             .font(.callout)
                             .foregroundStyle(.gray600)
                             .multilineTextAlignment(.center)
@@ -182,7 +182,7 @@ struct GroceryItemSheetView: View {
                         Image(systemName: "cart.circle.fill")
                             .foregroundStyle(.blue600)
                             .font(.system(size: 32))
-                        Text("Based on food waste history for this item, you should buy this again")
+                        Text("Based on your waste history for this item, you should buy this again")
                             .font(.callout)
                             .foregroundStyle(.gray600)
                             .multilineTextAlignment(.center)
