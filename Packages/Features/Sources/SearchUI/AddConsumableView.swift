@@ -3,16 +3,10 @@ import Models
 import SwiftUI
 
 public struct AddConsumableView: View {
-    @State private var isExpandedToggled: Bool = false
-    @State private var isExpiryDateSet: Bool = false
-    @State private var isStorageSet: Bool = false
-    @State private var isOpenedSet: Bool = false
-    @State private var isQuantitySet: Bool = false
-
     public let consumableItem: ConsumableSearchItem
 
     public init(consumableSearchItem: ConsumableSearchItem) {
-        self.consumableItem = consumableSearchItem
+        consumableItem = consumableSearchItem
     }
 
     public var body: some View {
@@ -82,7 +76,7 @@ public struct AddConsumableView: View {
                                     VStack(spacing: 0) {
                                         Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
                                             .foregroundStyle(.blue800)
-                                        Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                        Text("In Fridge").fontWeight(.light).font(.subheadline)
                                             .foregroundStyle(.blue800)
                                     }
                                     Image(systemName: "house")
@@ -90,7 +84,7 @@ public struct AddConsumableView: View {
                                         .foregroundStyle(.blue800)
                                     VStack(spacing: 0) {
                                         Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
-                                        Text("Located in Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                        Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
                                             .blue800)
                                     }
                                 }
@@ -126,10 +120,10 @@ public struct AddConsumableView: View {
                             }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
 
                             VStack(spacing: 10) {
-                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isExpiryDateSet, details: .init(title: "Expiry Date"))
-                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isStorageSet, details: .init(title: "Storage"))
-                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isOpenedSet, details: .init(title: "Status"))
-                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isQuantitySet, details: .init(title: "Quantity"))
+                                ConsumableCategory(type: .ExpiryDate)
+                                ConsumableCategory(type: .Storage)
+                                ConsumableCategory(type: .Status)
+                                ConsumableCategory(type: .Quantity)
                             }
                         }
                         .padding(.bottom, 100)
