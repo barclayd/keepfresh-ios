@@ -74,6 +74,38 @@ private extension Date {
         formatter.dateFormat = "d'\(suffix)' MMMM"
         return formatter.string(from: self)
     }
+
+    var expiryDescription: String {
+        let days = daysFromNow
+        switch days {
+        case ..<(-1):
+            return "Expiry has past"
+        case -1:
+            return "Expired yesterday"
+        case 0:
+            return "Expires today"
+        case 1:
+            return "Expires tomorrow"
+        default:
+            return "Expires in \(days) days"
+        }
+    }
+
+    private var daysFromNow: Int {
+        let calendar = Calendar.current
+
+        // Start of day for both dates
+        let startOfToday = calendar.startOfDay(for: Date.now)
+        let startOfTarget = calendar.startOfDay(for: self)
+
+        let components = calendar.dateComponents([.day], from: startOfToday, to: startOfTarget)
+        return components.day ?? 0
+    }
+
+    func isSameDay(as other: Date) -> Bool {
+        let calendar = Calendar.current
+        return calendar.isDate(self, equalTo: other, toGranularity: .day)
+    }
 }
 
 private extension ConsumableCategoryType {
@@ -97,8 +129,9 @@ private extension ConsumableCategoryType {
                             .offset(y: -8)
                     }
                 }
-                Text("Expires in 7 days").foregroundStyle(.black800).font(.footnote).fontWeight(
-                    .thin)
+                Text(expiryDate.wrappedValue.expiryDescription).foregroundStyle(.black800).font(.footnote)
+                    .fontWeight(
+                        .thin)
             }
             .frame(width: 150, alignment: .leading)
 
@@ -145,7 +178,8 @@ private extension ConsumableCategoryType {
     @MainActor
     @ViewBuilder
     func expandedContent(
-        status: Binding<ConsumableStatus>, inventoryStore: Binding<InventoryStore>, expiryDate: Binding<Date>
+        status: Binding<ConsumableStatus>, inventoryStore: Binding<InventoryStore>,
+        expiryDate: Binding<Date>
     ) -> some View {
         switch self {
         case .ExpiryDate:
@@ -188,7 +222,8 @@ struct ConsumableCategoryOverview: View {
             .frame(width: 105, alignment: .leading)
 
         type.overviewLabel(
-            quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore,
+            quantity: $quantity, status: $status, expiryDate: $expiryDate,
+            inventoryStore: $inventoryStore,
             didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore
         )
 
@@ -321,7 +356,7 @@ struct ConsumableCategoryExpiryDateContent: View {
                     selection: $expiryDate,
                     displayedComponents: [.date]
                 )
-                .datePickerStyle(.graphical).colorInvert().colorMultiply(.blue800)
+                .datePickerStyle(.graphical).colorInvert().colorMultiply(.blue400)
             }
 
             HStack {
@@ -381,7 +416,7 @@ public struct ConsumableCategory: View {
     }
 
     var didUpdateExpiryDate: Bool {
-        expiryDate != ConsumableCategory.initialExpiryDate
+        expiryDate.isSameDay(as: ConsumableCategory.initialExpiryDate) == false
     }
 
     public var body: some View {
@@ -418,7 +453,9 @@ public struct ConsumableCategory: View {
                 }
             }
             if isToggable {
-                type.expandedContent(status: $status, inventoryStore: $inventoryStore, expiryDate: $expiryDate)
+                type.expandedContent(
+                    status: $status, inventoryStore: $inventoryStore, expiryDate: $expiryDate
+                )
             }
         }
         .transition(.move(edge: .top))
