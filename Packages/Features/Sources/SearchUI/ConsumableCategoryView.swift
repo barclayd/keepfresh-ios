@@ -3,6 +3,8 @@ import Models
 import SwiftUI
 
 struct CheckToggleStyle: ToggleStyle {
+    @Environment(\.isEnabled) var isEnabled
+    
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
@@ -16,7 +18,6 @@ struct CheckToggleStyle: ToggleStyle {
                     .imageScale(.large)
             }
         }
-        .buttonStyle(.plain)
     }
 }
 
@@ -94,7 +95,6 @@ private extension Date {
     private var daysFromNow: Int {
         let calendar = Calendar.current
 
-        // Start of day for both dates
         let startOfToday = calendar.startOfDay(for: Date.now)
         let startOfTarget = calendar.startOfDay(for: self)
 
@@ -170,6 +170,7 @@ private extension ConsumableCategoryType {
             Toggle("Selected Expiry Date", isOn: isToggled)
                 .toggleStyle(CheckToggleStyle())
                 .labelsHidden()
+                .disabled(true)
         case .Quantity:
             Stepper(value: quantity, in: 1 ... 10, step: 1) {}.tint(.blue800)
         }
@@ -241,7 +242,7 @@ struct ConsumableCategoryStatusContent: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Image(systemName: "house")
+                Image(systemName: "door.right.hand.open")
                     .font(.system(size: 21))
                     .fontWeight(.bold)
                     .foregroundColor(.blue800)
@@ -255,7 +256,7 @@ struct ConsumableCategoryStatusContent: View {
 
                 Picker("Select consumable item status", selection: $status) {
                     ForEach(ConsumableStatus.allCases) { statusType in
-                        Text(statusType.rawValue).foregroundStyle(.gray600)
+                        Text(statusType.rawValue.capitalized).foregroundStyle(.gray600)
                             .font(.callout)
                             .lineLimit(1).border(.yellow)
                     }
@@ -395,28 +396,21 @@ struct ConsumableCategoryExpiryDateContent: View {
 }
 
 public struct ConsumableCategory: View {
-    private static let initialInventoryStore: InventoryStore = .fridge
-    private static let initialExpiryDate = Date()
-
     @State private var isExpandedToggled: Bool = false
-    @State private var isMarkedAsReady: Bool = false
-    @State private var quantity: Int = 1
-    @State private var status: ConsumableStatus = .unopened
-    @State private var expiryDate = initialExpiryDate
-    @State private var inventoryStore: InventoryStore = initialInventoryStore
+    @State private var isMarkedAsReady: Bool = true
+    
+    @Binding var quantity: Int
+    @Binding var status: ConsumableStatus
+    @Binding var expiryDate: Date
+    @Binding var inventoryStore: InventoryStore
+    
+    var didUpdateExpiryDate: Bool
+    var didUpdateInventoryStore: Bool
 
     let type: ConsumableCategoryType
 
     var isToggable: Bool {
         isExpandedToggled && type.isExapndable
-    }
-
-    var didUpdateInventoryStore: Bool {
-        inventoryStore != ConsumableCategory.initialInventoryStore
-    }
-
-    var didUpdateExpiryDate: Bool {
-        expiryDate.isSameDay(as: ConsumableCategory.initialExpiryDate) == false
     }
 
     public var body: some View {
