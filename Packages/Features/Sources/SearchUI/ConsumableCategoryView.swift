@@ -26,7 +26,23 @@ enum ConsumableCategoryType: String, Codable {
     case Quantity
 }
 
+enum ExpiryType: String, Codable, Identifiable, CaseIterable {
+    var id: Self { self }
+
+    case UseBy = "Use By"
+    case BestBefore = "Best Before"
+}
+
 private extension ConsumableCategoryType {
+    var isExapndable: Bool {
+        switch self {
+        case .ExpiryDate, .Storage, .Status:
+            true
+        case .Quantity:
+            false
+        }
+    }
+
     var icon: String {
         switch self {
         case .ExpiryDate:
@@ -105,6 +121,7 @@ private extension ConsumableCategoryType {
 
 struct ConsumableCategoryOverview: View {
     @Binding var isExpiryDateToggled: Bool
+    @Binding var isMarkedAsReady: Bool
     @Binding var quantity: Int
 
     let type: ConsumableCategoryType
@@ -128,13 +145,15 @@ struct ConsumableCategoryOverview: View {
 
         Spacer()
 
-        type.overviewSwitch(isToggled: $isExpiryDateToggled, quantity: $quantity)
+        type.overviewSwitch(isToggled: $isMarkedAsReady, quantity: $quantity)
     }
 }
 
-struct ConsumableCategoryContent: View {
+struct ConsumableCategoryExpiryDateContent: View {
     @State private var date = Date()
     @State private var showDatePicker = false
+
+    @State private var expiryType: ExpiryType = .BestBefore
 
     var body: some View {
         VStack(spacing: 0) {
@@ -145,7 +164,7 @@ struct ConsumableCategoryContent: View {
                     .foregroundColor(.blue800)
                     .frame(width: 40, height: 40)
 
-                Text("Expiry date")
+                Text(expiryType.rawValue)
                     .foregroundStyle(.blue800)
                     .font(.callout)
                     .lineLimit(1)
@@ -184,38 +203,46 @@ struct ConsumableCategoryContent: View {
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
 
-                Text("Use By")
-                    .foregroundStyle(.gray600)
-                    .font(.callout)
-                    .lineLimit(1)
-                    .frame(width: 150, alignment: .leading)
+                Picker("Select expiry type", selection: $expiryType) {
+                    ForEach(ExpiryType.allCases) { expiryType in
+                        Text(expiryType.rawValue).foregroundStyle(.gray600)
+                            .font(.callout)
+                            .lineLimit(1).border(.yellow)
+                    }
+                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(width: 150, alignment: .leading)
 
                 Spacer()
             }
+
         }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0)).fill(.white))
     }
 }
 
 public struct ConsumableCategory: View {
     @State private var isExpandedToggled: Bool = false
+    @State private var isMarkedAsReady: Bool = false
     @State private var quantity: Int = 1
 
     let type: ConsumableCategoryType
 
+    var isToggable: Bool {
+        isExpandedToggled && type.isExapndable
+    }
+
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
-                ConsumableCategoryOverview(isExpiryDateToggled: $isExpandedToggled, quantity: $quantity, type: type)
+                ConsumableCategoryOverview(isExpiryDateToggled: $isExpandedToggled, isMarkedAsReady: $isMarkedAsReady, quantity: $quantity, type: type)
             }.padding(.vertical, 14).padding(.horizontal, 10)
                 .frame(maxWidth: .infinity)
-                .background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 20, bottomLeading: isExpandedToggled ? 0 : 20, bottomTrailing: isExpandedToggled ? 0 : 20, topTrailing: 20)).fill(.gray200))
+                .background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 20, bottomLeading: isToggable ? 0 : 20, bottomTrailing: isToggable ? 0 : 20, topTrailing: 20)).fill(.gray200))
                 .onTapGesture {
                     withAnimation(.easeInOut) {
                         isExpandedToggled.toggle()
                     }
                 }
-            if isExpandedToggled {
-                ConsumableCategoryContent()
+            if isToggable {
+                ConsumableCategoryExpiryDateContent()
             }
         }.transition(.move(edge: .top))
     }
