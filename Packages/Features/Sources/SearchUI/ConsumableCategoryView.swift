@@ -1,4 +1,5 @@
 import DesignSystem
+import Models
 import SwiftUI
 
 struct CheckToggleStyle: ToggleStyle {
@@ -57,16 +58,44 @@ private extension ConsumableCategoryType {
     }
 }
 
+private extension Date {
+    var formattedWithOrdinal: String {
+        let day = Calendar.current.component(.day, from: self)
+        let suffix: String
+
+        switch day {
+        case 1, 21, 31: suffix = "st"
+        case 2, 22: suffix = "nd"
+        case 3, 23: suffix = "rd"
+        default: suffix = "th"
+        }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d'\(suffix)' MMMM"
+        return formatter.string(from: self)
+    }
+}
+
 private extension ConsumableCategoryType {
+    @MainActor
     @ViewBuilder
-    func overviewLabel(quantity: Binding<Int>) -> some View {
+    func overviewLabel(
+        quantity: Binding<Int>,
+        status: Binding<ConsumableStatus>,
+        expiryDate: Binding<Date>,
+        inventoryStore: Binding<InventoryStore>,
+        didUpdateExpiryDate: Bool,
+        didUpdateInventoryStore: Bool
+    ) -> some View {
         switch self {
         case .ExpiryDate:
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {
-                    Text("22nd December").foregroundStyle(.gray600)
-                    Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
-                        .offset(y: -8)
+                    Text(expiryDate.wrappedValue.formattedWithOrdinal).foregroundStyle(.gray600)
+                    if !didUpdateExpiryDate {
+                        Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
+                            .offset(y: -8)
+                    }
                 }
                 Text("Expires in 7 days").foregroundStyle(.black800).font(.footnote).fontWeight(
                     .thin)
@@ -75,17 +104,20 @@ private extension ConsumableCategoryType {
 
         case .Status:
             VStack(alignment: .leading, spacing: 0) {
-                Text("Unopened").foregroundStyle(.gray600)
+                Text(status.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
             }
             .frame(width: 150, alignment: .leading)
 
         case .Storage:
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .lastTextBaseline, spacing: 0) {
-                    Image(systemName: "refrigerator").font(.system(size: 24)).foregroundStyle(.gray600).padding(.trailing, 2)
-                    Text("Fridge").foregroundStyle(.gray600)
-                    Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
-                        .offset(y: -8)
+                    Image(systemName: inventoryStore.wrappedValue.icon).font(.system(size: 24))
+                        .foregroundStyle(.gray600).padding(.trailing, 2)
+                    Text(inventoryStore.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
+                    if !didUpdateInventoryStore {
+                        Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
+                            .offset(y: -8)
+                    }
                 }
             }
             .frame(width: 150, alignment: .leading)
@@ -110,19 +142,33 @@ private extension ConsumableCategoryType {
         }
     }
 
-//    @ViewBuilder
-//    func contentAction() -> some View {
-//        switch self {
-//        case .ExpiryDate:
-//            Text("Select Expiry Date")
-//        }
-//    }
+    @MainActor
+    @ViewBuilder
+    func expandedContent(
+        status: Binding<ConsumableStatus>, inventoryStore: Binding<InventoryStore>, expiryDate: Binding<Date>
+    ) -> some View {
+        switch self {
+        case .ExpiryDate:
+            ConsumableCategoryExpiryDateContent(expiryDate: expiryDate)
+        case .Status:
+            ConsumableCategoryStatusContent(status: status)
+        case .Storage:
+            ConsumableCategoryStorageContent(inventoryStore: inventoryStore)
+        default:
+            EmptyView()
+        }
+    }
 }
 
 struct ConsumableCategoryOverview: View {
     @Binding var isExpiryDateToggled: Bool
     @Binding var isMarkedAsReady: Bool
     @Binding var quantity: Int
+    @Binding var status: ConsumableStatus
+    @Binding var inventoryStore: InventoryStore
+    @Binding var expiryDate: Date
+    var didUpdateExpiryDate: Bool
+    var didUpdateInventoryStore: Bool
 
     let type: ConsumableCategoryType
 
@@ -141,7 +187,10 @@ struct ConsumableCategoryOverview: View {
             .lineLimit(1)
             .frame(width: 105, alignment: .leading)
 
-        type.overviewLabel(quantity: $quantity)
+        type.overviewLabel(
+            quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore,
+            didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore
+        )
 
         Spacer()
 
@@ -149,8 +198,93 @@ struct ConsumableCategoryOverview: View {
     }
 }
 
+struct ConsumableCategoryStatusContent: View {
+    @Binding var status: ConsumableStatus
+
+    @State private var showStoragePicker = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "house")
+                    .font(.system(size: 21))
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue800)
+                    .frame(width: 40, height: 40)
+
+                Text("Status")
+                    .foregroundStyle(.blue800)
+                    .font(.callout)
+                    .lineLimit(1)
+                    .frame(width: 105, alignment: .leading)
+
+                Picker("Select consumable item status", selection: $status) {
+                    ForEach(ConsumableStatus.allCases) { statusType in
+                        Text(statusType.rawValue).foregroundStyle(.gray600)
+                            .font(.callout)
+                            .lineLimit(1).border(.yellow)
+                    }
+                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(
+                    width: 150, alignment: .leading
+                )
+
+                Spacer()
+            }
+
+        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(
+            UnevenRoundedRectangle(
+                cornerRadii: RectangleCornerRadii(
+                    topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0
+                )
+            ).fill(.white))
+    }
+}
+
+struct ConsumableCategoryStorageContent: View {
+    @Binding var inventoryStore: InventoryStore
+
+    @State private var showStoragePicker = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "house")
+                    .font(.system(size: 21))
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue800)
+                    .frame(width: 40, height: 40)
+
+                Text("Location")
+                    .foregroundStyle(.blue800)
+                    .font(.callout)
+                    .lineLimit(1)
+                    .frame(width: 105, alignment: .leading)
+
+                Picker("Select storage location", selection: $inventoryStore) {
+                    ForEach(InventoryStore.allCases) { inventoryStore in
+                        Text(inventoryStore.rawValue.capitalized).foregroundStyle(.gray600)
+                            .font(.callout)
+                            .lineLimit(1).border(.yellow)
+                    }
+                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(
+                    width: 150, alignment: .leading
+                )
+
+                Spacer()
+            }
+
+        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(
+            UnevenRoundedRectangle(
+                cornerRadii: RectangleCornerRadii(
+                    topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0
+                )
+            ).fill(.white))
+    }
+}
+
 struct ConsumableCategoryExpiryDateContent: View {
-    @State private var date = Date()
+    @Binding var expiryDate: Date
+
     @State private var showDatePicker = false
 
     @State private var expiryType: ExpiryType = .BestBefore
@@ -171,7 +305,7 @@ struct ConsumableCategoryExpiryDateContent: View {
                     .frame(width: 105, alignment: .leading)
 
                 Button(action: { showDatePicker.toggle() }) {
-                    Text(date.formatted(date: .long, time: .omitted))
+                    Text(expiryDate.formattedWithOrdinal)
                         .foregroundStyle(.gray600)
                         .font(.callout)
                         .lineLimit(1)
@@ -184,7 +318,7 @@ struct ConsumableCategoryExpiryDateContent: View {
             if showDatePicker {
                 DatePicker(
                     "Expiry date",
-                    selection: $date,
+                    selection: $expiryDate,
                     displayedComponents: [.date]
                 )
                 .datePickerStyle(.graphical).colorInvert().colorMultiply(.blue800)
@@ -209,19 +343,32 @@ struct ConsumableCategoryExpiryDateContent: View {
                             .font(.callout)
                             .lineLimit(1).border(.yellow)
                     }
-                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(width: 150, alignment: .leading)
+                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(
+                    width: 150, alignment: .leading
+                )
 
                 Spacer()
             }
 
-        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0)).fill(.white))
+        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(
+            UnevenRoundedRectangle(
+                cornerRadii: RectangleCornerRadii(
+                    topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0
+                )
+            ).fill(.white))
     }
 }
 
 public struct ConsumableCategory: View {
+    private static let initialInventoryStore: InventoryStore = .fridge
+    private static let initialExpiryDate = Date()
+
     @State private var isExpandedToggled: Bool = false
     @State private var isMarkedAsReady: Bool = false
     @State private var quantity: Int = 1
+    @State private var status: ConsumableStatus = .unopened
+    @State private var expiryDate = initialExpiryDate
+    @State private var inventoryStore: InventoryStore = initialInventoryStore
 
     let type: ConsumableCategoryType
 
@@ -229,21 +376,51 @@ public struct ConsumableCategory: View {
         isExpandedToggled && type.isExapndable
     }
 
+    var didUpdateInventoryStore: Bool {
+        inventoryStore != ConsumableCategory.initialInventoryStore
+    }
+
+    var didUpdateExpiryDate: Bool {
+        expiryDate != ConsumableCategory.initialExpiryDate
+    }
+
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
-                ConsumableCategoryOverview(isExpiryDateToggled: $isExpandedToggled, isMarkedAsReady: $isMarkedAsReady, quantity: $quantity, type: type)
-            }.padding(.vertical, 14).padding(.horizontal, 10)
-                .frame(maxWidth: .infinity)
-                .background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topLeading: 20, bottomLeading: isToggable ? 0 : 20, bottomTrailing: isToggable ? 0 : 20, topTrailing: 20)).fill(.gray200))
-                .onTapGesture {
-                    withAnimation(.easeInOut) {
-                        isExpandedToggled.toggle()
-                    }
-                }
-            if isToggable {
-                ConsumableCategoryExpiryDateContent()
+                ConsumableCategoryOverview(
+                    isExpiryDateToggled: $isExpandedToggled,
+                    isMarkedAsReady: $isMarkedAsReady,
+                    quantity: $quantity,
+                    status: $status,
+                    inventoryStore: $inventoryStore,
+                    expiryDate: $expiryDate,
+                    didUpdateExpiryDate: didUpdateExpiryDate,
+                    didUpdateInventoryStore: didUpdateInventoryStore,
+                    type: type
+                )
             }
-        }.transition(.move(edge: .top))
+            .padding(.vertical, 14)
+            .padding(.horizontal, 10)
+            .frame(maxWidth: .infinity)
+            .background(
+                UnevenRoundedRectangle(
+                    cornerRadii: RectangleCornerRadii(
+                        topLeading: 20,
+                        bottomLeading: isToggable ? 0 : 20,
+                        bottomTrailing: isToggable ? 0 : 20,
+                        topTrailing: 20
+                    )
+                ).fill(.gray200)
+            )
+            .onTapGesture {
+                withAnimation(.easeInOut) {
+                    isExpandedToggled.toggle()
+                }
+            }
+            if isToggable {
+                type.expandedContent(status: $status, inventoryStore: $inventoryStore, expiryDate: $expiryDate)
+            }
+        }
+        .transition(.move(edge: .top))
     }
 }
