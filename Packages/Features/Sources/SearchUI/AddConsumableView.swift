@@ -1,18 +1,47 @@
 import DesignSystem
 import Models
+import Router
 import SwiftUI
 
+private extension Date {
+    func isSameDay(as other: Date) -> Bool {
+        let calendar = Calendar.current
+        return calendar.isDate(self, equalTo: other, toGranularity: .day)
+    }
+}
+
 public struct AddConsumableView: View {
-    @State private var isExpandedToggled: Bool = false
-    @State private var isExpiryDateSet: Bool = false
-    @State private var isStorageSet: Bool = false
-    @State private var isOpenedSet: Bool = false
-    @State private var isQuantitySet: Bool = false
+    @Environment(Router.self) var router
+    
+    @State private var expiryDate: Date
+    @State private var inventoryStore: InventoryStore
+    @State private var quantity: Int = 1
+    @State private var status: ConsumableStatus = .unopened
 
     public let consumableItem: ConsumableSearchItem
+    let initialInventoryStore: InventoryStore
+    let initialExpiryDate: Date
 
     public init(consumableSearchItem: ConsumableSearchItem) {
-        self.consumableItem = consumableSearchItem
+        consumableItem = consumableSearchItem
+        initialExpiryDate = Date()
+        initialInventoryStore = .fridge
+        _expiryDate = State(initialValue: initialExpiryDate)
+        _inventoryStore = State(initialValue: initialInventoryStore)
+    }
+
+    var didUpdateInventoryStore: Bool {
+        inventoryStore != initialInventoryStore
+    }
+
+    var didUpdateExpiryDate: Bool {
+        expiryDate.isSameDay(as: initialExpiryDate) == false
+    }
+    
+    func addToInventory() {
+        print("Expiry date: \(expiryDate)", "Inventory store: \(inventoryStore.rawValue)", "quantity: \(quantity)", "status: \(status.rawValue)")
+        
+        router.popToRoot(for: .search)
     }
 
     public var body: some View {
@@ -82,7 +111,7 @@ public struct AddConsumableView: View {
                                     VStack(spacing: 0) {
                                         Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
                                             .foregroundStyle(.blue800)
-                                        Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                        Text("In Fridge").fontWeight(.light).font(.subheadline)
                                             .foregroundStyle(.blue800)
                                     }
                                     Image(systemName: "house")
@@ -90,7 +119,7 @@ public struct AddConsumableView: View {
                                         .foregroundStyle(.blue800)
                                     VStack(spacing: 0) {
                                         Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
-                                        Text("Located in Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                        Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
                                             .blue800)
                                     }
                                 }
@@ -125,11 +154,11 @@ public struct AddConsumableView: View {
 
                             }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
 
-                            VStack(spacing: 10) {
-                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isExpiryDateSet, details: .init(title: "Expiry Date"))
-                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isStorageSet, details: .init(title: "Storage"))
-                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isOpenedSet, details: .init(title: "Status"))
-                                ConsumableCategory(isExpandedToggled: $isExpandedToggled, isExpiryDateToggled: $isQuantitySet, details: .init(title: "Quantity"))
+                            VStack(spacing: 15) {
+                                ConsumableCategory(quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore, type: .ExpiryDate)
+                                ConsumableCategory(quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore, type: .Storage)
+                                ConsumableCategory(quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore, type: .Status)
+                                ConsumableCategory(quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore, type: .Quantity)
                             }
                         }
                         .padding(.bottom, 100)
@@ -151,10 +180,8 @@ public struct AddConsumableView: View {
                     .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
                     .frame(height: 80)
 
-                    Button(action: {
-                        print("Tapped add to fridge")
-                    }) {
-                        Text("Add to Fridge")
+                    Button(action: addToInventory) {
+                        Text("Add to \(inventoryStore.rawValue.capitalized)")
                             .font(.title2)
                             .foregroundStyle(.blue600)
                             .fontWeight(.medium)
@@ -170,9 +197,7 @@ public struct AddConsumableView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    print("Add click")
-                }) {
+                Button(action: addToInventory) {
                     Image(systemName: "checkmark")
                         .font(.system(size: 18))
                         .foregroundColor(.white200)

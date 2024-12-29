@@ -1,16 +1,28 @@
 import Foundation
 
-public enum InventoryStore: String, Codable {
-    case pantry = "Pantry"
-    case fridge = "Fridge"
-    case freezer = "Freezer"
+public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
+    public var id: Self { self }
+
+    case pantry
+    case fridge
+    case freezer
+
+    public var icon: String {
+        switch self {
+        case .pantry: return "cabinet"
+        case .fridge: return "refrigerator"
+        case .freezer: return "snowflake.circle"
+        }
+    }
 }
 
-public enum ConsumableStatus: String, Codable {
-    case open = "Open"
-    case binned = "Binned"
-    case consumed = "Consumed"
-    case unopened = "Unopened"
+public enum ConsumableStatus: String, Codable, Identifiable, CaseIterable {
+    public var id: Self { self }
+
+    case open
+    case binned
+    case consumed
+    case unopened
 }
 
 public struct ConsumableSearchItem: Identifiable, Hashable {
