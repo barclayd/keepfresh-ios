@@ -16,6 +16,28 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
     }
 }
 
+public struct InventoryStoreDetails: Identifiable, Hashable {
+    public init(id: Int, type: InventoryStore, expiryStatusPercentage: Float, lastUpdated: Date, itemsCount: Int, openItemsCount: Int, itemsExpiringSoonCount: Int, recentItemImages: [String]) {
+        self.id = id
+        self.type = type
+        self.expiryStatusPercentage = expiryStatusPercentage
+        self.lastUpdated = lastUpdated
+        self.itemsCount = itemsCount
+        self.openItemsCount = openItemsCount
+        self.itemsExpiringSoonCount = itemsExpiringSoonCount
+        self.recentItemImages = recentItemImages
+    }
+
+    public var id: Int
+    public var type: InventoryStore
+    public var expiryStatusPercentage: Float
+    public var lastUpdated: Date
+    public var itemsCount: Int
+    public var openItemsCount: Int
+    public var itemsExpiringSoonCount: Int
+    public var recentItemImages: [String]
+}
+
 public enum ConsumableStatus: String, Codable, Identifiable, CaseIterable {
     public var id: Self { self }
 

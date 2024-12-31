@@ -4,7 +4,7 @@ import SwiftUI
 
 struct CheckToggleStyle: ToggleStyle {
     @Environment(\.isEnabled) var isEnabled
-    
+
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
@@ -398,12 +398,12 @@ struct ConsumableCategoryExpiryDateContent: View {
 public struct ConsumableCategory: View {
     @State private var isExpandedToggled: Bool = false
     @State private var isMarkedAsReady: Bool = true
-    
+
     @Binding var quantity: Int
     @Binding var status: ConsumableStatus
     @Binding var expiryDate: Date
     @Binding var inventoryStore: InventoryStore
-    
+
     var didUpdateExpiryDate: Bool
     var didUpdateInventoryStore: Bool
 
