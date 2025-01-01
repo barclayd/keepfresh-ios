@@ -4,7 +4,7 @@
 import PackageDescription
 
 let baseDeps: [PackageDescription.Target.Dependency] = [
-    .product(name: "DesignSystem", package: "DesignSystem"),
+    .product(name: "DesignSystem", package: "../DesignSystem"),
 ]
 
 let package = Package(
@@ -20,7 +20,7 @@ let package = Package(
     targets: [
         .target(
             name: "Models",
-            dependencies: []
+            dependencies: baseDeps
         ),
         .target(
             name: "Router",

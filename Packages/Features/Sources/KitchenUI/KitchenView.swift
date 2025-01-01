@@ -1,4 +1,5 @@
 import DesignSystem
+import Router
 import Models
 import SwiftUI
 
@@ -103,34 +104,61 @@ private struct InventoryStore: View {
         .background(Color.white)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
+        .shadow(color: .shadow, radius: 2, x: 0, y: 4)
     }
 }
 
 public struct KitchenView: View {
+    
+    let inventoryStoreDetails: [InventoryStoreDetails] = [InventoryStoreDetails(
+        id: 1, name: "Pantry", type: .pantry, expiryStatusPercentage: 12, lastUpdated: Date(), itemsCount: 12,
+        openItemsCount: 3, itemsExpiringSoonCount: 4,
+        recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+    ), InventoryStoreDetails(
+        id: 2, name: "Fridge", type: .fridge, expiryStatusPercentage: 43, lastUpdated: Date(), itemsCount: 12,
+        openItemsCount: 3, itemsExpiringSoonCount: 4,
+        recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+    ), InventoryStoreDetails(
+        id: 3, name: "Freezer", type: .freezer, expiryStatusPercentage: 80, lastUpdated: Date(), itemsCount: 12,
+        openItemsCount: 3, itemsExpiringSoonCount: 4,
+        recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+    )]
+    
     public init() {}
 
     public var body: some View {
         ScrollView {
-            VStack(spacing: 25) {
-                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
-                    id: 1, name: "Pantry", type: .pantry, expiryStatusPercentage: 12, lastUpdated: Date(), itemsCount: 12,
-                    openItemsCount: 3, itemsExpiringSoonCount: 4,
-                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-                ))
-                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
-                    id: 1, name: "Fridge", type: .fridge, expiryStatusPercentage: 43, lastUpdated: Date(), itemsCount: 12,
-                    openItemsCount: 3, itemsExpiringSoonCount: 4,
-                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-                ))
-                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
-                    id: 1, name: "Freezer", type: .freezer, expiryStatusPercentage: 80, lastUpdated: Date(), itemsCount: 12,
-                    openItemsCount: 3, itemsExpiringSoonCount: 4,
-                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-                ))
+            LazyVStack(spacing: 25) {
+                HStack {
+                    Text("Kitchen").font(.largeTitle).foregroundStyle(.blue800).fontWeight(.bold)
+                    Spacer()
+                }
+                ForEach(inventoryStoreDetails) { inventoryStoreDetail in
+                    NavigationLink(value: RouterDestination.inventoryStoreView(inventoryStore: inventoryStoreDetail)) {
+                        InventoryStore(inventoryStoreDetails: inventoryStoreDetail)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                }
+//                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
+//                    id: 1, name: "Pantry", type: .pantry, expiryStatusPercentage: 12, lastUpdated: Date(), itemsCount: 12,
+//                    openItemsCount: 3, itemsExpiringSoonCount: 4,
+//                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+//                ))
+//                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
+//                    id: 1, name: "Fridge", type: .fridge, expiryStatusPercentage: 43, lastUpdated: Date(), itemsCount: 12,
+//                    openItemsCount: 3, itemsExpiringSoonCount: 4,
+//                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+//                ))
+//                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
+//                    id: 1, name: "Freezer", type: .freezer, expiryStatusPercentage: 80, lastUpdated: Date(), itemsCount: 12,
+//                    openItemsCount: 3, itemsExpiringSoonCount: 4,
+//                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+//                ))
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)
-            .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         }.padding(.vertical, 10).background(.white200)
     }
 }

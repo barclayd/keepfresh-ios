@@ -7,10 +7,11 @@ public enum RouterDestination: Hashable {
     case search
     case kitchen
     case addConsumableItem(consumableSearchItem: ConsumableSearchItem)
+    case inventoryStoreView(inventoryStore: InventoryStoreDetails)
 
     public var tint: Color? {
         switch self {
-        case .addConsumableItem:
+        case .addConsumableItem, .inventoryStoreView:
             return .white200
         case .today, .kitchen, .search:
             return nil

@@ -1,5 +1,5 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
     public var id: Self { self }
