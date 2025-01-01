@@ -123,4 +123,8 @@ public extension UIColor {
     static var blue600: UIColor {
         UIColor(named: "blue-600", in: .module, compatibleWith: nil) ?? .blue
     }
+    
+    static var blue800: UIColor {
+        UIColor(named: "blue-800", in: .module, compatibleWith: nil) ?? .blue
+    }
 }

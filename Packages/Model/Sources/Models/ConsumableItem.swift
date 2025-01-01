@@ -20,7 +20,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
         switch self {
         case .pantry: return (.brown100, .brown300)
         case .fridge: return (.blue50, .blue600)
-        case .freezer: return (.blue600, .blue800)
+        case .freezer: return (.blue600, .blue700)
         }
     }
 
@@ -33,7 +33,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
                               Gradient.Stop(color: .blue500, location: 0.2),
                               Gradient.Stop(color: .white200, location: 0.375)]
         case .freezer: return [Gradient.Stop(color: .blue800, location: 0),
-                               Gradient.Stop(color: .blue600, location: 0.2),
+                               Gradient.Stop(color: .blue600, location: 0.25),
                                Gradient.Stop(color: .white200, location: 0.375)]
         }
     }
@@ -47,14 +47,14 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
 
     public var titleForegorundColor: Color {
         switch self {
-        case .pantry, .fridge: return .blue800
+        case .pantry, .fridge: return .blue700
         case .freezer: return .blue100
         }
     }
 
     public var expiryIconColor: Color {
         switch self {
-        case .pantry, .fridge: return .blue800
+        case .pantry, .fridge: return .blue700
         case .freezer: return .blue100
         }
     }

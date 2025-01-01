@@ -23,11 +23,11 @@ public struct InventoryStoreView: View {
                         .frame(height: geometry.size.height)
                         .frame(maxHeight: .infinity, alignment: .top)
 
-                        VStack(spacing: 10) {
+                        VStack(spacing: 15) {
                             Image(systemName: inventoryStore.type.icon).font(.system(size: 78)).foregroundColor(
-                                .blue800)
+                                .blue700)
                             Text(inventoryStore.name).font(.largeTitle).lineSpacing(0).foregroundStyle(
-                                .blue800
+                                .blue700
                             ).fontWeight(.bold)
 
                             VStack {
@@ -38,7 +38,7 @@ public struct InventoryStoreView: View {
                                     Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                                         .offset(x: -2, y: -10)
                                 }.offset(y: -5)
-                            }.padding(.top, 5)
+                            }
 
                             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
                                 GridRow {
@@ -48,32 +48,37 @@ public struct InventoryStoreView: View {
                                     }
                                     Image(systemName: "hourglass")
                                         .font(.system(size: 28)).fontWeight(.bold)
-                                        .foregroundStyle(.blue800)
+                                        .foregroundStyle(.blue700)
                                     Image(systemName: "clock.badge.exclamationmark")
                                         .font(.system(size: 28)).fontWeight(.bold)
-                                        .foregroundStyle(.blue800)
+                                        .foregroundStyle(.blue700)
                                     VStack(spacing: 0) {
-                                        Text("1").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
-                                        Text("Expires today").fontWeight(.light).font(.subheadline).foregroundStyle(.blue800)
+                                        Text("1").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                        Text("Expires today").fontWeight(.light).font(.subheadline).foregroundStyle(.blue700)
                                     }
                                 }
                                 GridRow {
                                     VStack(spacing: 0) {
-                                        Text("32").foregroundStyle(.blue800).fontWeight(.bold).font(.headline)
-                                        Text("Recently added").foregroundStyle(.blue800).fontWeight(.light).font(.subheadline).lineLimit(1)
+                                        Text("32").foregroundStyle(.blue700).fontWeight(.bold).font(.headline)
+                                        Text("Recently added").foregroundStyle(.blue700).fontWeight(.light).font(.subheadline).lineLimit(1)
                                     }
                                     Image(systemName: "calendar.badge.plus")
                                         .font(.system(size: 28)).fontWeight(.bold)
-                                        .foregroundStyle(.blue800)
+                                        .foregroundStyle(.blue700)
                                     Image(systemName: "list.number")
                                         .font(.system(size: 28)).fontWeight(.bold)
-                                        .foregroundStyle(.blue800)
+                                        .foregroundStyle(.blue700)
                                     VStack(spacing: 0) {
-                                        Text("34").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
-                                        Text("Total items").fontWeight(.light).font(.subheadline).foregroundStyle(.blue800)
+                                        Text("34").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                        Text("Total items").fontWeight(.light).font(.subheadline).foregroundStyle(.blue700)
                                     }
                                 }
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.blue150).cornerRadius(20)
+                            
+                            HStack {
+                                Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
+                                Spacer()
+                            }
 
                             Spacer()
                         }
@@ -93,14 +98,14 @@ public struct InventoryStoreView: View {
                 Button(action: {}) {
                     Image(systemName: "plus.app")
                         .font(.system(size: 18))
-                        .foregroundColor(.white200)
+                        .foregroundColor(.white200).fontWeight(.bold)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "barcode.viewfinder")
                         .font(.system(size: 18))
-                        .foregroundColor(.white200)
+                        .foregroundColor(.white200).fontWeight(.bold)
                 }
             }
         }

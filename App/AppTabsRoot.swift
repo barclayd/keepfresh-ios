@@ -55,7 +55,7 @@ public extension AppTab {
     @ViewBuilder
     var label: some View {
         Label(title, systemImage: icon)
-            .environment(\.symbolVariants, self == .today ? .none : .fill)
+            .environment(\.symbolVariants, self.symbolVariants)
     }
 
     @ToolbarContentBuilder
@@ -82,13 +82,13 @@ public extension AppTab {
                     print("Add item")
                 }) {
                     Image(systemName: "plus.app").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.blue600)
+                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
                 Button(action: {
                     print("Scan barcode")
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.blue600)
+                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
             }
 

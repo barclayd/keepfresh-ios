@@ -68,7 +68,7 @@ public struct RecentSearchView: View {
                     },
                     onDelete: { print("delete") },
                     colorConfiguration: .init(
-                        text: .blue800,
+                        text: .blue700,
                         background: .red200,
                         closeIcon: .blue400
                     )
