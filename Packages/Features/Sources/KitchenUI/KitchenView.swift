@@ -1,6 +1,6 @@
 import DesignSystem
-import Router
 import Models
+import Router
 import SwiftUI
 
 struct InventoryStat: Identifiable {
@@ -65,8 +65,8 @@ struct StatsView: View {
             ).fill(
                 LinearGradient(
                     stops: [
-                        Gradient.Stop(color: inventoryStoreDetails.type.gradientStops.start, location: 0),
-                        Gradient.Stop(color: inventoryStoreDetails.type.gradientStops.end, location: 1),
+                        Gradient.Stop(color: inventoryStoreDetails.type.previewGradientStops.start, location: 0),
+                        Gradient.Stop(color: inventoryStoreDetails.type.previewGradientStops.end, location: 1),
                     ], startPoint: .leading, endPoint: .trailing
                 ))
         )
@@ -109,7 +109,6 @@ private struct InventoryStore: View {
 }
 
 public struct KitchenView: View {
-    
     let inventoryStoreDetails: [InventoryStoreDetails] = [InventoryStoreDetails(
         id: 1, name: "Pantry", type: .pantry, expiryStatusPercentage: 12, lastUpdated: Date(), itemsCount: 12,
         openItemsCount: 3, itemsExpiringSoonCount: 4,
@@ -123,7 +122,7 @@ public struct KitchenView: View {
         openItemsCount: 3, itemsExpiringSoonCount: 4,
         recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
     )]
-    
+
     public init() {}
 
     public var body: some View {
@@ -139,23 +138,7 @@ public struct KitchenView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(PlainButtonStyle())
-                    
                 }
-//                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
-//                    id: 1, name: "Pantry", type: .pantry, expiryStatusPercentage: 12, lastUpdated: Date(), itemsCount: 12,
-//                    openItemsCount: 3, itemsExpiringSoonCount: 4,
-//                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-//                ))
-//                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
-//                    id: 1, name: "Fridge", type: .fridge, expiryStatusPercentage: 43, lastUpdated: Date(), itemsCount: 12,
-//                    openItemsCount: 3, itemsExpiringSoonCount: 4,
-//                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-//                ))
-//                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
-//                    id: 1, name: "Freezer", type: .freezer, expiryStatusPercentage: 80, lastUpdated: Date(), itemsCount: 12,
-//                    openItemsCount: 3, itemsExpiringSoonCount: 4,
-//                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-//                ))
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)

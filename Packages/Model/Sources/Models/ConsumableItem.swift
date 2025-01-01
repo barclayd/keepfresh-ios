@@ -16,28 +16,42 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
         }
     }
 
-    public var gradientStops: (start: Color, end: Color) {
+    public var previewGradientStops: (start: Color, end: Color) {
         switch self {
         case .pantry: return (.brown100, .brown300)
         case .fridge: return (.blue50, .blue600)
         case .freezer: return (.blue600, .blue800)
         }
     }
-    
+
+    public var viewGradientStops: [Gradient.Stop] {
+        switch self {
+        case .pantry: return [Gradient.Stop(color: .brown300, location: 0),
+                              Gradient.Stop(color: .brown100, location: 0.2),
+                              Gradient.Stop(color: .white200, location: 0.375)]
+        case .fridge: return [Gradient.Stop(color: .blue700, location: 0),
+                              Gradient.Stop(color: .blue500, location: 0.2),
+                              Gradient.Stop(color: .white200, location: 0.375)]
+        case .freezer: return [Gradient.Stop(color: .blue800, location: 0),
+                               Gradient.Stop(color: .blue600, location: 0.2),
+                               Gradient.Stop(color: .white200, location: 0.375)]
+        }
+    }
+
     public var foregorundColor: Color {
         switch self {
         case .pantry, .fridge: return .gray700
         case .freezer: return .gray100
         }
     }
-    
+
     public var titleForegorundColor: Color {
         switch self {
         case .pantry, .fridge: return .blue800
         case .freezer: return .blue100
         }
     }
-    
+
     public var expiryIconColor: Color {
         switch self {
         case .pantry, .fridge: return .blue800
@@ -68,8 +82,7 @@ public struct InventoryStoreDetails: Identifiable, Hashable {
     public var openItemsCount: Int
     public var itemsExpiringSoonCount: Int
     public var recentItemImages: [String]
-    
-    
+
     public var expiryStatusPercentageColor: Color {
         switch expiryStatusPercentage {
         case 0...33: return .green600

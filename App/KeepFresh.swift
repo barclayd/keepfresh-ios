@@ -31,10 +31,8 @@ struct KeepFreshApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            NavigationStack {
             AppTabRootView()
                 .environment(router)
-//            }.tint(router.currentTabPathTint)
-        }.environment(router)
+        }
     }
 }
