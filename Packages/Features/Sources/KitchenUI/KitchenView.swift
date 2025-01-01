@@ -10,6 +10,8 @@ struct InventoryStat: Identifiable {
 }
 
 struct StatsView: View {
+    let inventoryStoreDetails: InventoryStoreDetails
+
     let stats: [InventoryStat] = [
         .init(icon: "calendar", label: "2w"),
         .init(icon: "list.number", label: "18"),
@@ -22,33 +24,30 @@ struct StatsView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack {
-                Text("Pantry").foregroundStyle(.blue800).font(.title).fontWeight(.bold)
+                Text(inventoryStoreDetails.name).foregroundStyle(inventoryStoreDetails.type.titleForegorundColor).font(.title).fontWeight(.bold)
                 Spacer()
             }
             HStack {
-                HStack(spacing: 12) {
+                HStack(alignment: .bottom, spacing: 12) {
                     ForEach(stats) { stat in
-                        HStack(spacing: 6) {
+                        HStack(alignment: .lastTextBaseline, spacing: 4) {
                             Image(systemName: stat.icon)
-                                .font(.system(size: 18))
-                                .foregroundStyle(.gray700)
-                            Text(stat.label).font(.body).foregroundStyle(.gray700)
+                                .font(.system(size: 18)).foregroundStyle(stat.icon == "hourglass" ? inventoryStoreDetails.expiryStatusPercentageColor : inventoryStoreDetails.type.foregorundColor)
+
+                            Text(stat.label).font(.body).foregroundStyle(stat.icon == "hourglass" ? inventoryStoreDetails.expiryStatusPercentageColor : inventoryStoreDetails.type.foregorundColor)
                         }
                     }
-                }.fixedSize(horizontal: true, vertical: false)
+                }
 
                 Spacer()
 
-                HStack {
-                    Spacer()
-                    HStack(spacing: 0) {
-                        ForEach(Array(recentItemImages.reversed().enumerated()), id: \.offset) { index, image in
-                            Image(systemName: image)
-                                .font(.system(size: 18))
-                                              .foregroundStyle(.gray700)
-                                .opacity(Double(recentItemImages.count - index) / Double(recentItemImages.count))
-                                .offset(x: CGFloat(recentItemImages.count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
-                        }
+                HStack(spacing: 0) {
+                    ForEach(Array(recentItemImages.reversed().enumerated()), id: \.offset) { index, image in
+                        Image(systemName: image)
+                            .font(.system(size: 18))
+                            .foregroundStyle(inventoryStoreDetails.type.foregorundColor)
+                            .opacity(Double(recentItemImages.count - index) / Double(recentItemImages.count))
+                            .offset(x: CGFloat(recentItemImages.count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
                     }
                 }
             }
@@ -65,51 +64,70 @@ struct StatsView: View {
             ).fill(
                 LinearGradient(
                     stops: [
-                        Gradient.Stop(color: .brown100, location: 0),
-                        Gradient.Stop(color: .brown300, location: 1),
+                        Gradient.Stop(color: inventoryStoreDetails.type.gradientStops.start, location: 0),
+                        Gradient.Stop(color: inventoryStoreDetails.type.gradientStops.end, location: 1),
                     ], startPoint: .leading, endPoint: .trailing
                 ))
         )
     }
 }
 
-public struct KitchenView: View {
-    let inventoryStoreDetails = InventoryStoreDetails(
-        id: 1, type: .pantry, expiryStatusPercentage: 3.4, lastUpdated: Date(), itemsCount: 12,
-        openItemsCount: 3, itemsExpiringSoonCount: 4,
-        recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-    )
+private struct InventoryStore: View {
+    let inventoryStoreDetails: InventoryStoreDetails
 
+    public var body: some View {
+        VStack(alignment: .center, spacing: 0) {
+            HStack {
+                Image(systemName: inventoryStoreDetails.type.icon)
+                    .font(.system(size: 36))
+
+                Spacer()
+
+                VStack {
+                    Circle()
+                        .frame(width: 14, height: 14)
+                        .foregroundStyle(inventoryStoreDetails.expiryStatusPercentageColor)
+                    Spacer()
+                }
+            }
+            .padding(.vertical, 10)
+            .padding(.top, 5)
+            .padding(.horizontal, 10)
+            .background(Color.white)
+            .cornerRadius(20)
+
+            StatsView(inventoryStoreDetails: inventoryStoreDetails)
+        }
+        .padding(.bottom, 4)
+        .padding(.horizontal, 4)
+        .background(Color.white)
+        .cornerRadius(20)
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
+}
+
+public struct KitchenView: View {
     public init() {}
 
     public var body: some View {
         ScrollView {
-            VStack(alignment: .center, spacing: 0) {
-                HStack {
-                    Image(systemName: inventoryStoreDetails.type.icon)
-                        .font(.system(size: 36))
-
-                    Spacer()
-
-                    VStack {
-                        Circle()
-                            .frame(width: 12, height: 12)
-                            .foregroundStyle(.green600)
-                        Spacer()
-                    }
-                }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 10)
-                .background(Color.white)
-                .cornerRadius(20)
-
-                StatsView()
+            VStack(spacing: 40) {
+                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
+                    id: 1, name: "Pantry", type: .pantry, expiryStatusPercentage: 12, lastUpdated: Date(), itemsCount: 12,
+                    openItemsCount: 3, itemsExpiringSoonCount: 4,
+                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+                ))
+                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
+                    id: 1, name: "Fridge", type: .fridge, expiryStatusPercentage: 43, lastUpdated: Date(), itemsCount: 12,
+                    openItemsCount: 3, itemsExpiringSoonCount: 4,
+                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+                ))
+                InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
+                    id: 1, name: "Freezer", type: .freezer, expiryStatusPercentage: 80, lastUpdated: Date(), itemsCount: 12,
+                    openItemsCount: 3, itemsExpiringSoonCount: 4,
+                    recentItemImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
+                ))
             }
-            .padding(.bottom, 4)
-            .padding(.horizontal, 4)
-            .background(Color.white)
-            .cornerRadius(20)
-            .frame(maxWidth: .infinity, alignment: .center)
             .padding(.horizontal, 20)
             .padding(.top, 20)
             .shadow(color: .shadow, radius: 2, x: 0, y: 4)
