@@ -202,7 +202,8 @@ public struct TodayView: View {
             .background(Color.white)
             .cornerRadius(20)
             .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.horizontal, 10)
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
             .shadow(color: .shadow, radius: 2, x: 0, y: 4)
             .onTapGesture {
                 // need to add haptics

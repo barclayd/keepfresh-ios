@@ -12,7 +12,7 @@ private extension Date {
 
 public struct AddConsumableView: View {
     @Environment(Router.self) var router
-    
+
     @State private var expiryDate: Date
     @State private var inventoryStore: InventoryStore
     @State private var quantity: Int = 1
@@ -37,10 +37,10 @@ public struct AddConsumableView: View {
     var didUpdateExpiryDate: Bool {
         expiryDate.isSameDay(as: initialExpiryDate) == false
     }
-    
+
     func addToInventory() {
         print("Expiry date: \(expiryDate)", "Inventory store: \(inventoryStore.rawValue)", "quantity: \(quantity)", "status: \(status.rawValue)")
-        
+
         router.popToRoot(for: .search)
     }
 
