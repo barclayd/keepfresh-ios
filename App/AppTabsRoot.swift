@@ -18,10 +18,19 @@ struct AppTabRootView: View {
                     tab.rootView()
                         .withAppRouter()
                         .environment(\.currentTab, tab)
+                        .toolbarRole(.browser)
+                        .toolbar {
+                            router.selectedTab.toolbarContent
+                        }
+                        .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
+                        .toolbarBackground(router.selectedTab.toolbarBackground, for: .navigationBar)
+                        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+                        .navigationBarTitleDisplayMode(.inline)
                 }
                 .tint(.white200)
                 .tabItem { tab.label }
                 .tag(tab)
+                
             }
         }
     }

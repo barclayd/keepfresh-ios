@@ -73,6 +73,7 @@ public struct SearchResultView: View {
                 ForEach(0 ..< 20) { _ in
                     NavigationLink(value: RouterDestination.addConsumableItem(consumableSearchItem: consumableSearchItem)) {
                         SearchResultCard()
+                            .toolbarVisibility(.hidden, for: .tabBar)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(PlainButtonStyle())
