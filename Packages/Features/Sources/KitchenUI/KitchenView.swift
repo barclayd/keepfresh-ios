@@ -111,7 +111,7 @@ public struct KitchenView: View {
 
     public var body: some View {
         ScrollView {
-            VStack(spacing: 40) {
+            VStack(spacing: 25) {
                 InventoryStore(inventoryStoreDetails: InventoryStoreDetails(
                     id: 1, name: "Pantry", type: .pantry, expiryStatusPercentage: 12, lastUpdated: Date(), itemsCount: 12,
                     openItemsCount: 3, itemsExpiringSoonCount: 4,
