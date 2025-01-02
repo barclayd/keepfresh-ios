@@ -20,7 +20,7 @@ struct AppTabRootView: View {
                         .environment(\.currentTab, tab)
                         .toolbarRole(.browser)
                         .toolbar {
-                            router.selectedTab.toolbarContent
+                            router.selectedTab.toolbarContent(router: router)
                         }
                         .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
                         .toolbarBackground(router.selectedTab.toolbarBackground, for: .navigationBar)
@@ -59,7 +59,8 @@ public extension AppTab {
     }
 
     @ToolbarContentBuilder
-    var toolbarContent: some ToolbarContent {
+    func toolbarContent(router: Router) -> some ToolbarContent {
+        
         switch self {
         case .today, .kitchen:
             ToolbarItem(placement: .topBarLeading) {
@@ -79,7 +80,7 @@ public extension AppTab {
 
             ToolbarItemGroup {
                 Button(action: {
-                    print("Add item")
+                    router.selectedTab = .search
                 }) {
                     Image(systemName: "plus.app").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
