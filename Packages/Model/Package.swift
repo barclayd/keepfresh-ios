@@ -15,16 +15,16 @@ let package = Package(
         .library(name: "Router", targets: ["Router"]),
     ],
     dependencies: [
-        .package(name: "DesignSystem", path: "../DesignSystem"),
+        .package(name: "DesignSystem", path: "DesignSystem"),
     ],
     targets: [
         .target(
             name: "Models",
-            dependencies: []
+            dependencies: baseDeps
         ),
         .target(
             name: "Router",
-            dependencies: baseDeps
+            dependencies: baseDeps + ["Models"]
         ),
     ]
 )

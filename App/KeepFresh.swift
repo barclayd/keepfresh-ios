@@ -31,17 +31,8 @@ struct KeepFreshApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                AppTabRootView()
-                    .toolbarRole(.browser)
-                    .toolbar {
-                        router.selectedTab.toolbarContent
-                    }
-                    .toolbarBackground(router.selectedTab.toolbarBackground, for: .navigationBar)
-                    .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .environment(router)
-            }.tint(router.currentTabPathTint)
-        }.environment(router)
+            AppTabRootView()
+                .environment(router)
+        }
     }
 }

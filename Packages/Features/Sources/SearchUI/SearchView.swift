@@ -36,7 +36,7 @@ public struct SearchView: View {
                                 Text(searchTabItems[index])
                                     .fontWeight(.bold)
                                     .font(.subheadline)
-                                    .foregroundStyle(.blue800)
+                                    .foregroundStyle(.blue700)
                                     .opacity(currentPage == index ? 1 : 0.5)
                                 ZStack {
                                     Capsule()
@@ -153,7 +153,7 @@ public struct NavigatationBarSearch: ViewModifier {
 
                 func clearButtonImage() -> UIImage {
                     let image = UIImage(systemName: "xmark.circle.fill")
-                    return image!.withTintColor(UIColor(.blue800), renderingMode: .alwaysOriginal)
+                    return image!.withTintColor(UIColor(.blue700), renderingMode: .alwaysOriginal)
                 }
 
                 UISearchTextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])

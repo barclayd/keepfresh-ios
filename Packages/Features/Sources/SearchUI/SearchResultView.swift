@@ -14,7 +14,7 @@ public struct SearchResultCard: View {
                 Text(consumableSearchItem.name)
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundStyle(.blue800)
+                    .foregroundStyle(.blue700)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
                 Image(systemName: "plus")
@@ -22,7 +22,7 @@ public struct SearchResultCard: View {
                     .fontWeight(.bold)
                     .foregroundColor(.white200)
                     .frame(width: 28, height: 28)
-                    .background(Circle().fill(.blue800))
+                    .background(Circle().fill(.blue700))
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 10)
@@ -41,13 +41,13 @@ public struct SearchResultCard: View {
                         .foregroundStyle(.brandSainsburys)
                     Circle()
                         .frame(width: 4, height: 4)
-                        .foregroundStyle(.blue800)
+                        .foregroundStyle(.blue700)
                     Text("\(String(format: "%.0f", consumableSearchItem.amount)) \(consumableSearchItem.unit)").foregroundStyle(.gray500)
                         .font(.subheadline)
                     Spacer()
                     Image(systemName: "clock")
                         .font(.system(size: 16))
-                        .foregroundStyle(.blue800)
+                        .foregroundStyle(.blue700)
                 }
             }.padding(.horizontal, 5).padding(10).padding(.bottom, 5)
                 .background(
@@ -73,6 +73,7 @@ public struct SearchResultView: View {
                 ForEach(0 ..< 20) { _ in
                     NavigationLink(value: RouterDestination.addConsumableItem(consumableSearchItem: consumableSearchItem)) {
                         SearchResultCard()
+                            .toolbarVisibility(.hidden, for: .tabBar)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(PlainButtonStyle())

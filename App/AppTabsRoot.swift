@@ -18,10 +18,19 @@ struct AppTabRootView: View {
                     tab.rootView()
                         .withAppRouter()
                         .environment(\.currentTab, tab)
+                        .toolbarRole(.browser)
+                        .toolbar {
+                            router.selectedTab.toolbarContent(router: router)
+                        }
+                        .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
+                        .toolbarBackground(router.selectedTab.toolbarBackground, for: .navigationBar)
+                        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+                        .navigationBarTitleDisplayMode(.inline)
                 }
                 .tint(.white200)
                 .tabItem { tab.label }
                 .tag(tab)
+                
             }
         }
     }
@@ -46,11 +55,12 @@ public extension AppTab {
     @ViewBuilder
     var label: some View {
         Label(title, systemImage: icon)
-            .environment(\.symbolVariants, self == .today ? .none : .fill)
+            .environment(\.symbolVariants, self.symbolVariants)
     }
 
     @ToolbarContentBuilder
-    var toolbarContent: some ToolbarContent {
+    func toolbarContent(router: Router) -> some ToolbarContent {
+        
         switch self {
         case .today, .kitchen:
             ToolbarItem(placement: .topBarLeading) {
@@ -70,16 +80,16 @@ public extension AppTab {
 
             ToolbarItemGroup {
                 Button(action: {
-                    print("Add item")
+                    router.selectedTab = .search
                 }) {
                     Image(systemName: "plus.app").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.blue600)
+                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
                 Button(action: {
                     print("Scan barcode")
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.blue600)
+                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
             }
 

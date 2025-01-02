@@ -22,6 +22,10 @@ public final class Router {
     public var currentTabPathTint: Color? {
         selectedTabPath.last?.tint
     }
+    
+    public var tabBarVisibilityForCurrentTab: Visibility {
+        selectedTabPath.last?.tabBarVisibility ?? .automatic
+    }
 
     public func popToRoot(for tab: AppTab? = nil) {
         paths[tab ?? selectedTab] = []

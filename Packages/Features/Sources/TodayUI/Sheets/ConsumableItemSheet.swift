@@ -15,10 +15,10 @@ struct ConsumableSheetStatsGridRows: View {
                     }
                     Image(systemName: "hourglass")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue800)
+                        .foregroundStyle(.blue700)
                     Image(systemName: "percent")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue800)
+                        .foregroundStyle(.blue700)
                     VStack(spacing: 0) {
                         Text("17").fontWeight(.bold).font(.headline)
                         Text("Waste score").fontWeight(.light).font(.subheadline)
@@ -28,10 +28,10 @@ struct ConsumableSheetStatsGridRows: View {
                     Text("Fridge").fontWeight(.bold).font(.headline)
                     Image(systemName: "refrigerator")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue800)
+                        .foregroundStyle(.blue700)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue800)
+                        .foregroundStyle(.blue700)
                     Text("Sainsburys").fontWeight(.bold).foregroundStyle(.brandSainsburys).font(.headline).lineLimit(1)
                 }
             }

@@ -65,7 +65,7 @@ public struct AddConsumableView: View {
                             Image(systemName: consumableItem.icon).font(.system(size: 78)).foregroundColor(
                                 .white200)
                             Text("\(consumableItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
-                                .blue800
+                                .blue700
                             ).fontWeight(.bold)
                             HStack {
                                 Text(consumableItem.category)
@@ -94,33 +94,33 @@ public struct AddConsumableView: View {
                             Grid {
                                 GridRow {
                                     VStack(spacing: 0) {
-                                        Text("32").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
+                                        Text("32").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
                                         Text("Previously addded").fontWeight(.light).font(.subheadline).lineLimit(1)
-                                            .foregroundStyle(.blue800)
+                                            .foregroundStyle(.blue700)
                                     }
                                     Image(systemName: "calendar.badge.plus")
                                         .font(.system(size: 32)).fontWeight(.bold)
-                                        .foregroundStyle(.blue800)
+                                        .foregroundStyle(.blue700)
                                     VStack(spacing: 0) {
-                                        Text("31").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
+                                        Text("31").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
                                         Text("Previously consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                            .blue800)
+                                            .blue700)
                                     }
                                 }
                                 GridRow {
                                     VStack(spacing: 0) {
-                                        Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
-                                            .foregroundStyle(.blue800)
+                                        Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            .foregroundStyle(.blue700)
                                         Text("In Fridge").fontWeight(.light).font(.subheadline)
-                                            .foregroundStyle(.blue800)
+                                            .foregroundStyle(.blue700)
                                     }
                                     Image(systemName: "house")
                                         .font(.system(size: 32)).fontWeight(.bold)
-                                        .foregroundStyle(.blue800)
+                                        .foregroundStyle(.blue700)
                                     VStack(spacing: 0) {
-                                        Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue800)
+                                        Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
                                         Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                            .blue800)
+                                            .blue700)
                                     }
                                 }
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(

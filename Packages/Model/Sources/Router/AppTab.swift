@@ -17,6 +17,14 @@ public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .kitchen: return "refrigerator"
         }
     }
+    
+    public var symbolVariants: SymbolVariants {
+        switch self {
+        case .today: return .none
+        case .search: return .fill
+        case .kitchen: return .none
+        }
+    }
 
     public var title: String {
         switch self {
