@@ -109,6 +109,11 @@ private struct InventoryStore: View {
 }
 
 public struct KitchenView: View {
+    @State private var selectedConsumableItem: ConsumableItem? = nil
+    
+    @MainActor let consumableItem: ConsumableItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+    
+    
     let inventoryStoreDetails: [InventoryStoreDetails] = [InventoryStoreDetails(
         id: 1, name: "Pantry", type: .pantry, expiryStatusPercentage: 12, lastUpdated: Date(), itemsCount: 12,
         openItemsCount: 3, itemsExpiringSoonCount: 4,
@@ -139,6 +144,7 @@ public struct KitchenView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
+                ConsumableItemView(selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)
