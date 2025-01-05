@@ -130,7 +130,7 @@ public struct KitchenView: View {
         ScrollView {
             LazyVStack(spacing: 25) {
                 HStack {
-                    Text("Kitchen").font(.largeTitle).foregroundStyle(.blue700).fontWeight(.bold)
+                    Text("Kitchen").font(.largeTitle).foregroundStyle(.blue800).fontWeight(.bold)
                     Spacer()
                 }
                 ForEach(inventoryStoreDetails) { inventoryStoreDetail in

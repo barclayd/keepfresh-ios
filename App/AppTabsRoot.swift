@@ -30,7 +30,6 @@ struct AppTabRootView: View {
                 .tint(.white200)
                 .tabItem { tab.label }
                 .tag(tab)
-                
             }
         }
     }
@@ -55,12 +54,11 @@ public extension AppTab {
     @ViewBuilder
     var label: some View {
         Label(title, systemImage: icon)
-            .environment(\.symbolVariants, self.symbolVariants)
+            .environment(\.symbolVariants, symbolVariants)
     }
 
     @ToolbarContentBuilder
     func toolbarContent(router: Router) -> some ToolbarContent {
-        
         switch self {
         case .today, .kitchen:
             ToolbarItem(placement: .topBarLeading) {

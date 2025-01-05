@@ -1,13 +1,104 @@
 import DesignSystem
-import TodayUI
 import Models
 import Router
 import SwiftUI
+import TodayUI
+
+private enum SortDirection {
+    case forward
+    case backward
+
+    func toggle() -> SortDirection {
+        switch self {
+        case .forward: return .backward
+        case .backward: return .forward
+        }
+    }
+}
+
+private enum ConsumbaleItemSortMode {
+    case dateAdded(direction: SortDirection)
+    case alphabetical(direction: SortDirection)
+    case expiryDate(direction: SortDirection)
+
+    var isDateAdded: Bool {
+        if case .dateAdded = self { return true }
+        return false
+    }
+
+    var isAlphabetical: Bool {
+        if case .alphabetical = self { return true }
+        return false
+    }
+
+    var isExpiryDate: Bool {
+        if case .expiryDate = self { return true }
+        return false
+    }
+
+    func toggleDirection() -> ConsumbaleItemSortMode {
+        switch self {
+        case let .dateAdded(direction: direction):
+            return .dateAdded(direction: direction.toggle())
+        case let .alphabetical(direction: direction):
+            return .alphabetical(direction: direction.toggle())
+        case let .expiryDate(direction: direction):
+            return .expiryDate(direction: direction.toggle())
+        }
+    }
+
+    func updateSortMode() -> ConsumbaleItemSortMode {
+        switch self {
+        case .dateAdded: return .dateAdded(direction: .forward)
+        case .alphabetical: return .alphabetical(direction: .forward)
+        case .expiryDate: return .expiryDate(direction: .forward)
+        }
+    }
+
+    var baseCase: String {
+        switch self {
+        case .dateAdded: return "dateAdded"
+        case .alphabetical: return "alphabetical"
+        case .expiryDate: return "expiryDate"
+        }
+    }
+}
+
+private struct SortButton: View {
+    @Binding var sortMode: ConsumbaleItemSortMode
+    let type: ConsumbaleItemSortMode
+    let icon: String
+
+    var isActive: Bool {
+        type.baseCase == sortMode.baseCase
+    }
+
+    public var body: some View {
+        Button(action: {
+            if isActive {
+                let toggledDirection = sortMode.toggleDirection()
+                sortMode = toggledDirection
+            } else {
+                sortMode = type.updateSortMode()
+            }
+        }) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundColor(.white400)
+                .frame(width: 32, height: 32)
+                .background(Circle().fill(isActive ? .blue700 : .gray700))
+        }
+    }
+}
 
 public struct InventoryStoreView: View {
     @State private var selectedConsumableItem: ConsumableItem? = nil
+    @State private var sortMode: ConsumbaleItemSortMode = .alphabetical(direction: .forward)
 
-    let consumableItem: ConsumableItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+    let consumableItem: ConsumableItem = .init(
+        id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy",
+        brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open,
+        wasteScore: 17, expiryDate: Date())
 
     public let inventoryStore: InventoryStoreDetails
 
@@ -21,12 +112,11 @@ public struct InventoryStoreView: View {
                 ScrollView(showsIndicators: false) {
                     ZStack {
                         LinearGradient(
-                            stops: inventoryStore.type.viewGradientStops, startPoint: .top, endPoint: .bottom
-                        )
-                        .ignoresSafeArea(edges: .top)
-                        .offset(y: -geometry.safeAreaInsets.top)
-                        .frame(height: geometry.size.height)
-                        .frame(maxHeight: .infinity, alignment: .top)
+                            stops: inventoryStore.type.viewGradientStops, startPoint: .top, endPoint: .bottom)
+                            .ignoresSafeArea(edges: .top)
+                            .offset(y: -geometry.safeAreaInsets.top)
+                            .frame(height: geometry.size.height)
+                            .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 15) {
                             Image(systemName: inventoryStore.type.icon).font(.system(size: 78)).foregroundColor(
@@ -49,7 +139,9 @@ public struct InventoryStoreView: View {
                                 GridRow {
                                     VStack(spacing: 0) {
                                         Text("3").foregroundStyle(.green600).fontWeight(.bold).font(.headline)
-                                        Text("Expriing soon").foregroundStyle(.green600).fontWeight(.light).font(.subheadline).lineLimit(1)
+                                        Text("Expriing soon").foregroundStyle(.green600).fontWeight(.light).font(
+                                            .subheadline
+                                        ).lineLimit(1)
                                     }
                                     Image(systemName: "hourglass")
                                         .font(.system(size: 28)).fontWeight(.bold)
@@ -59,13 +151,16 @@ public struct InventoryStoreView: View {
                                         .foregroundStyle(.blue700)
                                     VStack(spacing: 0) {
                                         Text("1").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Expires today").fontWeight(.light).font(.subheadline).foregroundStyle(.blue700)
+                                        Text("Expires today").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                            .blue700)
                                     }
                                 }
                                 GridRow {
                                     VStack(spacing: 0) {
                                         Text("32").foregroundStyle(.blue700).fontWeight(.bold).font(.headline)
-                                        Text("Recently added").foregroundStyle(.blue700).fontWeight(.light).font(.subheadline).lineLimit(1)
+                                        Text("Recently added").foregroundStyle(.blue700).fontWeight(.light).font(
+                                            .subheadline
+                                        ).lineLimit(1)
                                     }
                                     Image(systemName: "calendar.badge.plus")
                                         .font(.system(size: 28)).fontWeight(.bold)
@@ -75,17 +170,33 @@ public struct InventoryStoreView: View {
                                         .foregroundStyle(.blue700)
                                     VStack(spacing: 0) {
                                         Text("34").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Total items").fontWeight(.light).font(.subheadline).foregroundStyle(.blue700)
+                                        Text("Total items").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                            .blue700)
                                     }
                                 }
-                            }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.blue150).cornerRadius(20)
+                            }.padding(.horizontal, 15).padding(.vertical, 5).frame(
+                                maxWidth: .infinity, alignment: .center).background(.blue150).cornerRadius(20)
 
                             HStack {
                                 Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                 Spacer()
-                            }
+                                HStack(spacing: 8) {
+                                    SortButton(
+                                        sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock")
+                                    SortButton(
+                                        sortMode: $sortMode, type: .alphabetical(direction: .forward),
+                                        icon: "arrow.up.arrow.down")
+                                    SortButton(
+                                        sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass")
+                                }
+                            }.padding(.vertical, 5)
 
-                            ConsumableItemView(selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
 
                             Spacer()
                         }

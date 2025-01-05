@@ -135,7 +135,7 @@ struct WideStatsView: View {
 
 public struct ConsumableItemView: View {
     @Binding var selectedConsumableItem: ConsumableItem?
-    
+
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private func getSheetFraction(height: CGFloat) -> CGFloat {
@@ -154,12 +154,11 @@ public struct ConsumableItemView: View {
             return 0.7
         }
     }
-    
-    
+
     let consumableItem: ConsumableItem
-    
+
     public init(selectedConsumableItem: Binding<ConsumableItem?>, consumableItem: ConsumableItem) {
-        self._selectedConsumableItem = selectedConsumableItem
+        _selectedConsumableItem = selectedConsumableItem
         self.consumableItem = consumableItem
     }
 
@@ -172,6 +171,7 @@ public struct ConsumableItemView: View {
                     Text(consumableItem.name)
                         .font(.title2)
                         .fontWeight(.bold)
+                        .foregroundStyle(.blue800)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     HStack {
