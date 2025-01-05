@@ -157,6 +157,11 @@ public struct ConsumableItemView: View {
     
     
     let consumableItem: ConsumableItem
+    
+    public init(selectedConsumableItem: Binding<ConsumableItem?>, consumableItem: ConsumableItem) {
+        self._selectedConsumableItem = selectedConsumableItem
+        self.consumableItem = consumableItem
+    }
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -203,8 +208,6 @@ public struct ConsumableItemView: View {
         .background(Color.white)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .onTapGesture {
             // need to add haptics

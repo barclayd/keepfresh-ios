@@ -31,6 +31,8 @@ public struct TodayView: View {
     public var body: some View {
         ScrollView {
             ConsumableItemView(selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
-        }.padding(.vertical, 10).background(.white200)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 20).padding(.vertical, 10).background(.white200)
     }
 }

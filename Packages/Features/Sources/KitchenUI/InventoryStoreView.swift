@@ -1,9 +1,14 @@
 import DesignSystem
+import TodayUI
 import Models
 import Router
 import SwiftUI
 
 public struct InventoryStoreView: View {
+    @State private var selectedConsumableItem: ConsumableItem? = nil
+
+    let consumableItem: ConsumableItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+
     public let inventoryStore: InventoryStoreDetails
 
     public init(inventoryStore: InventoryStoreDetails) {
@@ -74,11 +79,13 @@ public struct InventoryStoreView: View {
                                     }
                                 }
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.blue150).cornerRadius(20)
-                            
+
                             HStack {
                                 Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                 Spacer()
                             }
+
+                            ConsumableItemView(selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
 
                             Spacer()
                         }
