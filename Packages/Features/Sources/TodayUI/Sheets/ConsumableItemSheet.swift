@@ -22,7 +22,7 @@ struct ConsumableSheetStatsGridRows: View {
                     VStack(spacing: 0) {
                         Text("17").fontWeight(.bold).font(.headline)
                         Text("Waste score").fontWeight(.light).font(.subheadline)
-                    }
+                    }.foregroundStyle(.blue700)
                 }
                 GridRow {
                     Text("Fridge").fontWeight(.bold).font(.headline)
@@ -42,27 +42,27 @@ struct ConsumableSheetStatsGridRows: View {
                 VStack(spacing: 0) {
                     Text("3 weeks ago").fontWeight(.bold).font(.headline)
                     Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
-                }
+                }.foregroundStyle(.blue700)
                 Image(systemName: "calendar.badge.plus")
                     .font(.system(size: 32)).fontWeight(.bold)
-                    .foregroundStyle(.black800)
+                    .foregroundStyle(.blue700)
                 VStack(spacing: 0) {
                     Text("3 days ago").fontWeight(.bold).font(.headline)
                     Text("Opened").fontWeight(.light).font(.subheadline)
-                }
+                }.foregroundStyle(.blue700)
             }
             GridRow {
                 VStack(spacing: 0) {
                     Text("2").fontWeight(.bold).font(.headline)
                     Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
-                }
+                }.foregroundStyle(.blue700)
                 Image(systemName: "house")
                     .font(.system(size: 32)).fontWeight(.bold)
-                    .foregroundStyle(.black800)
+                    .foregroundStyle(.blue700)
                 VStack(spacing: 0) {
                     Text("3").fontWeight(.bold).font(.headline)
                     Text("Located in Freezer").fontWeight(.light).font(.subheadline)
-                }
+                }.foregroundStyle(.blue700)
             }
         }
     }
@@ -122,8 +122,8 @@ struct ConsumableItemSheetView: View {
                 }
             }.padding(.top, 10)
             Image(systemName: consumableItem.icon)
-                .font(.system(size: 80)).padding(.bottom, -8)
-            Text(consumableItem.name).font(.title).fontWeight(.bold).foregroundStyle(.black).lineSpacing(0).padding(.bottom, -8)
+                .font(.system(size: 80)).padding(.bottom, -8).foregroundStyle(.blue800)
+            Text(consumableItem.name).font(.title).fontWeight(.bold).foregroundStyle(.blue800).lineSpacing(0).padding(.bottom, -8)
             HStack {
                 Text(consumableItem.category)
                     .font(.callout)

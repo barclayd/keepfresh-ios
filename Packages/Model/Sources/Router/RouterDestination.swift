@@ -17,7 +17,7 @@ public enum RouterDestination: Hashable {
             return nil
         }
     }
-    
+
     public var tabBarVisibility: Visibility {
         switch self {
         case .addConsumableItem:

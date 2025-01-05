@@ -22,7 +22,7 @@ public final class Router {
     public var currentTabPathTint: Color? {
         selectedTabPath.last?.tint
     }
-    
+
     public var tabBarVisibilityForCurrentTab: Visibility {
         selectedTabPath.last?.tabBarVisibility ?? .automatic
     }
