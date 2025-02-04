@@ -90,6 +90,7 @@ struct ConsumableItemSheetView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
+    @State private var showRemoveSheet: Bool = false
 
     init(consumableItem: Binding<ConsumableItem?>) {
         _consumableItem = consumableItem
@@ -175,7 +176,17 @@ struct ConsumableItemSheetView: View {
                             .lineLimit(2 ... 2)
                         Spacer()
                     }
-
+                    GridRow {
+                        Image(systemName: "beach.umbrella.fill")
+                            .foregroundStyle(.green500)
+                            .font(.system(size: 32))
+                        Text("You should only need to buy one of these before your next holiday")
+                            .font(.callout)
+                            .foregroundStyle(.gray600)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2 ... 2)
+                        Spacer()
+                    }
                 }.padding(.bottom, 8)
                 Grid(horizontalSpacing: 16, verticalSpacing: 0) {
                     GridRow {
@@ -189,17 +200,17 @@ struct ConsumableItemSheetView: View {
                             .lineLimit(2 ... 2)
                         Spacer()
                     }
-
                 }.padding(.bottom, 8)
             }
             Button(action: {
-                print("Mark as no waste")
+                print("Mark as done")
+                showRemoveSheet = true
             }) {
                 HStack(spacing: 10) {
                     Image(systemName: "takeoutbag.and.cup.and.straw.fill")
                         .font(.system(size: 18))
                         .frame(width: 20, alignment: .center)
-                    Text("Finish with no waste")
+                    Text("Mark as done")
                         .font(.headline)
                         .frame(width: 175, alignment: .center)
                 }
@@ -210,26 +221,6 @@ struct ConsumableItemSheetView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.green300)
-                )
-            }
-            Button(action: {
-                print("Mark as waste")
-            }) {
-                HStack(spacing: 10) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 18))
-                        .frame(width: 20, alignment: .center)
-                    Text("Finish with waste")
-                        .font(.headline)
-                        .frame(width: 175, alignment: .center)
-                }
-                .foregroundStyle(.blue600)
-                .fontWeight(.bold)
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .center)
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(.red200)
                 )
             }
             Button(action: {
@@ -254,5 +245,11 @@ struct ConsumableItemSheetView: View {
             }
         }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
             .padding(.horizontal, 10)
+            .sheet(isPresented: $showRemoveSheet) {
+                RemoveConsumableItemSheet()
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(25)
+                .presentationDetents([.fraction(0.35)])
+            }
     }
 }
