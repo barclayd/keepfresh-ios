@@ -2,7 +2,7 @@ import DesignSystem
 import Models
 import SwiftUI
 
-@MainActor let consumableItem: ConsumableItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+@MainActor let consumableItem: ConsumableItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pts", inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
 
 public struct TodayView: View {
     public init() {}
@@ -22,7 +22,7 @@ public struct TodayView: View {
         case ..<845:
             return 0.9 // iPhone 13
         case ..<957:
-            return 0.8 // iPhone 16 Pro Max
+            return 0.85 // iPhone 16 Pro Max
         default:
             return 0.7
         }

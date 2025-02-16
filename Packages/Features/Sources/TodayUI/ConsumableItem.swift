@@ -6,120 +6,38 @@ struct StatsView: View {
 
     var body: some View {
         HStack {
-            VStack {
-                Text("Location")
-                    .textCase(.uppercase)
+            HStack(spacing: 2) {
+                Image(systemName: "calendar")
+                    .font(.system(size: 18))
                     .foregroundStyle(.gray400)
-                    .font(.caption)
-                Text(consumableItem.inventoryStore.rawValue)
+                Text("2w")
+                    .foregroundStyle(.gray400)
+            }
+
+            Image(systemName: "refrigerator.fill")
+                .font(.system(size: 18))
+                .foregroundStyle(.gray400)
+
+            HStack(spacing: 2) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 18))
+                Text("17%")
+                    
+            }.foregroundStyle(.yellow500)
+            
+            Spacer()
+            
+            HStack(spacing: 3) {
+                Image(systemName: "hourglass")
+                    .font(.system(size: 18))
                     .fontWeight(.bold)
                     .foregroundStyle(.green600)
-                    .font(.headline)
-            }
-            Spacer()
-
-            VStack {
-                Text("Status")
-                    .textCase(.uppercase)
-                    .foregroundStyle(.gray400)
-                    .font(.caption)
-                Text(consumableItem.status.rawValue)
-                    .fontWeight(.bold)
+                Text("3 days")
                     .foregroundStyle(.green600)
-                    .font(.headline)
-            }
-            Spacer()
-
-            VStack {
-                Text("Expiry")
-                    .textCase(.uppercase)
-                    .foregroundStyle(.gray400)
-                    .font(.caption)
-                HStack(spacing: 3) {
-                    Image(systemName: "hourglass")
-                        .font(.system(size: 18))
-                        .foregroundStyle(.green600)
-                    Text("3 days")
-                        .fontWeight(.bold)
-                        .foregroundStyle(.green600)
-                        .font(.headline)
-                }
             }
         }
         .padding(.vertical, 15)
-        .padding(.horizontal, 20)
-        .background(
-            UnevenRoundedRectangle(
-                topLeadingRadius: 0,
-                bottomLeadingRadius: 20,
-                bottomTrailingRadius: 20,
-                topTrailingRadius: 0,
-                style: .continuous
-            )
-        )
-        .foregroundStyle(.green300)
-    }
-}
-
-struct WideStatsView: View {
-    let consumableItem: ConsumableItem
-
-    var body: some View {
-        HStack {
-            VStack {
-                Text("Location")
-                    .textCase(.uppercase)
-                    .foregroundStyle(.gray400)
-                    .font(.caption)
-                Text(consumableItem.inventoryStore.rawValue.capitalized)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.green600)
-                    .font(.headline)
-            }
-            Spacer()
-
-            VStack {
-                Text("Status")
-                    .textCase(.uppercase)
-                    .foregroundStyle(.gray400)
-                    .font(.caption)
-                Text(consumableItem.status.rawValue.capitalized)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.green600)
-                    .font(.headline)
-            }
-            Spacer()
-
-            VStack {
-                Text("Waste %")
-                    .textCase(.uppercase)
-                    .foregroundStyle(.gray400)
-                    .font(.caption)
-                Text("\(String(format: "%.0f", consumableItem.amount))")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.green600)
-                    .font(.headline)
-            }
-            Spacer()
-
-            VStack {
-                Text("EXPIRY")
-                    .textCase(.uppercase)
-                    .foregroundStyle(.gray400)
-                    .font(.caption)
-                HStack(spacing: 3) {
-                    Image(systemName: "hourglass")
-                        .font(.system(size: 18))
-                        .foregroundStyle(.green600)
-                    Text("3 days")
-                        .fontWeight(.bold)
-                        .foregroundStyle(.green600)
-                        .font(.headline)
-                }
-            }
-        }
-        .padding(.vertical, 15)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 10)
         .background(
             UnevenRoundedRectangle(
                 topLeadingRadius: 0,
@@ -142,6 +60,8 @@ public struct ConsumableItemView: View {
         if dynamicTypeSize >= .xxLarge {
             return 0.8
         }
+        
+        print("Height: \(height)")
 
         switch height {
         case ..<668:
@@ -149,9 +69,9 @@ public struct ConsumableItemView: View {
         case ..<845:
             return 0.9 // iPhone 13
         case ..<957:
-            return 0.8 // iPhone 16 Pro Max
+            return 0.725 // iPhone 16 Pro Max
         default:
-            return 0.7
+            return 0.5
         }
     }
 
@@ -166,46 +86,49 @@ public struct ConsumableItemView: View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
                 Image(systemName: consumableItem.icon)
-                    .font(.system(size: 36))
-                VStack(spacing: 5) {
-                    Text(consumableItem.name)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.blue800)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.system(size: 40))
+                VStack(spacing: 2) {
+                    HStack {
+                        Text(consumableItem.name)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.blue800)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Spacer()
+                        
+                        Circle()
+                            .frame(width: 12, height: 12)
+                            .foregroundStyle(.green600)
+                    }
+                    
 
                     HStack {
                         Text(consumableItem.category)
-                            .font(.footnote).foregroundStyle(.gray600)
+                            .foregroundStyle(.gray600)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
                         Text(consumableItem.brand)
-                            .font(.footnote)
                             .foregroundStyle(.brandSainsburys)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
-                        Text("\(String(format: "%.0f", consumableItem.amount)) \(consumableItem.unit)").foregroundStyle(.gray600)
-                            .font(.footnote)
+                        Text("\(String(format: "%.0f", consumableItem.amount))\(consumableItem.unit)").foregroundStyle(.gray600)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                Spacer()
             }
             .padding(.vertical, 10)
-            .padding(.horizontal, 10)
-            .background(Color.white)
+            .padding(.horizontal, 5)
+            .background(.white)
             .cornerRadius(20)
 
-            ViewThatFits {
-                WideStatsView(consumableItem: consumableItem)
-                StatsView(consumableItem: consumableItem)
-            }
+            StatsView(consumableItem: consumableItem)
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
-        .background(Color.white)
+        .background(.white)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
