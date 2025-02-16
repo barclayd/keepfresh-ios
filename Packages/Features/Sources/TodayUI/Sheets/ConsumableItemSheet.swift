@@ -28,12 +28,10 @@ struct ConsumableSheetStatsGridRows: View {
                     Text("Fridge").fontWeight(.bold).font(.headline)
                     Image(systemName: "refrigerator")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue700)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue700)
                     Text("Sainsburys").fontWeight(.bold).foregroundStyle(.brandSainsburys).font(.headline).lineLimit(1)
-                }
+                }.foregroundStyle(.blue700)
             }
         }
 
@@ -188,7 +186,20 @@ struct ConsumableItemSheetView: View {
                         Spacer()
                     }
                 }.padding(.bottom, 8)
-                Grid(horizontalSpacing: 16, verticalSpacing: 0) {
+                Grid(horizontalSpacing: 16, verticalSpacing: 20) {
+                    GridRow {
+                        Image(systemName: "checkmark.seal.fill")
+                            .fontWeight(.bold)
+                            .foregroundStyle(.yellow500)
+                            .font(.system(size: 32))
+                        Text("Great work, you're on track to finish this before it expires")
+                            .font(.callout)
+                            .foregroundStyle(.gray600)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2 ... 2)
+
+                        Spacer()
+                    }
                     GridRow {
                         Image(systemName: "cart.circle.fill")
                             .foregroundStyle(.blue600)

@@ -10,25 +10,20 @@ struct StatsView: View {
                 Image(systemName: "calendar")
                     .font(.system(size: 18))
                     .foregroundStyle(.gray400)
-                Text("2 weeks")
+                Text("2w")
                     .foregroundStyle(.gray400)
             }
 
-            HStack(spacing: 2) {
-                Image(systemName: "refrigerator.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(.gray400)
-                Text("Fridge")
-                    .foregroundStyle(.gray400)
-            }
+            Image(systemName: "refrigerator.fill")
+                .font(.system(size: 18))
+                .foregroundStyle(.gray400)
 
             HStack(spacing: 2) {
                 Image(systemName: "sparkles")
                     .font(.system(size: 18))
-                    .foregroundStyle(.yellow500)
                 Text("17%")
-                    .foregroundStyle(.gray400)
-            }
+                    
+            }.foregroundStyle(.yellow500)
             
             Spacer()
             
@@ -65,6 +60,8 @@ public struct ConsumableItemView: View {
         if dynamicTypeSize >= .xxLarge {
             return 0.8
         }
+        
+        print("Height: \(height)")
 
         switch height {
         case ..<668:
@@ -72,9 +69,9 @@ public struct ConsumableItemView: View {
         case ..<845:
             return 0.9 // iPhone 13
         case ..<957:
-            return 0.8 // iPhone 16 Pro Max
+            return 0.725 // iPhone 16 Pro Max
         default:
-            return 0.7
+            return 0.5
         }
     }
 
@@ -141,7 +138,7 @@ public struct ConsumableItemView: View {
         }
         .sheet(item: $selectedConsumableItem) { _ in
             ConsumableItemSheetView(consumableItem: $selectedConsumableItem)
-                .presentationDetents([.medium])
+                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }
