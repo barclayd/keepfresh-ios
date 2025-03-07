@@ -8,7 +8,7 @@ public struct RemoveConsumableItemSheet: View {
     @State private var wastePercentage: Double = 0
     @State private var sliderWidth: CGFloat = 0
     
-    let predictedWastePercentage: Double = 50
+    let predictedWastePercentage: Double = 100
     
     public init() {}
     
@@ -37,7 +37,6 @@ public struct RemoveConsumableItemSheet: View {
                     GeometryReader { geometry in
                         Slider(value: $wastePercentage, in: 0 ... 100).tint(.blue600).onAppear {
                             sliderWidth = geometry.frame(in: .local).width
-                            print("sliderWidth: \(sliderWidth)")
                         }
                     }
                     
