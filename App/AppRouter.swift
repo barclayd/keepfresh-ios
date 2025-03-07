@@ -3,6 +3,7 @@ import Router
 import SearchUI
 import SwiftUI
 import TodayUI
+import BarcodeUI
 
 public struct AppRouter: ViewModifier {
     public func body(content: Content) -> some View {
@@ -19,6 +20,8 @@ public struct AppRouter: ViewModifier {
                     AddConsumableView(consumableSearchItem: consumableSearchItem)
                 case let .inventoryStoreView(inventoryStore):
                     InventoryStoreView(inventoryStore: inventoryStore)
+                case .barcodeScan:
+                    BarcodeView()
                 }
             }
     }

@@ -84,7 +84,7 @@ public extension AppTab {
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
                 Button(action: {
-                    print("Scan barcode")
+                    router.presentedSheet = .barcodeScan
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
