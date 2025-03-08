@@ -28,8 +28,7 @@ func shapeWidth(geometry: GeometryProxy) -> CGFloat {
 
 public struct BarcodeView: View {
     @State private var isFlashOn: Bool = false
-    @State private var isAnimating: Bool = false
-    
+    @State private var offsetX: CGFloat = ((UIScreen.main.bounds.width / 10) * -3) + 20
     public init() {}
     
     public var body: some View {
@@ -50,35 +49,33 @@ public struct BarcodeView: View {
                         .mask(
                             roundedRectangleWithHoleInMask(
                                 in: CGRect(
-                                    x: 0, y: 0, width: geometry.size.width, height: geometry.size.height * 1.5),
+                                    x: 0, y: 0, width: geometry.size.width, height: geometry.size.height * 1.5
+                                ),
                                 shapeWidthOffset: (geometry.size.width - shapeWidth(geometry: geometry)) / 2,
                                 shapeHeightOffset: shapeHeightOffset(geometry: geometry),
                                 shapeWidth: shapeWidth(geometry: geometry),
                                 shapeHeight: shapeHeight(geometry: geometry)
                             ).fill(style: FillStyle(eoFill: true)))
                     
-                    VStack {
+                    
+                    VStack(spacing: 20) {
                         Image(systemName: "text.magnifyingglass")
                             .foregroundStyle(.white200)
                             .font(.system(size: 36))
-                            .offset(x: isAnimating ? (-1 * shapeWidth(geometry: geometry) / 2) : (shapeWidth(geometry: geometry) / 2))
+                            .offset(x: offsetX)
                             .animation(
-                                Animation.easeInOut(duration: 1.5)
+                                Animation.easeInOut(duration: 3)
                                     .repeatForever(autoreverses: true),
-                                value: isAnimating
-                            ).onAppear {
-                                isAnimating = true
-                            }
+                                value: offsetX
+                            )
+                        
                         Text("Scan a barcode")
                             .foregroundStyle(.white200)
                             .fontWeight(.bold)
                             .font(.headline)
-                    }.padding(.top, 10)
+                    }.padding(.top, shapeHeight(geometry: geometry) * 0.25)
                 }
                 .ignoresSafeArea(.all)
-                .onAppear {
-                    isAnimating = true
-                }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
@@ -87,6 +84,16 @@ public struct BarcodeView: View {
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.gray200)
                         }
+                    }
+                }
+                .onAppear {
+//                    offsetX = shapeWidth(geometry: geometry) / 2 * -1
+                    
+                    withAnimation(
+                        Animation.easeInOut(duration: 3)
+                            .repeatForever(autoreverses: true)
+                    ) {
+                        offsetX = (shapeWidth(geometry: geometry) / 2) - 20
                     }
                 }
             }
