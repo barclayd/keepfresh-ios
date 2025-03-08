@@ -29,7 +29,11 @@ func shapeWidth(geometry: GeometryProxy) -> CGFloat {
 public struct BarcodeView: View {
     @State private var isFlashOn: Bool = false
     @State private var offsetX: CGFloat = ((UIScreen.main.bounds.width / 10) * -3) + 20
+    @State private var barcodeIndex: Int = 0
     public init() {}
+    
+    let timer = Timer.publish(every: 3, tolerance: 1, on: .main, in: .common).autoconnect()
+    let barcodeIcons = ["text.magnifyingglass", "text.page.badge.magnifyingglass", "rectangle.and.text.magnifyingglass"]
     
     public var body: some View {
         NavigationView {
@@ -45,7 +49,7 @@ public struct BarcodeView: View {
                     }
                     
                     Rectangle()
-                        .fill(Color.black).opacity(0.7)
+                        .fill(Color.blue800).opacity(0.8)
                         .mask(
                             roundedRectangleWithHoleInMask(
                                 in: CGRect(
@@ -59,7 +63,7 @@ public struct BarcodeView: View {
                     
                     
                     VStack(spacing: 20) {
-                        Image(systemName: "text.magnifyingglass")
+                        Image(systemName: barcodeIcons[barcodeIndex])
                             .foregroundStyle(.white200)
                             .font(.system(size: 36))
                             .offset(x: offsetX)
@@ -68,6 +72,10 @@ public struct BarcodeView: View {
                                     .repeatForever(autoreverses: true),
                                 value: offsetX
                             )
+                            .frame(height: 50)
+                            .onReceive(timer) { _ in
+                                barcodeIndex = (barcodeIndex + 1) % barcodeIcons.count
+                            }
                         
                         Text("Scan a barcode")
                             .foregroundStyle(.white200)
