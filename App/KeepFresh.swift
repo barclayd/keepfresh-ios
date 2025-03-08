@@ -1,16 +1,16 @@
+import BarcodeUI
 import DesignSystem
 import Router
 import SwiftUI
-import BarcodeUI
 
 public class FontRegistration {
     public static func registerFonts() {
         let bundle = Bundle(for: FontRegistration.self)
-        
+
         guard let bundleURL = bundle.url(forResource: "Shrikhand-Regular", withExtension: "ttf") else {
             return
         }
-        
+
         CTFontManagerRegisterFontsForURL(bundleURL as CFURL, .process, nil)
     }
 }
@@ -18,7 +18,7 @@ public class FontRegistration {
 @main
 struct KeepFreshApp: App {
     @State var router: Router = .init()
-    
+
     init() {
         if UIDevice.current.userInterfaceIdiom == .phone {
             let tabBarAppearance = UITabBarAppearance()
@@ -29,7 +29,7 @@ struct KeepFreshApp: App {
         }
         FontRegistration.registerFonts()
     }
-    
+
     var body: some Scene {
         WindowGroup {
             AppTabRootView()

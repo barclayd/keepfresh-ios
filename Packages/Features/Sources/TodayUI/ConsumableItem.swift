@@ -22,11 +22,11 @@ struct StatsView: View {
                 Image(systemName: "sparkles")
                     .font(.system(size: 18))
                 Text("17%")
-                    
+
             }.foregroundStyle(.yellow500)
-            
+
             Spacer()
-            
+
             HStack(spacing: 3) {
                 Image(systemName: "hourglass")
                     .font(.system(size: 18))
@@ -60,7 +60,7 @@ public struct ConsumableItemView: View {
         if dynamicTypeSize >= .xxLarge {
             return 0.8
         }
-        
+
         print("Height: \(height)")
 
         switch height {
@@ -94,14 +94,13 @@ public struct ConsumableItemView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.blue800)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        
+
                         Spacer()
-                        
+
                         Circle()
                             .frame(width: 12, height: 12)
                             .foregroundStyle(.green600)
                     }
-                    
 
                     HStack {
                         Text(consumableItem.category)

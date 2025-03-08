@@ -46,7 +46,7 @@ public struct SearchResultCard: View {
                         .font(.subheadline)
                     Spacer()
                     Image(systemName: "clock")
-                        .font(.system(size: 16))
+                        .font(.callout)
                         .foregroundStyle(.blue700)
                 }
             }.padding(.horizontal, 5).padding(10).padding(.bottom, 5)

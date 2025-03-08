@@ -98,7 +98,8 @@ public struct InventoryStoreView: View {
     let consumableItem: ConsumableItem = .init(
         id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy",
         brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open,
-        wasteScore: 17, expiryDate: Date())
+        wasteScore: 17, expiryDate: Date()
+    )
 
     public let inventoryStore: InventoryStoreDetails
 
@@ -112,11 +113,12 @@ public struct InventoryStoreView: View {
                 ScrollView(showsIndicators: false) {
                     ZStack {
                         LinearGradient(
-                            stops: inventoryStore.type.viewGradientStops, startPoint: .top, endPoint: .bottom)
-                            .ignoresSafeArea(edges: .top)
-                            .offset(y: -geometry.safeAreaInsets.top)
-                            .frame(height: geometry.size.height)
-                            .frame(maxHeight: .infinity, alignment: .top)
+                            stops: inventoryStore.type.viewGradientStops, startPoint: .top, endPoint: .bottom
+                        )
+                        .ignoresSafeArea(edges: .top)
+                        .offset(y: -geometry.safeAreaInsets.top)
+                        .frame(height: geometry.size.height)
+                        .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 15) {
                             Image(systemName: inventoryStore.type.icon).font(.system(size: 78)).foregroundColor(
@@ -175,28 +177,35 @@ public struct InventoryStoreView: View {
                                     }
                                 }
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(
-                                maxWidth: .infinity, alignment: .center).background(.blue150).cornerRadius(20)
+                                maxWidth: .infinity, alignment: .center
+                            ).background(.blue150).cornerRadius(20)
 
                             HStack {
                                 Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                 Spacer()
                                 HStack(spacing: 8) {
                                     SortButton(
-                                        sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock")
+                                        sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock"
+                                    )
                                     SortButton(
                                         sortMode: $sortMode, type: .alphabetical(direction: .forward),
-                                        icon: "arrow.up.arrow.down")
+                                        icon: "arrow.up.arrow.down"
+                                    )
                                     SortButton(
-                                        sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass")
+                                        sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass"
+                                    )
                                 }
                             }.padding(.vertical, 5)
 
                             ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
                             ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
                             ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
 
                             Spacer()
                         }

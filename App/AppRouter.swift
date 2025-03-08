@@ -1,9 +1,9 @@
+import BarcodeUI
 import KitchenUI
 import Router
 import SearchUI
 import SwiftUI
 import TodayUI
-import BarcodeUI
 
 public struct AppRouter: ViewModifier {
     public func body(content: Content) -> some View {

@@ -21,6 +21,7 @@ let package = Package(
     dependencies: [
         .package(name: "Model", path: "../Model"),
         .package(name: "DesignSystem", path: "../DesignSystem"),
+        .package(url: "https://github.com/twostraws/CodeScanner", from: "2.5.0"),
     ],
     targets: [
         .target(
@@ -37,7 +38,7 @@ let package = Package(
         ),
         .target(
             name: "BarcodeUI",
-            dependencies: baseDeps
+            dependencies: baseDeps + ["CodeScanner"]
         ),
     ]
 )

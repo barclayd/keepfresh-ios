@@ -21,6 +21,7 @@
 		4E747FB62D19F28D00DDCE17 /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = Packages/DesignSystem; sourceTree = "<group>"; };
 		4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/DesignSystem/Sources/DesignSystem/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
 		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4E9517A02D7BB56700FAFC86 /* KeepFresh-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KeepFresh-Info.plist"; sourceTree = "<group>"; };
 		9F2142232CE9DAA1004167D7 /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FAEE3A72CF0994400F86CDC /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Features; path = Packages/Features; sourceTree = "<group>"; };
 		9FAEE3A82CF0994C00F86CDC /* Model */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Model; path = Packages/Model; sourceTree = "<group>"; };
@@ -56,6 +57,7 @@
 		9F21421A2CE9DAA1004167D7 = {
 			isa = PBXGroup;
 			children = (
+				4E9517A02D7BB56700FAFC86 /* KeepFresh-Info.plist */,
 				4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */,
 				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
@@ -304,8 +306,10 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "KeepFresh-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Keep Fresh";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSCameraUsageDescription = "KeepFresh uses the camera to scan barcodes";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save images to your photo library";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -350,8 +354,10 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "KeepFresh-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Keep Fresh";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSCameraUsageDescription = "KeepFresh uses the camera to scan barcodes";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save images to your photo library";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
