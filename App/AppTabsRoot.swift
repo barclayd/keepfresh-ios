@@ -1,5 +1,7 @@
+import BarcodeUI
 import DesignSystem
 import KitchenUI
+import Models
 import Router
 import SearchUI
 import SwiftUI
@@ -31,6 +33,17 @@ struct AppTabRootView: View {
                 .tabItem { tab.label }
                 .tag(tab)
             }
+        }.sheet(
+            item: $router.presentedSheet,
+            content: { presentedSheet in
+                switch presentedSheet {
+                case .barcodeScan:
+                    BarcodeView()
+                }
+            }
+        )
+        .onAppear {
+            router.navigateTo(.addConsumableItem(consumableSearchItem: ConsumableSearchItem(id: UUID(), icon: "carrot", name: "Carrot", category: "Vegetables", brand: "Tesco", amount: 1, unit: "kg")))
         }
     }
 }

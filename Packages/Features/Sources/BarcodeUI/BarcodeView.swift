@@ -1,6 +1,10 @@
 import CodeScanner
 import DesignSystem
+import Models
+import Router
 import SwiftUI
+
+@MainActor let consumableSearchItem: ConsumableSearchItem = .init(id: UUID(), icon: "waterbottle.fill", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints")
 
 func roundedRectangleWithHoleInMask(
     in rect: CGRect, shapeWidthOffset: CGFloat, shapeHeightOffset: CGFloat, shapeWidth: CGFloat,
@@ -27,10 +31,15 @@ func shapeWidth(geometry: GeometryProxy) -> CGFloat {
 }
 
 public struct BarcodeView: View {
+    @Environment(Router.self) var router
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var isFlashOn: Bool = false
     @State private var offsetX: CGFloat = ((UIScreen.main.bounds.width / 10) * -3) + 20
     @State private var barcodeIndex: Int = 0
+    
     public init() {}
+    
     
     let timer = Timer.publish(every: 3, tolerance: 1, on: .main, in: .common).autoconnect()
     let barcodeIcons = ["text.magnifyingglass", "text.page.badge.magnifyingglass", "rectangle.and.text.magnifyingglass"]
@@ -43,6 +52,8 @@ public struct BarcodeView: View {
                         switch response {
                         case let .success(result):
                             print("Found code: \(result.string)")
+                            router.navigateTo(.addConsumableItem(consumableSearchItem: consumableSearchItem))
+                            dismiss()
                         case let .failure(error):
                             print(error.localizedDescription)
                         }

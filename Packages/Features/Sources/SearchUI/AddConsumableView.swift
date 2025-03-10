@@ -95,7 +95,7 @@ public struct AddConsumableView: View {
                                 GridRow {
                                     VStack(spacing: 0) {
                                         Text("32").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Previously addded").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                        Text("Addded").fontWeight(.light).font(.subheadline).lineLimit(1)
                                             .foregroundStyle(.blue700)
                                     }
                                     Image(systemName: "calendar.badge.plus")
@@ -103,7 +103,7 @@ public struct AddConsumableView: View {
                                         .foregroundStyle(.blue700)
                                     VStack(spacing: 0) {
                                         Text("31").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Previously consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                        Text("Consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
                                             .blue700)
                                     }
                                 }
@@ -163,7 +163,7 @@ public struct AddConsumableView: View {
                         }
                         .padding(.bottom, 100)
                         .padding(.horizontal, 20)
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: geometry.size.width)
                     }
                 }.background(.white200)
 
@@ -190,7 +190,7 @@ public struct AddConsumableView: View {
                     }
                 }
             }
-            .frame(maxHeight: geometry.size.height)
+            .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbarRole(.editor)

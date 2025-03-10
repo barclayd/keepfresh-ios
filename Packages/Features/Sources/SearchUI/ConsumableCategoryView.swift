@@ -159,7 +159,7 @@ private extension ConsumableCategoryType {
             VStack(alignment: .leading, spacing: 0) {
                 Text("\(quantity.wrappedValue)").foregroundStyle(.gray600)
             }
-            .frame(width: 100, alignment: .leading)
+            .frame(width: 75, alignment: .leading)
         }
     }
 
