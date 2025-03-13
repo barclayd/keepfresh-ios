@@ -91,9 +91,13 @@ private struct SortButton: View {
     }
 }
 
+
 public struct InventoryStoreView: View {
+    @Environment(Router.self) var router
+
     @State private var selectedConsumableItem: ConsumableItem? = nil
     @State private var sortMode: ConsumbaleItemSortMode = .alphabetical(direction: .forward)
+    @State private var didScrollPastOmbreColor = false
 
     let consumableItem: ConsumableItem = .init(
         id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy",
@@ -106,6 +110,8 @@ public struct InventoryStoreView: View {
     public init(inventoryStore: InventoryStoreDetails) {
         self.inventoryStore = inventoryStore
     }
+    
+    let inventoryStoreToScrollOffset: [InventoryStore: CGFloat] = [.pantry: -50, .fridge: 70, .freezer: 100]
 
     public var body: some View {
         GeometryReader { geometry in
@@ -207,6 +213,26 @@ public struct InventoryStoreView: View {
                                 selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
                             )
 
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+
                             Spacer()
                         }
                         .padding(.bottom, 100)
@@ -216,23 +242,36 @@ public struct InventoryStoreView: View {
                 }.background(.white200)
             }
             .frame(maxHeight: geometry.size.height)
+            .onScrollGeometryChange(for: CGFloat.self, of: { geometry in
+                    geometry.contentOffset.y
+                }, action: { oldValue, newValue in
+                    withAnimation {
+                        if newValue > inventoryStoreToScrollOffset[inventoryStore.type, default: 0] {
+                            router.customTintColor = .blue700
+                            didScrollPastOmbreColor = true
+                        } else {
+                            router.customTintColor = .white200
+                            didScrollPastOmbreColor = false
+                        }
+                    }
+                })
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbarRole(.editor)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarBackground(didScrollPastOmbreColor ? .visible : .hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "plus.app")
                         .font(.system(size: 18))
-                        .foregroundColor(.white200).fontWeight(.bold)
+                        .foregroundColor(didScrollPastOmbreColor ? .blue700 : .white200).fontWeight(.bold)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "barcode.viewfinder")
                         .font(.system(size: 18))
-                        .foregroundColor(.white200).fontWeight(.bold)
+                        .foregroundColor(didScrollPastOmbreColor ? .blue700 : .white200).fontWeight(.bold)
                 }
             }
         }

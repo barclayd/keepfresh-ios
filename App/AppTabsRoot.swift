@@ -29,7 +29,7 @@ struct AppTabRootView: View {
                         .toolbarBackgroundVisibility(.visible, for: .navigationBar)
                         .navigationBarTitleDisplayMode(.inline)
                 }
-                .tint(.white200)
+                .tint(router.customTintColor ?? router.defaultTintColor)
                 .tabItem { tab.label }
                 .tag(tab)
             }
@@ -42,9 +42,6 @@ struct AppTabRootView: View {
                 }
             }
         )
-        .onAppear {
-            router.navigateTo(.addConsumableItem(consumableSearchItem: ConsumableSearchItem(id: UUID(), icon: "carrot", name: "Carrot", category: "Vegetables", brand: "Tesco", amount: 1, unit: "kg")))
-        }
     }
 }
 

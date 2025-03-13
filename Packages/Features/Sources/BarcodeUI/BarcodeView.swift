@@ -32,7 +32,6 @@ func shapeWidth(geometry: GeometryProxy) -> CGFloat {
 
 public struct BarcodeView: View {
     @Environment(Router.self) var router
-    @Environment(\.dismiss) private var dismiss
     
     @State private var isFlashOn: Bool = false
     @State private var offsetX: CGFloat = ((UIScreen.main.bounds.width / 10) * -3) + 20
@@ -53,14 +52,14 @@ public struct BarcodeView: View {
                         case let .success(result):
                             print("Found code: \(result.string)")
                             router.navigateTo(.addConsumableItem(consumableSearchItem: consumableSearchItem))
-                            dismiss()
+                            router.presentedSheet = nil
                         case let .failure(error):
                             print(error.localizedDescription)
                         }
                     }
                     
                     Rectangle()
-                        .fill(Color.blue800).opacity(0.8)
+                        .fill(Color.blue800).opacity(0.95)
                         .mask(
                             roundedRectangleWithHoleInMask(
                                 in: CGRect(
@@ -98,7 +97,7 @@ public struct BarcodeView: View {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
-                            // dismiss
+                            router.presentedSheet = nil
                         }) {
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.gray200)
@@ -106,8 +105,6 @@ public struct BarcodeView: View {
                     }
                 }
                 .onAppear {
-//                    offsetX = shapeWidth(geometry: geometry) / 2 * -1
-                    
                     withAnimation(
                         Animation.easeInOut(duration: 3)
                             .repeatForever(autoreverses: true)
