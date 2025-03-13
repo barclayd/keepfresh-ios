@@ -1,5 +1,7 @@
+import BarcodeUI
 import DesignSystem
 import KitchenUI
+import Models
 import Router
 import SearchUI
 import SwiftUI
@@ -27,11 +29,19 @@ struct AppTabRootView: View {
                         .toolbarBackgroundVisibility(.visible, for: .navigationBar)
                         .navigationBarTitleDisplayMode(.inline)
                 }
-                .tint(.white200)
+                .tint(router.customTintColor ?? router.defaultTintColor)
                 .tabItem { tab.label }
                 .tag(tab)
             }
-        }
+        }.sheet(
+            item: $router.presentedSheet,
+            content: { presentedSheet in
+                switch presentedSheet {
+                case .barcodeScan:
+                    BarcodeView()
+                }
+            }
+        )
     }
 }
 
@@ -84,7 +94,7 @@ public extension AppTab {
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
                 Button(action: {
-                    print("Scan barcode")
+                    router.presentedSheet = .barcodeScan
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)

@@ -7,24 +7,24 @@ func calculatePredictedWastePercentageOffset(predictedWastePercentage: Double, s
 public struct RemoveConsumableItemSheet: View {
     @State private var wastePercentage: Double = 0
     @State private var sliderWidth: CGFloat = 0
-    
-    let predictedWastePercentage: Double = 50
-    
+
+    let predictedWastePercentage: Double = 100
+
     public init() {}
-    
+
     public var body: some View {
         VStack(spacing: 20) {
             Text("How much Semi Skimmed Milk is left?").lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
-            
+
             VStack(spacing: 0) {
                 HStack(spacing: 30) {
                     EmptyView()
                         .frame(width: 20, alignment: .center)
-                    
+
                     Image(systemName: "sparkles")
                         .foregroundStyle(.yellow500)
                         .font(.system(size: 16)).offset(x: calculatePredictedWastePercentageOffset(predictedWastePercentage: predictedWastePercentage, sliderWidth: sliderWidth))
-                    
+
                     EmptyView()
                         .frame(width: 20, alignment: .center)
                 }
@@ -33,14 +33,13 @@ public struct RemoveConsumableItemSheet: View {
                         .foregroundStyle(.green500)
                         .font(.system(size: 32))
                         .frame(width: 20, alignment: .center)
-                    
+
                     GeometryReader { geometry in
                         Slider(value: $wastePercentage, in: 0 ... 100).tint(.blue600).onAppear {
                             sliderWidth = geometry.frame(in: .local).width
-                            print("sliderWidth: \(sliderWidth)")
                         }
                     }
-                    
+
                     Image(systemName: "trash.fill")
                         .foregroundStyle(.red500)
                         .font(.system(size: 32))
@@ -48,9 +47,9 @@ public struct RemoveConsumableItemSheet: View {
                 }
                 Text("% waste").font(.callout).fontWeight(.light).foregroundStyle(.gray700).offset(y: -4)
             }
-            
+
             Spacer()
-            
+
             Button(action: {
                 print("Mark as opened")
             }) {

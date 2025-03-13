@@ -91,20 +91,27 @@ private struct SortButton: View {
     }
 }
 
+
 public struct InventoryStoreView: View {
+    @Environment(Router.self) var router
+
     @State private var selectedConsumableItem: ConsumableItem? = nil
     @State private var sortMode: ConsumbaleItemSortMode = .alphabetical(direction: .forward)
+    @State private var didScrollPastOmbreColor = false
 
     let consumableItem: ConsumableItem = .init(
         id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy",
         brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open,
-        wasteScore: 17, expiryDate: Date())
+        wasteScore: 17, expiryDate: Date()
+    )
 
     public let inventoryStore: InventoryStoreDetails
 
     public init(inventoryStore: InventoryStoreDetails) {
         self.inventoryStore = inventoryStore
     }
+    
+    let inventoryStoreToScrollOffset: [InventoryStore: CGFloat] = [.pantry: -50, .fridge: 70, .freezer: 100]
 
     public var body: some View {
         GeometryReader { geometry in
@@ -112,11 +119,12 @@ public struct InventoryStoreView: View {
                 ScrollView(showsIndicators: false) {
                     ZStack {
                         LinearGradient(
-                            stops: inventoryStore.type.viewGradientStops, startPoint: .top, endPoint: .bottom)
-                            .ignoresSafeArea(edges: .top)
-                            .offset(y: -geometry.safeAreaInsets.top)
-                            .frame(height: geometry.size.height)
-                            .frame(maxHeight: .infinity, alignment: .top)
+                            stops: inventoryStore.type.viewGradientStops, startPoint: .top, endPoint: .bottom
+                        )
+                        .ignoresSafeArea(edges: .top)
+                        .offset(y: -geometry.safeAreaInsets.top)
+                        .frame(height: geometry.size.height)
+                        .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 15) {
                             Image(systemName: inventoryStore.type.icon).font(.system(size: 78)).foregroundColor(
@@ -175,28 +183,55 @@ public struct InventoryStoreView: View {
                                     }
                                 }
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(
-                                maxWidth: .infinity, alignment: .center).background(.blue150).cornerRadius(20)
+                                maxWidth: .infinity, alignment: .center
+                            ).background(.blue150).cornerRadius(20)
 
                             HStack {
                                 Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                 Spacer()
                                 HStack(spacing: 8) {
                                     SortButton(
-                                        sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock")
+                                        sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock"
+                                    )
                                     SortButton(
                                         sortMode: $sortMode, type: .alphabetical(direction: .forward),
-                                        icon: "arrow.up.arrow.down")
+                                        icon: "arrow.up.arrow.down"
+                                    )
                                     SortButton(
-                                        sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass")
+                                        sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass"
+                                    )
                                 }
                             }.padding(.vertical, 5)
 
                             ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
                             ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
                             ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
+                            ConsumableItemView(
+                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            )
 
                             Spacer()
                         }
@@ -207,23 +242,36 @@ public struct InventoryStoreView: View {
                 }.background(.white200)
             }
             .frame(maxHeight: geometry.size.height)
+            .onScrollGeometryChange(for: CGFloat.self, of: { geometry in
+                    geometry.contentOffset.y
+                }, action: { oldValue, newValue in
+                    withAnimation {
+                        if newValue > inventoryStoreToScrollOffset[inventoryStore.type, default: 0] {
+                            router.customTintColor = .blue700
+                            didScrollPastOmbreColor = true
+                        } else {
+                            router.customTintColor = .white200
+                            didScrollPastOmbreColor = false
+                        }
+                    }
+                })
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbarRole(.editor)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarBackground(didScrollPastOmbreColor ? .visible : .hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "plus.app")
                         .font(.system(size: 18))
-                        .foregroundColor(.white200).fontWeight(.bold)
+                        .foregroundColor(didScrollPastOmbreColor ? .blue700 : .white200).fontWeight(.bold)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "barcode.viewfinder")
                         .font(.system(size: 18))
-                        .foregroundColor(.white200).fontWeight(.bold)
+                        .foregroundColor(didScrollPastOmbreColor ? .blue700 : .white200).fontWeight(.bold)
                 }
             }
         }

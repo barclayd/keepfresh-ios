@@ -16,10 +16,12 @@ let package = Package(
         .library(name: "SearchUI", targets: ["SearchUI"]),
         .library(name: "TodayUI", targets: ["TodayUI"]),
         .library(name: "KitchenUI", targets: ["KitchenUI"]),
+        .library(name: "BarcodeUI", targets: ["BarcodeUI"]),
     ],
     dependencies: [
         .package(name: "Model", path: "../Model"),
         .package(name: "DesignSystem", path: "../DesignSystem"),
+        .package(url: "https://github.com/twostraws/CodeScanner", from: "2.5.0"),
     ],
     targets: [
         .target(
@@ -32,7 +34,11 @@ let package = Package(
         ),
         .target(
             name: "KitchenUI",
-            dependencies: baseDeps
+            dependencies: baseDeps + ["TodayUI"]
+        ),
+        .target(
+            name: "BarcodeUI",
+            dependencies: baseDeps + ["CodeScanner"]
         ),
     ]
 )

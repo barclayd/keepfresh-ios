@@ -5,6 +5,7 @@ import SwiftUI
 public enum RouterDestination: Hashable {
     case today
     case search
+    case barcodeScan
     case kitchen
     case addConsumableItem(consumableSearchItem: ConsumableSearchItem)
     case inventoryStoreView(inventoryStore: InventoryStoreDetails)
@@ -13,7 +14,7 @@ public enum RouterDestination: Hashable {
         switch self {
         case .addConsumableItem, .inventoryStoreView:
             return .white200
-        case .today, .kitchen, .search:
+        case .today, .kitchen, .search, .barcodeScan:
             return nil
         }
     }

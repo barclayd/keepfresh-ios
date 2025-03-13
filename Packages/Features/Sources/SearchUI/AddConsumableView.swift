@@ -93,35 +93,43 @@ public struct AddConsumableView: View {
 
                             Grid {
                                 GridRow {
+                                    Spacer()
                                     VStack(spacing: 0) {
                                         Text("32").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Previously addded").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                        Text("Addded").fontWeight(.light).font(.subheadline).lineLimit(1)
                                             .foregroundStyle(.blue700)
                                     }
+                                    Spacer()
                                     Image(systemName: "calendar.badge.plus")
                                         .font(.system(size: 32)).fontWeight(.bold)
                                         .foregroundStyle(.blue700)
+                                    Spacer()
                                     VStack(spacing: 0) {
                                         Text("31").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Previously consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                        Text("Consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
                                             .blue700)
                                     }
+                                    Spacer()
                                 }
                                 GridRow {
+                                    Spacer()
                                     VStack(spacing: 0) {
                                         Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
                                             .foregroundStyle(.blue700)
                                         Text("In Fridge").fontWeight(.light).font(.subheadline)
                                             .foregroundStyle(.blue700)
                                     }
+                                    Spacer()
                                     Image(systemName: "house")
                                         .font(.system(size: 32)).fontWeight(.bold)
                                         .foregroundStyle(.blue700)
+                                    Spacer()
                                     VStack(spacing: 0) {
                                         Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
                                         Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
                                             .blue700)
                                     }
+                                    Spacer()
                                 }
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                 maxWidth: .infinity, alignment: .center
@@ -163,7 +171,7 @@ public struct AddConsumableView: View {
                         }
                         .padding(.bottom, 100)
                         .padding(.horizontal, 20)
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: geometry.size.width)
                     }
                 }.background(.white200)
 
@@ -190,7 +198,7 @@ public struct AddConsumableView: View {
                     }
                 }
             }
-            .frame(maxHeight: geometry.size.height)
+            .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbarRole(.editor)

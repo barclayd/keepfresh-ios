@@ -258,9 +258,9 @@ struct ConsumableItemSheetView: View {
             .padding(.horizontal, 10)
             .sheet(isPresented: $showRemoveSheet) {
                 RemoveConsumableItemSheet()
-                .presentationDragIndicator(.visible)
-                .presentationCornerRadius(25)
-                .presentationDetents([.fraction(0.35)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+                    .presentationDetents([.fraction(0.35)])
             }
     }
 }

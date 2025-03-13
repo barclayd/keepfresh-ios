@@ -1,3 +1,4 @@
+import BarcodeUI
 import KitchenUI
 import Router
 import SearchUI
@@ -19,6 +20,8 @@ public struct AppRouter: ViewModifier {
                     AddConsumableView(consumableSearchItem: consumableSearchItem)
                 case let .inventoryStoreView(inventoryStore):
                     InventoryStoreView(inventoryStore: inventoryStore)
+                case .barcodeScan:
+                    BarcodeView()
                 }
             }
     }
