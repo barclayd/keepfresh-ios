@@ -91,6 +91,12 @@ private struct SortButton: View {
     }
 }
 
+struct StoreColors: Hashable {
+    let defaultColor: Color
+    let onScrollColor: Color
+}
+
+
 
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
@@ -112,6 +118,21 @@ public struct InventoryStoreView: View {
     }
     
     let inventoryStoreToScrollOffset: [InventoryStore: CGFloat] = [.pantry: -50, .fridge: 70, .freezer: 100]
+    
+    let inventoryStoreToToolbarColor: [InventoryStore: StoreColors] = [
+        .pantry: StoreColors(
+            defaultColor: .blue700,
+            onScrollColor: .blue700
+        ),
+        .fridge: StoreColors(
+                defaultColor: .white200,
+                onScrollColor: .blue700
+        ),
+        .freezer: StoreColors(
+            defaultColor: .white200,
+            onScrollColor: .blue700
+        ),
+    ]
 
     public var body: some View {
         GeometryReader { geometry in
@@ -247,10 +268,10 @@ public struct InventoryStoreView: View {
                 }, action: { oldValue, newValue in
                     withAnimation {
                         if newValue > inventoryStoreToScrollOffset[inventoryStore.type, default: 0] {
-                            router.customTintColor = .blue700
+                            router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor
                             didScrollPastOmbreColor = true
                         } else {
-                            router.customTintColor = .white200
+                            router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor
                             didScrollPastOmbreColor = false
                         }
                     }
@@ -264,14 +285,14 @@ public struct InventoryStoreView: View {
                 Button(action: {}) {
                     Image(systemName: "plus.app")
                         .font(.system(size: 18))
-                        .foregroundColor(didScrollPastOmbreColor ? .blue700 : .white200).fontWeight(.bold)
+                        .foregroundColor(didScrollPastOmbreColor ? inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor : inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor).fontWeight(.bold)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "barcode.viewfinder")
                         .font(.system(size: 18))
-                        .foregroundColor(didScrollPastOmbreColor ? .blue700 : .white200).fontWeight(.bold)
+                        .foregroundColor(didScrollPastOmbreColor ? inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor : inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor).fontWeight(.bold)
                 }
             }
         }
