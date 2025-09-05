@@ -23,10 +23,10 @@ public final class Router {
     public var currentTabPathTint: Color? {
         selectedTabPath.last?.tint
     }
-    
-    public var defaultTintColor: Color = Color.white200
-    
-    public var customTintColor: Color? = nil
+
+    public var defaultTintColor: Color = .white200
+
+    public var customTintColor: Color?
 
     public var tabBarVisibilityForCurrentTab: Visibility {
         selectedTabPath.last?.tabBarVisibility ?? .automatic

@@ -96,8 +96,6 @@ struct StoreColors: Hashable {
     let onScrollColor: Color
 }
 
-
-
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
 
@@ -116,17 +114,17 @@ public struct InventoryStoreView: View {
     public init(inventoryStore: InventoryStoreDetails) {
         self.inventoryStore = inventoryStore
     }
-    
+
     let inventoryStoreToScrollOffset: [InventoryStore: CGFloat] = [.pantry: -50, .fridge: 70, .freezer: 100]
-    
+
     let inventoryStoreToToolbarColor: [InventoryStore: StoreColors] = [
         .pantry: StoreColors(
             defaultColor: .blue700,
             onScrollColor: .blue700
         ),
         .fridge: StoreColors(
-                defaultColor: .white200,
-                onScrollColor: .blue700
+            defaultColor: .white200,
+            onScrollColor: .blue700
         ),
         .freezer: StoreColors(
             defaultColor: .white200,
@@ -264,18 +262,18 @@ public struct InventoryStoreView: View {
             }
             .frame(maxHeight: geometry.size.height)
             .onScrollGeometryChange(for: CGFloat.self, of: { geometry in
-                    geometry.contentOffset.y
-                }, action: { oldValue, newValue in
-                    withAnimation {
-                        if newValue > inventoryStoreToScrollOffset[inventoryStore.type, default: 0] {
-                            router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor
-                            didScrollPastOmbreColor = true
-                        } else {
-                            router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor
-                            didScrollPastOmbreColor = false
-                        }
+                geometry.contentOffset.y
+            }, action: { _, newValue in
+                withAnimation {
+                    if newValue > inventoryStoreToScrollOffset[inventoryStore.type, default: 0] {
+                        router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor
+                        didScrollPastOmbreColor = true
+                    } else {
+                        router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor
+                        didScrollPastOmbreColor = false
                     }
-                })
+                }
+            })
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbarRole(.editor)
