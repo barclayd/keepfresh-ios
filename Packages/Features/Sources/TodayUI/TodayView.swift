@@ -2,7 +2,11 @@ import DesignSystem
 import Models
 import SwiftUI
 
-@MainActor let consumableItem: ConsumableItem = .init(id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pts", inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date())
+@MainActor let consumableItem: ConsumableItem = .init(
+    id: UUID(), imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
+    name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pts",
+    inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date()
+)
 
 public struct TodayView: View {
     public init() {}
@@ -30,7 +34,9 @@ public struct TodayView: View {
 
     public var body: some View {
         ScrollView {
-            ConsumableItemView(selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem)
+            ConsumableItemView(
+                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+            )
         }
         .padding(.horizontal, 20)
         .padding(.top, 20).padding(.vertical, 10).background(.white200)

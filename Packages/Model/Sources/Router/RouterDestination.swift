@@ -7,12 +7,12 @@ public enum RouterDestination: Hashable {
     case search
     case barcodeScan
     case kitchen
-    case addConsumableItem(consumableSearchItem: ConsumableSearchItem)
+    case addProduct(product: ProductSearchItem)
     case inventoryStoreView(inventoryStore: InventoryStoreDetails)
 
     public var tint: Color? {
         switch self {
-        case .addConsumableItem, .inventoryStoreView:
+        case .addProduct, .inventoryStoreView:
             return .white200
         case .today, .kitchen, .search, .barcodeScan:
             return nil
@@ -21,7 +21,7 @@ public enum RouterDestination: Hashable {
 
     public var tabBarVisibility: Visibility {
         switch self {
-        case .addConsumableItem:
+        case .addProduct:
             return .hidden
         default:
             return .visible

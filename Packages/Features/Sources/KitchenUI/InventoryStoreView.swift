@@ -104,7 +104,7 @@ public struct InventoryStoreView: View {
     @State private var didScrollPastOmbreColor = false
 
     let consumableItem: ConsumableItem = .init(
-        id: UUID(), icon: "waterbottle", name: "Semi Skimmed Milk", category: "Dairy",
+        id: UUID(), imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png", name: "Semi Skimmed Milk", category: "Dairy",
         brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open,
         wasteScore: 17, expiryDate: Date()
     )

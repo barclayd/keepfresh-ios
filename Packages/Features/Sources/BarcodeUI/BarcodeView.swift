@@ -4,7 +4,10 @@ import Models
 import Router
 import SwiftUI
 
-@MainActor let consumableSearchItem: ConsumableSearchItem = .init(id: UUID(), icon: "waterbottle.fill", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints")
+@MainActor let productSearchItem: ProductSearchItem = .init(
+    sourceId: "012345435", imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
+    name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints"
+)
 
 func roundedRectangleWithHoleInMask(
     in rect: CGRect, shapeWidthOffset: CGFloat, shapeHeightOffset: CGFloat, shapeWidth: CGFloat,
@@ -40,7 +43,9 @@ public struct BarcodeView: View {
     public init() {}
 
     let timer = Timer.publish(every: 3, tolerance: 1, on: .main, in: .common).autoconnect()
-    let barcodeIcons = ["text.magnifyingglass", "text.page.badge.magnifyingglass", "rectangle.and.text.magnifyingglass"]
+    let barcodeIcons = [
+        "text.magnifyingglass", "text.page.badge.magnifyingglass", "rectangle.and.text.magnifyingglass",
+    ]
 
     public var body: some View {
         NavigationView {
@@ -50,7 +55,7 @@ public struct BarcodeView: View {
                         switch response {
                         case let .success(result):
                             print("Found code: \(result.string)")
-                            router.navigateTo(.addConsumableItem(consumableSearchItem: consumableSearchItem))
+                            router.navigateTo(.addProduct(product: productSearchItem))
                             router.presentedSheet = nil
                         case let .failure(error):
                             print(error.localizedDescription)

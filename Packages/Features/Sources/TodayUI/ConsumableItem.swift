@@ -85,8 +85,14 @@ public struct ConsumableItemView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                Image(systemName: consumableItem.icon)
-                    .font(.system(size: 40))
+                AsyncImage(url: URL(string: consumableItem.imageURL)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: 40, height: 40)
                 VStack(spacing: 2) {
                     HStack {
                         Text(consumableItem.name)
@@ -113,7 +119,8 @@ public struct ConsumableItemView: View {
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
-                        Text("\(String(format: "%.0f", consumableItem.amount))\(consumableItem.unit)").foregroundStyle(.gray600)
+                        Text("\(String(format: "%.0f", consumableItem.amount))\(consumableItem.unit)")
+                            .foregroundStyle(.gray600)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -137,7 +144,8 @@ public struct ConsumableItemView: View {
         }
         .sheet(item: $selectedConsumableItem) { _ in
             ConsumableItemSheetView(consumableItem: $selectedConsumableItem)
-                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))])
+                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))]
+                )
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }

@@ -129,10 +129,6 @@ public struct KitchenView: View {
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 25) {
-                HStack {
-                    Text("Kitchen").font(.largeTitle).foregroundStyle(.blue800).fontWeight(.bold)
-                    Spacer()
-                }
                 ForEach(inventoryStoreDetails) { inventoryStoreDetail in
                     NavigationLink(value: RouterDestination.inventoryStoreView(inventoryStore: inventoryStoreDetail)) {
                         InventoryStore(inventoryStoreDetails: inventoryStoreDetail)

@@ -16,8 +16,8 @@ public struct AppRouter: ViewModifier {
                     SearchView()
                 case .today:
                     TodayView()
-                case let .addConsumableItem(consumableSearchItem):
-                    AddConsumableView(consumableSearchItem: consumableSearchItem)
+                case let .addProduct(productSearchItem):
+                    AddConsumableView(productSearchItem: productSearchItem)
                 case let .inventoryStoreView(inventoryStore):
                     InventoryStoreView(inventoryStore: inventoryStore)
                 case .barcodeScan:
