@@ -2,7 +2,7 @@ import DesignSystem
 import Models
 import SwiftUI
 
-@MainActor let consumableItem: ConsumableItem = .init(
+@MainActor let consumableItem: InventoryItem = .init(
     id: UUID(), imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
     name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pts",
     inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date()
@@ -11,7 +11,7 @@ import SwiftUI
 public struct TodayView: View {
     public init() {}
 
-    @State private var selectedConsumableItem: ConsumableItem? = nil
+    @State private var selectedConsumableItem: InventoryItem? = nil
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 

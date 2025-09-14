@@ -2,7 +2,7 @@ import Models
 import SwiftUI
 
 struct StatsView: View {
-    let consumableItem: ConsumableItem
+    let consumableItem: InventoryItem
 
     var body: some View {
         HStack {
@@ -52,7 +52,7 @@ struct StatsView: View {
 }
 
 public struct ConsumableItemView: View {
-    @Binding var selectedConsumableItem: ConsumableItem?
+    @Binding var selectedConsumableItem: InventoryItem?
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -75,9 +75,9 @@ public struct ConsumableItemView: View {
         }
     }
 
-    let consumableItem: ConsumableItem
+    let consumableItem: InventoryItem
 
-    public init(selectedConsumableItem: Binding<ConsumableItem?>, consumableItem: ConsumableItem) {
+    public init(selectedConsumableItem: Binding<InventoryItem?>, consumableItem: InventoryItem) {
         _selectedConsumableItem = selectedConsumableItem
         self.consumableItem = consumableItem
     }

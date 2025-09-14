@@ -67,7 +67,7 @@ struct ConsumableSheetStatsGridRows: View {
 }
 
 struct ConsumableItemSheetStatsGrid: View {
-    let consumableItem: ConsumableItem
+    let consumableItem: InventoryItem
 
     let pageIndex: Int
 
@@ -85,13 +85,13 @@ struct ConsumableItemSheetStatsGrid: View {
 }
 
 struct ConsumableItemSheetView: View {
-    @Binding var consumableItem: ConsumableItem?
+    @Binding var consumableItem: InventoryItem?
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
 
-    init(consumableItem: Binding<ConsumableItem?>) {
+    init(consumableItem: Binding<InventoryItem?>) {
         _consumableItem = consumableItem
 
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)

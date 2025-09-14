@@ -3,11 +3,11 @@ import SwiftUI
 
 public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
     public var id: Self { self }
-
+    
     case pantry
     case fridge
     case freezer
-
+    
     public var icon: String {
         switch self {
         case .pantry: return "cabinet"
@@ -15,7 +15,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
         case .freezer: return "snowflake.circle"
         }
     }
-
+    
     public var previewGradientStops: (start: Color, end: Color) {
         switch self {
         case .pantry: return (.brown100, .brown300)
@@ -23,7 +23,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
         case .freezer: return (.blue600, .blue700)
         }
     }
-
+    
     public var viewGradientStops: [Gradient.Stop] {
         switch self {
         case .pantry:
@@ -46,21 +46,21 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
             ]
         }
     }
-
+    
     public var foregorundColor: Color {
         switch self {
         case .pantry, .fridge: return .gray700
         case .freezer: return .gray100
         }
     }
-
+    
     public var titleForegorundColor: Color {
         switch self {
         case .pantry, .fridge: return .blue700
         case .freezer: return .blue100
         }
     }
-
+    
     public var expiryIconColor: Color {
         switch self {
         case .pantry, .fridge: return .blue700
@@ -84,7 +84,7 @@ public struct InventoryStoreDetails: Identifiable, Hashable {
         self.itemsExpiringSoonCount = itemsExpiringSoonCount
         self.recentItemImages = recentItemImages
     }
-
+    
     public var id: Int
     public var name: String
     public var type: InventoryStore
@@ -94,7 +94,7 @@ public struct InventoryStoreDetails: Identifiable, Hashable {
     public var openItemsCount: Int
     public var itemsExpiringSoonCount: Int
     public var recentItemImages: [String]
-
+    
     public var expiryStatusPercentageColor: Color {
         switch expiryStatusPercentage {
         case 0 ... 33: return .green600
@@ -104,9 +104,9 @@ public struct InventoryStoreDetails: Identifiable, Hashable {
     }
 }
 
-public enum ConsumableStatus: String, Codable, Identifiable, CaseIterable {
+public enum InventoryItemStatus: String, Codable, Identifiable, CaseIterable {
     public var id: Self { self }
-
+    
     case open
     case binned
     case consumed
@@ -115,7 +115,7 @@ public enum ConsumableStatus: String, Codable, Identifiable, CaseIterable {
 
 public struct ProductSearchItem: Identifiable, Hashable, Codable {
     public init(
-        sourceId: String, imageURL: String, name: String, category: String, brand: String,
+        sourceId: String, imageURL: String, name: String, category: String, categoryPath: String, brand: String,
         amount: Double?,
         unit: String?
     ) {
@@ -123,28 +123,30 @@ public struct ProductSearchItem: Identifiable, Hashable, Codable {
         self.imageURL = imageURL
         self.name = name
         self.category = category
+        self.categoryPath = categoryPath
         self.brand = brand
         self.amount = amount
         self.unit = unit
     }
-
+    
     public let sourceId: String
     public let imageURL: String
     public let name: String
     public let category: String
+    public let categoryPath: String
     public let brand: String
     public let amount: Double?
     public let unit: String?
-
+    
     public var id: String {
         "\(sourceId)-\(brand)"
     }
 }
 
-public struct ConsumableItem: Identifiable {
+public struct InventoryItem: Identifiable {
     public init(
         id: UUID, imageURL: String, name: String, category: String, brand: String, amount: Double,
-        unit: String, inventoryStore: InventoryStore, status: ConsumableStatus, wasteScore: Double,
+        unit: String, inventoryStore: InventoryStore, status: InventoryItemStatus, wasteScore: Double,
         expiryDate: Date? = nil
     ) {
         self.id = id
@@ -159,7 +161,7 @@ public struct ConsumableItem: Identifiable {
         self.wasteScore = wasteScore
         self.expiryDate = expiryDate
     }
-
+    
     public let id: UUID
     public let imageURL: String
     public let name: String
@@ -168,7 +170,7 @@ public struct ConsumableItem: Identifiable {
     public let amount: Double
     public let unit: String
     public let inventoryStore: InventoryStore
-    public let status: ConsumableStatus
+    public let status: InventoryItemStatus
     public let wasteScore: Double
     public let expiryDate: Date?
 }

@@ -99,11 +99,11 @@ struct StoreColors: Hashable {
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
 
-    @State private var selectedConsumableItem: ConsumableItem? = nil
+    @State private var selectedConsumableItem: InventoryItem? = nil
     @State private var sortMode: ConsumbaleItemSortMode = .alphabetical(direction: .forward)
     @State private var didScrollPastOmbreColor = false
 
-    let consumableItem: ConsumableItem = .init(
+    let consumableItem: InventoryItem = .init(
         id: UUID(), imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png", name: "Semi Skimmed Milk", category: "Dairy",
         brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open,
         wasteScore: 17, expiryDate: Date()

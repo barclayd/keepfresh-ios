@@ -16,7 +16,7 @@ public struct AddConsumableView: View {
     @State private var expiryDate: Date
     @State private var inventoryStore: InventoryStore
     @State private var quantity: Int = 1
-    @State private var status: ConsumableStatus = .unopened
+    @State private var status: InventoryItemStatus = .unopened
 
     public let productSearchItem: ProductSearchItem
     let initialInventoryStore: InventoryStore
@@ -79,11 +79,12 @@ public struct AddConsumableView: View {
                             HStack {
                                 Text(productSearchItem.category)
                                     .font(.callout).foregroundStyle(.gray600)
-                                Circle()
-                                    .frame(width: 4, height: 4)
-                                    .foregroundStyle(.gray600)
                                 if ((productSearchItem.amount != nil) && (productSearchItem.unit != nil)) {
-                                    Text("\(String(format: "%.0f", productSearchItem.amount!)) \(productSearchItem.unit!)")
+                                    Circle()
+                                        .frame(width: 4, height: 4)
+                                        .foregroundStyle(.gray600)
+                                    
+                                    Text("\(String(format: "%.0f", productSearchItem.amount!))\(productSearchItem.unit!)")
                                         .foregroundStyle(.gray600)
                                         .font(.callout)
                                 }

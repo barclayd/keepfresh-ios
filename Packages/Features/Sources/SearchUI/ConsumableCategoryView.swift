@@ -113,7 +113,7 @@ private extension ConsumableCategoryType {
     @ViewBuilder
     func overviewLabel(
         quantity: Binding<Int>,
-        status: Binding<ConsumableStatus>,
+        status: Binding<InventoryItemStatus>,
         expiryDate: Binding<Date>,
         inventoryStore: Binding<InventoryStore>,
         didUpdateExpiryDate: Bool,
@@ -179,7 +179,7 @@ private extension ConsumableCategoryType {
     @MainActor
     @ViewBuilder
     func expandedContent(
-        status: Binding<ConsumableStatus>, inventoryStore: Binding<InventoryStore>,
+        status: Binding<InventoryItemStatus>, inventoryStore: Binding<InventoryStore>,
         expiryDate: Binding<Date>
     ) -> some View {
         switch self {
@@ -199,7 +199,7 @@ struct ConsumableCategoryOverview: View {
     @Binding var isExpiryDateToggled: Bool
     @Binding var isMarkedAsReady: Bool
     @Binding var quantity: Int
-    @Binding var status: ConsumableStatus
+    @Binding var status: InventoryItemStatus
     @Binding var inventoryStore: InventoryStore
     @Binding var expiryDate: Date
     var didUpdateExpiryDate: Bool
@@ -235,7 +235,7 @@ struct ConsumableCategoryOverview: View {
 }
 
 struct ConsumableCategoryStatusContent: View {
-    @Binding var status: ConsumableStatus
+    @Binding var status: InventoryItemStatus
 
     @State private var showStoragePicker = false
 
@@ -255,7 +255,7 @@ struct ConsumableCategoryStatusContent: View {
                     .frame(width: 105, alignment: .leading)
 
                 Picker("Select consumable item status", selection: $status) {
-                    ForEach(ConsumableStatus.allCases) { statusType in
+                    ForEach(InventoryItemStatus.allCases) { statusType in
                         Text(statusType.rawValue.capitalized).foregroundStyle(.gray600)
                             .font(.callout)
                             .lineLimit(1).border(.yellow)
@@ -400,7 +400,7 @@ public struct ConsumableCategory: View {
     @State private var isMarkedAsReady: Bool = true
 
     @Binding var quantity: Int
-    @Binding var status: ConsumableStatus
+    @Binding var status: InventoryItemStatus
     @Binding var expiryDate: Date
     @Binding var inventoryStore: InventoryStore
 
