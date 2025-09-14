@@ -60,7 +60,7 @@ public struct SearchResultCard: View {
             
             VStack {
                 HStack {
-                    Text(product.categoryPath)
+                    Text(product.category.path)
                         .font(.subheadline).foregroundStyle(.gray500)
                     Spacer()
                 }

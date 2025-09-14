@@ -77,18 +77,17 @@ public struct AddConsumableView: View {
                                 .blue700
                             ).fontWeight(.bold)
                             HStack {
-                                Text(productSearchItem.category)
+                                Text(productSearchItem.category.name)
                                     .font(.callout).foregroundStyle(.gray600)
-                                if ((productSearchItem.amount != nil) && (productSearchItem.unit != nil)) {
+                                if (productSearchItem.amount != nil) && (productSearchItem.unit != nil) {
                                     Circle()
                                         .frame(width: 4, height: 4)
                                         .foregroundStyle(.gray600)
-                                    
+
                                     Text("\(String(format: "%.0f", productSearchItem.amount!))\(productSearchItem.unit!)")
                                         .foregroundStyle(.gray600)
                                         .font(.callout)
                                 }
-                                
                             }
                             Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
