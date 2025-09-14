@@ -4,9 +4,9 @@ import SwiftUI
 public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
     public var id: Self { self }
 
-    case pantry
-    case fridge
-    case freezer
+    case pantry = "Pantry"
+    case fridge = "Fridge"
+    case freezer = "Freezer"
 
     public var icon: String {
         switch self {
@@ -113,13 +113,20 @@ public enum InventoryItemStatus: String, Codable, Identifiable, CaseIterable {
     case unopened
 }
 
+public enum ProductSearchItemStatus: String, Codable, Identifiable, CaseIterable {
+    public var id: Self { self }
+
+    case opened = "Opened"
+    case unopened = "Unopened"
+}
+
 public struct ProductSearchItemCategory: Identifiable, Codable, Equatable, Hashable {
     public init(id: Int, name: String, path: String) {
         self.id = id
         self.name = name
         self.path = path
     }
-    
+
     public let id: Int
     public let name: String
     public let path: String
@@ -183,4 +190,12 @@ public struct InventoryItem: Identifiable {
     public let status: InventoryItemStatus
     public let wasteScore: Double
     public let expiryDate: Date?
+}
+
+public enum ExpiryType: String, Codable, Identifiable, CaseIterable {
+    public var id: Self { self }
+
+    case UseBy = "Use By"
+    case BestBefore = "Best Before"
+    case LongLife = "Long Life"
 }

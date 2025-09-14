@@ -132,10 +132,9 @@ public struct SearchView: View {
 
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< searchTabItems.count, id: \.self) { index in
-                        SearchResultView(products: searchManager.searchResults).frame(
-                            maxWidth: .infinity, maxHeight: .infinity
-                        )
-                        .tag(index)
+                        SearchResultView(products: searchManager.searchResults)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .tag(index)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))

@@ -22,23 +22,16 @@ struct CheckToggleStyle: ToggleStyle {
 }
 
 enum ConsumableCategoryType: String, Codable {
-    case ExpiryDate = "Expiry Date"
+    case Expiry = "Expiry"
     case Storage
     case Status
     case Quantity
 }
 
-enum ExpiryType: String, Codable, Identifiable, CaseIterable {
-    var id: Self { self }
-
-    case UseBy = "Use By"
-    case BestBefore = "Best Before"
-}
-
 private extension ConsumableCategoryType {
     var isExapndable: Bool {
         switch self {
-        case .ExpiryDate, .Storage, .Status:
+        case .Expiry, .Storage, .Status:
             true
         case .Quantity:
             false
@@ -47,7 +40,7 @@ private extension ConsumableCategoryType {
 
     var icon: String {
         switch self {
-        case .ExpiryDate:
+        case .Expiry:
             "hourglass"
         case .Storage:
             "house"
@@ -113,14 +106,14 @@ private extension ConsumableCategoryType {
     @ViewBuilder
     func overviewLabel(
         quantity: Binding<Int>,
-        status: Binding<InventoryItemStatus>,
+        status: Binding<ProductSearchItemStatus>,
         expiryDate: Binding<Date>,
         inventoryStore: Binding<InventoryStore>,
         didUpdateExpiryDate: Bool,
         didUpdateInventoryStore: Bool
     ) -> some View {
         switch self {
-        case .ExpiryDate:
+        case .Expiry:
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {
                     Text(expiryDate.wrappedValue.formattedWithOrdinal).foregroundStyle(.gray600)
@@ -166,7 +159,7 @@ private extension ConsumableCategoryType {
     @ViewBuilder
     func overviewSwitch(isToggled: Binding<Bool>, quantity: Binding<Int>) -> some View {
         switch self {
-        case .ExpiryDate, .Status, .Storage:
+        case .Expiry, .Status, .Storage:
             Toggle("Selected Expiry Date", isOn: isToggled)
                 .toggleStyle(CheckToggleStyle())
                 .labelsHidden()
@@ -179,11 +172,11 @@ private extension ConsumableCategoryType {
     @MainActor
     @ViewBuilder
     func expandedContent(
-        status: Binding<InventoryItemStatus>, inventoryStore: Binding<InventoryStore>,
+        status: Binding<ProductSearchItemStatus>, inventoryStore: Binding<InventoryStore>,
         expiryDate: Binding<Date>
     ) -> some View {
         switch self {
-        case .ExpiryDate:
+        case .Expiry:
             ConsumableCategoryExpiryDateContent(expiryDate: expiryDate)
         case .Status:
             ConsumableCategoryStatusContent(status: status)
@@ -199,7 +192,7 @@ struct ConsumableCategoryOverview: View {
     @Binding var isExpiryDateToggled: Bool
     @Binding var isMarkedAsReady: Bool
     @Binding var quantity: Int
-    @Binding var status: InventoryItemStatus
+    @Binding var status: ProductSearchItemStatus
     @Binding var inventoryStore: InventoryStore
     @Binding var expiryDate: Date
     var didUpdateExpiryDate: Bool
@@ -235,7 +228,7 @@ struct ConsumableCategoryOverview: View {
 }
 
 struct ConsumableCategoryStatusContent: View {
-    @Binding var status: InventoryItemStatus
+    @Binding var status: ProductSearchItemStatus
 
     @State private var showStoragePicker = false
 
@@ -255,7 +248,7 @@ struct ConsumableCategoryStatusContent: View {
                     .frame(width: 105, alignment: .leading)
 
                 Picker("Select consumable item status", selection: $status) {
-                    ForEach(InventoryItemStatus.allCases) { statusType in
+                    ForEach(ProductSearchItemStatus.allCases) { statusType in
                         Text(statusType.rawValue.capitalized).foregroundStyle(.gray600)
                             .font(.callout)
                             .lineLimit(1).border(.yellow)
@@ -353,7 +346,7 @@ struct ConsumableCategoryExpiryDateContent: View {
 
             if showDatePicker {
                 DatePicker(
-                    "Expiry date",
+                    "Expiry",
                     selection: $expiryDate,
                     displayedComponents: [.date]
                 )
@@ -400,7 +393,7 @@ public struct ConsumableCategory: View {
     @State private var isMarkedAsReady: Bool = true
 
     @Binding var quantity: Int
-    @Binding var status: InventoryItemStatus
+    @Binding var status: ProductSearchItemStatus
     @Binding var expiryDate: Date
     @Binding var inventoryStore: InventoryStore
 

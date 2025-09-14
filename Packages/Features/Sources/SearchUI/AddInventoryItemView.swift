@@ -12,41 +12,62 @@ private extension Date {
 
 public struct AddConsumableView: View {
     @Environment(Router.self) var router
-
+    
+    @StateObject private var inventoryService = InventorySuggestionsService()
+    
     @State private var expiryDate: Date
+    @State private var expiryType: ExpiryType
     @State private var inventoryStore: InventoryStore
     @State private var quantity: Int = 1
-    @State private var status: InventoryItemStatus = .unopened
-
+    @State private var status: ProductSearchItemStatus = .unopened
+    @State private var hasLoadedDefaults: Bool = false
+    
     public let productSearchItem: ProductSearchItem
     let initialInventoryStore: InventoryStore
     let initialExpiryDate: Date
-
+    let initialExpiryType: ExpiryType
+    
     public init(productSearchItem: ProductSearchItem) {
         self.productSearchItem = productSearchItem
         initialExpiryDate = Date()
         initialInventoryStore = .fridge
-        _expiryDate = State(initialValue: initialExpiryDate)
-        _inventoryStore = State(initialValue: initialInventoryStore)
+        initialExpiryType = .BestBefore
+        _expiryDate = State(initialValue: Date())
+        _inventoryStore = State(initialValue: .fridge)
+        _expiryType = State(initialValue: .BestBefore)
     }
-
+    
     var didUpdateInventoryStore: Bool {
         inventoryStore != initialInventoryStore
     }
-
+    
     var didUpdateExpiryDate: Bool {
         expiryDate.isSameDay(as: initialExpiryDate) == false
     }
-
+    
+    var calculatedExpiryDate: Date {
+        guard
+            let shelfLife = inventoryService.suggestions?.shelfLifeInDays,
+            let expiry = getExpiryDateForSelection(
+                storage: inventoryStore,
+                status: status,
+                shelfLife: shelfLife
+            )
+        else {
+            return Date()
+        }
+        return expiry
+    }
+    
     func addToInventory() {
         print(
             "Expiry date: \(expiryDate)", "Inventory store: \(inventoryStore.rawValue)",
             "quantity: \(quantity)", "status: \(status.rawValue)"
         )
-
+        
         router.popToRoot(for: .search)
     }
-
+    
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
@@ -63,7 +84,7 @@ public struct AddConsumableView: View {
                         .offset(y: -geometry.safeAreaInsets.top)
                         .frame(height: geometry.size.height)
                         .frame(maxHeight: .infinity, alignment: .top)
-
+                        
                         VStack(spacing: 5) {
                             AsyncImage(url: URL(string: productSearchItem.imageURL)) { image in
                                 image
@@ -83,118 +104,127 @@ public struct AddConsumableView: View {
                                     Circle()
                                         .frame(width: 4, height: 4)
                                         .foregroundStyle(.gray600)
-
-                                    Text("\(String(format: "%.0f", productSearchItem.amount!))\(productSearchItem.unit!)")
-                                        .foregroundStyle(.gray600)
-                                        .font(.callout)
+                                    
+                                    Text(
+                                        "\(String(format: "%.0f", productSearchItem.amount!))\(productSearchItem.unit!)"
+                                    )
+                                    .foregroundStyle(.gray600)
+                                    .font(.callout)
                                 }
                             }
                             Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
-
-                            VStack {
-                                Text("3%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(0)
-                                HStack(spacing: 0) {
-                                    Text("Predicted waste score").font(.subheadline).foregroundStyle(.black800)
-                                        .fontWeight(.light)
-                                    Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
+                            
+                            if inventoryService.isLoading {
+                                ProgressView()
+                            } else {
+                                VStack {
+                                    Text("3%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(
+                                        0)
+                                    HStack(spacing: 0) {
+                                        Text("Predicted waste score").font(.subheadline).foregroundStyle(.black800)
+                                            .fontWeight(.light)
+                                        Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
+                                            .yellow500
+                                        )
                                         .offset(x: -2, y: -10)
-                                }.offset(y: -5)
-                            }.padding(.top, 10)
-
-                            Grid {
-                                GridRow {
-                                    Spacer()
-                                    VStack(spacing: 0) {
-                                        Text("32").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Addded").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                    }.offset(y: -5)
+                                }.padding(.top, 10)
+                                
+                                Grid {
+                                    GridRow {
+                                        Spacer()
+                                        VStack(spacing: 0) {
+                                            Text("32").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("Addded").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                                .foregroundStyle(.blue700)
+                                        }
+                                        Spacer()
+                                        Image(systemName: "calendar.badge.plus")
+                                            .font(.system(size: 32)).fontWeight(.bold)
                                             .foregroundStyle(.blue700)
+                                        Spacer()
+                                        VStack(spacing: 0) {
+                                            Text("31").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("Consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                                .blue700)
+                                        }
+                                        Spacer()
                                     }
-                                    Spacer()
-                                    Image(systemName: "calendar.badge.plus")
-                                        .font(.system(size: 32)).fontWeight(.bold)
-                                        .foregroundStyle(.blue700)
-                                    Spacer()
-                                    VStack(spacing: 0) {
-                                        Text("31").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                            .blue700)
-                                    }
-                                    Spacer()
-                                }
-                                GridRow {
-                                    Spacer()
-                                    VStack(spacing: 0) {
-                                        Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                    GridRow {
+                                        Spacer()
+                                        VStack(spacing: 0) {
+                                            Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                                .foregroundStyle(.blue700)
+                                            Text("In Fridge").fontWeight(.light).font(.subheadline)
+                                                .foregroundStyle(.blue700)
+                                        }
+                                        Spacer()
+                                        Image(systemName: "house")
+                                            .font(.system(size: 32)).fontWeight(.bold)
                                             .foregroundStyle(.blue700)
-                                        Text("In Fridge").fontWeight(.light).font(.subheadline)
-                                            .foregroundStyle(.blue700)
+                                        Spacer()
+                                        VStack(spacing: 0) {
+                                            Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                                .blue700)
+                                        }
+                                        Spacer()
                                     }
-                                    Spacer()
-                                    Image(systemName: "house")
-                                        .font(.system(size: 32)).fontWeight(.bold)
-                                        .foregroundStyle(.blue700)
-                                    Spacer()
-                                    VStack(spacing: 0) {
-                                        Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                            .blue700)
+                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(
+                                    maxWidth: .infinity, alignment: .center
+                                ).background(.blue100).cornerRadius(20).padding(.bottom, 10)
+                                
+                                Grid(horizontalSpacing: 16, verticalSpacing: 20) {
+                                    GridRow {
+                                        Image(systemName: "checkmark.seal.fill").fontWeight(.bold)
+                                            .foregroundStyle(.yellow500)
+                                            .font(.system(size: 32))
+                                        Text("Looks like a good choice, you’re unlikely to waste any of this item")
+                                            .font(.callout)
+                                            .foregroundStyle(.gray600)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(2 ... 2)
+                                        
+                                        Spacer()
                                     }
-                                    Spacer()
+                                    GridRow {
+                                        Image(systemName: "beach.umbrella.fill")
+                                            .foregroundStyle(.blue600).fontWeight(.bold)
+                                            .font(.system(size: 32))
+                                        Text("You should only need to buy one of these before your next holiday")
+                                            .font(.callout)
+                                            .foregroundStyle(.gray600)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(2 ... 2)
+                                        Spacer()
+                                    }
+                                    
+                                }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
+                                
+                                VStack(spacing: 15) {
+                                    ConsumableCategory(
+                                        quantity: $quantity, status: $status, expiryDate: $expiryDate,
+                                        inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
+                                        didUpdateInventoryStore: didUpdateInventoryStore, type: .Expiry
+                                    )
+                                    ConsumableCategory(
+                                        quantity: $quantity, status: $status, expiryDate: $expiryDate,
+                                        inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
+                                        didUpdateInventoryStore: didUpdateInventoryStore, type: .Storage
+                                    )
+                                    ConsumableCategory(
+                                        quantity: $quantity, status: $status, expiryDate: $expiryDate,
+                                        inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
+                                        didUpdateInventoryStore: didUpdateInventoryStore, type: .Status
+                                    )
+                                    ConsumableCategory(
+                                        quantity: $quantity, status: $status, expiryDate: $expiryDate,
+                                        inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
+                                        didUpdateInventoryStore: didUpdateInventoryStore, type: .Quantity
+                                    )
                                 }
-                            }.padding(.horizontal, 15).padding(.vertical, 5).frame(
-                                maxWidth: .infinity, alignment: .center
-                            ).background(.blue100).cornerRadius(20).padding(.bottom, 10)
-
-                            Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                                GridRow {
-                                    Image(systemName: "checkmark.seal.fill").fontWeight(.bold)
-                                        .foregroundStyle(.yellow500)
-                                        .font(.system(size: 32))
-                                    Text("Looks like a good choice, you’re unlikely to waste any of this item")
-                                        .font(.callout)
-                                        .foregroundStyle(.gray600)
-                                        .multilineTextAlignment(.center)
-                                        .lineLimit(2 ... 2)
-
-                                    Spacer()
-                                }
-                                GridRow {
-                                    Image(systemName: "beach.umbrella.fill")
-                                        .foregroundStyle(.blue600).fontWeight(.bold)
-                                        .font(.system(size: 32))
-                                    Text("You should only need to buy one of these before your next holiday")
-                                        .font(.callout)
-                                        .foregroundStyle(.gray600)
-                                        .multilineTextAlignment(.center)
-                                        .lineLimit(2 ... 2)
-                                    Spacer()
-                                }
-
-                            }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
-
-                            VStack(spacing: 15) {
-                                ConsumableCategory(
-                                    quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                    inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
-                                    didUpdateInventoryStore: didUpdateInventoryStore, type: .ExpiryDate
-                                )
-                                ConsumableCategory(
-                                    quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                    inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
-                                    didUpdateInventoryStore: didUpdateInventoryStore, type: .Storage
-                                )
-                                ConsumableCategory(
-                                    quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                    inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
-                                    didUpdateInventoryStore: didUpdateInventoryStore, type: .Status
-                                )
-                                ConsumableCategory(
-                                    quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                    inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
-                                    didUpdateInventoryStore: didUpdateInventoryStore, type: .Quantity
-                                )
                             }
                         }
                         .padding(.bottom, 100)
@@ -202,7 +232,7 @@ public struct AddConsumableView: View {
                         .frame(maxWidth: geometry.size.width)
                     }
                 }.background(.white200)
-
+                
                 ZStack(alignment: .bottom) {
                     UnevenRoundedRectangle(
                         cornerRadii: RectangleCornerRadii(
@@ -215,7 +245,7 @@ public struct AddConsumableView: View {
                     .fill(.white200)
                     .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
                     .frame(height: 80)
-
+                    
                     Button(action: addToInventory) {
                         Text("Add to \(inventoryStore.rawValue.capitalized)")
                             .font(.title2)
@@ -240,5 +270,26 @@ public struct AddConsumableView: View {
                 }
             }
         }
+        .onAppear {
+            Task {
+                await inventoryService.fetchInventorySuggestions(for: productSearchItem.category.id)
+            }
+        }
+        .onChange(of: inventoryService.suggestions) { _, newSuggestions in
+            updateDefaultsFromSuggestions(newSuggestions)
+        }
+        .onChange(of: calculatedExpiryDate) { _, newDate in
+            expiryDate = newDate
+        }
+    }
+    
+    private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
+        guard let suggestions = suggestions, !hasLoadedDefaults else { return }
+        
+        inventoryStore = suggestions.recommendedStorageLocation
+        
+        expiryType = suggestions.expiryType
+        
+        hasLoadedDefaults = true
     }
 }
