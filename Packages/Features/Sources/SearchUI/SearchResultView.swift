@@ -3,15 +3,44 @@ import Models
 import Router
 import SwiftUI
 
-@MainActor let consumableSearchItem: ConsumableSearchItem = .init(id: UUID(), icon: "waterbottle.fill", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints")
+public struct SearchResultView: View {
+    var products: [ProductSearchItem]
+    
+    public var body: some View {
+        ScrollView {
+            LazyVStack(spacing: 20) {
+                ForEach(products, id: \.sourceId) { product in
+                    NavigationLink(
+                        value: RouterDestination.addProduct(product: product)
+                    ) {
+                        SearchResultCard(product: product)
+                            .toolbarVisibility(.hidden, for: .tabBar)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }.padding(.top, 15)
+                .padding(.horizontal, 16)
+        }
+    }
+}
 
 public struct SearchResultCard: View {
+    var product: ProductSearchItem
+    
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                Image(systemName: consumableSearchItem.icon)
-                    .font(.system(size: 28)).foregroundStyle(.white200)
-                Text(consumableSearchItem.name)
+                AsyncImage(url: URL(string: product.imageURL)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } placeholder: {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white200))
+                }
+                .frame(width: 28, height: 28)
+                Text(product.name)
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundStyle(.blue700)
@@ -28,22 +57,29 @@ public struct SearchResultCard: View {
             .padding(.horizontal, 10)
             .background(.blue400)
             .cornerRadius(20)
-
+            
             VStack {
                 HStack {
-                    Text(consumableSearchItem.category)
+                    Text(product.categoryPath)
                         .font(.subheadline).foregroundStyle(.gray500)
                     Spacer()
                 }
                 HStack {
-                    Text(consumableSearchItem.brand)
+                    Text(product.brand)
                         .font(.subheadline)
                         .foregroundStyle(.brandSainsburys)
-                    Circle()
-                        .frame(width: 4, height: 4)
-                        .foregroundStyle(.blue700)
-                    Text("\(String(format: "%.0f", consumableSearchItem.amount)) \(consumableSearchItem.unit)").foregroundStyle(.gray500)
-                        .font(.subheadline)
+                    
+                    if product.amount != nil && product.unit != nil {
+                        Circle()
+                            .frame(width: 4, height: 4)
+                            .foregroundStyle(.blue700)
+                        
+                        Text(
+                            "\(String(format: "%.0f", product.amount ?? 1))\(product.unit ?? "g")"
+                        ).foregroundStyle(.gray500)
+                            .font(.subheadline)
+                    }
+                    
                     Spacer()
                     Image(systemName: "clock")
                         .font(.callout)
@@ -63,23 +99,5 @@ public struct SearchResultCard: View {
         .background(.blue400)
         .cornerRadius(20)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
-    }
-}
-
-public struct SearchResultView: View {
-    public var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 20) {
-                ForEach(0 ..< 20) { _ in
-                    NavigationLink(value: RouterDestination.addConsumableItem(consumableSearchItem: consumableSearchItem)) {
-                        SearchResultCard()
-                            .toolbarVisibility(.hidden, for: .tabBar)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }.padding(.top, 15)
-                .padding(.horizontal, 16)
-        }
     }
 }

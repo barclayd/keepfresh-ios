@@ -71,17 +71,8 @@ public extension AppTab {
     func toolbarContent(router: Router) -> some ToolbarContent {
         switch self {
         case .today, .kitchen:
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    print("Profile click")
-                }) {
-                    Image(systemName: "person.crop.circle.fill").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.blue600)
-                }
-            }
-
-            ToolbarItem(placement: .principal) {
-                Text("Fresh")
+            ToolbarItem(placement: .title) {
+                Text("KeepFresh")
                     .foregroundColor(.green500).font(
                         Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
             }

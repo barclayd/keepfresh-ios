@@ -17,8 +17,16 @@ public struct RecentSearchItem: View {
         Button(action: { onTap(currentSearchText) }) {
             HStack {
                 HStack(spacing: 10) {
-                    Image(systemName: "waterbottle.fill")
-                        .font(.system(size: 35))
+                    AsyncImage(
+                        url: URL(string: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png")
+                    ) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 35, height: 35)
                     Text(currentSearchText)
                         .font(.headline)
                         .fontWeight(.bold)
@@ -60,7 +68,7 @@ public struct RecentSearchView: View {
                 Spacer()
             }.padding(.top, 10)
 
-            ForEach(0 ..< 20) { _ in
+            ForEach(0 ..< 5) { _ in
                 RecentSearchItem(
                     currentSearchText: "Semi Skimmed Milk",
                     onTap: { previousSearchText in

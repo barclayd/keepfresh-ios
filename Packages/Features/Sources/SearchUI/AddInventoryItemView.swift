@@ -16,14 +16,14 @@ public struct AddConsumableView: View {
     @State private var expiryDate: Date
     @State private var inventoryStore: InventoryStore
     @State private var quantity: Int = 1
-    @State private var status: ConsumableStatus = .unopened
+    @State private var status: InventoryItemStatus = .unopened
 
-    public let consumableItem: ConsumableSearchItem
+    public let productSearchItem: ProductSearchItem
     let initialInventoryStore: InventoryStore
     let initialExpiryDate: Date
 
-    public init(consumableSearchItem: ConsumableSearchItem) {
-        consumableItem = consumableSearchItem
+    public init(productSearchItem: ProductSearchItem) {
+        self.productSearchItem = productSearchItem
         initialExpiryDate = Date()
         initialInventoryStore = .fridge
         _expiryDate = State(initialValue: initialExpiryDate)
@@ -39,7 +39,10 @@ public struct AddConsumableView: View {
     }
 
     func addToInventory() {
-        print("Expiry date: \(expiryDate)", "Inventory store: \(inventoryStore.rawValue)", "quantity: \(quantity)", "status: \(status.rawValue)")
+        print(
+            "Expiry date: \(expiryDate)", "Inventory store: \(inventoryStore.rawValue)",
+            "quantity: \(quantity)", "status: \(status.rawValue)"
+        )
 
         router.popToRoot(for: .search)
     }
@@ -62,22 +65,32 @@ public struct AddConsumableView: View {
                         .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 5) {
-                            Image(systemName: consumableItem.icon).font(.system(size: 78)).foregroundColor(
-                                .white200)
-                            Text("\(consumableItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
+                            AsyncImage(url: URL(string: productSearchItem.imageURL)) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(height: 150)
+                            Text("\(productSearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold)
                             HStack {
-                                Text(consumableItem.category)
+                                Text(productSearchItem.category)
                                     .font(.callout).foregroundStyle(.gray600)
-                                Circle()
-                                    .frame(width: 4, height: 4)
-                                    .foregroundStyle(.gray600)
-                                Text("\(String(format: "%.0f", consumableItem.amount)) \(consumableItem.unit)")
-                                    .foregroundStyle(.gray600)
-                                    .font(.callout)
+                                if ((productSearchItem.amount != nil) && (productSearchItem.unit != nil)) {
+                                    Circle()
+                                        .frame(width: 4, height: 4)
+                                        .foregroundStyle(.gray600)
+                                    
+                                    Text("\(String(format: "%.0f", productSearchItem.amount!))\(productSearchItem.unit!)")
+                                        .foregroundStyle(.gray600)
+                                        .font(.callout)
+                                }
+                                
                             }
-                            Text(consumableItem.brand)
+                            Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
 
@@ -163,10 +176,26 @@ public struct AddConsumableView: View {
                             }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
 
                             VStack(spacing: 15) {
-                                ConsumableCategory(quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore, type: .ExpiryDate)
-                                ConsumableCategory(quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore, type: .Storage)
-                                ConsumableCategory(quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore, type: .Status)
-                                ConsumableCategory(quantity: $quantity, status: $status, expiryDate: $expiryDate, inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore, type: .Quantity)
+                                ConsumableCategory(
+                                    quantity: $quantity, status: $status, expiryDate: $expiryDate,
+                                    inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
+                                    didUpdateInventoryStore: didUpdateInventoryStore, type: .ExpiryDate
+                                )
+                                ConsumableCategory(
+                                    quantity: $quantity, status: $status, expiryDate: $expiryDate,
+                                    inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
+                                    didUpdateInventoryStore: didUpdateInventoryStore, type: .Storage
+                                )
+                                ConsumableCategory(
+                                    quantity: $quantity, status: $status, expiryDate: $expiryDate,
+                                    inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
+                                    didUpdateInventoryStore: didUpdateInventoryStore, type: .Status
+                                )
+                                ConsumableCategory(
+                                    quantity: $quantity, status: $status, expiryDate: $expiryDate,
+                                    inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
+                                    didUpdateInventoryStore: didUpdateInventoryStore, type: .Quantity
+                                )
                             }
                         }
                         .padding(.bottom, 100)

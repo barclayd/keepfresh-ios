@@ -4,7 +4,10 @@ import Models
 import Router
 import SwiftUI
 
-@MainActor let consumableSearchItem: ConsumableSearchItem = .init(id: UUID(), icon: "waterbottle.fill", name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pints")
+@MainActor let productSearchItem: ProductSearchItem = .init(
+    sourceId: "012345435", imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
+    name: "Semi Skimmed Milk", category: "Milk", categoryPath: "Dairy > Milk", brand: "Sainburys", amount: 4, unit: "pints"
+)
 
 func roundedRectangleWithHoleInMask(
     in rect: CGRect, shapeWidthOffset: CGFloat, shapeHeightOffset: CGFloat, shapeWidth: CGFloat,
@@ -32,17 +35,18 @@ func shapeWidth(geometry: GeometryProxy) -> CGFloat {
 
 public struct BarcodeView: View {
     @Environment(Router.self) var router
-    
+
     @State private var isFlashOn: Bool = false
     @State private var offsetX: CGFloat = ((UIScreen.main.bounds.width / 10) * -3) + 20
     @State private var barcodeIndex: Int = 0
-    
+
     public init() {}
-    
-    
+
     let timer = Timer.publish(every: 3, tolerance: 1, on: .main, in: .common).autoconnect()
-    let barcodeIcons = ["text.magnifyingglass", "text.page.badge.magnifyingglass", "rectangle.and.text.magnifyingglass"]
-    
+    let barcodeIcons = [
+        "text.magnifyingglass", "text.page.badge.magnifyingglass", "rectangle.and.text.magnifyingglass",
+    ]
+
     public var body: some View {
         NavigationView {
             GeometryReader { geometry in
@@ -51,13 +55,13 @@ public struct BarcodeView: View {
                         switch response {
                         case let .success(result):
                             print("Found code: \(result.string)")
-                            router.navigateTo(.addConsumableItem(consumableSearchItem: consumableSearchItem))
+                            router.navigateTo(.addProduct(product: productSearchItem))
                             router.presentedSheet = nil
                         case let .failure(error):
                             print(error.localizedDescription)
                         }
                     }
-                    
+
                     Rectangle()
                         .fill(Color.blue800).opacity(0.95)
                         .mask(
@@ -70,8 +74,7 @@ public struct BarcodeView: View {
                                 shapeWidth: shapeWidth(geometry: geometry),
                                 shapeHeight: shapeHeight(geometry: geometry)
                             ).fill(style: FillStyle(eoFill: true)))
-                    
-                    
+
                     VStack(spacing: 20) {
                         Image(systemName: barcodeIcons[barcodeIndex])
                             .foregroundStyle(.white200)
@@ -86,7 +89,7 @@ public struct BarcodeView: View {
                             .onReceive(timer) { _ in
                                 barcodeIndex = (barcodeIndex + 1) % barcodeIcons.count
                             }
-                        
+
                         Text("Scan a barcode")
                             .foregroundStyle(.white200)
                             .fontWeight(.bold)
