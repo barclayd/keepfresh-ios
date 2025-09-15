@@ -10,47 +10,44 @@ private extension Date {
     }
 }
 
+@Observable
+public class ConsumableFormState {
+    var expiryDate = Date()
+    var expiryType: ExpiryType = .BestBefore
+    var inventoryStore: InventoryStore = .fridge
+    var quantity = 1
+    var status: ProductSearchItemStatus = .unopened
+}
+
 public struct AddConsumableView: View {
     @Environment(Router.self) var router
     
-    @StateObject private var inventoryService = InventorySuggestionsService()
-    
-    @State private var expiryDate: Date
-    @State private var expiryType: ExpiryType
-    @State private var inventoryStore: InventoryStore
-    @State private var quantity: Int = 1
-    @State private var status: ProductSearchItemStatus = .unopened
+    @State private var inventory = InventorySuggestions()
+    @State private var formState = ConsumableFormState()
     
     public let productSearchItem: ProductSearchItem
-    let initialExpiryDate: Date
-    let initialExpiryType: ExpiryType
     
     public init(productSearchItem: ProductSearchItem) {
         self.productSearchItem = productSearchItem
-        initialExpiryDate = Date()
-        initialExpiryType = .BestBefore
-        _expiryDate = State(initialValue: Date())
-        _inventoryStore = State(initialValue: .fridge)
-        _expiryType = State(initialValue: .BestBefore)
     }
-
+    
     var isRecommendedExpiryDate: Bool {
-        guard let recommendedNumberOfDays = inventoryService.suggestions?.shelfLifeInDays[status][inventoryStore] else {
+        guard let recommendedNumberOfDays = inventory.suggestions?.shelfLifeInDays[formState.status][formState.inventoryStore] else {
             return false
         }
-        return expiryDate.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
+        return formState.expiryDate.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
     }
     
     var isRecommendedStorageLocation: Bool {
-        inventoryStore == inventoryService.suggestions?.recommendedStorageLocation
+        formState.inventoryStore == inventory.suggestions?.recommendedStorageLocation
     }
     
     var calculatedExpiryDate: Date {
         guard
-            let shelfLife = inventoryService.suggestions?.shelfLifeInDays,
+            let shelfLife = inventory.suggestions?.shelfLifeInDays,
             let expiry = getExpiryDateForSelection(
-                storage: inventoryStore,
-                status: status,
+                storage: formState.inventoryStore,
+                status: formState.status,
                 shelfLife: shelfLife
             )
         else {
@@ -61,8 +58,8 @@ public struct AddConsumableView: View {
     
     func addToInventory() {
         print(
-            "Expiry date: \(expiryDate)", "Inventory store: \(inventoryStore.rawValue)",
-            "quantity: \(quantity)", "status: \(status.rawValue)"
+            "Expiry date: \(formState.expiryDate)", "Inventory store: \(formState.inventoryStore.rawValue)",
+            "quantity: \(formState.quantity)", "status: \(formState.status.rawValue)"
         )
         
         router.popToRoot(for: .search)
@@ -116,7 +113,7 @@ public struct AddConsumableView: View {
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
                             
-                            if inventoryService.isLoading {
+                            if inventory.isLoading {
                                 ProgressView()
                             } else {
                                 VStack {
@@ -205,23 +202,23 @@ public struct AddConsumableView: View {
                                 
                                 VStack(spacing: 15) {
                                     ConsumableCategory(
-                                        quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                        inventoryStore: $inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        quantity: $formState.quantity, status: $formState.status, expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Expiry
                                     )
                                     ConsumableCategory(
-                                        quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                        inventoryStore: $inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        quantity: $formState.quantity, status: $formState.status, expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Storage
                                     )
                                     ConsumableCategory(
-                                        quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                        inventoryStore: $inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        quantity: $formState.quantity, status: $formState.status, expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Status
                                     )
                                     ConsumableCategory(
-                                        quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                        inventoryStore: $inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        quantity: $formState.quantity, status: $formState.status, expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Quantity
                                     )
                                 }
@@ -247,7 +244,7 @@ public struct AddConsumableView: View {
                     .frame(height: 80)
                     
                     Button(action: addToInventory) {
-                        Text("Add to \(inventoryStore.rawValue.capitalized)")
+                        Text("Add to \(formState.inventoryStore.rawValue.capitalized)")
                             .font(.title2)
                             .foregroundStyle(.blue600)
                             .fontWeight(.medium)
@@ -272,24 +269,24 @@ public struct AddConsumableView: View {
         }
         .onAppear {
             Task {
-                await inventoryService.fetchInventorySuggestions(for: productSearchItem.category.id)
+                await inventory.fetchInventorySuggestions(for: productSearchItem.category.id)
             }
         }
-        .onChange(of: inventoryService.suggestions) { _, newSuggestions in
+        .onChange(of: inventory.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
         .onChange(of: calculatedExpiryDate) { oldDate, newDate in
             if !newDate.isSameDay(as: oldDate) {
-                expiryDate = newDate
+                formState.expiryDate = newDate
             }
         }
     }
     
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
-        guard let suggestions = suggestions, inventoryService.isLoading else { return }
+        guard let suggestions = suggestions, inventory.isLoading else { return }
         
-        inventoryStore = suggestions.recommendedStorageLocation
+        formState.inventoryStore = suggestions.recommendedStorageLocation
         
-        expiryType = suggestions.expiryType
+        formState.expiryType = suggestions.expiryType
     }
 }
