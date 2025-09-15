@@ -93,7 +93,7 @@ public extension AppTab {
             }
 
         case .search:
-            ToolbarItem(placement: .topBarLeading) {
+            ToolbarItem(placement: .title) {
                 Text("Search")
                     .foregroundColor(.white200).font(
                         Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
@@ -104,7 +104,7 @@ public extension AppTab {
                     print("Barcode scan")
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.white200)
+                        .frame(width: 24, height: 24).foregroundColor(.blue600)
                 }
             }
         }

@@ -20,29 +20,29 @@ public struct AddConsumableView: View {
     @State private var inventoryStore: InventoryStore
     @State private var quantity: Int = 1
     @State private var status: ProductSearchItemStatus = .unopened
-    @State private var hasLoadedDefaults: Bool = false
     
     public let productSearchItem: ProductSearchItem
-    let initialInventoryStore: InventoryStore
     let initialExpiryDate: Date
     let initialExpiryType: ExpiryType
     
     public init(productSearchItem: ProductSearchItem) {
         self.productSearchItem = productSearchItem
         initialExpiryDate = Date()
-        initialInventoryStore = .fridge
         initialExpiryType = .BestBefore
         _expiryDate = State(initialValue: Date())
         _inventoryStore = State(initialValue: .fridge)
         _expiryType = State(initialValue: .BestBefore)
     }
-    
-    var didUpdateInventoryStore: Bool {
-        inventoryStore != initialInventoryStore
+
+    var isRecommendedExpiryDate: Bool {
+        guard let recommendedNumberOfDays = inventoryService.suggestions?.shelfLifeInDays[status][inventoryStore] else {
+            return false
+        }
+        return expiryDate.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
     }
     
-    var didUpdateExpiryDate: Bool {
-        expiryDate.isSameDay(as: initialExpiryDate) == false
+    var isRecommendedStorageLocation: Bool {
+        inventoryStore == inventoryService.suggestions?.recommendedStorageLocation
     }
     
     var calculatedExpiryDate: Date {
@@ -206,23 +206,23 @@ public struct AddConsumableView: View {
                                 VStack(spacing: 15) {
                                     ConsumableCategory(
                                         quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                        inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
-                                        didUpdateInventoryStore: didUpdateInventoryStore, type: .Expiry
+                                        inventoryStore: $inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Expiry
                                     )
                                     ConsumableCategory(
                                         quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                        inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
-                                        didUpdateInventoryStore: didUpdateInventoryStore, type: .Storage
+                                        inventoryStore: $inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Storage
                                     )
                                     ConsumableCategory(
                                         quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                        inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
-                                        didUpdateInventoryStore: didUpdateInventoryStore, type: .Status
+                                        inventoryStore: $inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Status
                                     )
                                     ConsumableCategory(
                                         quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                                        inventoryStore: $inventoryStore, didUpdateExpiryDate: didUpdateExpiryDate,
-                                        didUpdateInventoryStore: didUpdateInventoryStore, type: .Quantity
+                                        inventoryStore: $inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Quantity
                                     )
                                 }
                             }
@@ -266,7 +266,7 @@ public struct AddConsumableView: View {
                 Button(action: addToInventory) {
                     Image(systemName: "checkmark")
                         .font(.system(size: 18))
-                        .foregroundColor(.white200)
+                        .foregroundColor(.blue600)
                 }
             }
         }
@@ -278,18 +278,18 @@ public struct AddConsumableView: View {
         .onChange(of: inventoryService.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
-        .onChange(of: calculatedExpiryDate) { _, newDate in
-            expiryDate = newDate
+        .onChange(of: calculatedExpiryDate) { oldDate, newDate in
+            if !newDate.isSameDay(as: oldDate) {
+                expiryDate = newDate
+            }
         }
     }
     
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
-        guard let suggestions = suggestions, !hasLoadedDefaults else { return }
+        guard let suggestions = suggestions, inventoryService.isLoading else { return }
         
         inventoryStore = suggestions.recommendedStorageLocation
         
         expiryType = suggestions.expiryType
-        
-        hasLoadedDefaults = true
     }
 }

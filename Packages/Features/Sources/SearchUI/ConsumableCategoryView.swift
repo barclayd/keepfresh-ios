@@ -109,15 +109,15 @@ private extension ConsumableCategoryType {
         status: Binding<ProductSearchItemStatus>,
         expiryDate: Binding<Date>,
         inventoryStore: Binding<InventoryStore>,
-        didUpdateExpiryDate: Bool,
-        didUpdateInventoryStore: Bool
+        isRecommendedExpiryDate: Bool,
+        isRecommendedStorageLocation: Bool
     ) -> some View {
         switch self {
         case .Expiry:
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {
                     Text(expiryDate.wrappedValue.formattedWithOrdinal).foregroundStyle(.gray600)
-                    if !didUpdateExpiryDate {
+                    if isRecommendedExpiryDate {
                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                             .offset(y: -8)
                     }
@@ -140,7 +140,7 @@ private extension ConsumableCategoryType {
                     Image(systemName: inventoryStore.wrappedValue.icon).font(.system(size: 24))
                         .foregroundStyle(.gray600).padding(.trailing, 2)
                     Text(inventoryStore.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
-                    if !didUpdateInventoryStore {
+                    if isRecommendedStorageLocation {
                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                             .offset(y: -8)
                     }
@@ -195,8 +195,9 @@ struct ConsumableCategoryOverview: View {
     @Binding var status: ProductSearchItemStatus
     @Binding var inventoryStore: InventoryStore
     @Binding var expiryDate: Date
-    var didUpdateExpiryDate: Bool
-    var didUpdateInventoryStore: Bool
+    
+    var isRecommendedExpiryDate: Bool
+    var isRecommendedStorageLocation: Bool
 
     let type: ConsumableCategoryType
 
@@ -218,7 +219,7 @@ struct ConsumableCategoryOverview: View {
         type.overviewLabel(
             quantity: $quantity, status: $status, expiryDate: $expiryDate,
             inventoryStore: $inventoryStore,
-            didUpdateExpiryDate: didUpdateExpiryDate, didUpdateInventoryStore: didUpdateInventoryStore
+            isRecommendedExpiryDate: isRecommendedExpiryDate, isRecommendedStorageLocation: isRecommendedStorageLocation
         )
 
         Spacer()
@@ -397,8 +398,8 @@ public struct ConsumableCategory: View {
     @Binding var expiryDate: Date
     @Binding var inventoryStore: InventoryStore
 
-    var didUpdateExpiryDate: Bool
-    var didUpdateInventoryStore: Bool
+    var isRecommendedExpiryDate: Bool
+    var isRecommendedStorageLocation: Bool
 
     let type: ConsumableCategoryType
 
@@ -416,8 +417,8 @@ public struct ConsumableCategory: View {
                     status: $status,
                     inventoryStore: $inventoryStore,
                     expiryDate: $expiryDate,
-                    didUpdateExpiryDate: didUpdateExpiryDate,
-                    didUpdateInventoryStore: didUpdateInventoryStore,
+                    isRecommendedExpiryDate: isRecommendedExpiryDate,
+                    isRecommendedStorageLocation: isRecommendedStorageLocation,
                     type: type
                 )
             }

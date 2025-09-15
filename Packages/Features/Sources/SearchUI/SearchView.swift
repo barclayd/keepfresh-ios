@@ -11,72 +11,80 @@ struct SearchResponse: Codable {
 }
 
 @MainActor
-class SearchManager: ObservableObject {
-    @Published var searchText: String = ""
-    @Published var debouncedSearchText: String = ""
-    @Published var searchResults: [ProductSearchItem] = []
-    @Published var isLoading: Bool = false
-
-    private var cancellables = Set<AnyCancellable>()
-
-    init() {
-        setupSearchDebounce()
+@Observable
+class Search {
+    var searchText: String = "" {
+        didSet {
+            Task {
+                await debounceSearch()
+            }
+        }
     }
-
-    private func setupSearchDebounce() {
-        $searchText
-            .debounce(for: .seconds(1), scheduler: RunLoop.main)
-            .sink { [weak self] debouncedValue in
-                self?.debouncedSearchText = debouncedValue
-                print("Debounced value: '\(debouncedValue)'")
-
-                if !debouncedValue.isEmpty {
-                    Task { [weak self] in
-                        await self?.sendSearchRequest(searchTerm: debouncedValue)
+    var debouncedSearchText: String = ""
+    var searchResults: [ProductSearchItem] = []
+    var isLoading: Bool = false
+    
+    private var searchTask: Task<Void, Never>?
+    
+    private func debounceSearch() async {
+        searchTask?.cancel()
+        
+        searchTask = Task {
+            do {
+                try await Task.sleep(for: .seconds(1))
+                
+                if !Task.isCancelled {
+                    debouncedSearchText = searchText
+                    print("Debounced value: '\(searchText)'")
+                    
+                    if !searchText.isEmpty {
+                        await sendSearchRequest(searchTerm: searchText)
                     }
                 }
+            } catch {
+                print ("Search request failed for searchText=\(searchText)")
             }
-            .store(in: &cancellables)
+        }
     }
-
+    
     private func sendSearchRequest(searchTerm: String) async {
         isLoading = true
-
+        
         do {
             var urlComponents = URLComponents(string: "https://api.keepfre.sh/v1/products")!
-
+            
             let parameters: [String: String] = [
                 "search": searchTerm,
             ]
-
+            
             urlComponents.queryItems = parameters.map { key, value in
                 URLQueryItem(name: key, value: value)
             }
-
+            
             guard let url = urlComponents.url else {
                 isLoading = false
                 return
             }
-
+            
             let (data, _) = try await URLSession.shared.data(from: url)
-
+            
             let searchResponse = try JSONDecoder().decode(SearchResponse.self, from: data)
-
+            
             searchResults = searchResponse.products
             print("Search successful: Found \(searchResults.count) products")
-
+            
         } catch {
             print("Search failed with error: \(error)")
             searchResults = []
         }
-
+        
         isLoading = false
     }
 }
 
 @MainActor
 public struct SearchView: View {
-    @StateObject private var searchManager = SearchManager()
+    @State private var searchManager = Search()
     @State private var currentPage: Int = 0
     @State private var dragOffset: CGFloat = 0
     @State private var canDrag: Bool = true

@@ -40,28 +40,23 @@ extension StorageOptions {
 
 @MainActor
 public class InventorySuggestionsService: ObservableObject {
-    // Static cache shared across all instances for performance
     private static var globalCache: [Int: InventorySuggestionsResponse] = [:]
 
-    // Instance-specific state (resets with each view)
     @Published public var isLoading: Bool = false
     @Published public var suggestions: InventorySuggestionsResponse?
     @Published public var error: Error?
 
-    // Track which category this instance is for
     private var currentCategoryId: Int?
 
     public init() {}
 
     public func fetchInventorySuggestions(for categoryId: Int) async {
-        // Reset state if switching categories
         if currentCategoryId != categoryId {
             currentCategoryId = categoryId
             suggestions = nil
             error = nil
         }
 
-        // Check global cache first
         if let cachedSuggestions = Self.globalCache[categoryId] {
             suggestions = cachedSuggestions
             print("Using cached inventory suggestions for category: \(categoryId)")
@@ -77,10 +72,8 @@ public class InventorySuggestionsService: ObservableObject {
             let (data, _) = try await URLSession.shared.data(from: url)
             let response = try JSONDecoder().decode(InventorySuggestionsResponse.self, from: data)
 
-            // Cache the result globally
             Self.globalCache[categoryId] = response
 
-            // Only update this instance if we're still on the same category
             if currentCategoryId == categoryId {
                 suggestions = response
             }
@@ -88,7 +81,6 @@ public class InventorySuggestionsService: ObservableObject {
             print("Fetched inventory suggestions for category: \(categoryId)")
 
         } catch {
-            // Only update error if we're still on the same category
             if currentCategoryId == categoryId {
                 self.error = error
             }
