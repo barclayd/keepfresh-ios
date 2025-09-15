@@ -1,4 +1,3 @@
-import Combine
 import DesignSystem
 import Models
 import Router
@@ -11,32 +10,40 @@ struct SearchResponse: Codable {
 }
 
 @MainActor
-class SearchManager: ObservableObject {
-    @Published var searchText: String = ""
-    @Published var debouncedSearchText: String = ""
-    @Published var searchResults: [ProductSearchItem] = []
-    @Published var isLoading: Bool = false
-    
-    private var cancellables = Set<AnyCancellable>()
-    
-    init() {
-        setupSearchDebounce()
+@Observable
+class Search {
+    var searchText: String = "" {
+        didSet {
+            Task {
+                await debounceSearch()
+            }
+        }
     }
+    var debouncedSearchText: String = ""
+    var searchResults: [ProductSearchItem] = []
+    var isLoading: Bool = false
     
-    private func setupSearchDebounce() {
-        $searchText
-            .debounce(for: .seconds(1), scheduler: RunLoop.main)
-            .sink { [weak self] debouncedValue in
-                self?.debouncedSearchText = debouncedValue
-                print("Debounced value: '\(debouncedValue)'")
+    private var searchTask: Task<Void, Never>?
+    
+    private func debounceSearch() async {
+        searchTask?.cancel()
+        
+        searchTask = Task {
+            do {
+                try await Task.sleep(for: .seconds(1))
                 
-                if !debouncedValue.isEmpty {
-                    Task { [weak self] in
-                        await self?.sendSearchRequest(searchTerm: debouncedValue)
+                if !Task.isCancelled {
+                    debouncedSearchText = searchText
+                    print("Debounced value: '\(searchText)'")
+                    
+                    if !searchText.isEmpty {
+                        await sendSearchRequest(searchTerm: searchText)
                     }
                 }
+            } catch {
+                print ("Search request failed for searchText=\(searchText)")
             }
-            .store(in: &cancellables)
+        }
     }
     
     private func sendSearchRequest(searchTerm: String) async {
@@ -46,7 +53,7 @@ class SearchManager: ObservableObject {
             var urlComponents = URLComponents(string: "https://api.keepfre.sh/v1/products")!
             
             let parameters: [String: String] = [
-                "search": searchTerm
+                "search": searchTerm,
             ]
             
             urlComponents.queryItems = parameters.map { key, value in
@@ -76,25 +83,25 @@ class SearchManager: ObservableObject {
 
 @MainActor
 public struct SearchView: View {
-    @StateObject private var searchManager = SearchManager()
+    @State private var searchManager = Search()
     @State private var currentPage: Int = 0
     @State private var dragOffset: CGFloat = 0
     @State private var canDrag: Bool = true
     @Namespace private var animationNamespace
-    
+
     public init() {
         UIScrollView.appearance().bounces = false
     }
-    
+
     private var isSearching: Bool {
         !searchManager.debouncedSearchText.isEmpty
     }
-    
+
     public var body: some View {
         VStack(spacing: 0) {
             if isSearching {
                 HStack(spacing: 0) {
-                    ForEach(0..<searchTabItems.count, id: \.self) { index in
+                    ForEach(0 ..< searchTabItems.count, id: \.self) { index in
                         Spacer()
                         Button {
                             withAnimation(.smooth(duration: 0.3)) {
@@ -129,13 +136,12 @@ public struct SearchView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 50)
                 .background(Rectangle().fill(.blue600))
-                
+
                 TabView(selection: $currentPage) {
-                    ForEach(0..<searchTabItems.count, id: \.self) { index in
-                        SearchResultView(products: searchManager.searchResults).frame(
-                            maxWidth: .infinity, maxHeight: .infinity
-                        )
-                        .tag(index)
+                    ForEach(0 ..< searchTabItems.count, id: \.self) { index in
+                        SearchResultView(products: searchManager.searchResults)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .tag(index)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -151,17 +157,17 @@ public struct SearchView: View {
                 }
                 .simultaneousGesture(
                     canDrag
-                    ? DragGesture(minimumDistance: 10)
+                        ? DragGesture(minimumDistance: 10)
                         .onChanged { value in
                             if abs(value.translation.height) > abs(value.translation.width) {
-                                return  // Ignore primarily vertical drags
+                                return // Ignore primarily vertical drags
                             }
-                            
+
                             let screenWidth = UIScreen.main.bounds.width
                             let tabWidth = screenWidth / CGFloat(searchTabItems.count)
                             let translation = value.translation.width
                             let progress = (-translation / screenWidth)
-                            
+
                             if (progress * tabWidth) > 57 || (progress * tabWidth) < -57 {
                                 canDrag = false
                                 withAnimation(.smooth) {
@@ -179,7 +185,7 @@ public struct SearchView: View {
                                 dragOffset = 0
                             }
                         }
-                    : nil)
+                        : nil)
             } else {
                 RecentSearchView(searchText: $searchManager.searchText)
             }
@@ -188,8 +194,8 @@ public struct SearchView: View {
     }
 }
 
-extension View {
-    public func navigationBarSearch(searchText: Binding<String>) -> some View {
+public extension View {
+    func navigationBarSearch(searchText: Binding<String>) -> some View {
         modifier(NavigatationBarSearch(searchText: searchText))
     }
 }
@@ -197,7 +203,7 @@ extension View {
 public struct NavigatationBarSearch: ViewModifier {
     @Binding var searchText: String
     @Environment(Router.self) var router
-    
+
     public func body(content: Content) -> some View {
         switch router.selectedTab {
         case .search:
@@ -209,30 +215,30 @@ public struct NavigatationBarSearch: ViewModifier {
             .onAppear {
                 UISearchTextField.appearance().backgroundColor = .blue400
                 UISearchTextField.appearance().tintColor = .white200
-                
+
                 UISearchTextField.appearance().borderStyle = .none
                 UISearchTextField.appearance().layer.cornerRadius = 10
-                
+
                 UISearchTextField.appearance().attributedPlaceholder = NSAttributedString(
                     string: "What do you want to track next?",
                     attributes: [.foregroundColor: UIColor.gray200]
                 )
-                
+
                 func searchBarImage() -> UIImage {
                     let image = UIImage(systemName: "magnifyingglass")
                     return image!.withTintColor(UIColor(.white200), renderingMode: .alwaysOriginal)
                 }
-                
+
                 UISearchTextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
                     .attributedPlaceholder = NSAttributedString(
                         string: "What do you want to track next?",
                         attributes: [.foregroundColor: UIColor(.white200)]
                     )
-                
+
                 UISearchBar.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setImage(
                     searchBarImage(), for: .search, state: .normal
                 )
-                
+
                 UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self])
                     .setTitleTextAttributes([.foregroundColor: UIColor.white400], for: .normal)
             }.foregroundColor(.white200)

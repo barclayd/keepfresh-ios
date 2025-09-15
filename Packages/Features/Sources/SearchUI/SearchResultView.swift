@@ -5,11 +5,11 @@ import SwiftUI
 
 public struct SearchResultView: View {
     var products: [ProductSearchItem]
-    
+
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 20) {
-                ForEach(products, id: \.sourceId) { product in
+                ForEach(products) { product in
                     NavigationLink(
                         value: RouterDestination.addProduct(product: product)
                     ) {
@@ -27,7 +27,7 @@ public struct SearchResultView: View {
 
 public struct SearchResultCard: View {
     var product: ProductSearchItem
-    
+
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
@@ -57,10 +57,10 @@ public struct SearchResultCard: View {
             .padding(.horizontal, 10)
             .background(.blue400)
             .cornerRadius(20)
-            
+
             VStack {
                 HStack {
-                    Text(product.categoryPath)
+                    Text(product.category.path)
                         .font(.subheadline).foregroundStyle(.gray500)
                     Spacer()
                 }
@@ -68,18 +68,18 @@ public struct SearchResultCard: View {
                     Text(product.brand)
                         .font(.subheadline)
                         .foregroundStyle(.brandSainsburys)
-                    
+
                     if product.amount != nil && product.unit != nil {
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.blue700)
-                        
+
                         Text(
                             "\(String(format: "%.0f", product.amount ?? 1))\(product.unit ?? "g")"
                         ).foregroundStyle(.gray500)
                             .font(.subheadline)
                     }
-                    
+
                     Spacer()
                     Image(systemName: "clock")
                         .font(.callout)

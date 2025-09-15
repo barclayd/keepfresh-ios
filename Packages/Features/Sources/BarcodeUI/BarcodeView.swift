@@ -6,7 +6,7 @@ import SwiftUI
 
 @MainActor let productSearchItem: ProductSearchItem = .init(
     sourceId: "012345435", imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
-    name: "Semi Skimmed Milk", category: "Milk", categoryPath: "Dairy > Milk", brand: "Sainburys", amount: 4, unit: "pints"
+    name: "Semi Skimmed Milk", category: ProductSearchItemCategory(id: 123, name: "Milk", path: "Fresh Food > Milk"), brand: "Sainburys", amount: 4, unit: "pints"
 )
 
 func roundedRectangleWithHoleInMask(
