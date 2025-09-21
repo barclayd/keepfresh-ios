@@ -2,19 +2,18 @@
 import PackageDescription
 
 let package = Package(
-    name: "Router",
+    name: "Models",
     platforms: [.iOS(.v18), .macOS(.v15)],
     products: [
-        .library(name: "Router", targets: ["Router"]),
+        .library(name: "Models", targets: ["Models"]),
     ],
     dependencies: [
         .package(path: "../DesignSystem"),
-        .package(path: "../Models")
     ],
     targets: [
         .target(
-            name: "Router",
-            dependencies: ["DesignSystem", "Models"]
+            name: "Models",
+            dependencies: ["DesignSystem"]
         ),
     ]
 )

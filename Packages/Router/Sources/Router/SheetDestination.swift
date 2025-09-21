@@ -1,5 +1,4 @@
-import Models
-import SwiftUI
+import Foundation
 
 public enum SheetDestination: Hashable, Identifiable {
     public var id: Int { hashValue }

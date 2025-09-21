@@ -1,10 +1,10 @@
 import DesignSystem
 import Models
-import Router
 import SwiftUI
+import Router
 
 public struct SearchResultView: View {
-    var products: [ProductSearchItem]
+    var products: [ProductSearchItemResponse]
 
     public var body: some View {
         ScrollView {
@@ -26,12 +26,12 @@ public struct SearchResultView: View {
 }
 
 public struct SearchResultCard: View {
-    var product: ProductSearchItem
+    var product: ProductSearchItemResponse
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                AsyncImage(url: URL(string: product.imageURL)) { image in
+                AsyncImage(url: product.imageURL.flatMap(URL.init)) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)

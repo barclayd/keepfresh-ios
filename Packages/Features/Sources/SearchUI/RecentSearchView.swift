@@ -61,7 +61,7 @@ public struct RecentSearchView: View {
     public var body: some View {
         List {
             HStack {
-                Text("Recent Searches" + searchText)
+                Text("Recent Searches")
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundStyle(.black)

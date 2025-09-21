@@ -2,12 +2,9 @@ import DesignSystem
 import Models
 import Router
 import SwiftUI
+import Network
 
 let searchTabItems = ["All", "Foods", "Categories", "My Foods"]
-
-struct SearchResponse: Codable {
-    let products: [ProductSearchItem]
-}
 
 @MainActor
 @Observable
@@ -19,8 +16,9 @@ class Search {
             }
         }
     }
+    
     var debouncedSearchText: String = ""
-    var searchResults: [ProductSearchItem] = []
+    var searchResults: [ProductSearchItemResponse] = []
     var isLoading: Bool = false
     
     private var searchTask: Task<Void, Never>?
@@ -41,7 +39,7 @@ class Search {
                     }
                 }
             } catch {
-                print ("Search request failed for searchText=\(searchText)")
+                print("Search request failed for searchText=\(searchText)")
             }
         }
     }
@@ -49,26 +47,10 @@ class Search {
     private func sendSearchRequest(searchTerm: String) async {
         isLoading = true
         
+        let api = KeepFreshAPI()
+        
         do {
-            var urlComponents = URLComponents(string: "https://api.keepfre.sh/v1/products")!
-            
-            let parameters: [String: String] = [
-                "search": searchTerm,
-            ]
-            
-            urlComponents.queryItems = parameters.map { key, value in
-                URLQueryItem(name: key, value: value)
-            }
-            
-            guard let url = urlComponents.url else {
-                isLoading = false
-                return
-            }
-            
-            let (data, _) = try await URLSession.shared.data(from: url)
-            
-            let searchResponse = try JSONDecoder().decode(SearchResponse.self, from: data)
-            
+            let searchResponse = try await api.searchProducts(query: searchTerm)
             searchResults = searchResponse.products
             print("Search successful: Found \(searchResults.count) products")
             
@@ -88,15 +70,15 @@ public struct SearchView: View {
     @State private var dragOffset: CGFloat = 0
     @State private var canDrag: Bool = true
     @Namespace private var animationNamespace
-
+    
     public init() {
         UIScrollView.appearance().bounces = false
     }
-
+    
     private var isSearching: Bool {
         !searchManager.debouncedSearchText.isEmpty
     }
-
+    
     public var body: some View {
         VStack(spacing: 0) {
             if isSearching {
@@ -136,7 +118,7 @@ public struct SearchView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 50)
                 .background(Rectangle().fill(.blue600))
-
+                
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< searchTabItems.count, id: \.self) { index in
                         SearchResultView(products: searchManager.searchResults)
@@ -157,17 +139,17 @@ public struct SearchView: View {
                 }
                 .simultaneousGesture(
                     canDrag
-                        ? DragGesture(minimumDistance: 10)
+                    ? DragGesture(minimumDistance: 10)
                         .onChanged { value in
                             if abs(value.translation.height) > abs(value.translation.width) {
                                 return // Ignore primarily vertical drags
                             }
-
+                            
                             let screenWidth = UIScreen.main.bounds.width
                             let tabWidth = screenWidth / CGFloat(searchTabItems.count)
                             let translation = value.translation.width
                             let progress = (-translation / screenWidth)
-
+                            
                             if (progress * tabWidth) > 57 || (progress * tabWidth) < -57 {
                                 canDrag = false
                                 withAnimation(.smooth) {
@@ -185,7 +167,7 @@ public struct SearchView: View {
                                 dragOffset = 0
                             }
                         }
-                        : nil)
+                    : nil)
             } else {
                 RecentSearchView(searchText: $searchManager.searchText)
             }
@@ -203,7 +185,7 @@ public extension View {
 public struct NavigatationBarSearch: ViewModifier {
     @Binding var searchText: String
     @Environment(Router.self) var router
-
+    
     public func body(content: Content) -> some View {
         switch router.selectedTab {
         case .search:
@@ -215,30 +197,30 @@ public struct NavigatationBarSearch: ViewModifier {
             .onAppear {
                 UISearchTextField.appearance().backgroundColor = .blue400
                 UISearchTextField.appearance().tintColor = .white200
-
+                
                 UISearchTextField.appearance().borderStyle = .none
                 UISearchTextField.appearance().layer.cornerRadius = 10
-
+                
                 UISearchTextField.appearance().attributedPlaceholder = NSAttributedString(
                     string: "What do you want to track next?",
                     attributes: [.foregroundColor: UIColor.gray200]
                 )
-
+                
                 func searchBarImage() -> UIImage {
                     let image = UIImage(systemName: "magnifyingglass")
                     return image!.withTintColor(UIColor(.white200), renderingMode: .alwaysOriginal)
                 }
-
+                
                 UISearchTextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
                     .attributedPlaceholder = NSAttributedString(
                         string: "What do you want to track next?",
                         attributes: [.foregroundColor: UIColor(.white200)]
                     )
-
+                
                 UISearchBar.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setImage(
                     searchBarImage(), for: .search, state: .normal
                 )
-
+                
                 UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self])
                     .setTitleTextAttributes([.foregroundColor: UIColor.white400], for: .normal)
             }.foregroundColor(.white200)
