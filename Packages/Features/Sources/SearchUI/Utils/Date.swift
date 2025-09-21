@@ -13,3 +13,18 @@ func getExpiryDateForSelection(storage: InventoryStore, status: ProductSearchIte
 
     return addDaysToNow(expiryInDays)
 }
+
+public extension Date {
+    func isSameDay(as other: Date) -> Bool {
+        let calendar = Calendar.current
+        return calendar.isDate(self, equalTo: other, toGranularity: .day)
+    }
+}
+
+public extension Date {
+    var isoString: String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter.string(from: self)
+    }
+}

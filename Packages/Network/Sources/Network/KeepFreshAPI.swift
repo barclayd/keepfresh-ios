@@ -1,5 +1,3 @@
-// NetworkPackage/Sources/NetworkPackage/KeepFreshAPI.swift
-
 import Foundation
 import Models
 
@@ -26,6 +24,16 @@ public struct KeepFreshAPI {
         try await client.fetch(
             InventorySuggestionsResponse.self,
             path: "v1/categories/\(categoryId)/inventory-suggestions"
+        )
+    }
+    
+    // MARK: - Inventory
+    
+    public func createInventoryItem(_ request: AddInventoryItemRequest) async throws -> AddInventoryItemResponse {
+        try await client.post(
+            AddInventoryItemResponse.self,
+            path: "v1/inventory/items",
+            body: request
         )
     }
 }
