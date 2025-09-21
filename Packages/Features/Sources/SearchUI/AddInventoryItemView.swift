@@ -1,8 +1,9 @@
 import DesignSystem
+import Foundation
 import Models
+import Network
 import Router
 import SwiftUI
-import Network
 
 @Observable
 public class ConsumableFormState {
@@ -15,16 +16,16 @@ public class ConsumableFormState {
 
 public struct AddConsumableView: View {
     @Environment(Router.self) var router
-    
+
     @State private var inventory = InventorySuggestions()
     @State private var formState = ConsumableFormState()
-    
+
     public let productSearchItem: ProductSearchItemResponse
-    
+
     public init(productSearchItem: ProductSearchItemResponse) {
         self.productSearchItem = productSearchItem
     }
-    
+
     var isRecommendedExpiryDate: Bool {
         guard
             let recommendedNumberOfDays = inventory.suggestions?.shelfLifeInDays[formState.status][
@@ -35,11 +36,11 @@ public struct AddConsumableView: View {
         }
         return formState.expiryDate.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
     }
-    
+
     var isRecommendedStorageLocation: Bool {
         formState.inventoryStore == inventory.suggestions?.recommendedStorageLocation
     }
-    
+
     var calculatedExpiryDate: Date {
         guard
             let shelfLife = inventory.suggestions?.shelfLifeInDays,
@@ -53,33 +54,66 @@ public struct AddConsumableView: View {
         }
         return expiry
     }
-    
+
     func addToInventory() async throws {
         print(
             "Expiry date: \(formState.expiryDate)",
             "Inventory store: \(formState.inventoryStore.rawValue)",
             "quantity: \(formState.quantity)", "status: \(formState.status.rawValue)"
         )
-        
+
         guard let recommendedExpiryType = inventory.suggestions?.expiryType,
               let recommendedStorageLocation = inventory.suggestions?.recommendedStorageLocation
         else {
             return
         }
-        
+
         let api = KeepFreshAPI()
-        
+
         do {
-            let response = try await api.createInventoryItem(AddInventoryItemRequest(item: AddInventoryItemRequest.InventoryItem(expiryDate: formState.expiryDate.isoString, storageLocation: formState.inventoryStore.rawValue, status: formState.status.rawValue, expiryType: formState.status.rawValue), product: AddInventoryItemRequest.ProductData(name: productSearchItem.name, brand: productSearchItem.brand, expiryType: recommendedExpiryType.rawValue, storageLocation: recommendedStorageLocation.rawValue, barcode: productSearchItem.source.ref, unit: productSearchItem.unit, amount: productSearchItem.amount, categoryId: productSearchItem.category.id, sourceId: productSearchItem.source.id, sourceRef: productSearchItem.source.ref)))
-            
+            let request = AddInventoryItemRequest(
+                item: AddInventoryItemRequest.InventoryItem(
+                    expiryDate: formState.expiryDate.isoString,
+                    storageLocation: formState.inventoryStore.rawValue,
+                    status: formState.status.rawValue,
+                    expiryType: formState.expiryType.rawValue
+                ),
+                product: AddInventoryItemRequest.ProductData(
+                    name: productSearchItem.name, brand: productSearchItem.brand,
+                    expiryType: recommendedExpiryType.rawValue,
+                    storageLocation: recommendedStorageLocation.rawValue,
+                    barcode: productSearchItem.source.ref, unit: productSearchItem.unit,
+                    amount: productSearchItem.amount, categoryId: productSearchItem.category.id,
+                    sourceId: productSearchItem.source.id, sourceRef: productSearchItem.source.ref
+                )
+            )
+
+            // Debug: Print the request being sent
+            print("Sending request: \(request)")
+
+            let response = try await api.createInventoryItem(request)
+
             print("inventoryItemId", response.inventoryItemId)
-            
+
             router.popToRoot(for: .search)
         } catch {
             print("Adding inventory item failed with error: \(error)")
+
+            // If it's an HTTP error, try to get more details
+            if let urlError = error as? URLError {
+                print("URL Error details: \(urlError.localizedDescription)")
+            }
+
+            // Try to extract response body for debugging
+            if let httpError = error as? DecodingError {
+                print("Decoding error: \(httpError)")
+            }
+
+            // Print the full error for debugging
+            print("Full error details: \(String(describing: error))")
         }
     }
-    
+
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
@@ -96,7 +130,7 @@ public struct AddConsumableView: View {
                         .offset(y: -geometry.safeAreaInsets.top)
                         .frame(height: geometry.size.height)
                         .frame(maxHeight: .infinity, alignment: .top)
-                        
+
                         VStack(spacing: 5) {
                             AsyncImage(url: productSearchItem.imageURL.flatMap(URL.init)) { image in
                                 image
@@ -116,7 +150,7 @@ public struct AddConsumableView: View {
                                     Circle()
                                         .frame(width: 4, height: 4)
                                         .foregroundStyle(.gray600)
-                                    
+
                                     Text(
                                         "\(String(format: "%.0f", productSearchItem.amount!))\(productSearchItem.unit!)"
                                     )
@@ -127,7 +161,7 @@ public struct AddConsumableView: View {
                             Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
-                            
+
                             if inventory.isLoading {
                                 ProgressView()
                             } else {
@@ -143,7 +177,7 @@ public struct AddConsumableView: View {
                                         .offset(x: -2, y: -10)
                                     }.offset(y: -5)
                                 }.padding(.top, 10)
-                                
+
                                 Grid {
                                     GridRow {
                                         Spacer()
@@ -187,7 +221,7 @@ public struct AddConsumableView: View {
                                 }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                     maxWidth: .infinity, alignment: .center
                                 ).background(.blue100).cornerRadius(20).padding(.bottom, 10)
-                                
+
                                 Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                                     GridRow {
                                         Image(systemName: "checkmark.seal.fill").fontWeight(.bold)
@@ -198,7 +232,7 @@ public struct AddConsumableView: View {
                                             .foregroundStyle(.gray600)
                                             .multilineTextAlignment(.center)
                                             .lineLimit(2 ... 2)
-                                        
+
                                         Spacer()
                                     }
                                     GridRow {
@@ -212,9 +246,9 @@ public struct AddConsumableView: View {
                                             .lineLimit(2 ... 2)
                                         Spacer()
                                     }
-                                    
+
                                 }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
-                                
+
                                 VStack(spacing: 15) {
                                     ConsumableCategory(
                                         quantity: $formState.quantity, status: $formState.status,
@@ -252,7 +286,7 @@ public struct AddConsumableView: View {
                         .frame(maxWidth: geometry.size.width)
                     }
                 }.background(.white200)
-                
+
                 ZStack(alignment: .bottom) {
                     UnevenRoundedRectangle(
                         cornerRadii: RectangleCornerRadii(
@@ -265,8 +299,12 @@ public struct AddConsumableView: View {
                     .fill(.white200)
                     .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
                     .frame(height: 80)
-                    
-                    Button(action: addToInventory) {
+
+                    Button {
+                        Task {
+                            try await addToInventory()
+                        }
+                    } label: {
                         Text("Add to \(formState.inventoryStore.rawValue.capitalized)")
                             .font(.title2)
                             .foregroundStyle(.blue600)
@@ -283,7 +321,11 @@ public struct AddConsumableView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: addToInventory) {
+                Button {
+                    Task {
+                        try await addToInventory()
+                    }
+                } label: {
                     Image(systemName: "checkmark")
                         .font(.system(size: 18))
                         .foregroundColor(.blue600)
@@ -304,12 +346,12 @@ public struct AddConsumableView: View {
             }
         }
     }
-    
+
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
         guard let suggestions = suggestions, inventory.isLoading else { return }
-        
+
         formState.inventoryStore = suggestions.recommendedStorageLocation
-        
+
         formState.expiryType = suggestions.expiryType
     }
 }

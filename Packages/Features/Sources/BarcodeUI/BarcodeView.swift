@@ -1,8 +1,8 @@
 import CodeScanner
 import DesignSystem
 import Models
-import SwiftUI
 import Router
+import SwiftUI
 
 @MainActor let productSearchItem: ProductSearchItemResponse = .init(
     name: "Semi Skimmed Milk",

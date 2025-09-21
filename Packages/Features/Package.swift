@@ -5,7 +5,7 @@ let baseDeps: [PackageDescription.Target.Dependency] = [
     .product(name: "Models", package: "Models"),
     .product(name: "DesignSystem", package: "DesignSystem"),
     .product(name: "Network", package: "Network"),
-    .product(name: "Router", package: "Router")
+    .product(name: "Router", package: "Router"),
 ]
 
 let package = Package(

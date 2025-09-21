@@ -2,7 +2,7 @@ import Foundation
 
 public enum InventoryItemStatus: String, Codable, Identifiable, CaseIterable {
     public var id: Self { self }
-    
+
     case open
     case binned
     case consumed
@@ -27,7 +27,7 @@ public struct InventoryItem: Identifiable {
         self.wasteScore = wasteScore
         self.expiryDate = expiryDate
     }
-    
+
     public let id: UUID
     public let imageURL: String
     public let name: String
@@ -44,18 +44,18 @@ public struct InventoryItem: Identifiable {
 public struct AddInventoryItemRequest: Codable, Sendable {
     public let item: InventoryItem
     public let product: ProductData
-    
+
     public init(item: InventoryItem, product: ProductData) {
         self.item = item
         self.product = product
     }
-    
+
     public struct InventoryItem: Codable, Sendable {
         public let expiryDate: String?
         public let storageLocation: String
         public let status: String
         public let expiryType: String
-        
+
         public init(expiryDate: String?, storageLocation: String, status: String, expiryType: String) {
             self.expiryDate = expiryDate
             self.storageLocation = storageLocation
@@ -63,7 +63,7 @@ public struct AddInventoryItemRequest: Codable, Sendable {
             self.expiryType = expiryType
         }
     }
-    
+
     public struct ProductData: Codable, Sendable {
         public let name: String
         public let brand: String
@@ -75,7 +75,7 @@ public struct AddInventoryItemRequest: Codable, Sendable {
         public let categoryId: Int
         public let sourceId: Int
         public let sourceRef: String
-        
+
         public init(
             name: String,
             brand: String,
