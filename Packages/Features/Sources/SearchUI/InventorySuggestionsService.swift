@@ -48,7 +48,7 @@ public class InventorySuggestions {
         }
 
         state = .loading
-        
+
         let api = KeepFreshAPI()
 
         do {

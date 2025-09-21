@@ -1,7 +1,7 @@
 import DesignSystem
 import Models
-import SwiftUI
 import Router
+import SwiftUI
 
 public struct SearchResultView: View {
     var products: [ProductSearchItemResponse]

@@ -94,11 +94,6 @@ private extension Date {
         let components = calendar.dateComponents([.day], from: startOfToday, to: startOfTarget)
         return components.day ?? 0
     }
-
-    func isSameDay(as other: Date) -> Bool {
-        let calendar = Calendar.current
-        return calendar.isDate(self, equalTo: other, toGranularity: .day)
-    }
 }
 
 private extension ConsumableCategoryType {

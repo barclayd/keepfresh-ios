@@ -9,7 +9,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../DesignSystem"),
-        .package(path: "../Models")
+        .package(path: "../Models"),
     ],
     targets: [
         .target(

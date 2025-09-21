@@ -1,14 +1,9 @@
 import DesignSystem
+import Foundation
 import Models
+import Network
 import Router
 import SwiftUI
-
-private extension Date {
-    func isSameDay(as other: Date) -> Bool {
-        let calendar = Calendar.current
-        return calendar.isDate(self, equalTo: other, toGranularity: .day)
-    }
-}
 
 @Observable
 public class ConsumableFormState {
@@ -60,14 +55,57 @@ public struct AddConsumableView: View {
         return expiry
     }
 
-    func addToInventory() {
+    func addToInventory() async throws {
         print(
             "Expiry date: \(formState.expiryDate)",
             "Inventory store: \(formState.inventoryStore.rawValue)",
             "quantity: \(formState.quantity)", "status: \(formState.status.rawValue)"
         )
 
-        router.popToRoot(for: .search)
+        guard let recommendedExpiryType = inventory.suggestions?.expiryType,
+              let recommendedStorageLocation = inventory.suggestions?.recommendedStorageLocation
+        else {
+            return
+        }
+
+        let api = KeepFreshAPI()
+
+        do {
+            let request = AddInventoryItemRequest(
+                item: AddInventoryItemRequest.InventoryItem(
+                    expiryDate: formState.expiryDate.isoString,
+                    storageLocation: formState.inventoryStore.rawValue,
+                    status: formState.status.rawValue,
+                    expiryType: formState.expiryType.rawValue
+                ),
+                product: AddInventoryItemRequest.ProductData(
+                    name: productSearchItem.name, brand: productSearchItem.brand,
+                    expiryType: recommendedExpiryType.rawValue,
+                    storageLocation: recommendedStorageLocation.rawValue,
+                    barcode: productSearchItem.source.ref, unit: productSearchItem.unit,
+                    amount: productSearchItem.amount, categoryId: productSearchItem.category.id,
+                    sourceId: productSearchItem.source.id, sourceRef: productSearchItem.source.ref
+                )
+            )
+
+            let response = try await api.createInventoryItem(request)
+
+            print("inventoryItemId", response.inventoryItemId)
+
+            router.popToRoot(for: .search)
+        } catch {
+            print("Adding inventory item failed with error: \(error)")
+
+            if let urlError = error as? URLError {
+                print("URL Error details: \(urlError.localizedDescription)")
+            }
+
+            if let httpError = error as? DecodingError {
+                print("Decoding error: \(httpError)")
+            }
+
+            print("Full error details: \(String(describing: error))")
+        }
     }
 
     public var body: some View {
@@ -256,7 +294,11 @@ public struct AddConsumableView: View {
                     .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
                     .frame(height: 80)
 
-                    Button(action: addToInventory) {
+                    Button {
+                        Task {
+                            try await addToInventory()
+                        }
+                    } label: {
                         Text("Add to \(formState.inventoryStore.rawValue.capitalized)")
                             .font(.title2)
                             .foregroundStyle(.blue600)
@@ -273,7 +315,11 @@ public struct AddConsumableView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: addToInventory) {
+                Button {
+                    Task {
+                        try await addToInventory()
+                    }
+                } label: {
                     Image(systemName: "checkmark")
                         .font(.system(size: 18))
                         .foregroundColor(.blue600)
