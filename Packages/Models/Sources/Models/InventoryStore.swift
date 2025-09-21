@@ -1,13 +1,13 @@
-import DesignSystem
 import SwiftUI
+import DesignSystem
 
-public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
+public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatable, Sendable {
     public var id: Self { self }
-
+    
     case pantry = "Pantry"
     case fridge = "Fridge"
     case freezer = "Freezer"
-
+    
     public var icon: String {
         switch self {
         case .pantry: return "cabinet"
@@ -15,7 +15,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
         case .freezer: return "snowflake.circle"
         }
     }
-
+    
     public var previewGradientStops: (start: Color, end: Color) {
         switch self {
         case .pantry: return (.brown100, .brown300)
@@ -23,7 +23,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
         case .freezer: return (.blue600, .blue700)
         }
     }
-
+    
     public var viewGradientStops: [Gradient.Stop] {
         switch self {
         case .pantry:
@@ -46,21 +46,21 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable {
             ]
         }
     }
-
+    
     public var foregorundColor: Color {
         switch self {
         case .pantry, .fridge: return .gray700
         case .freezer: return .gray100
         }
     }
-
+    
     public var titleForegorundColor: Color {
         switch self {
         case .pantry, .fridge: return .blue700
         case .freezer: return .blue100
         }
     }
-
+    
     public var expiryIconColor: Color {
         switch self {
         case .pantry, .fridge: return .blue700
@@ -84,7 +84,7 @@ public struct InventoryStoreDetails: Identifiable, Hashable {
         self.itemsExpiringSoonCount = itemsExpiringSoonCount
         self.recentItemImages = recentItemImages
     }
-
+    
     public var id: Int
     public var name: String
     public var type: InventoryStore
@@ -94,7 +94,7 @@ public struct InventoryStoreDetails: Identifiable, Hashable {
     public var openItemsCount: Int
     public var itemsExpiringSoonCount: Int
     public var recentItemImages: [String]
-
+    
     public var expiryStatusPercentageColor: Color {
         switch expiryStatusPercentage {
         case 0 ... 33: return .green600
@@ -102,100 +102,4 @@ public struct InventoryStoreDetails: Identifiable, Hashable {
         default: return .red500
         }
     }
-}
-
-public enum InventoryItemStatus: String, Codable, Identifiable, CaseIterable {
-    public var id: Self { self }
-
-    case open
-    case binned
-    case consumed
-    case unopened
-}
-
-public enum ProductSearchItemStatus: String, Codable, Identifiable, CaseIterable {
-    public var id: Self { self }
-
-    case opened = "Opened"
-    case unopened = "Unopened"
-}
-
-public struct ProductSearchItemCategory: Identifiable, Codable, Equatable, Hashable {
-    public init(id: Int, name: String, path: String) {
-        self.id = id
-        self.name = name
-        self.path = path
-    }
-
-    public let id: Int
-    public let name: String
-    public let path: String
-}
-
-public struct ProductSearchItem: Identifiable, Hashable, Codable {
-    public init(
-        sourceId: String, imageURL: String, name: String, category: ProductSearchItemCategory, brand: String,
-        amount: Double?,
-        unit: String?
-    ) {
-        self.sourceId = sourceId
-        self.imageURL = imageURL
-        self.name = name
-        self.category = category
-        self.brand = brand
-        self.amount = amount
-        self.unit = unit
-    }
-
-    public let sourceId: String
-    public let imageURL: String
-    public let name: String
-    public let category: ProductSearchItemCategory
-    public let brand: String
-    public let amount: Double?
-    public let unit: String?
-
-    public var id: String {
-        "\(sourceId)-\(brand)"
-    }
-}
-
-public struct InventoryItem: Identifiable {
-    public init(
-        id: UUID, imageURL: String, name: String, category: String, brand: String, amount: Double,
-        unit: String, inventoryStore: InventoryStore, status: InventoryItemStatus, wasteScore: Double,
-        expiryDate: Date? = nil
-    ) {
-        self.id = id
-        self.imageURL = imageURL
-        self.name = name
-        self.category = category
-        self.brand = brand
-        self.amount = amount
-        self.unit = unit
-        self.inventoryStore = inventoryStore
-        self.status = status
-        self.wasteScore = wasteScore
-        self.expiryDate = expiryDate
-    }
-
-    public let id: UUID
-    public let imageURL: String
-    public let name: String
-    public let category: String
-    public let brand: String
-    public let amount: Double
-    public let unit: String
-    public let inventoryStore: InventoryStore
-    public let status: InventoryItemStatus
-    public let wasteScore: Double
-    public let expiryDate: Date?
-}
-
-public enum ExpiryType: String, Codable, Identifiable, CaseIterable {
-    public var id: Self { self }
-
-    case UseBy = "Use By"
-    case BestBefore = "Best Before"
-    case LongLife = "Long Life"
 }

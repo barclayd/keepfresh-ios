@@ -1,12 +1,18 @@
 import CodeScanner
 import DesignSystem
 import Models
-import Router
 import SwiftUI
+import Router
 
-@MainActor let productSearchItem: ProductSearchItem = .init(
-    sourceId: "012345435", imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
-    name: "Semi Skimmed Milk", category: ProductSearchItemCategory(id: 123, name: "Milk", path: "Fresh Food > Milk"), brand: "Sainburys", amount: 4, unit: "pints"
+@MainActor let productSearchItem: ProductSearchItemResponse = .init(
+    name: "Semi Skimmed Milk",
+    brand: "Sainburys",
+    category: ProductSearchItemCategory(id: 123, name: "Milk", path: "Fresh Food > Milk"),
+    amount: 4,
+    unit: "pints",
+    icon: nil,
+    imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
+    source: ProductSearchItemSource(id: 1, ref: "Local Store")
 )
 
 func roundedRectangleWithHoleInMask(

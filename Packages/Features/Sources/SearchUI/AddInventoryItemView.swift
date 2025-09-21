@@ -21,27 +21,31 @@ public class ConsumableFormState {
 
 public struct AddConsumableView: View {
     @Environment(Router.self) var router
-    
+
     @State private var inventory = InventorySuggestions()
     @State private var formState = ConsumableFormState()
-    
-    public let productSearchItem: ProductSearchItem
-    
-    public init(productSearchItem: ProductSearchItem) {
+
+    public let productSearchItem: ProductSearchItemResponse
+
+    public init(productSearchItem: ProductSearchItemResponse) {
         self.productSearchItem = productSearchItem
     }
-    
+
     var isRecommendedExpiryDate: Bool {
-        guard let recommendedNumberOfDays = inventory.suggestions?.shelfLifeInDays[formState.status][formState.inventoryStore] else {
+        guard
+            let recommendedNumberOfDays = inventory.suggestions?.shelfLifeInDays[formState.status][
+                formState.inventoryStore
+            ]
+        else {
             return false
         }
         return formState.expiryDate.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
     }
-    
+
     var isRecommendedStorageLocation: Bool {
         formState.inventoryStore == inventory.suggestions?.recommendedStorageLocation
     }
-    
+
     var calculatedExpiryDate: Date {
         guard
             let shelfLife = inventory.suggestions?.shelfLifeInDays,
@@ -55,16 +59,17 @@ public struct AddConsumableView: View {
         }
         return expiry
     }
-    
+
     func addToInventory() {
         print(
-            "Expiry date: \(formState.expiryDate)", "Inventory store: \(formState.inventoryStore.rawValue)",
+            "Expiry date: \(formState.expiryDate)",
+            "Inventory store: \(formState.inventoryStore.rawValue)",
             "quantity: \(formState.quantity)", "status: \(formState.status.rawValue)"
         )
-        
+
         router.popToRoot(for: .search)
     }
-    
+
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
@@ -81,9 +86,9 @@ public struct AddConsumableView: View {
                         .offset(y: -geometry.safeAreaInsets.top)
                         .frame(height: geometry.size.height)
                         .frame(maxHeight: .infinity, alignment: .top)
-                        
+
                         VStack(spacing: 5) {
-                            AsyncImage(url: URL(string: productSearchItem.imageURL)) { image in
+                            AsyncImage(url: productSearchItem.imageURL.flatMap(URL.init)) { image in
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
@@ -101,7 +106,7 @@ public struct AddConsumableView: View {
                                     Circle()
                                         .frame(width: 4, height: 4)
                                         .foregroundStyle(.gray600)
-                                    
+
                                     Text(
                                         "\(String(format: "%.0f", productSearchItem.amount!))\(productSearchItem.unit!)"
                                     )
@@ -112,7 +117,7 @@ public struct AddConsumableView: View {
                             Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
-                            
+
                             if inventory.isLoading {
                                 ProgressView()
                             } else {
@@ -128,7 +133,7 @@ public struct AddConsumableView: View {
                                         .offset(x: -2, y: -10)
                                     }.offset(y: -5)
                                 }.padding(.top, 10)
-                                
+
                                 Grid {
                                     GridRow {
                                         Spacer()
@@ -172,7 +177,7 @@ public struct AddConsumableView: View {
                                 }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                     maxWidth: .infinity, alignment: .center
                                 ).background(.blue100).cornerRadius(20).padding(.bottom, 10)
-                                
+
                                 Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                                     GridRow {
                                         Image(systemName: "checkmark.seal.fill").fontWeight(.bold)
@@ -183,7 +188,7 @@ public struct AddConsumableView: View {
                                             .foregroundStyle(.gray600)
                                             .multilineTextAlignment(.center)
                                             .lineLimit(2 ... 2)
-                                        
+
                                         Spacer()
                                     }
                                     GridRow {
@@ -197,28 +202,36 @@ public struct AddConsumableView: View {
                                             .lineLimit(2 ... 2)
                                         Spacer()
                                     }
-                                    
+
                                 }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
-                                
+
                                 VStack(spacing: 15) {
                                     ConsumableCategory(
-                                        quantity: $formState.quantity, status: $formState.status, expiryDate: $formState.expiryDate,
-                                        inventoryStore: $formState.inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        quantity: $formState.quantity, status: $formState.status,
+                                        expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore,
+                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Expiry
                                     )
                                     ConsumableCategory(
-                                        quantity: $formState.quantity, status: $formState.status, expiryDate: $formState.expiryDate,
-                                        inventoryStore: $formState.inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        quantity: $formState.quantity, status: $formState.status,
+                                        expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore,
+                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Storage
                                     )
                                     ConsumableCategory(
-                                        quantity: $formState.quantity, status: $formState.status, expiryDate: $formState.expiryDate,
-                                        inventoryStore: $formState.inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        quantity: $formState.quantity, status: $formState.status,
+                                        expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore,
+                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Status
                                     )
                                     ConsumableCategory(
-                                        quantity: $formState.quantity, status: $formState.status, expiryDate: $formState.expiryDate,
-                                        inventoryStore: $formState.inventoryStore, isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        quantity: $formState.quantity, status: $formState.status,
+                                        expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore,
+                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Quantity
                                     )
                                 }
@@ -229,7 +242,7 @@ public struct AddConsumableView: View {
                         .frame(maxWidth: geometry.size.width)
                     }
                 }.background(.white200)
-                
+
                 ZStack(alignment: .bottom) {
                     UnevenRoundedRectangle(
                         cornerRadii: RectangleCornerRadii(
@@ -242,7 +255,7 @@ public struct AddConsumableView: View {
                     .fill(.white200)
                     .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
                     .frame(height: 80)
-                    
+
                     Button(action: addToInventory) {
                         Text("Add to \(formState.inventoryStore.rawValue.capitalized)")
                             .font(.title2)
@@ -281,12 +294,12 @@ public struct AddConsumableView: View {
             }
         }
     }
-    
+
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
         guard let suggestions = suggestions, inventory.isLoading else { return }
-        
+
         formState.inventoryStore = suggestions.recommendedStorageLocation
-        
+
         formState.expiryType = suggestions.expiryType
     }
 }

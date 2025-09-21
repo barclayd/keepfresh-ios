@@ -104,7 +104,7 @@ public extension AppTab {
                     print("Barcode scan")
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.blue600)
+                        .frame(width: 24, height: 24).foregroundColor(.white200)
                 }
             }
         }

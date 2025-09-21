@@ -22,7 +22,7 @@ struct CheckToggleStyle: ToggleStyle {
 }
 
 enum ConsumableCategoryType: String, Codable {
-    case Expiry = "Expiry"
+    case Expiry
     case Storage
     case Status
     case Quantity
@@ -195,7 +195,7 @@ struct ConsumableCategoryOverview: View {
     @Binding var status: ProductSearchItemStatus
     @Binding var inventoryStore: InventoryStore
     @Binding var expiryDate: Date
-    
+
     var isRecommendedExpiryDate: Bool
     var isRecommendedStorageLocation: Bool
 

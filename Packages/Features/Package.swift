@@ -1,12 +1,11 @@
 // swift-tools-version: 6.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
 let baseDeps: [PackageDescription.Target.Dependency] = [
-    .product(name: "Models", package: "Model"),
-    .product(name: "Router", package: "Model"),
+    .product(name: "Models", package: "Models"),
     .product(name: "DesignSystem", package: "DesignSystem"),
+    .product(name: "Network", package: "Network"),
+    .product(name: "Router", package: "Router")
 ]
 
 let package = Package(
@@ -19,8 +18,10 @@ let package = Package(
         .library(name: "BarcodeUI", targets: ["BarcodeUI"]),
     ],
     dependencies: [
-        .package(name: "Model", path: "../Model"),
-        .package(name: "DesignSystem", path: "../DesignSystem"),
+        .package(path: "../Models"),
+        .package(path: "../DesignSystem"),
+        .package(path: "../Router"),
+        .package(path: "../Network"),
         .package(url: "https://github.com/twostraws/CodeScanner", from: "2.5.0"),
     ],
     targets: [

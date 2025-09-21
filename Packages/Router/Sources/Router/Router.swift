@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 @Observable
@@ -21,6 +22,14 @@ public final class Router {
 
     public var currentTabPathTint: Color? {
         selectedTabPath.last?.tint
+    }
+
+    public var defaultTintColor: Color = .white200
+
+    public var customTintColor: Color?
+
+    public var tabBarVisibilityForCurrentTab: Visibility {
+        selectedTabPath.last?.tabBarVisibility ?? .automatic
     }
 
     public func popToRoot(for tab: AppTab? = nil) {
