@@ -88,9 +88,6 @@ public struct AddConsumableView: View {
                 )
             )
 
-            // Debug: Print the request being sent
-            print("Sending request: \(request)")
-
             let response = try await api.createInventoryItem(request)
 
             print("inventoryItemId", response.inventoryItemId)
@@ -99,17 +96,14 @@ public struct AddConsumableView: View {
         } catch {
             print("Adding inventory item failed with error: \(error)")
 
-            // If it's an HTTP error, try to get more details
             if let urlError = error as? URLError {
                 print("URL Error details: \(urlError.localizedDescription)")
             }
 
-            // Try to extract response body for debugging
             if let httpError = error as? DecodingError {
                 print("Decoding error: \(httpError)")
             }
 
-            // Print the full error for debugging
             print("Full error details: \(String(describing: error))")
         }
     }
