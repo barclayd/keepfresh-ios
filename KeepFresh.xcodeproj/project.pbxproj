@@ -12,6 +12,7 @@
 		4E747FC12D19F7F000DDCE17 /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
 		4E95179F2D7BAD5700FAFC86 /* BarcodeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E95179E2D7BAD5700FAFC86 /* BarcodeUI */; };
+		4ED27E872E849FB800296595 /* Environment in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED27E862E849FB800296595 /* Environment */; };
 		4EEEBA792E806DFC0049511B /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA782E806DFC0049511B /* Models */; };
 		4EEEBA7B2E806E010049511B /* Network in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA7A2E806E010049511B /* Network */; };
 		4EEEBA7D2E8076900049511B /* Router in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA7C2E8076900049511B /* Router */; };
@@ -23,6 +24,7 @@
 		4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/DesignSystem/Sources/DesignSystem/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
 		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E9517A02D7BB56700FAFC86 /* KeepFresh-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KeepFresh-Info.plist"; sourceTree = "<group>"; };
+		4ED27E822E849BA600296595 /* Environment */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Environment; path = Packages/Environment; sourceTree = "<group>"; };
 		4EEEBA722E8063B70049511B /* Network */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Network; path = Packages/Network; sourceTree = "<group>"; };
 		4EEEBA732E8063DA0049511B /* Router */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Router; path = Packages/Router; sourceTree = "<group>"; };
 		4EEEBA742E80679B0049511B /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Models; path = Packages/Models; sourceTree = "<group>"; };
@@ -48,6 +50,7 @@
 				4EEEBA7B2E806E010049511B /* Network in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
 				4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */,
+				4ED27E872E849FB800296595 /* Environment in Frameworks */,
 				4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */,
 				4EEEBA792E806DFC0049511B /* Models in Frameworks */,
 				4E95179F2D7BAD5700FAFC86 /* BarcodeUI in Frameworks */,
@@ -66,6 +69,7 @@
 				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
+				4ED27E822E849BA600296595 /* Environment */,
 				4EEEBA742E80679B0049511B /* Models */,
 				4EEEBA732E8063DA0049511B /* Router */,
 				4EEEBA722E8063B70049511B /* Network */,
@@ -119,6 +123,7 @@
 				4EEEBA782E806DFC0049511B /* Models */,
 				4EEEBA7A2E806E010049511B /* Network */,
 				4EEEBA7C2E8076900049511B /* Router */,
+				4ED27E862E849FB800296595 /* Environment */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -150,6 +155,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4EEEBA752E806A180049511B /* XCLocalSwiftPackageReference "Packages/Network" */,
+				4ED27E852E849FB800296595 /* XCLocalSwiftPackageReference "Packages/Environment" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9F2142242CE9DAA1004167D7 /* Products */;
@@ -421,6 +427,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		4ED27E852E849FB800296595 /* XCLocalSwiftPackageReference "Packages/Environment" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Environment;
+		};
 		4EEEBA752E806A180049511B /* XCLocalSwiftPackageReference "Packages/Network" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/Network;
@@ -443,6 +453,10 @@
 		4E95179E2D7BAD5700FAFC86 /* BarcodeUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BarcodeUI;
+		};
+		4ED27E862E849FB800296595 /* Environment */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Environment;
 		};
 		4EEEBA782E806DFC0049511B /* Models */ = {
 			isa = XCSwiftPackageProductDependency;

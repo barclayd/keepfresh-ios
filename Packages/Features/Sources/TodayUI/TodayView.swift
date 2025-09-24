@@ -1,15 +1,13 @@
 import DesignSystem
 import Models
 import SwiftUI
-
-@MainActor let inventoryItem: InventoryItem = .init(id: 1, createdAt: "2025-09-21T19:08:19.525Z", openedAt: nil, status: "unopened", storageLocation: "Fridge", consumptionPrediction: 100, expiryDate: "2025-10-01T00:00:00.000Z", expiryType: "Use By", products: ProductDetails(id: 6, name: "Chicken Thighs", unit: "kg", brand: "Tesco", amount: 1.2, categories: CategoryDetails(name: "Fresh Chicken", pathDisplay: "Fresh Food.Fresh Meat & Poultry.Fresh Chicken")))
+import Environment
 
 public struct TodayView: View {
     public init() {}
 
-    @State private var selectedInventoryItem: InventoryItem? = nil
-
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(Inventory.self) var inventory
 
     private func getSheetFraction(height: CGFloat) -> CGFloat {
         if dynamicTypeSize >= .xxLarge {
@@ -30,11 +28,17 @@ public struct TodayView: View {
 
     public var body: some View {
         ScrollView {
-            InventoryItemView(
-                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
-            )
+            VStack(spacing: 28) {
+                ForEach(inventory.items) { inventoryItem in
+                    InventoryItemView(
+                        inventoryItem: inventoryItem
+                    )
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 10)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 20).padding(.vertical, 10).background(.white200)
+        .background(.white200)
     }
 }

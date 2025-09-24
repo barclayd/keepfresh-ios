@@ -6,9 +6,12 @@ import Router
 import SearchUI
 import SwiftUI
 import TodayUI
+import Environment
 
 struct AppTabRootView: View {
     @Environment(Router.self) var router
+    @Environment(Inventory.self) var inventory
+
     @State private var searchText = ""
 
     var body: some View {
@@ -19,6 +22,7 @@ struct AppTabRootView: View {
                 NavigationStack(path: $router[tab]) {
                     tab.rootView()
                         .withAppRouter()
+                        .environment(inventory)
                         .environment(\.currentTab, tab)
                         .toolbarRole(.browser)
                         .toolbar {

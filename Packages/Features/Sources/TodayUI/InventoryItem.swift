@@ -52,9 +52,13 @@ struct StatsView: View {
 }
 
 public struct InventoryItemView: View {
-    @Binding var selectedInventoryItem: InventoryItem?
-
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    
+    var inventoryItem: InventoryItem
+
+    public init(inventoryItem: InventoryItem) {
+        self.inventoryItem = inventoryItem
+    }
 
     private func getSheetFraction(height: CGFloat) -> CGFloat {
         if dynamicTypeSize >= .xxLarge {
@@ -73,13 +77,6 @@ public struct InventoryItemView: View {
         default:
             return 0.5
         }
-    }
-
-    let inventoryItem: InventoryItem
-
-    public init(selectedInventoryItem: Binding<InventoryItem?>, inventoryItem: InventoryItem) {
-        _selectedInventoryItem = selectedInventoryItem
-        self.inventoryItem = inventoryItem
     }
 
     public var body: some View {
@@ -140,14 +137,14 @@ public struct InventoryItemView: View {
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .onTapGesture {
             // need to add haptics
-            selectedInventoryItem = inventoryItem
+//            inventoryItem = inventoryItem
         }
-        .sheet(item: $selectedInventoryItem) { _ in
-            InventoryItemSheetView(inventoryItem: $selectedInventoryItem)
-                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))]
-                )
-                .presentationDragIndicator(.visible)
-                .presentationCornerRadius(25)
-        }
+//        .sheet(item: $inventoryItem) { _ in
+//            InventoryItemSheetView(inventoryItem: $inventoryItem)
+//                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))]
+//                )
+//                .presentationDragIndicator(.visible)
+//                .presentationCornerRadius(25)
+//        }
     }
 }

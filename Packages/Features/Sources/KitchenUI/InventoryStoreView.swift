@@ -7,7 +7,7 @@ import TodayUI
 private enum SortDirection {
     case forward
     case backward
-
+    
     func toggle() -> SortDirection {
         switch self {
         case .forward: return .backward
@@ -20,22 +20,22 @@ private enum InventoryItemSortMode {
     case dateAdded(direction: SortDirection)
     case alphabetical(direction: SortDirection)
     case expiryDate(direction: SortDirection)
-
+    
     var isDateAdded: Bool {
         if case .dateAdded = self { return true }
         return false
     }
-
+    
     var isAlphabetical: Bool {
         if case .alphabetical = self { return true }
         return false
     }
-
+    
     var isExpiryDate: Bool {
         if case .expiryDate = self { return true }
         return false
     }
-
+    
     func toggleDirection() -> InventoryItemSortMode {
         switch self {
         case let .dateAdded(direction: direction):
@@ -46,7 +46,7 @@ private enum InventoryItemSortMode {
             return .expiryDate(direction: direction.toggle())
         }
     }
-
+    
     func updateSortMode() -> InventoryItemSortMode {
         switch self {
         case .dateAdded: return .dateAdded(direction: .forward)
@@ -54,7 +54,7 @@ private enum InventoryItemSortMode {
         case .expiryDate: return .expiryDate(direction: .forward)
         }
     }
-
+    
     var baseCase: String {
         switch self {
         case .dateAdded: return "dateAdded"
@@ -68,11 +68,11 @@ private struct SortButton: View {
     @Binding var sortMode: InventoryItemSortMode
     let type: InventoryItemSortMode
     let icon: String
-
+    
     var isActive: Bool {
         type.baseCase == sortMode.baseCase
     }
-
+    
     public var body: some View {
         Button(action: {
             if isActive {
@@ -98,21 +98,21 @@ struct StoreColors: Hashable {
 
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
-
+    
     @State private var selectedInventoryItem: InventoryItem? = nil
     @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
     @State private var didScrollPastOmbreColor = false
-
+    
     let inventoryItem: InventoryItem = .init(id: 1, createdAt: "2025-09-21T19:08:19.525Z", openedAt: nil, status: "unopened", storageLocation: "Fridge", consumptionPrediction: 100, expiryDate: "2025-10-01T00:00:00.000Z", expiryType: "Use By", products: ProductDetails(id: 6, name: "Chicken Thighs", unit: "kg", brand: "Tesco", amount: 1.2, categories: CategoryDetails(name: "Fresh Chicken", pathDisplay: "Fresh Food.Fresh Meat & Poultry.Fresh Chicken")))
-
+    
     public let inventoryStore: InventoryStoreDetails
-
+    
     public init(inventoryStore: InventoryStoreDetails) {
         self.inventoryStore = inventoryStore
     }
-
+    
     let inventoryStoreToScrollOffset: [InventoryStore: CGFloat] = [.pantry: -50, .fridge: 70, .freezer: 100]
-
+    
     let inventoryStoreToToolbarColor: [InventoryStore: StoreColors] = [
         .pantry: StoreColors(
             defaultColor: .blue700,
@@ -127,7 +127,7 @@ public struct InventoryStoreView: View {
             onScrollColor: .blue700
         ),
     ]
-
+    
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
@@ -140,14 +140,14 @@ public struct InventoryStoreView: View {
                         .offset(y: -geometry.safeAreaInsets.top)
                         .frame(height: geometry.size.height)
                         .frame(maxHeight: .infinity, alignment: .top)
-
+                        
                         VStack(spacing: 15) {
                             Image(systemName: inventoryStore.type.icon).font(.system(size: 78)).foregroundColor(
                                 .blue700)
                             Text(inventoryStore.name).font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold)
-
+                            
                             VStack {
                                 Text("3%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(0)
                                 HStack(spacing: 0) {
@@ -157,7 +157,7 @@ public struct InventoryStoreView: View {
                                         .offset(x: -2, y: -10)
                                 }.offset(y: -5)
                             }
-
+                            
                             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
                                 GridRow {
                                     VStack(spacing: 0) {
@@ -200,7 +200,7 @@ public struct InventoryStoreView: View {
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                 maxWidth: .infinity, alignment: .center
                             ).background(.blue150).cornerRadius(20)
-
+                            
                             HStack {
                                 Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                 Spacer()
@@ -217,37 +217,37 @@ public struct InventoryStoreView: View {
                                     )
                                 }
                             }.padding(.vertical, 5)
-
+                            
                             InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                                inventoryItem: inventoryItem
                             )
                             InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                                inventoryItem: inventoryItem
                             )
                             InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                                inventoryItem: inventoryItem
                             )
-
+                            
                             InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
-                            )
-                            InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                                inventoryItem: inventoryItem
                             )
                             InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
-                            )
-
-                            InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                                inventoryItem: inventoryItem
                             )
                             InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                                inventoryItem: inventoryItem
+                            )
+                            
+                            InventoryItemView(
+                                inventoryItem: inventoryItem
                             )
                             InventoryItemView(
-                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                                inventoryItem: inventoryItem
                             )
-
+                            InventoryItemView(
+                                inventoryItem: inventoryItem
+                            )
+                            
                             Spacer()
                         }
                         .padding(.bottom, 100)

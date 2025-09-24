@@ -1,7 +1,7 @@
 import Foundation
 import Models
 
-public struct KeepFreshAPI {
+public struct KeepFreshAPI: Sendable {
     private let client: APIClient
 
     public init(baseURL: String = "https://api.keepfre.sh") {
@@ -26,14 +26,14 @@ public struct KeepFreshAPI {
             path: "v1/categories/\(categoryId)/inventory-suggestions"
         )
     }
-    
+
     public func getInventoryItems() async throws -> InventoryItemsResponse {
-            try await client.fetch(
-                InventoryItemsResponse.self,
-                path: "v1/inventory",
-                queryParameters: nil
-            )
-        }
+        try await client.fetch(
+            InventoryItemsResponse.self,
+            path: "v1/inventory",
+            queryParameters: nil
+        )
+    }
 
     // MARK: - Inventory
 
