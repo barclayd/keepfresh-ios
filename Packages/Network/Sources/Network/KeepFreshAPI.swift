@@ -26,6 +26,14 @@ public struct KeepFreshAPI {
             path: "v1/categories/\(categoryId)/inventory-suggestions"
         )
     }
+    
+    public func getInventoryItems() async throws -> InventoryItemsResponse {
+            try await client.fetch(
+                InventoryItemsResponse.self,
+                path: "v1/inventory",
+                queryParameters: nil
+            )
+        }
 
     // MARK: - Inventory
 

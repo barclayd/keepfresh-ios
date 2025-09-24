@@ -2,7 +2,7 @@ import DesignSystem
 import Models
 import SwiftUI
 
-struct ConsumableSheetStatsGridRows: View {
+struct InventoryItemSheetStatsGridRows: View {
     let pageIndex: Int
 
     var body: some View {
@@ -66,33 +66,33 @@ struct ConsumableSheetStatsGridRows: View {
     }
 }
 
-struct ConsumableItemSheetStatsGrid: View {
-    let consumableItem: InventoryItem
+struct InventoryItemSheetStatsGrid: View {
+    let inventoryItem: InventoryItem
 
     let pageIndex: Int
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
-                ConsumableSheetStatsGridRows(pageIndex: pageIndex)
+                InventoryItemSheetStatsGridRows(pageIndex: pageIndex)
             }
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
-                ConsumableSheetStatsGridRows(pageIndex: pageIndex)
+                InventoryItemSheetStatsGridRows(pageIndex: pageIndex)
             }
         }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center)
             .background(.white300).cornerRadius(20)
     }
 }
 
-struct ConsumableItemSheetView: View {
-    @Binding var consumableItem: InventoryItem?
+struct InventoryItemSheetView: View {
+    @Binding var inventoryItem: InventoryItem?
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
 
-    init(consumableItem: Binding<InventoryItem?>) {
-        _consumableItem = consumableItem
+    init(inventoryItem: Binding<InventoryItem?>) {
+        _inventoryItem = inventoryItem
 
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
@@ -100,7 +100,7 @@ struct ConsumableItemSheetView: View {
 
     var body: some View {
         Group {
-            if let consumableItem = consumableItem {
+            if let inventoryItem = inventoryItem {
                 VStack(spacing: 10) {
                     HStack {
                         Button(action: {
@@ -120,30 +120,30 @@ struct ConsumableItemSheetView: View {
                         }
                     }.padding(.top, 10)
 
-                    AsyncImage(url: URL(string: consumableItem.imageURL)) { image in
+                    AsyncImage(url: URL(string: inventoryItem.products.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
                         image.resizable()
                     } placeholder: {
                         ProgressView()
                     }
                     .frame(width: 80, height: 80)
                     .padding(.bottom, -8)
-                    Text(consumableItem.name).font(.title).fontWeight(.bold).foregroundStyle(.blue800)
+                    Text(inventoryItem.products.name).font(.title).fontWeight(.bold).foregroundStyle(.blue800)
                         .lineSpacing(0).padding(.bottom, -8)
                     HStack {
-                        Text(consumableItem.category)
+                        Text(inventoryItem.products.categories.name)
                             .font(.callout)
                             .foregroundStyle(.gray600)
                         Circle()
                             .frame(width: 6, height: 6)
                             .foregroundStyle(.gray600)
                             .padding(.horizontal, 4)
-                        Text("\(String(format: "%.0f", consumableItem.amount)) \(consumableItem.unit)")
+                        Text("\(String(format: "%.0f", inventoryItem.products.amount)) \(inventoryItem.products.unit)")
                             .font(.callout)
                             .foregroundStyle(.gray600)
                     }
                     TabView(selection: $currentPage) {
                         ForEach(0 ..< 2, id: \.self) { page in
-                            ConsumableItemSheetStatsGrid(consumableItem: consumableItem, pageIndex: page)
+                            InventoryItemSheetStatsGrid(inventoryItem: inventoryItem, pageIndex: page)
                                 .tag(page)
                                 .padding(.horizontal, 16)
                         }
@@ -263,7 +263,7 @@ struct ConsumableItemSheetView: View {
                 }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
                     .padding(.horizontal, 10)
                     .sheet(isPresented: $showRemoveSheet) {
-                        RemoveConsumableItemSheet()
+                        RemoveInventoryItemSheet()
                             .presentationDragIndicator(.visible)
                             .presentationCornerRadius(25)
                             .presentationDetents([.fraction(0.35)])

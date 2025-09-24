@@ -16,7 +16,7 @@ private enum SortDirection {
     }
 }
 
-private enum ConsumbaleItemSortMode {
+private enum InventoryItemSortMode {
     case dateAdded(direction: SortDirection)
     case alphabetical(direction: SortDirection)
     case expiryDate(direction: SortDirection)
@@ -36,7 +36,7 @@ private enum ConsumbaleItemSortMode {
         return false
     }
 
-    func toggleDirection() -> ConsumbaleItemSortMode {
+    func toggleDirection() -> InventoryItemSortMode {
         switch self {
         case let .dateAdded(direction: direction):
             return .dateAdded(direction: direction.toggle())
@@ -47,7 +47,7 @@ private enum ConsumbaleItemSortMode {
         }
     }
 
-    func updateSortMode() -> ConsumbaleItemSortMode {
+    func updateSortMode() -> InventoryItemSortMode {
         switch self {
         case .dateAdded: return .dateAdded(direction: .forward)
         case .alphabetical: return .alphabetical(direction: .forward)
@@ -65,8 +65,8 @@ private enum ConsumbaleItemSortMode {
 }
 
 private struct SortButton: View {
-    @Binding var sortMode: ConsumbaleItemSortMode
-    let type: ConsumbaleItemSortMode
+    @Binding var sortMode: InventoryItemSortMode
+    let type: InventoryItemSortMode
     let icon: String
 
     var isActive: Bool {
@@ -99,15 +99,11 @@ struct StoreColors: Hashable {
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
 
-    @State private var selectedConsumableItem: InventoryItem? = nil
-    @State private var sortMode: ConsumbaleItemSortMode = .alphabetical(direction: .forward)
+    @State private var selectedInventoryItem: InventoryItem? = nil
+    @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
     @State private var didScrollPastOmbreColor = false
 
-    let consumableItem: InventoryItem = .init(
-        id: UUID(), imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png", name: "Semi Skimmed Milk", category: "Dairy",
-        brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open,
-        wasteScore: 17, expiryDate: Date()
-    )
+    let inventoryItem: InventoryItem = .init(id: 1, createdAt: "2025-09-21T19:08:19.525Z", openedAt: nil, status: "unopened", storageLocation: "Fridge", consumptionPrediction: 100, expiryDate: "2025-10-01T00:00:00.000Z", expiryType: "Use By", products: ProductDetails(id: 6, name: "Chicken Thighs", unit: "kg", brand: "Tesco", amount: 1.2, categories: CategoryDetails(name: "Fresh Chicken", pathDisplay: "Fresh Food.Fresh Meat & Poultry.Fresh Chicken")))
 
     public let inventoryStore: InventoryStoreDetails
 
@@ -222,34 +218,34 @@ public struct InventoryStoreView: View {
                                 }
                             }.padding(.vertical, 5)
 
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
                             )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
                             )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
                             )
 
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
                             )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
                             )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                            )
+
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                            )
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
+                            )
+                            InventoryItemView(
+                                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
                             )
 
                             Spacer()

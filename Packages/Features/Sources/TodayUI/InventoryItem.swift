@@ -2,7 +2,7 @@ import Models
 import SwiftUI
 
 struct StatsView: View {
-    let consumableItem: InventoryItem
+    let inventoryItem: InventoryItem
 
     var body: some View {
         HStack {
@@ -51,8 +51,8 @@ struct StatsView: View {
     }
 }
 
-public struct ConsumableItemView: View {
-    @Binding var selectedConsumableItem: InventoryItem?
+public struct InventoryItemView: View {
+    @Binding var selectedInventoryItem: InventoryItem?
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -75,17 +75,17 @@ public struct ConsumableItemView: View {
         }
     }
 
-    let consumableItem: InventoryItem
+    let inventoryItem: InventoryItem
 
-    public init(selectedConsumableItem: Binding<InventoryItem?>, consumableItem: InventoryItem) {
-        _selectedConsumableItem = selectedConsumableItem
-        self.consumableItem = consumableItem
+    public init(selectedInventoryItem: Binding<InventoryItem?>, inventoryItem: InventoryItem) {
+        _selectedInventoryItem = selectedInventoryItem
+        self.inventoryItem = inventoryItem
     }
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                AsyncImage(url: URL(string: consumableItem.imageURL)) { image in
+                AsyncImage(url: URL(string: inventoryItem.products.categories.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -95,7 +95,7 @@ public struct ConsumableItemView: View {
                 .frame(width: 40, height: 40)
                 VStack(spacing: 2) {
                     HStack {
-                        Text(consumableItem.name)
+                        Text(inventoryItem.products.name)
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundStyle(.blue800)
@@ -109,17 +109,17 @@ public struct ConsumableItemView: View {
                     }
 
                     HStack {
-                        Text(consumableItem.category)
+                        Text(inventoryItem.products.categories.name)
                             .foregroundStyle(.gray600)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
-                        Text(consumableItem.brand)
+                        Text(inventoryItem.products.brand)
                             .foregroundStyle(.brandSainsburys)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
-                        Text("\(String(format: "%.0f", consumableItem.amount))\(consumableItem.unit)")
+                        Text("\(String(format: "%.0f", inventoryItem.products.amount))\(inventoryItem.products.unit)")
                             .foregroundStyle(.gray600)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -130,7 +130,7 @@ public struct ConsumableItemView: View {
             .background(.white)
             .cornerRadius(20)
 
-            StatsView(consumableItem: consumableItem)
+            StatsView(inventoryItem: inventoryItem)
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
@@ -140,10 +140,10 @@ public struct ConsumableItemView: View {
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .onTapGesture {
             // need to add haptics
-            selectedConsumableItem = consumableItem
+            selectedInventoryItem = inventoryItem
         }
-        .sheet(item: $selectedConsumableItem) { _ in
-            ConsumableItemSheetView(consumableItem: $selectedConsumableItem)
+        .sheet(item: $selectedInventoryItem) { _ in
+            InventoryItemSheetView(inventoryItem: $selectedInventoryItem)
                 .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))]
                 )
                 .presentationDragIndicator(.visible)

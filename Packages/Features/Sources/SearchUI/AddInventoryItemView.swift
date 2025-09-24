@@ -14,7 +14,7 @@ public class ConsumableFormState {
     var status: ProductSearchItemStatus = .unopened
 }
 
-public struct AddConsumableView: View {
+public struct AddInventoryItemView: View {
     @Environment(Router.self) var router
 
     @State private var inventory = InventorySuggestions()

@@ -2,16 +2,12 @@ import DesignSystem
 import Models
 import SwiftUI
 
-@MainActor let consumableItem: InventoryItem = .init(
-    id: UUID(), imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
-    name: "Semi Skimmed Milk", category: "Dairy", brand: "Sainburys", amount: 4, unit: "pts",
-    inventoryStore: .fridge, status: .open, wasteScore: 17, expiryDate: Date()
-)
+@MainActor let inventoryItem: InventoryItem = .init(id: 1, createdAt: "2025-09-21T19:08:19.525Z", openedAt: nil, status: "unopened", storageLocation: "Fridge", consumptionPrediction: 100, expiryDate: "2025-10-01T00:00:00.000Z", expiryType: "Use By", products: ProductDetails(id: 6, name: "Chicken Thighs", unit: "kg", brand: "Tesco", amount: 1.2, categories: CategoryDetails(name: "Fresh Chicken", pathDisplay: "Fresh Food.Fresh Meat & Poultry.Fresh Chicken")))
 
 public struct TodayView: View {
     public init() {}
 
-    @State private var selectedConsumableItem: InventoryItem? = nil
+    @State private var selectedInventoryItem: InventoryItem? = nil
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -34,8 +30,8 @@ public struct TodayView: View {
 
     public var body: some View {
         ScrollView {
-            ConsumableItemView(
-                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
+            InventoryItemView(
+                selectedInventoryItem: $selectedInventoryItem, inventoryItem: inventoryItem
             )
         }
         .padding(.horizontal, 20)
