@@ -6,7 +6,7 @@ import Router
 import SwiftUI
 
 @Observable
-public class ConsumableFormState {
+public class InventoryFormState {
     var expiryDate = Date()
     var expiryType: ExpiryType = .BestBefore
     var inventoryStore: InventoryStore = .fridge
@@ -18,7 +18,7 @@ public struct AddInventoryItemView: View {
     @Environment(Router.self) var router
 
     @State private var inventory = InventorySuggestions()
-    @State private var formState = ConsumableFormState()
+    @State private var formState = InventoryFormState()
 
     public let productSearchItem: ProductSearchItemResponse
 
@@ -244,28 +244,28 @@ public struct AddInventoryItemView: View {
                                 }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
 
                                 VStack(spacing: 15) {
-                                    ConsumableCategory(
+                                    InventoryCategory(
                                         quantity: $formState.quantity, status: $formState.status,
                                         expiryDate: $formState.expiryDate,
                                         inventoryStore: $formState.inventoryStore,
                                         isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Expiry
                                     )
-                                    ConsumableCategory(
+                                    InventoryCategory(
                                         quantity: $formState.quantity, status: $formState.status,
                                         expiryDate: $formState.expiryDate,
                                         inventoryStore: $formState.inventoryStore,
                                         isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Storage
                                     )
-                                    ConsumableCategory(
+                                    InventoryCategory(
                                         quantity: $formState.quantity, status: $formState.status,
                                         expiryDate: $formState.expiryDate,
                                         inventoryStore: $formState.inventoryStore,
                                         isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Status
                                     )
-                                    ConsumableCategory(
+                                    InventoryCategory(
                                         quantity: $formState.quantity, status: $formState.status,
                                         expiryDate: $formState.expiryDate,
                                         inventoryStore: $formState.inventoryStore,
