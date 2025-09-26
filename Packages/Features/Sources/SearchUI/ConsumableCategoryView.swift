@@ -21,14 +21,14 @@ struct CheckToggleStyle: ToggleStyle {
     }
 }
 
-enum ConsumableCategoryType: String, Codable {
+enum InventoryItemFormType: String, Codable {
     case Expiry
     case Storage
     case Status
     case Quantity
 }
 
-private extension ConsumableCategoryType {
+private extension InventoryItemFormType {
     var isExapndable: Bool {
         switch self {
         case .Expiry, .Storage, .Status:
@@ -96,7 +96,7 @@ private extension Date {
     }
 }
 
-private extension ConsumableCategoryType {
+private extension InventoryItemFormType {
     @MainActor
     @ViewBuilder
     func overviewLabel(
@@ -172,18 +172,18 @@ private extension ConsumableCategoryType {
     ) -> some View {
         switch self {
         case .Expiry:
-            ConsumableCategoryExpiryDateContent(expiryDate: expiryDate)
+            InventoryItemExpiryDateContent(expiryDate: expiryDate)
         case .Status:
-            ConsumableCategoryStatusContent(status: status)
+            IventoryItemStatusContent(status: status)
         case .Storage:
-            ConsumableCategoryStorageContent(inventoryStore: inventoryStore)
+            InventoryItemStorageContent(inventoryStore: inventoryStore)
         default:
             EmptyView()
         }
     }
 }
 
-struct ConsumableCategoryOverview: View {
+struct InventoryItemOverview: View {
     @Binding var isExpiryDateToggled: Bool
     @Binding var isMarkedAsReady: Bool
     @Binding var quantity: Int
@@ -194,7 +194,7 @@ struct ConsumableCategoryOverview: View {
     var isRecommendedExpiryDate: Bool
     var isRecommendedStorageLocation: Bool
 
-    let type: ConsumableCategoryType
+    let type: InventoryItemFormType
 
     var body: some View {
         Image(systemName: type.icon)
@@ -223,7 +223,7 @@ struct ConsumableCategoryOverview: View {
     }
 }
 
-struct ConsumableCategoryStatusContent: View {
+struct IventoryItemStatusContent: View {
     @Binding var status: ProductSearchItemStatus
 
     @State private var showStoragePicker = false
@@ -243,7 +243,7 @@ struct ConsumableCategoryStatusContent: View {
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
 
-                Picker("Select consumable item status", selection: $status) {
+                Picker("Select inventory item status", selection: $status) {
                     ForEach(ProductSearchItemStatus.allCases) { statusType in
                         Text(statusType.rawValue.capitalized).foregroundStyle(.gray600)
                             .font(.callout)
@@ -265,7 +265,7 @@ struct ConsumableCategoryStatusContent: View {
     }
 }
 
-struct ConsumableCategoryStorageContent: View {
+struct InventoryItemStorageContent: View {
     @Binding var inventoryStore: InventoryStore
 
     @State private var showStoragePicker = false
@@ -307,7 +307,7 @@ struct ConsumableCategoryStorageContent: View {
     }
 }
 
-struct ConsumableCategoryExpiryDateContent: View {
+struct InventoryItemExpiryDateContent: View {
     @Binding var expiryDate: Date
 
     @State private var showDatePicker = false
@@ -384,7 +384,7 @@ struct ConsumableCategoryExpiryDateContent: View {
     }
 }
 
-public struct ConsumableCategory: View {
+public struct InventoryCategory: View {
     @State private var isExpandedToggled: Bool = false
     @State private var isMarkedAsReady: Bool = true
 
@@ -396,7 +396,7 @@ public struct ConsumableCategory: View {
     var isRecommendedExpiryDate: Bool
     var isRecommendedStorageLocation: Bool
 
-    let type: ConsumableCategoryType
+    let type: InventoryItemFormType
 
     var isToggable: Bool {
         isExpandedToggled && type.isExapndable
@@ -405,7 +405,7 @@ public struct ConsumableCategory: View {
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
-                ConsumableCategoryOverview(
+                InventoryItemOverview(
                     isExpiryDateToggled: $isExpandedToggled,
                     isMarkedAsReady: $isMarkedAsReady,
                     quantity: $quantity,

@@ -2,12 +2,13 @@ import DesignSystem
 import Models
 import Router
 import SwiftUI
+import Environment
 import TodayUI
 
 private enum SortDirection {
     case forward
     case backward
-
+    
     func toggle() -> SortDirection {
         switch self {
         case .forward: return .backward
@@ -16,27 +17,27 @@ private enum SortDirection {
     }
 }
 
-private enum ConsumbaleItemSortMode {
+private enum InventoryItemSortMode {
     case dateAdded(direction: SortDirection)
     case alphabetical(direction: SortDirection)
     case expiryDate(direction: SortDirection)
-
+    
     var isDateAdded: Bool {
         if case .dateAdded = self { return true }
         return false
     }
-
+    
     var isAlphabetical: Bool {
         if case .alphabetical = self { return true }
         return false
     }
-
+    
     var isExpiryDate: Bool {
         if case .expiryDate = self { return true }
         return false
     }
-
-    func toggleDirection() -> ConsumbaleItemSortMode {
+    
+    func toggleDirection() -> InventoryItemSortMode {
         switch self {
         case let .dateAdded(direction: direction):
             return .dateAdded(direction: direction.toggle())
@@ -46,15 +47,15 @@ private enum ConsumbaleItemSortMode {
             return .expiryDate(direction: direction.toggle())
         }
     }
-
-    func updateSortMode() -> ConsumbaleItemSortMode {
+    
+    func updateSortMode() -> InventoryItemSortMode {
         switch self {
         case .dateAdded: return .dateAdded(direction: .forward)
         case .alphabetical: return .alphabetical(direction: .forward)
         case .expiryDate: return .expiryDate(direction: .forward)
         }
     }
-
+    
     var baseCase: String {
         switch self {
         case .dateAdded: return "dateAdded"
@@ -65,14 +66,14 @@ private enum ConsumbaleItemSortMode {
 }
 
 private struct SortButton: View {
-    @Binding var sortMode: ConsumbaleItemSortMode
-    let type: ConsumbaleItemSortMode
+    @Binding var sortMode: InventoryItemSortMode
+    let type: InventoryItemSortMode
     let icon: String
-
+    
     var isActive: Bool {
         type.baseCase == sortMode.baseCase
     }
-
+    
     public var body: some View {
         Button(action: {
             if isActive {
@@ -98,25 +99,20 @@ struct StoreColors: Hashable {
 
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
-
-    @State private var selectedConsumableItem: InventoryItem? = nil
-    @State private var sortMode: ConsumbaleItemSortMode = .alphabetical(direction: .forward)
+    @Environment(Inventory.self) var inventory
+        
+    @State private var selectedInventoryItem: InventoryItem? = nil
+    @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
     @State private var didScrollPastOmbreColor = false
-
-    let consumableItem: InventoryItem = .init(
-        id: UUID(), imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png", name: "Semi Skimmed Milk", category: "Dairy",
-        brand: "Sainburys", amount: 4, unit: "pints", inventoryStore: .fridge, status: .open,
-        wasteScore: 17, expiryDate: Date()
-    )
-
+    
     public let inventoryStore: InventoryStoreDetails
-
+    
     public init(inventoryStore: InventoryStoreDetails) {
         self.inventoryStore = inventoryStore
     }
-
+    
     let inventoryStoreToScrollOffset: [InventoryStore: CGFloat] = [.pantry: -50, .fridge: 70, .freezer: 100]
-
+    
     let inventoryStoreToToolbarColor: [InventoryStore: StoreColors] = [
         .pantry: StoreColors(
             defaultColor: .blue700,
@@ -131,7 +127,7 @@ public struct InventoryStoreView: View {
             onScrollColor: .blue700
         ),
     ]
-
+    
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
@@ -144,14 +140,14 @@ public struct InventoryStoreView: View {
                         .offset(y: -geometry.safeAreaInsets.top)
                         .frame(height: geometry.size.height)
                         .frame(maxHeight: .infinity, alignment: .top)
-
+                        
                         VStack(spacing: 15) {
                             Image(systemName: inventoryStore.type.icon).font(.system(size: 78)).foregroundColor(
                                 .blue700)
                             Text(inventoryStore.name).font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold)
-
+                            
                             VStack {
                                 Text("3%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(0)
                                 HStack(spacing: 0) {
@@ -161,7 +157,7 @@ public struct InventoryStoreView: View {
                                         .offset(x: -2, y: -10)
                                 }.offset(y: -5)
                             }
-
+                            
                             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
                                 GridRow {
                                     VStack(spacing: 0) {
@@ -204,7 +200,7 @@ public struct InventoryStoreView: View {
                             }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                 maxWidth: .infinity, alignment: .center
                             ).background(.blue150).cornerRadius(20)
-
+                            
                             HStack {
                                 Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                 Spacer()
@@ -221,37 +217,13 @@ public struct InventoryStoreView: View {
                                     )
                                 }
                             }.padding(.vertical, 5)
-
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-                            ConsumableItemView(
-                                selectedConsumableItem: $selectedConsumableItem, consumableItem: consumableItem
-                            )
-
+                            
+                            ForEach(inventory.itemsByStore[inventoryStore.type]!) { inventoryItem in
+                                InventoryItemView(
+                                    inventoryItem: inventoryItem
+                                )
+                            }
+                            
                             Spacer()
                         }
                         .padding(.bottom, 100)
