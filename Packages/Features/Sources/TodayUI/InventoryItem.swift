@@ -9,21 +9,20 @@ struct StatsView: View {
             HStack(spacing: 2) {
                 Image(systemName: "calendar")
                     .font(.system(size: 18))
-                    .foregroundStyle(.gray400)
+                    .foregroundStyle(.green600)
                 Text("2w")
-                    .foregroundStyle(.gray400)
+                    .foregroundStyle(.green600)
             }
 
             Image(systemName: "refrigerator.fill")
                 .font(.system(size: 18))
-                .foregroundStyle(.gray400)
+                .foregroundStyle(.green600)
 
             HStack(spacing: 2) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 18))
-                Text("17%")
-
-            }.foregroundStyle(.yellow500)
+                    .font(.system(size: 18)).foregroundStyle(.yellow500)
+                Text("17%").foregroundStyle(.green600)
+            }
 
             Spacer()
 
