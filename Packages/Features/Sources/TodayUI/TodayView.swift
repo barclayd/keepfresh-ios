@@ -28,7 +28,7 @@ public struct TodayView: View {
 
     public var body: some View {
         ScrollView {
-            VStack(spacing: 28) {
+            LazyVStack(spacing: 14) {
                 ForEach(inventory.items) { inventoryItem in
                     InventoryItemView(
                         inventoryItem: inventoryItem

@@ -19,6 +19,16 @@ public final class Inventory {
     
     let api = KeepFreshAPI()
     
+    public var itemsByStore: [InventoryStore: [InventoryItem]] {
+        var grouped = Dictionary(grouping: items, by: \.storageLocation)
+        
+        for store in InventoryStore.allCases {
+            grouped[store] = grouped[store] ?? []
+        }
+        
+        return grouped
+    }
+    
     public func fetchItems() async {
         state = .loading
         

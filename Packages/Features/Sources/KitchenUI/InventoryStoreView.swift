@@ -2,6 +2,7 @@ import DesignSystem
 import Models
 import Router
 import SwiftUI
+import Environment
 import TodayUI
 
 private enum SortDirection {
@@ -98,12 +99,11 @@ struct StoreColors: Hashable {
 
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
-    
+    @Environment(Inventory.self) var inventory
+        
     @State private var selectedInventoryItem: InventoryItem? = nil
     @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
     @State private var didScrollPastOmbreColor = false
-    
-    let inventoryItem: InventoryItem = .init(id: 1, createdAt: "2025-09-21T19:08:19.525Z", openedAt: nil, status: "unopened", storageLocation: "Fridge", consumptionPrediction: 100, expiryDate: "2025-10-01T00:00:00.000Z", expiryType: "Use By", products: ProductDetails(id: 6, name: "Chicken Thighs", unit: "kg", brand: "Tesco", amount: 1.2, categories: CategoryDetails(name: "Fresh Chicken", pathDisplay: "Fresh Food.Fresh Meat & Poultry.Fresh Chicken")))
     
     public let inventoryStore: InventoryStoreDetails
     
@@ -218,35 +218,11 @@ public struct InventoryStoreView: View {
                                 }
                             }.padding(.vertical, 5)
                             
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
-                            
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
-                            
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
-                            InventoryItemView(
-                                inventoryItem: inventoryItem
-                            )
+                            ForEach(inventory.itemsByStore[inventoryStore.type]!) { inventoryItem in
+                                InventoryItemView(
+                                    inventoryItem: inventoryItem
+                                )
+                            }
                             
                             Spacer()
                         }
