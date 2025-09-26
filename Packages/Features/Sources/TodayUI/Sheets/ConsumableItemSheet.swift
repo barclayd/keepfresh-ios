@@ -83,14 +83,15 @@ struct InventoryItemSheetStatsGrid: View {
 }
 
 struct InventoryItemSheetView: View {
-    @Binding var inventoryItem: InventoryItem
     @Environment(\.dismiss) private var dismiss
     
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
     
-    init(inventoryItem: Binding<InventoryItem>) {
-        _inventoryItem = inventoryItem
+    var inventoryItem: InventoryItem
+    
+    init(inventoryItem: InventoryItem) {
+        self.inventoryItem = inventoryItem
         
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)

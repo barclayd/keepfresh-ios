@@ -53,6 +53,7 @@ struct StatsView: View {
 
 public struct InventoryItemView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @State var showInventoryItemSheet: Bool = false
     
     var inventoryItem: InventoryItem
 
@@ -137,14 +138,14 @@ public struct InventoryItemView: View {
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .onTapGesture {
             // need to add haptics
-//            inventoryItem = inventoryItem
+            showInventoryItemSheet.toggle()
         }
-//        .sheet(item: $inventoryItem) { _ in
-//            InventoryItemSheetView(inventoryItem: $inventoryItem)
-//                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))]
-//                )
-//                .presentationDragIndicator(.visible)
-//                .presentationCornerRadius(25)
-//        }
+        .sheet(isPresented: $showInventoryItemSheet) {
+            InventoryItemSheetView(inventoryItem: inventoryItem)
+                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))]
+                )
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(25)
+        }
     }
 }
