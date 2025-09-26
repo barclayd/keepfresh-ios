@@ -29,6 +29,14 @@ public final class Inventory {
         return grouped
     }
     
+    public var itemsSortedByRecentlyAddedDescending: [InventoryItem] {
+        items.sorted { $0.createdAt > $1.createdAt }
+    }
+    
+    public var itemsSortedByExpiryDescending: [InventoryItem] {
+        items.sorted { $0.expiryDate < $1.expiryDate }
+    }
+    
     public func fetchItems() async {
         state = .loading
         

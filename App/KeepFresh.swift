@@ -21,13 +21,6 @@ struct KeepFreshApp: App {
     @State var inventory: Inventory = .init()
     
     init() {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            let tabBarAppearance = UITabBarAppearance()
-            tabBarAppearance.configureWithOpaqueBackground()
-            tabBarAppearance.backgroundColor = UIColor.white
-            UITabBar.appearance().standardAppearance = tabBarAppearance
-            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
-        }
         FontRegistration.registerFonts()
     }
     
