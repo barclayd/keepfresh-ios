@@ -84,7 +84,7 @@ public struct InventoryItemView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                AsyncImage(url: URL(string: inventoryItem.products.categories.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
+                AsyncImage(url: URL(string: inventoryItem.product.categories.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -94,7 +94,7 @@ public struct InventoryItemView: View {
                 .frame(width: 40, height: 40)
                 VStack(spacing: 2) {
                     HStack {
-                        Text(inventoryItem.products.name)
+                        Text(inventoryItem.product.name)
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundStyle(.blue800)
@@ -108,17 +108,17 @@ public struct InventoryItemView: View {
                     }
 
                     HStack {
-                        Text(inventoryItem.products.categories.name)
+                        Text(inventoryItem.product.categories.name)
                             .foregroundStyle(.gray600)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
-                        Text(inventoryItem.products.brand.name)
-                            .foregroundStyle(inventoryItem.products.brand.color)
+                        Text(inventoryItem.product.brand.name)
+                            .foregroundStyle(inventoryItem.product.brand.color)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
-                        Text("\(String(format: "%.0f", inventoryItem.products.amount))\(inventoryItem.products.unit)")
+                        Text("\(String(format: "%.0f", inventoryItem.product.amount))\(inventoryItem.product.unit)")
                             .foregroundStyle(.gray600)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)

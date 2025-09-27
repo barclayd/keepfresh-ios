@@ -60,7 +60,7 @@ private enum InventoryItemSortMode {
             }
         case let .alphabetical(direction):
             items.sorted { lhs, rhs in
-                let comparison = lhs.products.name.localizedCaseInsensitiveCompare(rhs.products.name)
+                let comparison = lhs.product.name.localizedCaseInsensitiveCompare(rhs.product.name)
 
                 if comparison == .orderedSame {
                     return lhs.id < rhs.id
@@ -191,7 +191,7 @@ public struct InventoryStoreView: View {
                                             Text(locationDetails.expiringTodayCount.formatted()).fontWeight(.bold).font(
                                                 .headline
                                             ).foregroundStyle(.blue700)
-                                            Text("Expire \(locationDetails.expiringTodayCount > 1 ? "s" : "") today")
+                                            Text("Expire\(locationDetails.expiringTodayCount == 1 ? "s" : "") today")
                                                 .fontWeight(.light).font(.subheadline).foregroundStyle(
                                                     .blue700)
                                         }

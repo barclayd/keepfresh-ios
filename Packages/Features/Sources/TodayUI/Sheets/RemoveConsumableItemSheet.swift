@@ -20,7 +20,7 @@ public struct RemoveInventoryItemSheet: View {
 
     public var body: some View {
         VStack(spacing: 20) {
-            Text("How much \(inventoryItem.products.name) is left?").lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
+            Text("How much \(inventoryItem.product.name) is left?").lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
 
             VStack(spacing: 0) {
                 HStack(spacing: 30) {
