@@ -1,3 +1,5 @@
+import Extensions
+import DesignSystem
 import Models
 import Network
 import SwiftUI
@@ -9,24 +11,77 @@ public enum FetchState {
     case error
 }
 
+public struct InventoryLocationDetails: Hashable {
+    public var expiryPercentage: Int
+    public var lastUpdated: Date?
+    public var expiringSoonCount: Int
+    public var recentlyUpdatedImages: [String]
+    public var openItemsCount: Int
+    public var itemsCount: Int
+    public var recentlyAddedItemsCount: Int
+    public var expiringTodayCount: Int
+    
+    public var expiryStatusPercentageColor: Color {
+        switch expiryPercentage {
+        case 0 ... 33: return .green600
+        case 33 ... 66: return .yellow400
+        default: return .red500
+        }
+    }
+    
+    struct InventoryStat: Identifiable {
+        var icon: String
+        var label: String
+        
+        var id: String { icon }
+    }
+}
+
 @Observable
 @MainActor
 public final class Inventory {
-    public var items: [InventoryItem] = []
+    public var items: [InventoryItem] = [] {
+        didSet {
+            updateCaches()
+        }
+    }
     public var state: FetchState = .empty
-    
-    public init() {}
     
     let api = KeepFreshAPI()
     
-    public var itemsByStore: [InventoryStore: [InventoryItem]] {
-        var grouped = Dictionary(grouping: items, by: \.storageLocation)
+    private(set) public var itemsByLocation: [InventoryStore: [InventoryItem]] = [:]
+    private(set) public var productCounts: [Int: Int] = [:]
+    private(set) public var productCountsByLocation: [Int: [InventoryStore: Int]] = [:]
+    private(set) public var detailsByLocation: [InventoryStore: InventoryLocationDetails] = [:]
+    
+    public init() {}
+    
+    private func updateCaches() {
+        itemsByLocation = Dictionary(grouping: items, by: \.storageLocation)
         
-        for store in InventoryStore.allCases {
-            grouped[store] = grouped[store] ?? []
+        detailsByLocation = itemsByLocation.mapValues { items in
+            InventoryLocationDetails(expiryPercentage: 59, lastUpdated: items.map(\.createdAt).max(), expiringSoonCount: items.count(where: { $0.expiryDate.timeUntil.totalDays < 4}), recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"], openItemsCount: items.count(where: { $0.openedAt != nil }), itemsCount: items.count, recentlyAddedItemsCount: items.count(where: { $0.createdAt.timeSince.totalDays < 4 }), expiringTodayCount: items.count(where: { $0.expiryDate.timeUntil.totalDays == 0 }))
+            
         }
         
-        return grouped
+        var counts: [Int: Int] = [:]
+        var locationCounts: [Int: [InventoryStore: Int]] = [:]
+        
+        for item in items {
+            counts[item.products.id, default: 0] += 1
+            locationCounts[item.products.id, default: [:]][item.storageLocation, default: 0] += 1
+        }
+        
+        productCounts = counts
+        productCountsByLocation = locationCounts
+    }
+    
+    public var itemsSortedByRecentlyAddedDescending: [InventoryItem] {
+        items.sorted { $0.createdAt > $1.createdAt }
+    }
+    
+    public var itemsSortedByExpiryDescending: [InventoryItem] {
+        items.sorted { $0.expiryDate < $1.expiryDate }
     }
     
     public func fetchItems() async {

@@ -1,5 +1,3 @@
-// Packages/Network/Package.swift
-
 // swift-tools-version: 6.0
 import PackageDescription
 
@@ -12,11 +10,12 @@ let package = Package(
     dependencies: [
         .package(path: "../Models"),
         .package(path: "../Network"),
+        .package(path: "../Extensions"),
     ],
     targets: [
         .target(
             name: "Environment",
-            dependencies: ["Models", "Network"]
+            dependencies: ["Models", "Network", "Extensions"]
         ),
     ]
 )

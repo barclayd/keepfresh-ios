@@ -1,6 +1,7 @@
+import Models
 import SwiftUI
 
-func calculatePredictedWastePercentageOffset(predictedWastePercentage: Double, sliderWidth: CGFloat) -> CGFloat {
+func calculatePredictedWastePercentageOffset(predictedWastePercentage: CGFloat, sliderWidth: CGFloat) -> CGFloat {
     return (predictedWastePercentage / 100 - 0.5) * sliderWidth
 }
 
@@ -8,13 +9,18 @@ public struct RemoveInventoryItemSheet: View {
     @State private var wastePercentage: Double = 0
     @State private var sliderWidth: CGFloat = 0
 
-    let predictedWastePercentage: Double = 100
-
-    public init() {}
+    let predictedWastePercentage: Double = 25
+    
+    var inventoryItem: InventoryItem
+    
+    public init(inventoryItem: InventoryItem) {
+        self.inventoryItem = inventoryItem
+        _wastePercentage = State(initialValue: predictedWastePercentage)
+    }
 
     public var body: some View {
         VStack(spacing: 20) {
-            Text("How much Semi Skimmed Milk is left?").lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
+            Text("How much \(inventoryItem.products.name) is left?").lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
 
             VStack(spacing: 0) {
                 HStack(spacing: 30) {

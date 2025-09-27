@@ -58,6 +58,10 @@ public extension ShapeStyle where Self == Color {
         Color("brand-sainsburys", bundle: .module)
     }
 
+    static var brandTesco: Color {
+        Color("brand-tesco", bundle: .module)
+    }
+
     static var yellow400: Color {
         Color("yellow-400", bundle: .module)
     }

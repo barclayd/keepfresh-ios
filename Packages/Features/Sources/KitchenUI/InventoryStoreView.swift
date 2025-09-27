@@ -100,33 +100,18 @@ struct StoreColors: Hashable {
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
-        
-    @State private var selectedInventoryItem: InventoryItem? = nil
+    
     @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
-    @State private var didScrollPastOmbreColor = false
     
-    public let inventoryStore: InventoryStoreDetails
+    public var inventoryStore: InventoryStore
     
-    public init(inventoryStore: InventoryStoreDetails) {
+    public init(inventoryStore: InventoryStore) {
         self.inventoryStore = inventoryStore
     }
     
-    let inventoryStoreToScrollOffset: [InventoryStore: CGFloat] = [.pantry: -50, .fridge: 70, .freezer: 100]
-    
-    let inventoryStoreToToolbarColor: [InventoryStore: StoreColors] = [
-        .pantry: StoreColors(
-            defaultColor: .blue700,
-            onScrollColor: .blue700
-        ),
-        .fridge: StoreColors(
-            defaultColor: .white200,
-            onScrollColor: .blue700
-        ),
-        .freezer: StoreColors(
-            defaultColor: .white200,
-            onScrollColor: .blue700
-        ),
-    ]
+    var locationDetails: InventoryLocationDetails? {
+        inventory.detailsByLocation[inventoryStore]
+    }
     
     public var body: some View {
         GeometryReader { geometry in
@@ -134,7 +119,7 @@ public struct InventoryStoreView: View {
                 ScrollView(showsIndicators: false) {
                     ZStack {
                         LinearGradient(
-                            stops: inventoryStore.type.viewGradientStops, startPoint: .top, endPoint: .bottom
+                            stops: inventoryStore.viewGradientStops, startPoint: .top, endPoint: .bottom
                         )
                         .ignoresSafeArea(edges: .top)
                         .offset(y: -geometry.safeAreaInsets.top)
@@ -142,127 +127,117 @@ public struct InventoryStoreView: View {
                         .frame(maxHeight: .infinity, alignment: .top)
                         
                         VStack(spacing: 15) {
-                            Image(systemName: inventoryStore.type.icon).font(.system(size: 78)).foregroundColor(
-                                .blue700)
-                            Text(inventoryStore.name).font(.largeTitle).lineSpacing(0).foregroundStyle(
+                            Image(systemName: inventoryStore.icon).font(.system(size: 78)).foregroundColor(                                inventoryStore == .freezer ? .white200 : .blue700
+                            )
+                            
+                            Text(inventoryStore.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold)
                             
-                            VStack {
-                                Text("3%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(0)
-                                HStack(spacing: 0) {
-                                    Text("Predicted waste score").font(.subheadline).foregroundStyle(.black800)
-                                        .fontWeight(.light)
-                                    Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
-                                        .offset(x: -2, y: -10)
-                                }.offset(y: -5)
+                            if let locationDetails = locationDetails {
+                                
+                                VStack {
+                                    Text("\(locationDetails.expiryPercentage)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(0)
+                                    HStack(spacing: 0) {
+                                        Text("Predicted waste score").font(.subheadline).foregroundStyle(.black800)
+                                            .fontWeight(.light)
+                                        Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
+                                            .offset(x: -2, y: -10)
+                                    }.offset(y: -5)
+                                }
+                                
+                                Grid(horizontalSpacing: 15, verticalSpacing: 10) {
+                                    GridRow {
+                                        VStack(spacing: 0) {
+                                            Text(locationDetails.expiringSoonCount.formatted()).foregroundStyle(.green600).fontWeight(.bold).font(.headline)
+                                            Text("Expiring soon").foregroundStyle(.green600).fontWeight(.light).font(
+                                                .subheadline
+                                            ).lineLimit(1)
+                                        }
+                                        Image(systemName: "hourglass")
+                                            .font(.system(size: 28)).fontWeight(.bold)
+                                            .foregroundStyle(.blue700)
+                                        Image(systemName: "clock.badge.exclamationmark")
+                                            .font(.system(size: 28)).fontWeight(.bold)
+                                            .foregroundStyle(.blue700)
+                                        VStack(spacing: 0) {
+                                            Text(locationDetails.expiringTodayCount.formatted()).fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("Expires today").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                                .blue700)
+                                        }
+                                    }
+                                    GridRow {
+                                        VStack(spacing: 0) {
+                                            Text(locationDetails.recentlyAddedItemsCount.formatted()).foregroundStyle(.blue700).fontWeight(.bold).font(.headline)
+                                            Text("Recently added").foregroundStyle(.blue700).fontWeight(.light).font(
+                                                .subheadline
+                                            ).lineLimit(1)
+                                        }
+                                        Image(systemName: "calendar.badge.plus")
+                                            .font(.system(size: 28)).fontWeight(.bold)
+                                            .foregroundStyle(.blue700)
+                                        Image(systemName: "list.number")
+                                            .font(.system(size: 28)).fontWeight(.bold)
+                                            .foregroundStyle(.blue700)
+                                        VStack(spacing: 0) {
+                                            Text(locationDetails.itemsCount.formatted()).fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("Total items").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                                .blue700)
+                                        }
+                                    }
+                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(
+                                    maxWidth: .infinity, alignment: .center
+                                ).background(.blue150).cornerRadius(20)
+                                
+                                HStack {
+                                    Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
+                                    Spacer()
+                                    HStack(spacing: 8) {
+                                        SortButton(
+                                            sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock"
+                                        )
+                                        SortButton(
+                                            sortMode: $sortMode, type: .alphabetical(direction: .forward),
+                                            icon: "arrow.up.arrow.down"
+                                        )
+                                        SortButton(
+                                            sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass"
+                                        )
+                                    }
+                                }.padding(.vertical, 5)
+                                
+                                ForEach(inventory.itemsByLocation[inventoryStore] ?? []) { inventoryItem in
+                                    InventoryItemView(
+                                        inventoryItem: inventoryItem
+                                    )
+                                }
                             }
                             
-                            Grid(horizontalSpacing: 30, verticalSpacing: 10) {
-                                GridRow {
-                                    VStack(spacing: 0) {
-                                        Text("3").foregroundStyle(.green600).fontWeight(.bold).font(.headline)
-                                        Text("Expriing soon").foregroundStyle(.green600).fontWeight(.light).font(
-                                            .subheadline
-                                        ).lineLimit(1)
-                                    }
-                                    Image(systemName: "hourglass")
-                                        .font(.system(size: 28)).fontWeight(.bold)
-                                        .foregroundStyle(.blue700)
-                                    Image(systemName: "clock.badge.exclamationmark")
-                                        .font(.system(size: 28)).fontWeight(.bold)
-                                        .foregroundStyle(.blue700)
-                                    VStack(spacing: 0) {
-                                        Text("1").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Expires today").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                            .blue700)
-                                    }
-                                }
-                                GridRow {
-                                    VStack(spacing: 0) {
-                                        Text("32").foregroundStyle(.blue700).fontWeight(.bold).font(.headline)
-                                        Text("Recently added").foregroundStyle(.blue700).fontWeight(.light).font(
-                                            .subheadline
-                                        ).lineLimit(1)
-                                    }
-                                    Image(systemName: "calendar.badge.plus")
-                                        .font(.system(size: 28)).fontWeight(.bold)
-                                        .foregroundStyle(.blue700)
-                                    Image(systemName: "list.number")
-                                        .font(.system(size: 28)).fontWeight(.bold)
-                                        .foregroundStyle(.blue700)
-                                    VStack(spacing: 0) {
-                                        Text("34").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                        Text("Total items").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                            .blue700)
-                                    }
-                                }
-                            }.padding(.horizontal, 15).padding(.vertical, 5).frame(
-                                maxWidth: .infinity, alignment: .center
-                            ).background(.blue150).cornerRadius(20)
-                            
-                            HStack {
-                                Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
-                                Spacer()
-                                HStack(spacing: 8) {
-                                    SortButton(
-                                        sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock"
-                                    )
-                                    SortButton(
-                                        sortMode: $sortMode, type: .alphabetical(direction: .forward),
-                                        icon: "arrow.up.arrow.down"
-                                    )
-                                    SortButton(
-                                        sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass"
-                                    )
-                                }
-                            }.padding(.vertical, 5)
-                            
-                            ForEach(inventory.itemsByStore[inventoryStore.type]!) { inventoryItem in
-                                InventoryItemView(
-                                    inventoryItem: inventoryItem
-                                )
-                            }
                             
                             Spacer()
-                        }
-                        .padding(.bottom, 100)
-                        .padding(.horizontal, 20)
-                        .frame(maxWidth: .infinity)
+                        }.padding(.bottom, 100)
+                            .padding(.horizontal, 20)
+                            .frame(maxWidth: .infinity)
                     }
                 }.background(.white200)
             }
             .frame(maxHeight: geometry.size.height)
-            .onScrollGeometryChange(for: CGFloat.self, of: { geometry in
-                geometry.contentOffset.y
-            }, action: { _, newValue in
-                withAnimation {
-                    if newValue > inventoryStoreToScrollOffset[inventoryStore.type, default: 0] {
-                        router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor
-                        didScrollPastOmbreColor = true
-                    } else {
-                        router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor
-                        didScrollPastOmbreColor = false
-                    }
-                }
-            })
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbarRole(.editor)
-        .toolbarBackground(didScrollPastOmbreColor ? .visible : .hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "plus.app")
                         .font(.system(size: 18))
-                        .foregroundColor(didScrollPastOmbreColor ? inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor : inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor).fontWeight(.bold)
+                        .foregroundColor(.blue700).fontWeight(.bold)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "barcode.viewfinder")
                         .font(.system(size: 18))
-                        .foregroundColor(didScrollPastOmbreColor ? inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor : inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor).fontWeight(.bold)
+                        .foregroundColor(.blue700).fontWeight(.bold)
                 }
             }
         }

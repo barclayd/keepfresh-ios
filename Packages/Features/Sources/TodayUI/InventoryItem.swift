@@ -3,36 +3,37 @@ import SwiftUI
 
 struct StatsView: View {
     let inventoryItem: InventoryItem
-
+    
     var body: some View {
         HStack {
             HStack(spacing: 2) {
-                Image(systemName: "calendar")
-                    .font(.system(size: 18))
-                    .foregroundStyle(.gray400)
-                Text("2w")
-                    .foregroundStyle(.gray400)
+                if inventoryItem.createdAt.timeSince.amount > 0 {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.green600)
+                    Text(inventoryItem.createdAt.timeSince.abbreviated)
+                        .foregroundStyle(.green600)
+                }
             }
-
-            Image(systemName: "refrigerator.fill")
+            
+            Image(systemName: inventoryItem.storageLocation.iconFilled)
                 .font(.system(size: 18))
-                .foregroundStyle(.gray400)
-
+                .foregroundStyle(.green600)
+            
             HStack(spacing: 2) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 18))
-                Text("17%")
-
-            }.foregroundStyle(.yellow500)
-
+                    .font(.system(size: 18)).foregroundStyle(.yellow500)
+                Text("17%").foregroundStyle(.green600)
+            }
+            
             Spacer()
-
+            
             HStack(spacing: 3) {
                 Image(systemName: "hourglass")
                     .font(.system(size: 18))
                     .fontWeight(.bold)
                     .foregroundStyle(.green600)
-                Text("3 days")
+                Text(inventoryItem.expiryDate.timeUntil.formatted)
                     .foregroundStyle(.green600)
             }
         }
@@ -56,18 +57,18 @@ public struct InventoryItemView: View {
     @State var showInventoryItemSheet: Bool = false
     
     var inventoryItem: InventoryItem
-
+    
     public init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
     }
-
+    
     private func getSheetFraction(height: CGFloat) -> CGFloat {
         if dynamicTypeSize >= .xxLarge {
             return 0.8
         }
-
+        
         print("Height: \(height)")
-
+        
         switch height {
         case ..<668:
             return 1 // iPhone SE
@@ -79,7 +80,7 @@ public struct InventoryItemView: View {
             return 0.5
         }
     }
-
+    
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
@@ -98,22 +99,22 @@ public struct InventoryItemView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.blue800)
                             .frame(maxWidth: .infinity, alignment: .leading)
-
+                        
                         Spacer()
-
+                        
                         Circle()
                             .frame(width: 12, height: 12)
                             .foregroundStyle(.green600)
                     }
-
+                    
                     HStack {
                         Text(inventoryItem.products.categories.name)
                             .foregroundStyle(.gray600)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
-                        Text(inventoryItem.products.brand)
-                            .foregroundStyle(.brandSainsburys)
+                        Text(inventoryItem.products.brand.name)
+                            .foregroundStyle(inventoryItem.products.brand.color)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
@@ -127,7 +128,7 @@ public struct InventoryItemView: View {
             .padding(.horizontal, 5)
             .background(.white)
             .cornerRadius(20)
-
+            
             StatsView(inventoryItem: inventoryItem)
         }
         .padding(.bottom, 4)
