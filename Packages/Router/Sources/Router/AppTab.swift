@@ -12,33 +12,33 @@ public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
 
     public var icon: String {
         switch self {
-        case .today: return "text.rectangle.page"
-        case .search: return "magnifyingglass"
-        case .kitchen: return "refrigerator"
+        case .today: "text.rectangle.page"
+        case .search: "magnifyingglass"
+        case .kitchen: "refrigerator"
         }
     }
 
     public var symbolVariants: SymbolVariants {
         switch self {
-        case .today: return .none
-        case .search: return .fill
-        case .kitchen: return .none
+        case .today: .none
+        case .search: .fill
+        case .kitchen: .none
         }
     }
 
     public var title: String {
         switch self {
-        case .today: return "Today"
-        case .search: return "Search"
-        case .kitchen: return "Kitchen"
+        case .today: "Today"
+        case .search: "Search"
+        case .kitchen: "Kitchen"
         }
     }
 
     public var toolbarBackground: Color {
         switch self {
-        case .today: return .white
-        case .search: return .blue600
-        case .kitchen: return .white
+        case .today: .white
+        case .search: .blue600
+        case .kitchen: .white
         }
     }
 }

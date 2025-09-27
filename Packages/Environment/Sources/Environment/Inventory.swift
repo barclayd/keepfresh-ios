@@ -23,9 +23,9 @@ public struct InventoryLocationDetails: Hashable {
 
     public var expiryStatusPercentageColor: Color {
         switch expiryPercentage {
-        case 0 ... 33: return .green600
-        case 33 ... 66: return .yellow400
-        default: return .red500
+        case 0 ... 33: .green600
+        case 33 ... 66: .yellow400
+        default: .red500
         }
     }
 

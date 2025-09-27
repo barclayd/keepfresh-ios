@@ -17,7 +17,7 @@ struct StatsView: View {
     let locationDetails: InventoryLocationDetails?
 
     var stats: [InventoryStat] {
-        return [
+        [
             .init(icon: "list.number", amount: locationDetails?.itemsCount),
             .init(icon: "envelope.open.fill", amount: locationDetails?.openItemsCount),
             .init(icon: "hourglass", amount: locationDetails?.expiringSoonCount),
@@ -30,7 +30,7 @@ struct StatsView: View {
         VStack(spacing: 20) {
             Spacer()
             HStack {
-                if let locationDetails = locationDetails {
+                if let locationDetails {
                     HStack(alignment: .bottom, spacing: 12) {
                         ForEach(stats) { stat in
                             if let amount = stat.amount, amount > 0 {

@@ -24,7 +24,7 @@ public actor APIClient {
             throw APIError.invalidURL
         }
 
-        if let queryParameters = queryParameters {
+        if let queryParameters {
             components.queryItems = queryParameters.map {
                 URLQueryItem(name: $0.key, value: $0.value)
             }
@@ -50,10 +50,10 @@ public actor APIClient {
         return try decoder.decode(type, from: data)
     }
 
-    public func post<T: Decodable, B: Encodable>(
+    public func post<T: Decodable>(
         _ type: T.Type,
         path: String,
-        body: B
+        body: some Encodable
     ) async throws -> T {
         let url = baseURL.appendingPathComponent(path)
 
@@ -85,11 +85,11 @@ public enum APIError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "Invalid URL"
+            "Invalid URL"
         case .invalidResponse:
-            return "Invalid response from server"
+            "Invalid response from server"
         case let .httpError(statusCode, responseBody):
-            return "HTTP error \(statusCode): \(responseBody)"
+            "HTTP error \(statusCode): \(responseBody)"
         }
     }
 }

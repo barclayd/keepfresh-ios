@@ -26,9 +26,9 @@ public struct StorageOptions: Codable, Equatable, Sendable {
 public extension StorageOptions {
     subscript(_ store: InventoryStore) -> Int? {
         switch store {
-        case .pantry: return pantry
-        case .fridge: return fridge
-        case .freezer: return freezer
+        case .pantry: pantry
+        case .fridge: fridge
+        case .freezer: freezer
         }
     }
 }

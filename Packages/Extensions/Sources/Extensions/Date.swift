@@ -33,10 +33,10 @@ public enum TimeUnit: String, CaseIterable {
 
     var abbreviation: String {
         switch self {
-        case .day: return "d"
-        case .week: return "w"
-        case .month: return "m"
-        case .year: return "y"
+        case .day: "d"
+        case .week: "w"
+        case .month: "m"
+        case .year: "y"
         }
     }
 }

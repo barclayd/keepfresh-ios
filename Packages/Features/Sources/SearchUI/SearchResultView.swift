@@ -69,7 +69,7 @@ public struct SearchResultCard: View {
                         .font(.subheadline)
                         .foregroundStyle(.brandSainsburys)
 
-                    if product.amount != nil && product.unit != nil {
+                    if product.amount != nil, product.unit != nil {
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.blue700)

@@ -71,7 +71,7 @@ public class InventorySuggestions {
     }
 
     public func getCachedSuggestions(for categoryId: Int) -> InventorySuggestionsResponse? {
-        return Self.globalCache[categoryId]
+        Self.globalCache[categoryId]
     }
 
     public static func clearGlobalCache() {
