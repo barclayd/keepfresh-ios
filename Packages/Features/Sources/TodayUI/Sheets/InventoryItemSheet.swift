@@ -5,11 +5,11 @@ import SwiftUI
 
 struct InventoryItemSheetStatsGridRows: View {
     @Environment(Inventory.self) var inventory
-    
+
     let pageIndex: Int
-    
+
     var inventoryItem: InventoryItem
-    
+
     var body: some View {
         Group {
             if pageIndex == 0 {
@@ -74,7 +74,7 @@ struct InventoryItemSheetStatsGridRows: View {
 struct InventoryItemSheetStatsGrid: View {
     let pageIndex: Int
     let inventoryItem: InventoryItem
-    
+
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
@@ -90,19 +90,19 @@ struct InventoryItemSheetStatsGrid: View {
 
 struct InventoryItemSheetView: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
-    
+
     var inventoryItem: InventoryItem
-    
+
     init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
-        
+
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
-    
+
     var body: some View {
         Group {
             VStack(spacing: 10) {
@@ -123,7 +123,7 @@ struct InventoryItemSheetView: View {
                             .foregroundStyle(.gray600)
                     }
                 }.padding(.top, 10)
-                
+
                 AsyncImage(url: URL(string: inventoryItem.products.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
                     image.resizable()
                 } placeholder: {
@@ -169,7 +169,7 @@ struct InventoryItemSheetView: View {
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2 ... 2)
-                            
+
                             Spacer()
                         }
                         GridRow {
@@ -207,7 +207,7 @@ struct InventoryItemSheetView: View {
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2 ... 2)
-                            
+
                             Spacer()
                         }
                         GridRow {
@@ -274,5 +274,4 @@ struct InventoryItemSheetView: View {
                 }
         }
     }
-    
 }

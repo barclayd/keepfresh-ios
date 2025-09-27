@@ -55,13 +55,11 @@ private extension InventoryItemFormType {
 private extension Date {
     var formattedWithOrdinal: String {
         let day = Calendar.current.component(.day, from: self)
-        let suffix: String
-
-        switch day {
-        case 1, 21, 31: suffix = "st"
-        case 2, 22: suffix = "nd"
-        case 3, 23: suffix = "rd"
-        default: suffix = "th"
+        let suffix = switch day {
+        case 1, 21, 31: "st"
+        case 2, 22: "nd"
+        case 3, 23: "rd"
+        default: "th"
         }
 
         let formatter = DateFormatter()

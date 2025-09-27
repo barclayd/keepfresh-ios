@@ -13,18 +13,18 @@ public enum RouterDestination: Hashable {
     public var tint: Color? {
         switch self {
         case .addProduct, .inventoryStoreView:
-            return .white200
+            .white200
         case .today, .kitchen, .search, .barcodeScan:
-            return nil
+            nil
         }
     }
 
     public var tabBarVisibility: Visibility {
         switch self {
         case .addProduct:
-            return .hidden
+            .hidden
         default:
-            return .visible
+            .visible
         }
     }
 }

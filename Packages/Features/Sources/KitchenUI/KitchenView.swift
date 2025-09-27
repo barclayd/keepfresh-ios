@@ -8,45 +8,44 @@ import TodayUI
 struct InventoryStat: Identifiable {
     var icon: String
     var amount: Int?
-    
+
     var id: String { icon }
 }
 
 struct StatsView: View {
     let inventoryStore: InventoryStore
     let locationDetails: InventoryLocationDetails?
-    
+
     var stats: [InventoryStat] {
-        return [
+        [
             .init(icon: "list.number", amount: locationDetails?.itemsCount),
             .init(icon: "envelope.open.fill", amount: locationDetails?.openItemsCount),
             .init(icon: "hourglass", amount: locationDetails?.expiringSoonCount),
         ]
     }
-    
+
     let recentItemImages = ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
             HStack {
-                if let locationDetails = locationDetails {
+                if let locationDetails {
                     HStack(alignment: .bottom, spacing: 12) {
                         ForEach(stats) { stat in
                             if let amount = stat.amount, amount > 0 {
                                 HStack(alignment: .lastTextBaseline, spacing: 4) {
                                     Image(systemName: stat.icon)
                                         .font(.system(size: 18)).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
-                                    
+
                                     Text("\(amount)").font(.body).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
                                 }
                             }
-                            
                         }
                     }
-                    
+
                     Spacer()
-                    
+
                     HStack(spacing: 0) {
                         ForEach(Array(recentItemImages.reversed().enumerated()), id: \.offset) { index, image in
                             Image(systemName: image)
@@ -82,19 +81,19 @@ struct StatsView: View {
 
 private struct InventoryStoreTileView: View {
     @Environment(Inventory.self) var inventory
-    
+
     let inventoryStore: InventoryStore
-    
+
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
                 Image(systemName: inventoryStore.icon)
                     .font(.system(size: 36))
-                
+
                 Text(inventoryStore.rawValue).foregroundStyle(.blue700).font(.title).fontWeight(.bold)
-                
+
                 Spacer()
-                
+
                 if let locationDetails = inventory.detailsByLocation[inventoryStore] {
                     VStack {
                         Circle()
@@ -109,7 +108,7 @@ private struct InventoryStoreTileView: View {
             .padding(.horizontal, 10)
             .background(Color.white)
             .cornerRadius(20)
-            
+
             StatsView(inventoryStore: inventoryStore, locationDetails: inventory.detailsByLocation[inventoryStore])
         }
         .padding(.bottom, 4)
@@ -123,7 +122,7 @@ private struct InventoryStoreTileView: View {
 
 public struct KitchenView: View {
     public init() {}
-    
+
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 25) {

@@ -3,7 +3,7 @@ import SwiftUI
 
 struct StatsView: View {
     let inventoryItem: InventoryItem
-    
+
     var body: some View {
         HStack {
             HStack(spacing: 2) {
@@ -15,19 +15,19 @@ struct StatsView: View {
                         .foregroundStyle(.green600)
                 }
             }
-            
+
             Image(systemName: inventoryItem.storageLocation.iconFilled)
                 .font(.system(size: 18))
                 .foregroundStyle(.green600)
-            
+
             HStack(spacing: 2) {
                 Image(systemName: "sparkles")
                     .font(.system(size: 18)).foregroundStyle(.yellow500)
                 Text("17%").foregroundStyle(.green600)
             }
-            
+
             Spacer()
-            
+
             HStack(spacing: 3) {
                 Image(systemName: "hourglass")
                     .font(.system(size: 18))
@@ -55,20 +55,20 @@ struct StatsView: View {
 public struct InventoryItemView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State var showInventoryItemSheet: Bool = false
-    
+
     var inventoryItem: InventoryItem
-    
+
     public init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
     }
-    
+
     private func getSheetFraction(height: CGFloat) -> CGFloat {
         if dynamicTypeSize >= .xxLarge {
             return 0.8
         }
-        
+
         print("Height: \(height)")
-        
+
         switch height {
         case ..<668:
             return 1 // iPhone SE
@@ -80,7 +80,7 @@ public struct InventoryItemView: View {
             return 0.5
         }
     }
-    
+
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
@@ -99,14 +99,14 @@ public struct InventoryItemView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.blue800)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        
+
                         Spacer()
-                        
+
                         Circle()
                             .frame(width: 12, height: 12)
                             .foregroundStyle(.green600)
                     }
-                    
+
                     HStack {
                         Text(inventoryItem.products.categories.name)
                             .foregroundStyle(.gray600)
@@ -128,7 +128,7 @@ public struct InventoryItemView: View {
             .padding(.horizontal, 5)
             .background(.white)
             .cornerRadius(20)
-            
+
             StatsView(inventoryItem: inventoryItem)
         }
         .padding(.bottom, 4)

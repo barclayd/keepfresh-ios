@@ -140,7 +140,7 @@ public struct AddInventoryItemView: View {
                             HStack {
                                 Text(productSearchItem.category.name)
                                     .font(.callout).foregroundStyle(.gray600)
-                                if (productSearchItem.amount != nil) && (productSearchItem.unit != nil) {
+                                if productSearchItem.amount != nil, productSearchItem.unit != nil {
                                     Circle()
                                         .frame(width: 4, height: 4)
                                         .foregroundStyle(.gray600)
@@ -342,7 +342,7 @@ public struct AddInventoryItemView: View {
     }
 
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
-        guard let suggestions = suggestions, inventory.isLoading else { return }
+        guard let suggestions, inventory.isLoading else { return }
 
         formState.inventoryStore = suggestions.recommendedStorageLocation
 
