@@ -218,7 +218,7 @@ public struct InventoryStoreView: View {
                                 }
                             }.padding(.vertical, 5)
                             
-                            ForEach(inventory.itemsByStore[inventoryStore.type]!) { inventoryItem in
+                            ForEach(inventory.itemsByLocation[inventoryStore.type] ?? []) { inventoryItem in
                                 InventoryItemView(
                                     inventoryItem: inventoryItem
                                 )

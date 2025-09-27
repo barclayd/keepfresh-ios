@@ -12,21 +12,34 @@ public enum FetchState {
 @Observable
 @MainActor
 public final class Inventory {
-    public var items: [InventoryItem] = []
+    public var items: [InventoryItem] = [] {
+        didSet {
+            updateCaches()
+        }
+    }
     public var state: FetchState = .empty
-    
-    public init() {}
     
     let api = KeepFreshAPI()
     
-    public var itemsByStore: [InventoryStore: [InventoryItem]] {
-        var grouped = Dictionary(grouping: items, by: \.storageLocation)
+    private(set) public var itemsByLocation: [InventoryStore: [InventoryItem]] = [:]
+    private(set) public var productCounts: [Int: Int] = [:]
+    private(set) public var productCountsByLocation: [Int: [InventoryStore: Int]] = [:]
+    
+    public init() {}
+    
+    private func updateCaches() {
+        itemsByLocation = Dictionary(grouping: items, by: \.storageLocation)
         
-        for store in InventoryStore.allCases {
-            grouped[store] = grouped[store] ?? []
+        var counts: [Int: Int] = [:]
+        var locationCounts: [Int: [InventoryStore: Int]] = [:]
+        
+        for item in items {
+            counts[item.products.id, default: 0] += 1
+            locationCounts[item.products.id, default: [:]][item.storageLocation, default: 0] += 1
         }
         
-        return grouped
+        productCounts = counts
+        productCountsByLocation = locationCounts
     }
     
     public var itemsSortedByRecentlyAddedDescending: [InventoryItem] {

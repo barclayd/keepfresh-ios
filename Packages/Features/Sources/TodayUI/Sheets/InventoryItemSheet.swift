@@ -1,17 +1,22 @@
 import DesignSystem
+import Environment
 import Models
 import SwiftUI
 
 struct InventoryItemSheetStatsGridRows: View {
+    @Environment(Inventory.self) var inventory
+    
     let pageIndex: Int
+    
+    var inventoryItem: InventoryItem
     
     var body: some View {
         Group {
             if pageIndex == 0 {
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("3").foregroundStyle(.green600).fontWeight(.bold).font(.headline)
-                        Text("Days to expiry").foregroundStyle(.green600).fontWeight(.light).font(.subheadline)
+                        Text("\(inventoryItem.expiryDate.timeUntil.amount)").foregroundStyle(.green600).fontWeight(.bold).font(.headline)
+                        Text("\(inventoryItem.expiryDate.timeUntil.unit.rawValue.capitalized) to expiry").foregroundStyle(.green600).fontWeight(.light).font(.subheadline)
                             .lineLimit(1)
                     }
                     Image(systemName: "hourglass")
@@ -26,18 +31,18 @@ struct InventoryItemSheetStatsGridRows: View {
                     }.foregroundStyle(.blue700)
                 }
                 GridRow {
-                    Text("Fridge").fontWeight(.bold).font(.headline)
+                    Text(inventoryItem.storageLocation.rawValue).fontWeight(.bold).font(.headline)
                     Image(systemName: "refrigerator")
                         .font(.system(size: 28)).fontWeight(.bold)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
                         .font(.system(size: 28)).fontWeight(.bold)
-                    Text("Sainsburys").fontWeight(.bold).foregroundStyle(.brandSainsburys).font(.headline)
+                    Text(inventoryItem.products.brand.name).fontWeight(.bold).foregroundStyle(inventoryItem.products.brand.color).font(.headline)
                         .lineLimit(1)
                 }.foregroundStyle(.blue700)
             } else {
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("3 weeks ago").fontWeight(.bold).font(.headline)
+                        Text("\(inventoryItem.createdAt.timeSince.formatted) ago").fontWeight(.bold).font(.headline)
                         Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }.foregroundStyle(.blue700)
                     Image(systemName: "calendar.badge.plus")
@@ -50,14 +55,14 @@ struct InventoryItemSheetStatsGridRows: View {
                 }
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("2").fontWeight(.bold).font(.headline)
+                        Text("\(inventory.productCountsByLocation[inventoryItem.products.id]?[.fridge] ?? 0)").fontWeight(.bold).font(.headline)
                         Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }.foregroundStyle(.blue700)
                     Image(systemName: "house")
                         .font(.system(size: 32)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
                     VStack(spacing: 0) {
-                        Text("3").fontWeight(.bold).font(.headline)
+                        Text("\(inventory.productCountsByLocation[inventoryItem.products.id]?[.freezer] ?? 0)").fontWeight(.bold).font(.headline)
                         Text("Located in Freezer").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
@@ -68,14 +73,15 @@ struct InventoryItemSheetStatsGridRows: View {
 
 struct InventoryItemSheetStatsGrid: View {
     let pageIndex: Int
+    let inventoryItem: InventoryItem
     
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
-                InventoryItemSheetStatsGridRows(pageIndex: pageIndex)
+                InventoryItemSheetStatsGridRows(pageIndex: pageIndex, inventoryItem: inventoryItem)
             }
             Grid(horizontalSpacing: 10, verticalSpacing: 10) {
-                InventoryItemSheetStatsGridRows(pageIndex: pageIndex)
+                InventoryItemSheetStatsGridRows(pageIndex: pageIndex, inventoryItem: inventoryItem)
             }
         }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center)
             .background(.white300).cornerRadius(20)
@@ -141,7 +147,7 @@ struct InventoryItemSheetView: View {
                 }
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< 2, id: \.self) { page in
-                        InventoryItemSheetStatsGrid(pageIndex: page)
+                        InventoryItemSheetStatsGrid(pageIndex: page, inventoryItem: inventoryItem)
                             .tag(page)
                             .padding(.horizontal, 16)
                     }
@@ -261,10 +267,10 @@ struct InventoryItemSheetView: View {
             }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
                 .padding(.horizontal, 10)
                 .sheet(isPresented: $showRemoveSheet) {
-                    RemoveInventoryItemSheet()
+                    RemoveInventoryItemSheet(inventoryItem: inventoryItem)
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(25)
-                        .presentationDetents([.fraction(0.35)])
+                        .presentationDetents([.fraction(0.4)])
                 }
         }
     }
