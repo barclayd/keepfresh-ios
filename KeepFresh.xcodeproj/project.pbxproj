@@ -17,6 +17,7 @@
 		4EEEBA7D2E8076900049511B /* Router in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA7C2E8076900049511B /* Router */; };
 		4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF1853A2D14E70900961F35 /* SearchUI */; };
 		4EF223CF2E874ECA00A93567 /* Environment in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF223CE2E874ECA00A93567 /* Environment */; };
+		4EF223D22E883E4A00A93567 /* Extensions in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF223D12E883E4A00A93567 /* Extensions */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		4EEEBA722E8063B70049511B /* Network */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Network; path = Packages/Network; sourceTree = "<group>"; };
 		4EEEBA732E8063DA0049511B /* Router */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Router; path = Packages/Router; sourceTree = "<group>"; };
 		4EEEBA742E80679B0049511B /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Models; path = Packages/Models; sourceTree = "<group>"; };
+		4EF223D02E883D3800A93567 /* Extensions */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Extensions; path = Packages/Extensions; sourceTree = "<group>"; };
 		9F2142232CE9DAA1004167D7 /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FAEE3A72CF0994400F86CDC /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Features; path = Packages/Features; sourceTree = "<group>"; };
 		9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PackageTests.xctestplan; sourceTree = "<group>"; };
@@ -46,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4EF223D22E883E4A00A93567 /* Extensions in Frameworks */,
 				4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */,
 				4EEEBA7B2E806E010049511B /* Network in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
@@ -69,6 +72,7 @@
 				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
+				4EF223D02E883D3800A93567 /* Extensions */,
 				4ED27E822E849BA600296595 /* Environment */,
 				4EEEBA742E80679B0049511B /* Models */,
 				4EEEBA732E8063DA0049511B /* Router */,
@@ -124,6 +128,7 @@
 				4EEEBA7A2E806E010049511B /* Network */,
 				4EEEBA7C2E8076900049511B /* Router */,
 				4EF223CE2E874ECA00A93567 /* Environment */,
+				4EF223D12E883E4A00A93567 /* Extensions */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -473,6 +478,10 @@
 		4EF223CE2E874ECA00A93567 /* Environment */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Environment;
+		};
+		4EF223D12E883E4A00A93567 /* Extensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Extensions;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,3 +1,4 @@
+import Extensions
 import DesignSystem
 import Models
 import Network
@@ -17,6 +18,8 @@ public struct InventoryLocationDetails: Hashable {
     public var recentlyUpdatedImages: [String]
     public var openItemsCount: Int
     public var itemsCount: Int
+    public var recentlyAddedItemsCount: Int
+    public var expiringTodayCount: Int
     
     public var expiryStatusPercentageColor: Color {
         switch expiryPercentage {
@@ -29,7 +32,7 @@ public struct InventoryLocationDetails: Hashable {
     struct InventoryStat: Identifiable {
         var icon: String
         var label: String
-
+        
         var id: String { icon }
     }
 }
@@ -57,7 +60,7 @@ public final class Inventory {
         itemsByLocation = Dictionary(grouping: items, by: \.storageLocation)
         
         detailsByLocation = itemsByLocation.mapValues { items in
-            InventoryLocationDetails(expiryPercentage: 59, lastUpdated: items.map(\.createdAt).max(), expiringSoonCount: items.count(where: { $0.expiryDate < Date().addingTimeInterval(60 * 60 * 24 * 5)}), recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"], openItemsCount: items.count(where: { $0.openedAt != nil }), itemsCount: items.count)
+            InventoryLocationDetails(expiryPercentage: 59, lastUpdated: items.map(\.createdAt).max(), expiringSoonCount: items.count(where: { $0.expiryDate.timeUntil.totalDays < 4}), recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"], openItemsCount: items.count(where: { $0.openedAt != nil }), itemsCount: items.count, recentlyAddedItemsCount: items.count(where: { $0.createdAt.timeSince.totalDays < 4 }), expiringTodayCount: items.count(where: { $0.expiryDate.timeUntil.totalDays == 0 }))
             
         }
         

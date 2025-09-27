@@ -2,18 +2,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "Network",
+    name: "Extensions",
     platforms: [.iOS(.v18), .macOS(.v15)],
     products: [
-        .library(name: "Network", targets: ["Network"]),
+        .library(name: "Extensions", targets: ["Extensions"]),
     ],
     dependencies: [
-        .package(path: "../Models"),
     ],
     targets: [
         .target(
-            name: "Network",
-            dependencies: ["Models"]
+            name: "Extensions",
         ),
     ]
 )
