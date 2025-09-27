@@ -10,9 +10,9 @@ public struct RemoveInventoryItemSheet: View {
     @State private var sliderWidth: CGFloat = 0
 
     let predictedWastePercentage: Double = 25
-    
+
     var inventoryItem: InventoryItem
-    
+
     public init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
         _wastePercentage = State(initialValue: predictedWastePercentage)

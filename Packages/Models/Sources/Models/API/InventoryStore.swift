@@ -3,11 +3,11 @@ import SwiftUI
 
 public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatable, Sendable {
     public var id: Self { self }
-    
+
     case pantry = "Pantry"
     case fridge = "Fridge"
     case freezer = "Freezer"
-    
+
     public var icon: String {
         switch self {
         case .pantry: return "cabinet"
@@ -17,8 +17,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatab
     }
 
     public var iconFilled: String { "\(icon).fill" }
-    
-    
+
     public var previewGradientStops: (start: Color, end: Color) {
         switch self {
         case .pantry: return (.brown100, .brown300)
@@ -26,7 +25,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatab
         case .freezer: return (.blue600, .blue700)
         }
     }
-    
+
     public var viewGradientStops: [Gradient.Stop] {
         switch self {
         case .pantry:
@@ -49,14 +48,14 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatab
             ]
         }
     }
-    
+
     public var foregorundColor: Color {
         switch self {
         case .pantry, .fridge: return .gray700
         case .freezer: return .gray100
         }
     }
-    
+
     public var expiryIconColor: Color {
         switch self {
         case .pantry, .fridge: return .blue700

@@ -1,7 +1,7 @@
 import DesignSystem
+import Environment
 import Models
 import SwiftUI
-import Environment
 
 public struct TodayView: View {
     public init() {}

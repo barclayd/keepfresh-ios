@@ -1,12 +1,12 @@
 import BarcodeUI
 import DesignSystem
+import Environment
 import KitchenUI
 import Models
 import Router
 import SearchUI
 import SwiftUI
 import TodayUI
-import Environment
 
 struct AppTabRootView: View {
     @Environment(Router.self) var router
