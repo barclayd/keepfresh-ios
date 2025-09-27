@@ -68,8 +68,8 @@ public final class Inventory {
         var locationCounts: [Int: [InventoryStore: Int]] = [:]
 
         for item in items {
-            counts[item.products.id, default: 0] += 1
-            locationCounts[item.products.id, default: [:]][item.storageLocation, default: 0] += 1
+            counts[item.id, default: 0] += 1
+            locationCounts[item.id, default: [:]][item.storageLocation, default: 0] += 1
         }
 
         productCounts = counts

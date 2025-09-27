@@ -36,7 +36,7 @@ struct InventoryItemSheetStatsGridRows: View {
                         .font(.system(size: 28)).fontWeight(.bold)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
                         .font(.system(size: 28)).fontWeight(.bold)
-                    Text(inventoryItem.products.brand.name).fontWeight(.bold).foregroundStyle(inventoryItem.products.brand.color).font(.headline)
+                    Text(inventoryItem.product.brand.name).fontWeight(.bold).foregroundStyle(inventoryItem.product.brand.color).font(.headline)
                         .lineLimit(1)
                 }.foregroundStyle(.blue700)
             } else {
@@ -55,14 +55,14 @@ struct InventoryItemSheetStatsGridRows: View {
                 }
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("\(inventory.productCountsByLocation[inventoryItem.products.id]?[.fridge] ?? 0)").fontWeight(.bold).font(.headline)
+                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.fridge] ?? 0)").fontWeight(.bold).font(.headline)
                         Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }.foregroundStyle(.blue700)
                     Image(systemName: "house")
                         .font(.system(size: 32)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
                     VStack(spacing: 0) {
-                        Text("\(inventory.productCountsByLocation[inventoryItem.products.id]?[.freezer] ?? 0)").fontWeight(.bold).font(.headline)
+                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.freezer] ?? 0)").fontWeight(.bold).font(.headline)
                         Text("Located in Freezer").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
@@ -124,24 +124,24 @@ struct InventoryItemSheetView: View {
                     }
                 }.padding(.top, 10)
 
-                AsyncImage(url: URL(string: inventoryItem.products.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
+                AsyncImage(url: URL(string: inventoryItem.product.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
                     image.resizable()
                 } placeholder: {
                     ProgressView()
                 }
                 .frame(width: 80, height: 80)
                 .padding(.bottom, -8)
-                Text(inventoryItem.products.name).font(.title).fontWeight(.bold).foregroundStyle(.blue800)
+                Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue800)
                     .lineSpacing(0).padding(.bottom, -8)
                 HStack {
-                    Text(inventoryItem.products.categories.name)
+                    Text(inventoryItem.product.categories.name)
                         .font(.callout)
                         .foregroundStyle(.gray600)
                     Circle()
                         .frame(width: 6, height: 6)
                         .foregroundStyle(.gray600)
                         .padding(.horizontal, 4)
-                    Text("\(String(format: "%.0f", inventoryItem.products.amount)) \(inventoryItem.products.unit)")
+                    Text("\(String(format: "%.0f", inventoryItem.product.amount)) \(inventoryItem.product.unit)")
                         .font(.callout)
                         .foregroundStyle(.gray600)
                 }

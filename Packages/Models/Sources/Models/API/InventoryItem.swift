@@ -80,7 +80,7 @@ public struct InventoryItemsResponse: Codable, Sendable {
 }
 
 public struct InventoryItem: Codable, Sendable, Identifiable {
-    public init(id: Int, createdAt: Date, openedAt: String? = nil, status: String, storageLocation: InventoryStore, consumptionPrediction: Int, expiryDate: Date, expiryType: ExpiryType, products: ProductDetails) {
+    public init(id: Int, createdAt: Date, openedAt: String? = nil, status: String, storageLocation: InventoryStore, consumptionPrediction: Int, expiryDate: Date, expiryType: ExpiryType, product: Product) {
         self.id = id
         self.createdAt = createdAt
         self.openedAt = openedAt
@@ -89,7 +89,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
         self.consumptionPrediction = consumptionPrediction
         self.expiryDate = expiryDate
         self.expiryType = expiryType
-        self.products = products
+        self.product = product
     }
 
     public let id: Int
@@ -100,10 +100,10 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
     public let consumptionPrediction: Int
     public let expiryDate: Date
     public let expiryType: ExpiryType
-    public let products: ProductDetails
+    public let product: Product
 }
 
-public struct ProductDetails: Codable, Sendable {
+public struct Product: Codable, Sendable {
     public init(id: Int, name: String, unit: String, brand: Brand, amount: Double, imageUrl: String? = nil, categories: CategoryDetails) {
         self.id = id
         self.name = name
