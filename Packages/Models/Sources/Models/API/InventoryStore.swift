@@ -15,7 +15,7 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatab
         case .freezer: return "snowflake.circle"
         }
     }
-    
+
     public var iconFilled: String { "\(icon).fill" }
     
     
@@ -68,41 +68,6 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatab
         switch self {
         case .pantry, .fridge: return .blue700
         case .freezer: return .blue100
-        }
-    }
-}
-
-public struct InventoryStoreDetails: Identifiable, Hashable {
-    public init(
-        id: Int, name: String, type: InventoryStore, expiryStatusPercentage: Float, lastUpdated: Date,
-        itemsCount: Int, openItemsCount: Int, itemsExpiringSoonCount: Int, recentItemImages: [String]
-    ) {
-        self.id = id
-        self.name = name
-        self.type = type
-        self.expiryStatusPercentage = expiryStatusPercentage
-        self.lastUpdated = lastUpdated
-        self.itemsCount = itemsCount
-        self.openItemsCount = openItemsCount
-        self.itemsExpiringSoonCount = itemsExpiringSoonCount
-        self.recentItemImages = recentItemImages
-    }
-    
-    public var id: Int
-    public var name: String
-    public var type: InventoryStore
-    public var expiryStatusPercentage: Float
-    public var lastUpdated: Date
-    public var itemsCount: Int
-    public var openItemsCount: Int
-    public var itemsExpiringSoonCount: Int
-    public var recentItemImages: [String]
-    
-    public var expiryStatusPercentageColor: Color {
-        switch expiryStatusPercentage {
-        case 0 ... 33: return .green600
-        case 33 ... 66: return .yellow400
-        default: return .red500
         }
     }
 }

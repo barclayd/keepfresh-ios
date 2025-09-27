@@ -101,13 +101,12 @@ public struct InventoryStoreView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
         
-    @State private var selectedInventoryItem: InventoryItem? = nil
     @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
     @State private var didScrollPastOmbreColor = false
     
-    public let inventoryStore: InventoryStoreDetails
+    public var inventoryStore: InventoryStore
     
-    public init(inventoryStore: InventoryStoreDetails) {
+    public init(inventoryStore: InventoryStore) {
         self.inventoryStore = inventoryStore
     }
     
@@ -134,7 +133,7 @@ public struct InventoryStoreView: View {
                 ScrollView(showsIndicators: false) {
                     ZStack {
                         LinearGradient(
-                            stops: inventoryStore.type.viewGradientStops, startPoint: .top, endPoint: .bottom
+                            stops: inventoryStore.viewGradientStops, startPoint: .top, endPoint: .bottom
                         )
                         .ignoresSafeArea(edges: .top)
                         .offset(y: -geometry.safeAreaInsets.top)
@@ -142,9 +141,9 @@ public struct InventoryStoreView: View {
                         .frame(maxHeight: .infinity, alignment: .top)
                         
                         VStack(spacing: 15) {
-                            Image(systemName: inventoryStore.type.icon).font(.system(size: 78)).foregroundColor(
+                            Image(systemName: inventoryStore.icon).font(.system(size: 78)).foregroundColor(
                                 .blue700)
-                            Text(inventoryStore.name).font(.largeTitle).lineSpacing(0).foregroundStyle(
+                            Text(inventoryStore.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold)
                             
@@ -218,7 +217,7 @@ public struct InventoryStoreView: View {
                                 }
                             }.padding(.vertical, 5)
                             
-                            ForEach(inventory.itemsByLocation[inventoryStore.type] ?? []) { inventoryItem in
+                            ForEach(inventory.itemsByLocation[inventoryStore] ?? []) { inventoryItem in
                                 InventoryItemView(
                                     inventoryItem: inventoryItem
                                 )
@@ -237,11 +236,11 @@ public struct InventoryStoreView: View {
                 geometry.contentOffset.y
             }, action: { _, newValue in
                 withAnimation {
-                    if newValue > inventoryStoreToScrollOffset[inventoryStore.type, default: 0] {
-                        router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor
+                    if newValue > inventoryStoreToScrollOffset[inventoryStore, default: 0] {
+                        router.customTintColor = inventoryStoreToToolbarColor[inventoryStore]?.onScrollColor
                         didScrollPastOmbreColor = true
                     } else {
-                        router.customTintColor = inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor
+                        router.customTintColor = inventoryStoreToToolbarColor[inventoryStore]?.defaultColor
                         didScrollPastOmbreColor = false
                     }
                 }
@@ -255,14 +254,14 @@ public struct InventoryStoreView: View {
                 Button(action: {}) {
                     Image(systemName: "plus.app")
                         .font(.system(size: 18))
-                        .foregroundColor(didScrollPastOmbreColor ? inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor : inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor).fontWeight(.bold)
+                        .foregroundColor(didScrollPastOmbreColor ? inventoryStoreToToolbarColor[inventoryStore]?.onScrollColor : inventoryStoreToToolbarColor[inventoryStore]?.defaultColor).fontWeight(.bold)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {}) {
                     Image(systemName: "barcode.viewfinder")
                         .font(.system(size: 18))
-                        .foregroundColor(didScrollPastOmbreColor ? inventoryStoreToToolbarColor[inventoryStore.type]?.onScrollColor : inventoryStoreToToolbarColor[inventoryStore.type]?.defaultColor).fontWeight(.bold)
+                        .foregroundColor(didScrollPastOmbreColor ? inventoryStoreToToolbarColor[inventoryStore]?.onScrollColor : inventoryStoreToToolbarColor[inventoryStore]?.defaultColor).fontWeight(.bold)
                 }
             }
         }

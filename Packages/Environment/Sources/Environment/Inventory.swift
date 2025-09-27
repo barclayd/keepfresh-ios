@@ -1,3 +1,4 @@
+import DesignSystem
 import Models
 import Network
 import SwiftUI
@@ -7,6 +8,29 @@ public enum FetchState {
     case loading
     case loaded
     case error
+}
+
+public struct InventoryLocationDetails: Hashable {
+    public var expiryPercentage: Int
+    public var lastUpdated: Date?
+    public var expiringSoonCount: Int
+    public var recentlyUpdatedImages: [String]
+    public var openItemsCount: Int
+    
+    public var expiryStatusPercentageColor: Color {
+        switch expiryPercentage {
+        case 0 ... 33: return .green600
+        case 33 ... 66: return .yellow400
+        default: return .red500
+        }
+    }
+    
+    struct InventoryStat: Identifiable {
+        var icon: String
+        var label: String
+
+        var id: String { icon }
+    }
 }
 
 @Observable
@@ -24,11 +48,17 @@ public final class Inventory {
     private(set) public var itemsByLocation: [InventoryStore: [InventoryItem]] = [:]
     private(set) public var productCounts: [Int: Int] = [:]
     private(set) public var productCountsByLocation: [Int: [InventoryStore: Int]] = [:]
+    private(set) public var detailsByLocation: [InventoryStore: InventoryLocationDetails] = [:]
     
     public init() {}
     
     private func updateCaches() {
         itemsByLocation = Dictionary(grouping: items, by: \.storageLocation)
+        
+        detailsByLocation = itemsByLocation.mapValues { items in
+            InventoryLocationDetails(expiryPercentage: 59, lastUpdated: items.map(\.createdAt).max(), expiringSoonCount: items.count(where: { $0.expiryDate < Date().addingTimeInterval(60 * 60 * 24 * 5)}), recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"], openItemsCount: items.count(where: { $0.openedAt != nil }))
+            
+        }
         
         var counts: [Int: Int] = [:]
         var locationCounts: [Int: [InventoryStore: Int]] = [:]

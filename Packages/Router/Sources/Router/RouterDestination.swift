@@ -8,7 +8,7 @@ public enum RouterDestination: Hashable {
     case barcodeScan
     case kitchen
     case addProduct(product: ProductSearchItemResponse)
-    case inventoryStoreView(inventoryStore: InventoryStoreDetails)
+    case inventoryStoreView(inventoryStore: InventoryStore)
 
     public var tint: Color? {
         switch self {
