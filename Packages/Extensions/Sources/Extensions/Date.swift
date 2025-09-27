@@ -52,8 +52,12 @@ public struct RelativeTime {
         self.totalDays = abs(totalDays)
     }
     
-    var abbreviated: String {
+    public var abbreviated: String {
         "\(self.amount)\(self.unit.abbreviation)"
+    }
+    
+    public var formatted: String {
+        "\(amount) \(unit.pluralised(for: amount))"
     }
 }
 
