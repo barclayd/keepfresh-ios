@@ -100,7 +100,7 @@ struct StoreColors: Hashable {
 public struct InventoryStoreView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
-        
+    
     @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
     @State private var didScrollPastOmbreColor = false
     
@@ -141,8 +141,8 @@ public struct InventoryStoreView: View {
                         .frame(maxHeight: .infinity, alignment: .top)
                         
                         VStack(spacing: 15) {
-                            Image(systemName: inventoryStore.icon).font(.system(size: 78)).foregroundColor(
-                                .blue700)
+                            Image(systemName: inventoryStore.icon).font(.system(size: 78)).foregroundColor(                                inventoryStore == .freezer ? .white200 : .blue700
+                            )
                             Text(inventoryStore.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold)

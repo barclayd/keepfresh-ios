@@ -16,6 +16,7 @@ public struct InventoryLocationDetails: Hashable {
     public var expiringSoonCount: Int
     public var recentlyUpdatedImages: [String]
     public var openItemsCount: Int
+    public var itemsCount: Int
     
     public var expiryStatusPercentageColor: Color {
         switch expiryPercentage {
@@ -56,7 +57,7 @@ public final class Inventory {
         itemsByLocation = Dictionary(grouping: items, by: \.storageLocation)
         
         detailsByLocation = itemsByLocation.mapValues { items in
-            InventoryLocationDetails(expiryPercentage: 59, lastUpdated: items.map(\.createdAt).max(), expiringSoonCount: items.count(where: { $0.expiryDate < Date().addingTimeInterval(60 * 60 * 24 * 5)}), recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"], openItemsCount: items.count(where: { $0.openedAt != nil }))
+            InventoryLocationDetails(expiryPercentage: 59, lastUpdated: items.map(\.createdAt).max(), expiringSoonCount: items.count(where: { $0.expiryDate < Date().addingTimeInterval(60 * 60 * 24 * 5)}), recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"], openItemsCount: items.count(where: { $0.openedAt != nil }), itemsCount: items.count)
             
         }
         

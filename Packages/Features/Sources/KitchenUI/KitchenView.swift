@@ -7,7 +7,7 @@ import TodayUI
 
 struct InventoryStat: Identifiable {
     var icon: String
-    var label: String
+    var amount: Int?
     
     var id: String { icon }
 }
@@ -18,10 +18,9 @@ struct StatsView: View {
     
     var stats: [InventoryStat] {
         return [
-            .init(icon: "calendar", label: ""),
-            .init(icon: "list.number", label: "18"),
-            .init(icon: "envelope.open.fill", label: "12"),
-            .init(icon: "hourglass", label: "3"),
+            .init(icon: "list.number", amount: locationDetails?.itemsCount),
+            .init(icon: "envelope.open.fill", amount: locationDetails?.openItemsCount),
+            .init(icon: "hourglass", amount: locationDetails?.expiringSoonCount),
         ]
     }
     
@@ -29,20 +28,20 @@ struct StatsView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            HStack {
-                Text(inventoryStore.rawValue).foregroundStyle(inventoryStore.titleForegorundColor).font(.title).fontWeight(.bold)
-                Spacer()
-            }
+            Spacer()
             HStack {
                 if let locationDetails = locationDetails {
                     HStack(alignment: .bottom, spacing: 12) {
                         ForEach(stats) { stat in
-                            HStack(alignment: .lastTextBaseline, spacing: 4) {
-                                Image(systemName: stat.icon)
-                                    .font(.system(size: 18)).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
-                                
-                                Text(stat.label).font(.body).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                            if let amount = stat.amount, amount > 0 {
+                                HStack(alignment: .lastTextBaseline, spacing: 4) {
+                                    Image(systemName: stat.icon)
+                                        .font(.system(size: 18)).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                                    
+                                    Text("\(amount)").font(.body).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                                }
                             }
+                            
                         }
                     }
                     
@@ -60,6 +59,7 @@ struct StatsView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .padding(.horizontal, 12)
         .background(
@@ -90,6 +90,8 @@ private struct InventoryStoreTileView: View {
             HStack {
                 Image(systemName: inventoryStore.icon)
                     .font(.system(size: 36))
+                
+                Text(inventoryStore.rawValue).foregroundStyle(.blue700).font(.title).fontWeight(.bold)
                 
                 Spacer()
                 

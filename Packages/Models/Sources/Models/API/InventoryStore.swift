@@ -57,13 +57,6 @@ public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatab
         }
     }
     
-    public var titleForegorundColor: Color {
-        switch self {
-        case .pantry, .fridge: return .blue700
-        case .freezer: return .blue100
-        }
-    }
-    
     public var expiryIconColor: Color {
         switch self {
         case .pantry, .fridge: return .blue700
