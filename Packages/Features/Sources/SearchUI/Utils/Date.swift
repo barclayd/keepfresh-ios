@@ -7,7 +7,7 @@ func addDaysToNow(_ days: Int) -> Date {
 }
 
 func getExpiryDateForSelection(
-    storage: InventoryStore,
+    storage: StorageLocation,
     status: ProductSearchItemStatus,
     shelfLife: ShelfLifeInDays) -> Date?
 {

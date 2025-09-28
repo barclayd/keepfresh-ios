@@ -14,7 +14,7 @@ struct InventoryStat: Identifiable {
 }
 
 struct StatsView: View {
-    let inventoryStore: InventoryStore
+    let storageLocation: StorageLocation
     let locationDetails: InventoryLocationDetails?
 
     var stats: [InventoryStat] {
@@ -41,18 +41,18 @@ struct StatsView: View {
                                             .resizable()
                                             .scaledToFit()
                                             .frame(width: 22, height: 22)
-                                            .foregroundStyle(inventoryStore.foregorundColor)
+                                            .foregroundStyle(storageLocation.foregorundColor)
                                     } else {
                                         Image(systemName: stat.icon).font(.system(size: 18))
                                             .foregroundStyle(
                                                 stat.icon == "hourglass" ? locationDetails
-                                                    .expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                                                    .expiryStatusPercentageColor : storageLocation.foregorundColor)
                                     }
 
                                     Text("\(amount)").font(.body)
                                         .foregroundStyle(
                                             stat.icon == "hourglass" ? locationDetails
-                                                .expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                                                .expiryStatusPercentageColor : storageLocation.foregorundColor)
                                 }
                             }
                         }
@@ -64,7 +64,7 @@ struct StatsView: View {
                         ForEach(Array(recentItemImages.reversed().enumerated()), id: \.offset) { index, image in
                             Image(systemName: image)
                                 .font(.system(size: 18))
-                                .foregroundStyle(inventoryStore.foregorundColor)
+                                .foregroundStyle(storageLocation.foregorundColor)
                                 .opacity(Double(recentItemImages.count - index) / Double(recentItemImages.count))
                                 .offset(x: CGFloat(
                                     recentItemImages
@@ -84,31 +84,31 @@ struct StatsView: View {
             topTrailingRadius: 0,
             style: .continuous).fill(LinearGradient(stops: [
             Gradient.Stop(
-                color: inventoryStore.previewGradientStops.start,
+                color: storageLocation.previewGradientStops.start,
                 location: 0),
             Gradient.Stop(
-                color: inventoryStore.previewGradientStops.end,
+                color: storageLocation.previewGradientStops.end,
                 location: 1),
         ], startPoint: .leading, endPoint: .trailing)))
     }
 }
 
-private struct InventoryStoreTileView: View {
+private struct StorageLocationTileView: View {
     @Environment(Inventory.self) var inventory
 
-    let inventoryStore: InventoryStore
+    let storageLocation: StorageLocation
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                Image(systemName: inventoryStore.icon)
+                Image(systemName: storageLocation.icon)
                     .font(.system(size: 36))
 
-                Text(inventoryStore.rawValue).foregroundStyle(.blue700).font(.title).fontWeight(.bold)
+                Text(storageLocation.rawValue).foregroundStyle(.blue700).font(.title).fontWeight(.bold)
 
                 Spacer()
 
-                if let locationDetails = inventory.detailsByLocation[inventoryStore] {
+                if let locationDetails = inventory.detailsByStorageLocation[storageLocation] {
                     VStack {
                         Circle()
                             .frame(width: 14, height: 14)
@@ -123,7 +123,7 @@ private struct InventoryStoreTileView: View {
             .background(Color.white)
             .cornerRadius(20)
 
-            StatsView(inventoryStore: inventoryStore, locationDetails: inventory.detailsByLocation[inventoryStore])
+            StatsView(storageLocation: storageLocation, locationDetails: inventory.detailsByStorageLocation[storageLocation])
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
@@ -140,9 +140,9 @@ public struct KitchenView: View {
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 25) {
-                ForEach(InventoryStore.allCases) { inventoryStore in
-                    NavigationLink(value: RouterDestination.inventoryStoreView(inventoryStore: inventoryStore)) {
-                        InventoryStoreTileView(inventoryStore: inventoryStore)
+                ForEach(StorageLocation.allCases) { storageLocation in
+                    NavigationLink(value: RouterDestination.storageLocationView(storageLocation: storageLocation)) {
+                        StorageLocationTileView(storageLocation: storageLocation)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(PlainButtonStyle())

@@ -101,7 +101,7 @@ private extension InventoryItemFormType {
         quantity: Binding<Int>,
         status: Binding<ProductSearchItemStatus>,
         expiryDate: Binding<Date>,
-        inventoryStore: Binding<InventoryStore>,
+        storageLocation: Binding<StorageLocation>,
         isRecommendedExpiryDate: Bool,
         isRecommendedStorageLocation: Bool) -> some View
     {
@@ -129,9 +129,9 @@ private extension InventoryItemFormType {
         case .Storage:
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .lastTextBaseline, spacing: 0) {
-                    Image(systemName: inventoryStore.wrappedValue.icon).font(.system(size: 24))
+                    Image(systemName: storageLocation.wrappedValue.icon).font(.system(size: 24))
                         .foregroundStyle(.gray600).padding(.trailing, 2)
-                    Text(inventoryStore.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
+                    Text(storageLocation.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
                     if isRecommendedStorageLocation {
                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                             .offset(y: -8)
@@ -165,7 +165,7 @@ private extension InventoryItemFormType {
     @ViewBuilder
     func expandedContent(
         status: Binding<ProductSearchItemStatus>,
-        inventoryStore: Binding<InventoryStore>,
+        storageLocation: Binding<StorageLocation>,
         expiryDate: Binding<Date>) -> some View
     {
         switch self {
@@ -174,7 +174,7 @@ private extension InventoryItemFormType {
         case .Status:
             IventoryItemStatusContent(status: status)
         case .Storage:
-            InventoryItemStorageContent(inventoryStore: inventoryStore)
+            InventoryItemStorageContent(storageLocation: storageLocation)
         default:
             EmptyView()
         }
@@ -186,7 +186,7 @@ struct InventoryItemOverview: View {
     @Binding var isMarkedAsReady: Bool
     @Binding var quantity: Int
     @Binding var status: ProductSearchItemStatus
-    @Binding var inventoryStore: InventoryStore
+    @Binding var storageLocation: StorageLocation
     @Binding var expiryDate: Date
 
     var isRecommendedExpiryDate: Bool
@@ -213,7 +213,7 @@ struct InventoryItemOverview: View {
             quantity: $quantity,
             status: $status,
             expiryDate: $expiryDate,
-            inventoryStore: $inventoryStore,
+            storageLocation: $storageLocation,
             isRecommendedExpiryDate: isRecommendedExpiryDate,
             isRecommendedStorageLocation: isRecommendedStorageLocation)
 
@@ -266,7 +266,7 @@ struct IventoryItemStatusContent: View {
 }
 
 struct InventoryItemStorageContent: View {
-    @Binding var inventoryStore: InventoryStore
+    @Binding var storageLocation: StorageLocation
 
     @State private var showStoragePicker = false
 
@@ -285,9 +285,9 @@ struct InventoryItemStorageContent: View {
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
 
-                Picker("Select storage location", selection: $inventoryStore) {
-                    ForEach(InventoryStore.allCases) { inventoryStore in
-                        Text(inventoryStore.rawValue.capitalized).foregroundStyle(.gray600)
+                Picker("Select storage location", selection: $storageLocation) {
+                    ForEach(StorageLocation.allCases) { storageLocation in
+                        Text(storageLocation.rawValue.capitalized).foregroundStyle(.gray600)
                             .font(.callout)
                             .lineLimit(1).border(.yellow)
                     }
@@ -390,7 +390,7 @@ public struct InventoryCategory: View {
     @Binding var quantity: Int
     @Binding var status: ProductSearchItemStatus
     @Binding var expiryDate: Date
-    @Binding var inventoryStore: InventoryStore
+    @Binding var storageLocation: StorageLocation
 
     var isRecommendedExpiryDate: Bool
     var isRecommendedStorageLocation: Bool
@@ -409,7 +409,7 @@ public struct InventoryCategory: View {
                     isMarkedAsReady: $isMarkedAsReady,
                     quantity: $quantity,
                     status: $status,
-                    inventoryStore: $inventoryStore,
+                    storageLocation: $storageLocation,
                     expiryDate: $expiryDate,
                     isRecommendedExpiryDate: isRecommendedExpiryDate,
                     isRecommendedStorageLocation: isRecommendedStorageLocation,
@@ -429,7 +429,7 @@ public struct InventoryCategory: View {
                 }
             }
             if isToggable {
-                type.expandedContent(status: $status, inventoryStore: $inventoryStore, expiryDate: $expiryDate)
+                type.expandedContent(status: $status, storageLocation: $storageLocation, expiryDate: $expiryDate)
             }
         }
         .transition(.move(edge: .top))

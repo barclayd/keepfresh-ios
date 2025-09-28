@@ -10,7 +10,7 @@ import SwiftUI
 public class InventoryFormState {
     var expiryDate = Date()
     var expiryType: ExpiryType = .BestBefore
-    var inventoryStore: InventoryStore = .fridge
+    var storageLocation: StorageLocation = .fridge
     var quantity = 1
     var status: ProductSearchItemStatus = .unopened
 }
@@ -31,7 +31,7 @@ public struct AddInventoryItemView: View {
     var isRecommendedExpiryDate: Bool {
         guard
             let recommendedNumberOfDays = item.suggestions?.shelfLifeInDays[formState.status][
-                formState.inventoryStore
+                formState.storageLocation
             ]
         else {
             return false
@@ -40,14 +40,14 @@ public struct AddInventoryItemView: View {
     }
 
     var isRecommendedStorageLocation: Bool {
-        formState.inventoryStore == item.suggestions?.recommendedStorageLocation
+        formState.storageLocation == item.suggestions?.recommendedStorageLocation
     }
 
     var calculatedExpiryDate: Date {
         guard
             let shelfLife = item.suggestions?.shelfLifeInDays,
             let expiry = getExpiryDateForSelection(
-                storage: formState.inventoryStore,
+                storage: formState.storageLocation,
                 status: formState.status,
                 shelfLife: shelfLife)
         else {
@@ -59,7 +59,7 @@ public struct AddInventoryItemView: View {
     func addToInventory() async throws {
         print(
             "Expiry date: \(formState.expiryDate)",
-            "Inventory store: \(formState.inventoryStore.rawValue)",
+            "Storage location: \(formState.storageLocation.rawValue)",
             "quantity: \(formState.quantity)",
             "status: \(formState.status.rawValue)")
 
@@ -74,7 +74,7 @@ public struct AddInventoryItemView: View {
                 .InventoryItem(
                     expiryDate: formState.expiryDate,
                     storageLocation: formState
-                        .inventoryStore,
+                        .storageLocation,
                     status: formState.status,
                     expiryType: formState
                         .expiryType),
@@ -250,7 +250,7 @@ public struct AddInventoryItemView: View {
                                         quantity: $formState.quantity,
                                         status: $formState.status,
                                         expiryDate: $formState.expiryDate,
-                                        inventoryStore: $formState.inventoryStore,
+                                        storageLocation: $formState.storageLocation,
                                         isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation,
                                         type: .Expiry)
@@ -258,7 +258,7 @@ public struct AddInventoryItemView: View {
                                         quantity: $formState.quantity,
                                         status: $formState.status,
                                         expiryDate: $formState.expiryDate,
-                                        inventoryStore: $formState.inventoryStore,
+                                        storageLocation: $formState.storageLocation,
                                         isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation,
                                         type: .Storage)
@@ -266,7 +266,7 @@ public struct AddInventoryItemView: View {
                                         quantity: $formState.quantity,
                                         status: $formState.status,
                                         expiryDate: $formState.expiryDate,
-                                        inventoryStore: $formState.inventoryStore,
+                                        storageLocation: $formState.storageLocation,
                                         isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation,
                                         type: .Status)
@@ -274,7 +274,7 @@ public struct AddInventoryItemView: View {
                                         quantity: $formState.quantity,
                                         status: $formState.status,
                                         expiryDate: $formState.expiryDate,
-                                        inventoryStore: $formState.inventoryStore,
+                                        storageLocation: $formState.storageLocation,
                                         isRecommendedExpiryDate: isRecommendedExpiryDate,
                                         isRecommendedStorageLocation: isRecommendedStorageLocation,
                                         type: .Quantity)
@@ -302,7 +302,7 @@ public struct AddInventoryItemView: View {
                             try await addToInventory()
                         }
                     } label: {
-                        Text("Add to \(formState.inventoryStore.rawValue.capitalized)")
+                        Text("Add to \(formState.storageLocation.rawValue.capitalized)")
                             .font(.title2)
                             .foregroundStyle(.blue600)
                             .fontWeight(.medium)
@@ -347,7 +347,7 @@ public struct AddInventoryItemView: View {
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
         guard let suggestions else { return }
 
-        formState.inventoryStore = suggestions.recommendedStorageLocation
+        formState.storageLocation = suggestions.recommendedStorageLocation
 
         formState.expiryType = suggestions.expiryType
     }
