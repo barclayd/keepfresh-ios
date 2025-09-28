@@ -57,15 +57,22 @@ public struct RelativeTime {
     }
 
     public var formatted: String {
-        "\(amount) \(unit.pluralised(for: amount))"
+        guard amount > 0 else { return "Today" }
+
+        return "\(amount) \(unit.pluralised(for: amount))"
+    }
+
+    public var formattedElapsedTime: String {
+        guard amount > 0 else { return "Today" }
+
+        return "\(formatted) ago"
     }
 }
 
-public func relativeTime(
-    _ direction: TimeDirection,
-    from date: Date,
-    to referenceDate: Date = Date()
-) -> RelativeTime {
+public func relativeTime(_ direction: TimeDirection,
+                         from date: Date,
+                         to referenceDate: Date = Date()) -> RelativeTime
+{
     let calendar = Calendar.current
 
     let normalizedDate = calendar.startOfDay(for: date)

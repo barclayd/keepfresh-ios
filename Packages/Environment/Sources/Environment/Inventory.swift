@@ -68,8 +68,8 @@ public final class Inventory {
         var locationCounts: [Int: [InventoryStore: Int]] = [:]
 
         for item in items {
-            counts[item.id, default: 0] += 1
-            locationCounts[item.id, default: [:]][item.storageLocation, default: 0] += 1
+            counts[item.product.id, default: 0] += 1
+            locationCounts[item.product.id, default: [:]][item.storageLocation, default: 0] += 1
         }
 
         productCounts = counts
@@ -83,7 +83,7 @@ public final class Inventory {
     public var itemsSortedByExpiryDescending: [InventoryItem] {
         items.sorted { $0.expiryDate < $1.expiryDate }
     }
-
+    
     public func fetchItems() async {
         state = .loading
 
@@ -96,5 +96,22 @@ public final class Inventory {
         }
 
         state = .loaded
+    }
+
+    public func updateItemStatus(id: Int, status: InventoryItemStatus) {
+        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+
+        items[index].status = status
+
+        guard status == .opened else { return }
+
+        items[index].openedAt = Date()
+    }
+
+    public func updateItemStorageLocation(id: Int, storageLocation: InventoryStore) {
+        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+
+        items[index].storageLocation = storageLocation
+        items[index].updatedAt = Date()
     }
 }

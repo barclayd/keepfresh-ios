@@ -1,0 +1,14 @@
+# Minimal SwiftFormat for SwiftUI modifiers
+
+--swiftversion 6.0
+
+# Indentation
+--indent 4
+--xcodeindentation enabled
+
+# Keep modifiers on separate lines
+--wraparguments after-first
+--wrapparameters after-first
+
+# Exclude
+--exclude Pods,Generated,.build

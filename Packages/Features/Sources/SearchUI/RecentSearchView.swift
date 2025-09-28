@@ -69,18 +69,14 @@ public struct RecentSearchView: View {
             }.padding(.top, 10)
 
             ForEach(0 ..< 5) { _ in
-                RecentSearchItem(
-                    currentSearchText: "Semi Skimmed Milk",
-                    onTap: { previousSearchText in
-                        searchText = previousSearchText
-                    },
-                    onDelete: { print("delete") },
-                    colorConfiguration: .init(
-                        text: .blue700,
-                        background: .red200,
-                        closeIcon: .blue400
-                    )
-                ).listRowInsets(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+                RecentSearchItem(currentSearchText: "Semi Skimmed Milk",
+                                 onTap: { previousSearchText in
+                                     searchText = previousSearchText
+                                 },
+                                 onDelete: { print("delete") },
+                                 colorConfiguration: .init(text: .blue700,
+                                                           background: .red200,
+                                                           closeIcon: .blue400)).listRowInsets(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
             }
             .listRowSeparator(.hidden)
         }.frame(maxWidth: .infinity).listStyle(.plain)

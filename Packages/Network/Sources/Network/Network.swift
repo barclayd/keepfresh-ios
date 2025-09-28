@@ -11,15 +11,12 @@ public actor APIClient {
         self.session = session
     }
 
-    public func fetch<T: Decodable>(
-        _ type: T.Type,
-        path: String,
-        queryParameters: [String: String]? = nil
-    ) async throws -> T {
+    public func fetch<T: Decodable>(_ type: T.Type,
+                                    path: String,
+                                    queryParameters: [String: String]? = nil) async throws -> T
+    {
         guard
-            var components = URLComponents(
-                url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: true
-            )
+            var components = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: true)
         else {
             throw APIError.invalidURL
         }
@@ -50,11 +47,10 @@ public actor APIClient {
         return try decoder.decode(type, from: data)
     }
 
-    public func post<T: Decodable>(
-        _ type: T.Type,
-        path: String,
-        body: some Encodable
-    ) async throws -> T {
+    public func post<T: Decodable>(_ type: T.Type,
+                                   path: String,
+                                   body: some Encodable) async throws -> T
+    {
         let url = baseURL.appendingPathComponent(path)
 
         var request = URLRequest(url: url)
@@ -74,6 +70,28 @@ public actor APIClient {
         }
 
         return try decoder.decode(type, from: data)
+    }
+
+    public func patch(path: String,
+                      body: some Encodable) async throws
+    {
+        let url = baseURL.appendingPathComponent(path)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try encoder.encode(body)
+
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        guard (200 ... 299).contains(httpResponse.statusCode) else {
+            let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
+            throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
+        }
     }
 }
 
