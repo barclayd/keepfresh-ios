@@ -6,7 +6,11 @@ func addDaysToNow(_ days: Int) -> Date {
     return calendar.date(byAdding: .day, value: days, to: Date())!
 }
 
-func getExpiryDateForSelection(storage: InventoryStore, status: ProductSearchItemStatus, shelfLife: ShelfLifeInDays) -> Date? {
+func getExpiryDateForSelection(
+    storage: InventoryStore,
+    status: ProductSearchItemStatus,
+    shelfLife: ShelfLifeInDays) -> Date?
+{
     guard let expiryInDays = shelfLife[status][storage] else {
         return nil
     }

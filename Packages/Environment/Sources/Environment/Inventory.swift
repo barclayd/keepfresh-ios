@@ -23,8 +23,8 @@ public struct InventoryLocationDetails: Hashable {
 
     public var expiryStatusPercentageColor: Color {
         switch expiryPercentage {
-        case 0 ... 33: .green600
-        case 33 ... 66: .yellow400
+        case 0...33: .green600
+        case 33...66: .yellow400
         default: .red500
         }
     }
@@ -61,7 +61,16 @@ public final class Inventory {
         itemsByLocation = Dictionary(grouping: items, by: \.storageLocation)
 
         detailsByLocation = itemsByLocation.mapValues { items in
-            InventoryLocationDetails(expiryPercentage: 59, lastUpdated: items.map(\.createdAt).max(), expiringSoonCount: items.count(where: { $0.expiryDate.timeUntil.totalDays < 4 }), recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"], openItemsCount: items.count(where: { $0.openedAt != nil }), itemsCount: items.count, recentlyAddedItemsCount: items.count(where: { $0.createdAt.timeSince.totalDays < 4 }), expiringTodayCount: items.count(where: { $0.expiryDate.timeUntil.totalDays == 0 }))
+            InventoryLocationDetails(
+                expiryPercentage: 59,
+                lastUpdated: items.map(\.createdAt).max(),
+                expiringSoonCount: items.count(where: { $0.expiryDate.timeUntil.totalDays < 4 }),
+                recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"],
+                openItemsCount: items.count(where: { $0.openedAt != nil }),
+                itemsCount: items.count,
+                recentlyAddedItemsCount: items
+                    .count(where: { $0.createdAt.timeSince.totalDays < 4 }),
+                expiringTodayCount: items.count(where: { $0.expiryDate.timeUntil.totalDays == 0 }))
         }
 
         var counts: [Int: Int] = [:]

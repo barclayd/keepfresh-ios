@@ -1,7 +1,7 @@
 import DesignSystem
 import SwiftUI
 
-public enum ProductSearchItemStatus: String, Codable, Identifiable, CaseIterable {
+public enum ProductSearchItemStatus: String, Codable, Identifiable, CaseIterable, Sendable {
     public var id: Self { self }
 
     case opened
@@ -31,14 +31,15 @@ public struct ProductSearchItemSource: Codable, Hashable, Sendable {
 }
 
 public struct ProductSearchItemResponse: Identifiable, Hashable, Codable, Sendable {
-    public init(name: String,
-                brand: String,
-                category: ProductSearchItemCategory,
-                amount: Double?,
-                unit: String?,
-                icon: String?,
-                imageURL: String?,
-                source: ProductSearchItemSource)
+    public init(
+        name: String,
+        brand: String,
+        category: ProductSearchItemCategory,
+        amount: Double?,
+        unit: String?,
+        icon: String?,
+        imageURL: String?,
+        source: ProductSearchItemSource)
     {
         self.name = name
         self.brand = brand

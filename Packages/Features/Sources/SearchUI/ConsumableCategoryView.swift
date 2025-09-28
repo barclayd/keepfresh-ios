@@ -97,12 +97,13 @@ private extension Date {
 private extension InventoryItemFormType {
     @MainActor
     @ViewBuilder
-    func overviewLabel(quantity: Binding<Int>,
-                       status: Binding<ProductSearchItemStatus>,
-                       expiryDate: Binding<Date>,
-                       inventoryStore: Binding<InventoryStore>,
-                       isRecommendedExpiryDate: Bool,
-                       isRecommendedStorageLocation: Bool) -> some View
+    func overviewLabel(
+        quantity: Binding<Int>,
+        status: Binding<ProductSearchItemStatus>,
+        expiryDate: Binding<Date>,
+        inventoryStore: Binding<InventoryStore>,
+        isRecommendedExpiryDate: Bool,
+        isRecommendedStorageLocation: Bool) -> some View
     {
         switch self {
         case .Expiry:
@@ -115,8 +116,7 @@ private extension InventoryItemFormType {
                     }
                 }
                 Text(expiryDate.wrappedValue.expiryDescription).foregroundStyle(.black800).font(.footnote)
-                    .fontWeight(
-                        .thin)
+                    .fontWeight(.thin)
             }
             .frame(width: 150, alignment: .leading)
 
@@ -157,14 +157,16 @@ private extension InventoryItemFormType {
                 .labelsHidden()
                 .disabled(true)
         case .Quantity:
-            Stepper(value: quantity, in: 1 ... 10, step: 1) {}.tint(.blue700)
+            Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
         }
     }
 
     @MainActor
     @ViewBuilder
-    func expandedContent(status: Binding<ProductSearchItemStatus>, inventoryStore: Binding<InventoryStore>,
-                         expiryDate: Binding<Date>) -> some View
+    func expandedContent(
+        status: Binding<ProductSearchItemStatus>,
+        inventoryStore: Binding<InventoryStore>,
+        expiryDate: Binding<Date>) -> some View
     {
         switch self {
         case .Expiry:
@@ -207,9 +209,13 @@ struct InventoryItemOverview: View {
             .lineLimit(1)
             .frame(width: 105, alignment: .leading)
 
-        type.overviewLabel(quantity: $quantity, status: $status, expiryDate: $expiryDate,
-                           inventoryStore: $inventoryStore,
-                           isRecommendedExpiryDate: isRecommendedExpiryDate, isRecommendedStorageLocation: isRecommendedStorageLocation)
+        type.overviewLabel(
+            quantity: $quantity,
+            status: $status,
+            expiryDate: $expiryDate,
+            inventoryStore: $inventoryStore,
+            isRecommendedExpiryDate: isRecommendedExpiryDate,
+            isRecommendedStorageLocation: isRecommendedStorageLocation)
 
         Spacer()
 
@@ -248,10 +254,14 @@ struct IventoryItemStatusContent: View {
                 Spacer()
             }
 
-        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(
-            UnevenRoundedRectangle(
-                cornerRadii: RectangleCornerRadii(topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0)
-            ).fill(.white))
+        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
+            .background(
+                UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                    topLeading: 0,
+                    bottomLeading: 20,
+                    bottomTrailing: 20,
+                    topTrailing: 0))
+                    .fill(.white))
     }
 }
 
@@ -286,10 +296,14 @@ struct InventoryItemStorageContent: View {
                 Spacer()
             }
 
-        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(
-            UnevenRoundedRectangle(
-                cornerRadii: RectangleCornerRadii(topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0)
-            ).fill(.white))
+        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
+            .background(
+                UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                    topLeading: 0,
+                    bottomLeading: 20,
+                    bottomTrailing: 20,
+                    topTrailing: 0))
+                    .fill(.white))
     }
 }
 
@@ -327,9 +341,10 @@ struct InventoryItemExpiryDateContent: View {
             }
 
             if showDatePicker {
-                DatePicker("Expiry",
-                           selection: $expiryDate,
-                           displayedComponents: [.date])
+                DatePicker(
+                    "Expiry",
+                    selection: $expiryDate,
+                    displayedComponents: [.date])
                     .datePickerStyle(.graphical).colorInvert().colorMultiply(.blue400)
             }
 
@@ -357,10 +372,14 @@ struct InventoryItemExpiryDateContent: View {
                 Spacer()
             }
 
-        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(
-            UnevenRoundedRectangle(
-                cornerRadii: RectangleCornerRadii(topLeading: 0, bottomLeading: 20, bottomTrailing: 20, topTrailing: 0)
-            ).fill(.white))
+        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
+            .background(
+                UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                    topLeading: 0,
+                    bottomLeading: 20,
+                    bottomTrailing: 20,
+                    topTrailing: 0))
+                    .fill(.white))
     }
 }
 
@@ -385,27 +404,25 @@ public struct InventoryCategory: View {
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
-                InventoryItemOverview(isExpiryDateToggled: $isExpandedToggled,
-                                      isMarkedAsReady: $isMarkedAsReady,
-                                      quantity: $quantity,
-                                      status: $status,
-                                      inventoryStore: $inventoryStore,
-                                      expiryDate: $expiryDate,
-                                      isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                      isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                      type: type)
+                InventoryItemOverview(
+                    isExpiryDateToggled: $isExpandedToggled,
+                    isMarkedAsReady: $isMarkedAsReady,
+                    quantity: $quantity,
+                    status: $status,
+                    inventoryStore: $inventoryStore,
+                    expiryDate: $expiryDate,
+                    isRecommendedExpiryDate: isRecommendedExpiryDate,
+                    isRecommendedStorageLocation: isRecommendedStorageLocation,
+                    type: type)
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 10)
             .frame(maxWidth: .infinity)
-            .background(
-                UnevenRoundedRectangle(
-                    cornerRadii: RectangleCornerRadii(topLeading: 20,
-                                                      bottomLeading: isToggable ? 0 : 20,
-                                                      bottomTrailing: isToggable ? 0 : 20,
-                                                      topTrailing: 20)
-                ).fill(.gray200)
-            )
+            .background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                topLeading: 20,
+                bottomLeading: isToggable ? 0 : 20,
+                bottomTrailing: isToggable ? 0 : 20,
+                topTrailing: 20)).fill(.gray200))
             .onTapGesture {
                 withAnimation(.easeInOut) {
                     isExpandedToggled.toggle()

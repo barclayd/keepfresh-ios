@@ -13,28 +13,32 @@ struct NextBestAction {
 }
 
 extension InventoryItem {
-    func getNextBestAction(onOpen: @escaping () -> Void,
-                           onMove: @escaping (InventoryStore) -> Void) -> NextBestAction?
+    func getNextBestAction(
+        onOpen: @escaping () -> Void,
+        onMove: @escaping (InventoryStore) -> Void) -> NextBestAction?
     {
         switch (status, storageLocation) {
         case (.unopened, _):
-            NextBestAction(label: "Mark as opened",
-                           icon: "door.right.hand.open",
-                           textColor: .blue600,
-                           backgroundColor: .gray200,
-                           action: onOpen)
+            NextBestAction(
+                label: "Mark as opened",
+                icon: "door.right.hand.open",
+                textColor: .blue600,
+                backgroundColor: .gray200,
+                action: onOpen)
         case (.opened, .freezer):
-            NextBestAction(label: "Move to Fridge",
-                           icon: "refrigerator.fill",
-                           textColor: .white,
-                           backgroundColor: .blue600,
-                           action: { onMove(.fridge) })
+            NextBestAction(
+                label: "Move to Fridge",
+                icon: "refrigerator.fill",
+                textColor: .white,
+                backgroundColor: .blue600,
+                action: { onMove(.fridge) })
         case (.opened, .fridge):
-            NextBestAction(label: "Move to Freezer",
-                           icon: "snowflake",
-                           textColor: .white200,
-                           backgroundColor: .blue700,
-                           action: { onMove(.freezer) })
+            NextBestAction(
+                label: "Move to Freezer",
+                icon: "snowflake",
+                textColor: .white200,
+                backgroundColor: .blue700,
+                action: { onMove(.freezer) })
         default:
             nil
         }
@@ -53,8 +57,10 @@ struct InventoryItemSheetStatsGridRows: View {
             if pageIndex == 0 {
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("\(inventoryItem.expiryDate.timeUntil.amount)").foregroundStyle(.green600).fontWeight(.bold).font(.headline)
-                        Text("\(inventoryItem.expiryDate.timeUntil.unit.rawValue.capitalized) to expiry").foregroundStyle(.green600).fontWeight(.light).font(.subheadline)
+                        Text("\(inventoryItem.expiryDate.timeUntil.amount)").foregroundStyle(.green600)
+                            .fontWeight(.bold).font(.headline)
+                        Text("\(inventoryItem.expiryDate.timeUntil.unit.rawValue.capitalized) to expiry")
+                            .foregroundStyle(.green600).fontWeight(.light).font(.subheadline)
                             .lineLimit(1)
                     }
                     Image(systemName: "hourglass")
@@ -74,7 +80,8 @@ struct InventoryItemSheetStatsGridRows: View {
                         .font(.system(size: 28)).fontWeight(.bold)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
                         .font(.system(size: 28)).fontWeight(.bold)
-                    Text(inventoryItem.product.brand.name).fontWeight(.bold).foregroundStyle(inventoryItem.product.brand.color).font(.headline)
+                    Text(inventoryItem.product.brand.name).fontWeight(.bold)
+                        .foregroundStyle(inventoryItem.product.brand.color).font(.headline)
                         .lineLimit(1)
                 }.foregroundStyle(.blue700)
             } else {
@@ -87,20 +94,25 @@ struct InventoryItemSheetStatsGridRows: View {
                         .font(.system(size: 32)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
                     VStack(spacing: 0) {
-                        Text("\(inventoryItem.status == .opened ? "Opened" : "Updated")").fontWeight(.light).font(.subheadline)
-                        Text(inventoryItem.openedAt?.timeSince.formattedElapsedTime ?? inventoryItem.updatedAt.timeSince.formattedElapsedTime).fontWeight(.bold).font(.headline)
+                        Text("\(inventoryItem.status == .opened ? "Opened" : "Updated")").fontWeight(.light)
+                            .font(.subheadline)
+                        Text(
+                            inventoryItem.openedAt?.timeSince.formattedElapsedTime ?? inventoryItem.updatedAt.timeSince
+                                .formattedElapsedTime).fontWeight(.bold).font(.headline)
                     }.foregroundStyle(.blue700)
                 }
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.fridge] ?? 0)").fontWeight(.bold).font(.headline)
+                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.fridge] ?? 0)")
+                            .fontWeight(.bold).font(.headline)
                         Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }.foregroundStyle(.blue700)
                     Image(systemName: "house")
                         .font(.system(size: 32)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
                     VStack(spacing: 0) {
-                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.freezer] ?? 0)").fontWeight(.bold).font(.headline)
+                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.freezer] ?? 0)")
+                            .fontWeight(.bold).font(.headline)
                         Text("Located in Freezer").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
@@ -142,9 +154,10 @@ struct InventoryItemSheetView: View {
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
 
-    func updateInventoryItem(status: InventoryItemStatus? = nil,
-                             storageLocation: InventoryStore? = nil,
-                             percentageRemaining: Double? = nil)
+    func updateInventoryItem(
+        status: InventoryItemStatus? = nil,
+        storageLocation: InventoryStore? = nil,
+        percentageRemaining: Double? = nil)
     {
         let previousStatus = inventoryItem.status
 
@@ -160,8 +173,12 @@ struct InventoryItemSheetView: View {
             let api = KeepFreshAPI()
 
             do {
-                try await api.updateInventoryItem(for: inventoryItem.id,
-                                                  UpdateInventoryItemRequest(status: status, storageLocation: storageLocation, percentageRemaining: percentageRemaining))
+                try await api.updateInventoryItem(
+                    for: inventoryItem.id,
+                    UpdateInventoryItemRequest(
+                        status: status,
+                        storageLocation: storageLocation,
+                        percentageRemaining: percentageRemaining))
                 print("Updated inventoryItem with id: \(inventoryItem.id)")
                 dismiss()
 
@@ -208,7 +225,10 @@ struct InventoryItemSheetView: View {
                     }
                 }.padding(.top, 10)
 
-                AsyncImage(url: URL(string: inventoryItem.product.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
+                AsyncImage(url: URL(
+                    string: inventoryItem.product
+                        .imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png"))
+                { image in
                     image.resizable()
                 } placeholder: {
                     ProgressView()
@@ -218,16 +238,18 @@ struct InventoryItemSheetView: View {
                 Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue800)
                     .lineSpacing(0).padding(.bottom, -8)
                 HStack {
-                    Text(inventoryItem.product.categories.name)
+                    Text(inventoryItem.product.category.name)
                         .font(.callout)
                         .foregroundStyle(.gray600)
-                    Circle()
-                        .frame(width: 6, height: 6)
-                        .foregroundStyle(.gray600)
-                        .padding(.horizontal, 4)
-                    Text("\(String(format: "%.0f", inventoryItem.product.amount)) \(inventoryItem.product.unit)")
-                        .font(.callout)
-                        .foregroundStyle(.gray600)
+                    if let amount = inventoryItem.product.amount, let unit = inventoryItem.product.unitFormatted {
+                        Circle()
+                            .frame(width: 6, height: 6)
+                            .foregroundStyle(.gray600)
+                            .padding(.horizontal, 4)
+                        Text("\(String(format: "%.0f", amount)) \(unit)")
+                            .font(.callout)
+                            .foregroundStyle(.gray600)
+                    }
                 }
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< 2, id: \.self) { page in
@@ -252,7 +274,7 @@ struct InventoryItemSheetView: View {
                                 .font(.callout)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
-                                .lineLimit(2 ... 2)
+                                .lineLimit(2...2)
 
                             Spacer()
                         }
@@ -265,7 +287,7 @@ struct InventoryItemSheetView: View {
                                 .font(.callout)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
-                                .lineLimit(2 ... 2)
+                                .lineLimit(2...2)
                             Spacer()
                         }
                         GridRow {
@@ -276,7 +298,7 @@ struct InventoryItemSheetView: View {
                                 .font(.callout)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
-                                .lineLimit(2 ... 2)
+                                .lineLimit(2...2)
                             Spacer()
                         }
                     }.padding(.bottom, 8)
@@ -290,7 +312,7 @@ struct InventoryItemSheetView: View {
                                 .font(.callout)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
-                                .lineLimit(2 ... 2)
+                                .lineLimit(2...2)
 
                             Spacer()
                         }
@@ -302,7 +324,7 @@ struct InventoryItemSheetView: View {
                                 .font(.callout)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
-                                .lineLimit(2 ... 2)
+                                .lineLimit(2...2)
                             Spacer()
                         }
                     }.padding(.bottom, 8)
@@ -325,8 +347,7 @@ struct InventoryItemSheetView: View {
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 20)
-                            .fill(.green300)
-                    )
+                            .fill(.green300))
                 }
 
                 if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
@@ -345,8 +366,7 @@ struct InventoryItemSheetView: View {
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(nextBestAction.backgroundColor)
-                        )
+                                .fill(nextBestAction.backgroundColor))
                     }
                 }
 

@@ -48,15 +48,12 @@ struct IconsView: View {
         }
         .padding(.vertical, 15)
         .padding(.horizontal, 10)
-        .background(
-            UnevenRoundedRectangle(
-                topLeadingRadius: 0,
-                bottomLeadingRadius: 20,
-                bottomTrailingRadius: 20,
-                topTrailingRadius: 0,
-                style: .continuous
-            )
-        )
+        .background(UnevenRoundedRectangle(
+            topLeadingRadius: 0,
+            bottomLeadingRadius: 20,
+            bottomTrailingRadius: 20,
+            topTrailingRadius: 0,
+            style: .continuous))
         .foregroundStyle(.green300)
     }
 }
@@ -93,7 +90,10 @@ public struct InventoryItemView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                AsyncImage(url: URL(string: inventoryItem.product.categories.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
+                AsyncImage(url: URL(
+                    string: inventoryItem.product.category
+                        .imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png"))
+                { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -117,18 +117,21 @@ public struct InventoryItemView: View {
                     }
 
                     HStack {
-                        Text(inventoryItem.product.categories.name)
+                        Text(inventoryItem.product.category.name)
                             .foregroundStyle(.gray600)
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.gray600)
                         Text(inventoryItem.product.brand.name)
                             .foregroundStyle(inventoryItem.product.brand.color)
-                        Circle()
-                            .frame(width: 4, height: 4)
-                            .foregroundStyle(.gray600)
-                        Text("\(String(format: "%.0f", inventoryItem.product.amount))\(inventoryItem.product.unit)")
-                            .foregroundStyle(.gray600)
+
+                        if let amount = inventoryItem.product.amount, let unit = inventoryItem.product.unitFormatted {
+                            Circle()
+                                .frame(width: 4, height: 4)
+                                .foregroundStyle(.gray600)
+                            Text("\(String(format: "%.0f", amount))\(unit)")
+                                .foregroundStyle(.gray600)
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -152,8 +155,7 @@ public struct InventoryItemView: View {
         }
         .sheet(isPresented: $showInventoryItemSheet) {
             InventoryItemSheetView(inventoryItem: inventoryItem)
-                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))]
-                )
+                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }

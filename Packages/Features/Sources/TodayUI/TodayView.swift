@@ -30,9 +30,7 @@ public struct TodayView: View {
         ScrollView {
             LazyVStack(spacing: 14) {
                 ForEach(inventory.itemsSortedByExpiryDescending) { inventoryItem in
-                    InventoryItemView(
-                        inventoryItem: inventoryItem
-                    )
+                    InventoryItemView(inventoryItem: inventoryItem)
                 }
             }
             .padding(.horizontal, 20)

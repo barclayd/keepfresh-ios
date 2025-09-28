@@ -23,7 +23,8 @@ public struct RemoveInventoryItemSheet: View {
 
     public var body: some View {
         VStack(spacing: 20) {
-            Text("How much \(inventoryItem.product.name) is left?").lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
+            Text("How much \(inventoryItem.product.name) is left?").lineLimit(2).multilineTextAlignment(.center)
+                .fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
 
             VStack(spacing: 0) {
                 HStack(spacing: 30) {
@@ -32,7 +33,10 @@ public struct RemoveInventoryItemSheet: View {
 
                     Image(systemName: "sparkles")
                         .foregroundStyle(.yellow500)
-                        .font(.system(size: 16)).offset(x: calculatePredictedWastePercentageOffset(predictedWastePercentage: predictedWastePercentage, sliderWidth: sliderWidth))
+                        .font(.system(size: 16))
+                        .offset(x: calculatePredictedWastePercentageOffset(
+                            predictedWastePercentage: predictedWastePercentage,
+                            sliderWidth: sliderWidth))
 
                     EmptyView()
                         .frame(width: 20, alignment: .center)
@@ -44,7 +48,7 @@ public struct RemoveInventoryItemSheet: View {
                         .frame(width: 20, alignment: .center)
 
                     GeometryReader { geometry in
-                        Slider(value: $wastePercentage, in: 0 ... 100).tint(.blue600).onAppear {
+                        Slider(value: $wastePercentage, in: 0...100).tint(.blue600).onAppear {
                             sliderWidth = geometry.frame(in: .local).width
                         }
                     }
@@ -75,8 +79,7 @@ public struct RemoveInventoryItemSheet: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(wastePercentage == 0 ? .green300 : .red200)
-                )
+                        .fill(wastePercentage == 0 ? .green300 : .red200))
             }
         }.frame(maxWidth: .infinity)
             .padding(.horizontal, 40)

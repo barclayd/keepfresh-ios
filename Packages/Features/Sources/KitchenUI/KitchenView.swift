@@ -43,10 +43,16 @@ struct StatsView: View {
                                             .frame(width: 22, height: 22)
                                             .foregroundStyle(inventoryStore.foregorundColor)
                                     } else {
-                                        Image(systemName: stat.icon).font(.system(size: 18)).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                                        Image(systemName: stat.icon).font(.system(size: 18))
+                                            .foregroundStyle(
+                                                stat.icon == "hourglass" ? locationDetails
+                                                    .expiryStatusPercentageColor : inventoryStore.foregorundColor)
                                     }
-                                    
-                                    Text("\(amount)").font(.body).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
+
+                                    Text("\(amount)").font(.body)
+                                        .foregroundStyle(
+                                            stat.icon == "hourglass" ? locationDetails
+                                                .expiryStatusPercentageColor : inventoryStore.foregorundColor)
                                 }
                             }
                         }
@@ -60,7 +66,9 @@ struct StatsView: View {
                                 .font(.system(size: 18))
                                 .foregroundStyle(inventoryStore.foregorundColor)
                                 .opacity(Double(recentItemImages.count - index) / Double(recentItemImages.count))
-                                .offset(x: CGFloat(recentItemImages.count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
+                                .offset(x: CGFloat(
+                                    recentItemImages
+                                        .count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
                         }
                     }
                 }
@@ -69,17 +77,19 @@ struct StatsView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .padding(.horizontal, 12)
-        .background(
-            UnevenRoundedRectangle(topLeadingRadius: 0,
-                                   bottomLeadingRadius: 20,
-                                   bottomTrailingRadius: 20,
-                                   topTrailingRadius: 0,
-                                   style: .continuous).fill(
-                LinearGradient(stops: [
-                    Gradient.Stop(color: inventoryStore.previewGradientStops.start, location: 0),
-                    Gradient.Stop(color: inventoryStore.previewGradientStops.end, location: 1),
-                ], startPoint: .leading, endPoint: .trailing))
-        )
+        .background(UnevenRoundedRectangle(
+            topLeadingRadius: 0,
+            bottomLeadingRadius: 20,
+            bottomTrailingRadius: 20,
+            topTrailingRadius: 0,
+            style: .continuous).fill(LinearGradient(stops: [
+            Gradient.Stop(
+                color: inventoryStore.previewGradientStops.start,
+                location: 0),
+            Gradient.Stop(
+                color: inventoryStore.previewGradientStops.end,
+                location: 1),
+        ], startPoint: .leading, endPoint: .trailing)))
     }
 }
 
