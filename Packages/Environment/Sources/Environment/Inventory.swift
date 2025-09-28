@@ -89,7 +89,6 @@ public final class Inventory {
 
         do {
             items = try await api.getInventoryItems().inventoryItems
-            print("item length: \(items.count)")
         } catch {
             state = .error
             return

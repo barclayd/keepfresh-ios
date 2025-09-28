@@ -1,12 +1,12 @@
 import Models
 import SwiftUI
 
-struct StatsView: View {
+struct IconsView: View {
     let inventoryItem: InventoryItem
 
     var body: some View {
         HStack {
-            HStack(spacing: 2) {
+            HStack(spacing: 0) {
                 if inventoryItem.createdAt.timeSince.amount > 0 {
                     Image(systemName: "calendar")
                         .font(.system(size: 18))
@@ -19,6 +19,15 @@ struct StatsView: View {
             Image(systemName: inventoryItem.storageLocation.iconFilled)
                 .font(.system(size: 18))
                 .foregroundStyle(.green600)
+
+            if inventoryItem.status == .opened {
+                Image("tin.open")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
+                    .foregroundStyle(.green600)
+            }
 
             HStack(spacing: 2) {
                 Image(systemName: "sparkles")
@@ -40,11 +49,13 @@ struct StatsView: View {
         .padding(.vertical, 15)
         .padding(.horizontal, 10)
         .background(
-            UnevenRoundedRectangle(topLeadingRadius: 0,
-                                   bottomLeadingRadius: 20,
-                                   bottomTrailingRadius: 20,
-                                   topTrailingRadius: 0,
-                                   style: .continuous)
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: 20,
+                bottomTrailingRadius: 20,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
         )
         .foregroundStyle(.green300)
     }
@@ -127,7 +138,7 @@ public struct InventoryItemView: View {
             .background(.white)
             .cornerRadius(20)
 
-            StatsView(inventoryItem: inventoryItem)
+            IconsView(inventoryItem: inventoryItem)
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
