@@ -150,26 +150,6 @@ struct InventoryItemSheetView: View {
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
     
-    //Button(action: {
-    //}) {
-    //    HStack(spacing: 10) {
-    //        Image(systemName: "snowflake")
-    //            .font(.system(size: 18))
-    //            .frame(width: 20, alignment: .center)
-    //        Text("Move to Freezer")
-    //            .font(.headline)
-    //            .frame(width: 175, alignment: .center)
-    //    }
-    //    .foregroundStyle(.white200)
-    //    .fontWeight(.bold)
-    //    .padding()
-    //    .frame(maxWidth: .infinity)
-    //    .background(
-    //        RoundedRectangle(cornerRadius: 20)
-    //            .fill(.blue700)
-    //    )
-    //}
-    
     func updateInventoryItem(
         status: InventoryItemStatus? = nil,
         storageLocation: InventoryStore? = nil,
@@ -358,46 +338,6 @@ struct InventoryItemSheetView: View {
                             .fill(.green300)
                     )
                 }
-                
-//                if inventoryItem.status == .unopened {
-//                    Button(action: {
-//                        let previousStatus = inventoryItem.status
-//                        inventory.updateItemStatus(id: inventoryItem.id, status: .opened)
-//                        
-//                        Task {
-//                            let api = KeepFreshAPI()
-//                            
-//                            do {
-//                                try await api.updateInventoryItem(for: inventoryItem.id, UpdateInventoryItemRequest(status: .opened))
-//                                print("Updated inventoryItem with id: \(inventoryItem.id)")
-//                                dismiss()
-//                            } catch {
-//                                print("Failed to update inventory item with id: \(error)")
-//                                
-//                                await MainActor.run {
-//                                    inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
-//                                }
-//                            }
-//                        }
-//                    }) {
-//                        HStack(spacing: 10) {
-//                            Image(systemName: "door.right.hand.open")
-//                                .font(.system(size: 18))
-//                                .frame(width: 20, alignment: .center)
-//                            Text("Mark as opened")
-//                                .font(.headline)
-//                                .frame(width: 175, alignment: .center)
-//                        }
-//                        .foregroundStyle(.blue600)
-//                        .fontWeight(.bold)
-//                        .padding()
-//                        .frame(maxWidth: .infinity)
-//                        .background(
-//                            RoundedRectangle(cornerRadius: 20)
-//                                .fill(.gray200)
-//                        )
-//                    }
-//                }
                 
                 if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove, onConsume: onConsume) {
                     Button(action: nextBestAction.action) {
