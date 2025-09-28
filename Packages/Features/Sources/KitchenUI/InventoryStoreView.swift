@@ -96,13 +96,8 @@ private struct SortButton: View {
     public var body: some View {
         Button(action: {
             withAnimation {
-                if isActive {
-                    sortMode = sortMode.toggleDirection()
-                    rotationAngle += 180
-                } else {
-                    sortMode = type.updateSortMode()
-                    rotationAngle = 0
-                }
+                sortMode = isActive ? sortMode.toggleDirection() : type.updateSortMode()
+                rotationAngle += 180
             }
         }) {
             Image(systemName: icon)
@@ -112,6 +107,7 @@ private struct SortButton: View {
                 .background(Circle().fill(isActive ? .blue700 : .gray700))
                 .rotationEffect(.degrees(rotationAngle))
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -140,13 +136,11 @@ public struct InventoryStoreView: View {
             ZStack(alignment: .bottom) {
                 ScrollView(showsIndicators: false) {
                     ZStack {
-                        LinearGradient(
-                            stops: inventoryStore.viewGradientStops, startPoint: .top, endPoint: .bottom
-                        )
-                        .ignoresSafeArea(edges: .top)
-                        .offset(y: -geometry.safeAreaInsets.top)
-                        .frame(height: geometry.size.height)
-                        .frame(maxHeight: .infinity, alignment: .top)
+                        LinearGradient(stops: inventoryStore.viewGradientStops, startPoint: .top, endPoint: .bottom)
+                            .ignoresSafeArea(edges: .top)
+                            .offset(y: -geometry.safeAreaInsets.top)
+                            .frame(height: geometry.size.height)
+                            .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 15) {
                             Image(systemName: inventoryStore.icon).font(.system(size: 78)).foregroundColor(
@@ -220,24 +214,16 @@ public struct InventoryStoreView: View {
                                                 .blue700)
                                         }
                                     }
-                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(
-                                    maxWidth: .infinity, alignment: .center
-                                ).background(.blue150).cornerRadius(20)
+                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.blue150).cornerRadius(20)
 
                                 HStack {
                                     Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                     Spacer()
                                     HStack(spacing: 8) {
-                                        SortButton(
-                                            sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock"
-                                        )
-                                        SortButton(
-                                            sortMode: $sortMode, type: .alphabetical(direction: .forward),
-                                            icon: "arrow.up.arrow.down"
-                                        )
-                                        SortButton(
-                                            sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass"
-                                        )
+                                        SortButton(sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock")
+                                        SortButton(sortMode: $sortMode, type: .alphabetical(direction: .forward),
+                                                   icon: "arrow.up.arrow.down")
+                                        SortButton(sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass")
                                     }
                                 }.padding(.vertical, 5)
 

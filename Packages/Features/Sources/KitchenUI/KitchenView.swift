@@ -62,19 +62,15 @@ struct StatsView: View {
         .padding(.vertical, 12)
         .padding(.horizontal, 12)
         .background(
-            UnevenRoundedRectangle(
-                topLeadingRadius: 0,
-                bottomLeadingRadius: 20,
-                bottomTrailingRadius: 20,
-                topTrailingRadius: 0,
-                style: .continuous
-            ).fill(
-                LinearGradient(
-                    stops: [
-                        Gradient.Stop(color: inventoryStore.previewGradientStops.start, location: 0),
-                        Gradient.Stop(color: inventoryStore.previewGradientStops.end, location: 1),
-                    ], startPoint: .leading, endPoint: .trailing
-                ))
+            UnevenRoundedRectangle(topLeadingRadius: 0,
+                                   bottomLeadingRadius: 20,
+                                   bottomTrailingRadius: 20,
+                                   topTrailingRadius: 0,
+                                   style: .continuous).fill(
+                LinearGradient(stops: [
+                    Gradient.Stop(color: inventoryStore.previewGradientStops.start, location: 0),
+                    Gradient.Stop(color: inventoryStore.previewGradientStops.end, location: 1),
+                ], startPoint: .leading, endPoint: .trailing))
         )
     }
 }

@@ -97,4 +97,14 @@ public final class Inventory {
 
         state = .loaded
     }
+
+    public func updateItemStatus(id: Int, status: InventoryItemStatus) {
+        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+
+        items[index].status = status
+
+        guard status == .opened else { return }
+
+        items[index].openedAt = Date()
+    }
 }

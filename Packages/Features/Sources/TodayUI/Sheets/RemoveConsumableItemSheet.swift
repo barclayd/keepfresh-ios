@@ -57,7 +57,7 @@ public struct RemoveInventoryItemSheet: View {
             Spacer()
 
             Button(action: {
-                print("Mark as opened")
+                print("Discard item")
             }) {
                 HStack(spacing: 10) {
                     Image(systemName: "trash")

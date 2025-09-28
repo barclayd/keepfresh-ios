@@ -1,6 +1,7 @@
 import DesignSystem
 import Environment
 import Models
+import Network
 import SwiftUI
 
 struct InventoryItemSheetStatsGridRows: View {
@@ -42,15 +43,15 @@ struct InventoryItemSheetStatsGridRows: View {
             } else {
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("\(inventoryItem.createdAt.timeSince.formatted) ago").fontWeight(.bold).font(.headline)
                         Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
+                        Text("\(inventoryItem.createdAt.timeSince.formatted) ago").fontWeight(.bold).font(.headline)
                     }.foregroundStyle(.blue700)
                     Image(systemName: "calendar.badge.plus")
                         .font(.system(size: 32)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
                     VStack(spacing: 0) {
-                        Text("3 days ago").fontWeight(.bold).font(.headline)
-                        Text("Opened").fontWeight(.light).font(.subheadline)
+                        Text("\(inventoryItem.status == .opened ? "Opened" : "Updated")").fontWeight(.light).font(.subheadline)
+                        Text(inventoryItem.openedAt?.timeSince.formattedElapsedTime ?? inventoryItem.updatedAt.timeSince.formattedElapsedTime).fontWeight(.bold).font(.headline)
                     }.foregroundStyle(.blue700)
                 }
                 GridRow {
@@ -89,6 +90,7 @@ struct InventoryItemSheetStatsGrid: View {
 }
 
 struct InventoryItemSheetView: View {
+    @Environment(Inventory.self) var inventory
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
@@ -244,25 +246,86 @@ struct InventoryItemSheetView: View {
                             .fill(.green300)
                     )
                 }
-                Button(action: {
-                    print("Mark as opened")
-                }) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "door.right.hand.open")
-                            .font(.system(size: 18))
-                            .frame(width: 20, alignment: .center)
-                        Text("Mark as opened")
-                            .font(.headline)
-                            .frame(width: 175, alignment: .center)
+
+                if inventoryItem.status == .unopened {
+                    Button(action: {
+                        let previousStatus = inventoryItem.status
+                        inventory.updateItemStatus(id: inventoryItem.id, status: .opened)
+
+                        Task {
+                            let api = KeepFreshAPI()
+
+                            do {
+                                try await api.updateInventoryItem(for: inventoryItem.id, UpdateInventoryItemRequest(status: .opened))
+                                print("Updated inventoryItem with id: \(inventoryItem.id)")
+                                dismiss()
+                            } catch {
+                                print("Failed to update inventory item with id: \(error)")
+
+                                await MainActor.run {
+                                    inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
+                                }
+                            }
+                        }
+                    }) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "door.right.hand.open")
+                                .font(.system(size: 18))
+                                .frame(width: 20, alignment: .center)
+                            Text("Mark as opened")
+                                .font(.headline)
+                                .frame(width: 175, alignment: .center)
+                        }
+                        .foregroundStyle(.blue600)
+                        .fontWeight(.bold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.gray200)
+                        )
                     }
-                    .foregroundStyle(.blue600)
-                    .fontWeight(.bold)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(.gray200)
-                    )
+                }
+
+                if inventoryItem.status == .opened {
+                    Button(action: {
+                        //                        let previousStatus = inventoryItem.status
+                        //                        inventory.updateItemStatus(id: inventoryItem.id, status: .opened)
+                        //
+                        //                        Task {
+                        //                            let api = KeepFreshAPI()
+                        //
+                        //                            do {
+                        //                                try await api.updateInventoryItem(for: inventoryItem.id,
+                        //                                                                  UpdateInventoryItemRequest(status: .opened))
+                        //                                print("Updated inventoryItem with id: \(inventoryItem.id)")
+                        //                                dismiss()
+                        //                            } catch {
+                        //                                print("Failed to update inventory item with id: \(error)")
+                        //
+                        //                                await MainActor.run {
+                        //                                    inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
+                        //                                }
+                        //                            }
+                        //                        }
+                    }) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "snowflake")
+                                .font(.system(size: 18))
+                                .frame(width: 20, alignment: .center)
+                            Text("Move to Freezer")
+                                .font(.headline)
+                                .frame(width: 175, alignment: .center)
+                        }
+                        .foregroundStyle(.white200)
+                        .fontWeight(.bold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.blue700)
+                        )
+                    }
                 }
             }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
                 .padding(.horizontal, 10)

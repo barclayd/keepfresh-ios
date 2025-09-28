@@ -19,8 +19,9 @@ public struct SearchResultView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
-            }.padding(.top, 15)
-                .padding(.horizontal, 16)
+            }
+            .padding(.top, 15)
+            .padding(.horizontal, 16)
         }
     }
 }
@@ -87,13 +88,11 @@ public struct SearchResultCard: View {
                 }
             }.padding(.horizontal, 5).padding(10).padding(.bottom, 5)
                 .background(
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 0,
-                        bottomLeadingRadius: 20,
-                        bottomTrailingRadius: 20,
-                        topTrailingRadius: 0,
-                        style: .continuous
-                    ).fill(.white)
+                    UnevenRoundedRectangle(topLeadingRadius: 0,
+                                           bottomLeadingRadius: 20,
+                                           bottomTrailingRadius: 20,
+                                           topTrailingRadius: 0,
+                                           style: .continuous).fill(.white)
                 )
         }
         .background(.blue400)

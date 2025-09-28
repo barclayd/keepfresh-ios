@@ -40,13 +40,11 @@ struct StatsView: View {
         .padding(.vertical, 15)
         .padding(.horizontal, 10)
         .background(
-            UnevenRoundedRectangle(
-                topLeadingRadius: 0,
-                bottomLeadingRadius: 20,
-                bottomTrailingRadius: 20,
-                topTrailingRadius: 0,
-                style: .continuous
-            )
+            UnevenRoundedRectangle(topLeadingRadius: 0,
+                                   bottomLeadingRadius: 20,
+                                   bottomTrailingRadius: 20,
+                                   topTrailingRadius: 0,
+                                   style: .continuous)
         )
         .foregroundStyle(.green300)
     }

@@ -37,15 +37,13 @@ struct AppTabRootView: View {
                 .tabItem { tab.label }
                 .tag(tab)
             }
-        }.sheet(
-            item: $router.presentedSheet,
-            content: { presentedSheet in
-                switch presentedSheet {
-                case .barcodeScan:
-                    BarcodeView()
-                }
-            }
-        )
+        }.sheet(item: $router.presentedSheet,
+                content: { presentedSheet in
+                    switch presentedSheet {
+                    case .barcodeScan:
+                        BarcodeView()
+                    }
+                })
     }
 }
 
