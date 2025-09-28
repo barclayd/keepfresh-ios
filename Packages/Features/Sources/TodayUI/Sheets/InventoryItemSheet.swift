@@ -143,7 +143,8 @@ struct InventoryItemSheetView: View {
     }
 
     func updateInventoryItem(status: InventoryItemStatus? = nil,
-                             storageLocation: InventoryStore? = nil)
+                             storageLocation: InventoryStore? = nil,
+                             percentageRemaining: Double? = nil)
     {
         let previousStatus = inventoryItem.status
 
@@ -160,7 +161,7 @@ struct InventoryItemSheetView: View {
 
             do {
                 try await api.updateInventoryItem(for: inventoryItem.id,
-                                                  UpdateInventoryItemRequest(status: status, storageLocation: storageLocation))
+                                                  UpdateInventoryItemRequest(status: status, storageLocation: storageLocation, percentageRemaining: percentageRemaining))
                 print("Updated inventoryItem with id: \(inventoryItem.id)")
                 dismiss()
 
@@ -179,7 +180,7 @@ struct InventoryItemSheetView: View {
     }
 
     func onMarkAsDone(wastePercentage: Double) {
-        updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded)
+        updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
     func onMove(storageLocation: InventoryStore) {

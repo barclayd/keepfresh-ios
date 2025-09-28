@@ -13,10 +13,12 @@ public enum InventoryItemStatus: String, Codable, Identifiable, CaseIterable, Se
 public struct UpdateInventoryItemRequest: Codable, Sendable {
     public let status: InventoryItemStatus?
     public let storageLocation: InventoryStore?
+    public let percentageRemaining: Double?
 
-    public init(status: InventoryItemStatus? = nil, storageLocation: InventoryStore? = nil) {
+    public init(status: InventoryItemStatus? = nil, storageLocation: InventoryStore? = nil, percentageRemaining: Double?) {
         self.storageLocation = storageLocation
         self.status = status
+        self.percentageRemaining = percentageRemaining
     }
 }
 

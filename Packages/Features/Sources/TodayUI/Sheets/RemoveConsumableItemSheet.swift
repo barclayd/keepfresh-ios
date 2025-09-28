@@ -75,7 +75,7 @@ public struct RemoveInventoryItemSheet: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(.red200)
+                        .fill(wastePercentage == 0 ? .green300 : .red200)
                 )
             }
         }.frame(maxWidth: .infinity)
