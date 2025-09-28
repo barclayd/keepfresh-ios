@@ -11,10 +11,13 @@ public struct RemoveInventoryItemSheet: View {
 
     let predictedWastePercentage: Double = 25
 
+    let onMarkAsDone: (_ wastePercentage: Double) -> Void
+
     var inventoryItem: InventoryItem
 
-    public init(inventoryItem: InventoryItem) {
+    public init(inventoryItem: InventoryItem, onMarkAsDone: @escaping (_ wastePercentage: Double) -> Void) {
         self.inventoryItem = inventoryItem
+        self.onMarkAsDone = onMarkAsDone
         _wastePercentage = State(initialValue: predictedWastePercentage)
     }
 
@@ -57,7 +60,7 @@ public struct RemoveInventoryItemSheet: View {
             Spacer()
 
             Button(action: {
-                print("Discard item")
+                onMarkAsDone(wastePercentage)
             }) {
                 HStack(spacing: 10) {
                     Image(systemName: "trash")
