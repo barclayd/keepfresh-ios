@@ -13,49 +13,41 @@ struct NextBestAction {
 }
 
 extension InventoryItem {
-    func getNextBestAction(
-        onOpen: @escaping () -> Void,
-        onMove: @escaping (InventoryStore) -> Void,
-        onConsume: @escaping () -> Void
-    ) -> NextBestAction? {
+    func getNextBestAction(onOpen: @escaping () -> Void,
+                           onMove: @escaping (InventoryStore) -> Void) -> NextBestAction?
+    {
         switch (status, storageLocation) {
         case (.unopened, _):
-            return NextBestAction(
-                label: "Mark as opened",
-                icon: "door.right.hand.open",
-                textColor: .blue600,
-                backgroundColor: .gray200,
-                action: onOpen
-            )
+            NextBestAction(label: "Mark as opened",
+                           icon: "door.right.hand.open",
+                           textColor: .blue600,
+                           backgroundColor: .gray200,
+                           action: onOpen)
         case (.opened, .freezer):
-            return NextBestAction(
-                label: "Move to Fridge",
-                icon: "refrigerator.fill",
-                textColor: .white,
-                backgroundColor: .blue600,
-                action: { onMove(.fridge) }
-            )
+            NextBestAction(label: "Move to Fridge",
+                           icon: "refrigerator.fill",
+                           textColor: .white,
+                           backgroundColor: .blue600,
+                           action: { onMove(.fridge) })
         case (.opened, .fridge):
-            return NextBestAction(
-                label: "Move to Freezer",
-                icon: "snowflake",
-                textColor: .white200,
-                backgroundColor: .blue700,
-                action: { onMove(.freezer) }
-            )
+            NextBestAction(label: "Move to Freezer",
+                           icon: "snowflake",
+                           textColor: .white200,
+                           backgroundColor: .blue700,
+                           action: { onMove(.freezer) })
         default:
-            return nil
+            nil
         }
     }
 }
 
 struct InventoryItemSheetStatsGridRows: View {
     @Environment(Inventory.self) var inventory
-    
+
     let pageIndex: Int
-    
+
     var inventoryItem: InventoryItem
-    
+
     var body: some View {
         Group {
             if pageIndex == 0 {
@@ -120,7 +112,7 @@ struct InventoryItemSheetStatsGridRows: View {
 struct InventoryItemSheetStatsGrid: View {
     let pageIndex: Int
     let inventoryItem: InventoryItem
-    
+
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
@@ -137,66 +129,63 @@ struct InventoryItemSheetStatsGrid: View {
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(\.dismiss) private var dismiss
-    
+
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
-    
+
     var inventoryItem: InventoryItem
-    
+
     init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
-        
+
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
-    
-    func updateInventoryItem(
-        status: InventoryItemStatus? = nil,
-        storageLocation: InventoryStore? = nil,
-    ) {
+
+    func updateInventoryItem(status: InventoryItemStatus? = nil,
+                             storageLocation: InventoryStore? = nil)
+    {
         let previousStatus = inventoryItem.status
-        
-        if let status = status {
+
+        if let status {
             inventory.updateItemStatus(id: inventoryItem.id, status: status)
         }
-        
-        if let storageLocation = storageLocation {
+
+        if let storageLocation {
             inventory.updateItemStorageLocation(id: inventoryItem.id, storageLocation: storageLocation)
         }
-        
+
         Task {
             let api = KeepFreshAPI()
-            
+
             do {
-                try await api.updateInventoryItem(
-                    for: inventoryItem.id,
-                    UpdateInventoryItemRequest(status: status, storageLocation: storageLocation)
-                )
+                try await api.updateInventoryItem(for: inventoryItem.id,
+                                                  UpdateInventoryItemRequest(status: status, storageLocation: storageLocation))
                 print("Updated inventoryItem with id: \(inventoryItem.id)")
                 dismiss()
-                
+
             } catch {
                 print("Failed to update inventory item: \(error)")
-                
+
                 await MainActor.run {
                     inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
                 }
             }
         }
     }
-    
+
     func onOpen() {
         updateInventoryItem(status: .opened)
     }
-    
-    func onConsume() {
-        updateInventoryItem(status: .consumed)
+
+    func onMarkAsDone(wastePercentage: Double) {
+        updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded)
     }
-    
+
     func onMove(storageLocation: InventoryStore) {
         updateInventoryItem(storageLocation: storageLocation)
     }
-    
+
     var body: some View {
         Group {
             VStack(spacing: 10) {
@@ -217,7 +206,7 @@ struct InventoryItemSheetView: View {
                             .foregroundStyle(.gray600)
                     }
                 }.padding(.top, 10)
-                
+
                 AsyncImage(url: URL(string: inventoryItem.product.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
                     image.resizable()
                 } placeholder: {
@@ -263,7 +252,7 @@ struct InventoryItemSheetView: View {
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2 ... 2)
-                            
+
                             Spacer()
                         }
                         GridRow {
@@ -301,7 +290,7 @@ struct InventoryItemSheetView: View {
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2 ... 2)
-                            
+
                             Spacer()
                         }
                         GridRow {
@@ -338,8 +327,8 @@ struct InventoryItemSheetView: View {
                             .fill(.green300)
                     )
                 }
-                
-                if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove, onConsume: onConsume) {
+
+                if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                     Button(action: nextBestAction.action) {
                         HStack(spacing: 10) {
                             Image(systemName: nextBestAction.icon)
@@ -359,11 +348,11 @@ struct InventoryItemSheetView: View {
                         )
                     }
                 }
-                
+
             }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
                 .padding(.horizontal, 10)
                 .sheet(isPresented: $showRemoveSheet) {
-                    RemoveInventoryItemSheet(inventoryItem: inventoryItem)
+                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(25)
                         .presentationDetents([.fraction(0.4)])

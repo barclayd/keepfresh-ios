@@ -83,7 +83,7 @@ public final class Inventory {
     public var itemsSortedByExpiryDescending: [InventoryItem] {
         items.sorted { $0.expiryDate < $1.expiryDate }
     }
-    
+
     public func fetchItems() async {
         state = .loading
 
@@ -101,11 +101,16 @@ public final class Inventory {
     public func updateItemStatus(id: Int, status: InventoryItemStatus) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 
-        items[index].status = status
-
-        guard status == .opened else { return }
-
-        items[index].openedAt = Date()
+        switch status {
+        case .consumed, .discarded:
+            items.remove(at: index)
+        case .opened:
+            items[index].status = status
+            items[index].openedAt = Date()
+        case .unopened:
+            items[index].status = status
+            items[index].openedAt = nil
+        }
     }
 
     public func updateItemStorageLocation(id: Int, storageLocation: InventoryStore) {
