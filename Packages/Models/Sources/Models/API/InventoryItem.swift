@@ -10,12 +10,27 @@ public enum InventoryItemStatus: String, Codable, Identifiable, CaseIterable, Se
     case unopened
 }
 
+public extension InventoryItemStatus {
+    init(from productStatus: ProductSearchItemStatus) {
+        switch productStatus {
+        case .opened:
+            self = .opened
+        case .unopened:
+            self = .unopened
+        }
+    }
+}
+
 public struct UpdateInventoryItemRequest: Codable, Sendable {
     public let status: InventoryItemStatus?
     public let storageLocation: InventoryStore?
     public let percentageRemaining: Double?
 
-    public init(status: InventoryItemStatus? = nil, storageLocation: InventoryStore? = nil, percentageRemaining: Double?) {
+    public init(
+        status: InventoryItemStatus? = nil,
+        storageLocation: InventoryStore? = nil,
+        percentageRemaining: Double?)
+    {
         self.storageLocation = storageLocation
         self.status = status
         self.percentageRemaining = percentageRemaining
@@ -32,12 +47,12 @@ public struct AddInventoryItemRequest: Codable, Sendable {
     }
 
     public struct InventoryItem: Codable, Sendable {
-        public let expiryDate: String?
-        public let storageLocation: String
-        public let status: String
-        public let expiryType: String
+        public let expiryDate: Date
+        public let storageLocation: InventoryStore
+        public let status: ProductSearchItemStatus
+        public let expiryType: ExpiryType
 
-        public init(expiryDate: String?, storageLocation: String, status: String, expiryType: String) {
+        public init(expiryDate: Date, storageLocation: InventoryStore, status: ProductSearchItemStatus, expiryType: ExpiryType) {
             self.expiryDate = expiryDate
             self.storageLocation = storageLocation
             self.status = status
@@ -48,8 +63,8 @@ public struct AddInventoryItemRequest: Codable, Sendable {
     public struct ProductData: Codable, Sendable {
         public let name: String
         public let brand: String
-        public let expiryType: String
-        public let storageLocation: String
+        public let expiryType: ExpiryType
+        public let storageLocation: InventoryStore
         public let barcode: String?
         public let unit: String?
         public let amount: Double?
@@ -57,16 +72,17 @@ public struct AddInventoryItemRequest: Codable, Sendable {
         public let sourceId: Int
         public let sourceRef: String
 
-        public init(name: String,
-                    brand: String,
-                    expiryType: String,
-                    storageLocation: String,
-                    barcode: String?,
-                    unit: String?,
-                    amount: Double?,
-                    categoryId: Int,
-                    sourceId: Int,
-                    sourceRef: String)
+        public init(
+            name: String,
+            brand: String,
+            expiryType: ExpiryType,
+            storageLocation: InventoryStore,
+            barcode: String?,
+            unit: String?,
+            amount: Double?,
+            categoryId: Int,
+            sourceId: Int,
+            sourceRef: String)
         {
             self.name = name
             self.brand = brand
@@ -91,7 +107,18 @@ public struct InventoryItemsResponse: Codable, Sendable {
 }
 
 public struct InventoryItem: Codable, Sendable, Identifiable {
-    public init(id: Int, createdAt: Date, updatedAt: Date, openedAt: Date? = nil, status: InventoryItemStatus, storageLocation: InventoryStore, consumptionPrediction: Int, expiryDate: Date, expiryType: ExpiryType, product: Product) {
+    public init(
+        id: Int,
+        createdAt: Date,
+        updatedAt: Date,
+        openedAt: Date? = nil,
+        status: InventoryItemStatus,
+        storageLocation: InventoryStore,
+        consumptionPrediction: Int,
+        expiryDate: Date,
+        expiryType: ExpiryType,
+        product: Product)
+    {
         self.id = id
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -116,24 +143,65 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
     public let product: Product
 }
 
+public extension InventoryItem {
+    init(from request: AddInventoryItemRequest, category: ProductSearchItemCategory, id: Int, imageURL: String?, createdAt: Date = Date()) {
+        self.id = id
+        self.createdAt = createdAt
+        updatedAt = createdAt
+        openedAt = nil
+        status = InventoryItemStatus(from: request.item.status)
+        storageLocation = request.item.storageLocation
+        expiryDate = request.item.expiryDate
+        expiryType = request.item.expiryType
+        product = Product(
+            id: 15,
+            name: request.product.name,
+            unit: request.product.unit,
+            brand: Brand(from: request.product.brand),
+            amount: request.product.amount,
+            imageUrl: imageURL,
+            category: CategoryDetails(name: category.name, pathDisplay: category.path))
+        consumptionPrediction = 100
+    }
+}
+
 public struct Product: Codable, Sendable {
-    public init(id: Int, name: String, unit: String, brand: Brand, amount: Double, imageUrl: String? = nil, categories: CategoryDetails) {
+    public init(
+        id: Int,
+        name: String,
+        unit: String?,
+        brand: Brand,
+        amount: Double?,
+        imageUrl: String? = nil,
+        category: CategoryDetails)
+    {
         self.id = id
         self.name = name
         self.unit = unit
         self.brand = brand
         self.amount = amount
         self.imageUrl = imageUrl
-        self.categories = categories
+        self.category = category
     }
 
     public let id: Int
     public let name: String
-    public let unit: String
+    public let unit: String?
     public let brand: Brand
-    public let amount: Double
+    public let amount: Double?
     public let imageUrl: String?
-    public let categories: CategoryDetails
+    public let category: CategoryDetails
+
+    public var unitFormatted: String? {
+        guard let unit else { return nil }
+
+        switch unit {
+        case "l":
+            return unit.uppercased(with: .current)
+        default:
+            return unit
+        }
+    }
 }
 
 public struct CategoryDetails: Codable, Sendable {
@@ -186,5 +254,11 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(name)
+    }
+}
+
+public extension Brand {
+    init(from brandString: String) {
+        self = Self.knownBrands[brandString] ?? .unknown(brandString)
     }
 }

@@ -4,7 +4,7 @@ import Network
 
 @MainActor
 @Observable
-public class InventorySuggestions {
+public class InventoryItemSuggestions {
     private static var globalCache: [Int: InventorySuggestionsResponse] = [:]
 
     public enum LoadingState {
@@ -22,7 +22,9 @@ public class InventorySuggestions {
     }
 
     public var suggestions: InventorySuggestionsResponse? {
-        if case let .loaded(response) = state { return response }
+        if case let .loaded(response) = state {
+            return response
+        }
         return nil
     }
 

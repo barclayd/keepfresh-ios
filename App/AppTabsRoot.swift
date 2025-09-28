@@ -37,13 +37,14 @@ struct AppTabRootView: View {
                 .tabItem { tab.label }
                 .tag(tab)
             }
-        }.sheet(item: $router.presentedSheet,
-                content: { presentedSheet in
-                    switch presentedSheet {
-                    case .barcodeScan:
-                        BarcodeView()
-                    }
-                })
+        }.sheet(
+            item: $router.presentedSheet,
+            content: { presentedSheet in
+                switch presentedSheet {
+                case .barcodeScan:
+                    BarcodeView()
+                }
+            })
     }
 }
 
@@ -75,8 +76,7 @@ public extension AppTab {
         case .today, .kitchen:
             ToolbarItem(placement: .title) {
                 Text("KeepFresh")
-                    .foregroundColor(.green500).font(
-                        Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
+                    .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
             }
 
             ToolbarItemGroup {
@@ -97,8 +97,7 @@ public extension AppTab {
         case .search:
             ToolbarItem(placement: .title) {
                 Text("Search")
-                    .foregroundColor(.white200).font(
-                        Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
+                    .foregroundColor(.white200).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
             }
 
             ToolbarItem(placement: .topBarTrailing) {

@@ -1,4 +1,5 @@
 import DesignSystem
+import Environment
 import Foundation
 import Models
 import Network
@@ -15,9 +16,10 @@ public class InventoryFormState {
 }
 
 public struct AddInventoryItemView: View {
+    @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
 
-    @State private var inventory = InventorySuggestions()
+    @State private var item = InventoryItemSuggestions()
     @State private var formState = InventoryFormState()
 
     public let productSearchItem: ProductSearchItemResponse
@@ -28,7 +30,7 @@ public struct AddInventoryItemView: View {
 
     var isRecommendedExpiryDate: Bool {
         guard
-            let recommendedNumberOfDays = inventory.suggestions?.shelfLifeInDays[formState.status][
+            let recommendedNumberOfDays = item.suggestions?.shelfLifeInDays[formState.status][
                 formState.inventoryStore
             ]
         else {
@@ -38,15 +40,16 @@ public struct AddInventoryItemView: View {
     }
 
     var isRecommendedStorageLocation: Bool {
-        formState.inventoryStore == inventory.suggestions?.recommendedStorageLocation
+        formState.inventoryStore == item.suggestions?.recommendedStorageLocation
     }
 
     var calculatedExpiryDate: Date {
         guard
-            let shelfLife = inventory.suggestions?.shelfLifeInDays,
-            let expiry = getExpiryDateForSelection(storage: formState.inventoryStore,
-                                                   status: formState.status,
-                                                   shelfLife: shelfLife)
+            let shelfLife = item.suggestions?.shelfLifeInDays,
+            let expiry = getExpiryDateForSelection(
+                storage: formState.inventoryStore,
+                status: formState.status,
+                shelfLife: shelfLife)
         else {
             return Date()
         }
@@ -54,48 +57,56 @@ public struct AddInventoryItemView: View {
     }
 
     func addToInventory() async throws {
-        print("Expiry date: \(formState.expiryDate)",
-              "Inventory store: \(formState.inventoryStore.rawValue)",
-              "quantity: \(formState.quantity)", "status: \(formState.status.rawValue)")
+        print(
+            "Expiry date: \(formState.expiryDate)",
+            "Inventory store: \(formState.inventoryStore.rawValue)",
+            "quantity: \(formState.quantity)",
+            "status: \(formState.status.rawValue)")
 
-        guard let recommendedExpiryType = inventory.suggestions?.expiryType,
-              let recommendedStorageLocation = inventory.suggestions?.recommendedStorageLocation
+        guard let recommendedExpiryType = item.suggestions?.expiryType,
+              let recommendedStorageLocation = item.suggestions?.recommendedStorageLocation
         else {
             return
         }
 
-        let api = KeepFreshAPI()
+        let request = AddInventoryItemRequest(
+            item: AddInventoryItemRequest
+                .InventoryItem(
+                    expiryDate: formState.expiryDate,
+                    storageLocation: formState
+                        .inventoryStore,
+                    status: formState.status,
+                    expiryType: formState
+                        .expiryType),
+            product: AddInventoryItemRequest
+                .ProductData(
+                    name: productSearchItem.name,
+                    brand: productSearchItem
+                        .brand,
+                    expiryType: recommendedExpiryType,
+                    storageLocation: recommendedStorageLocation,
+                    barcode: productSearchItem
+                        .source.ref,
+                    unit: productSearchItem
+                        .unit?.lowercased(),
+                    amount: productSearchItem
+                        .amount,
+                    categoryId: productSearchItem
+                        .category.id,
+                    sourceId: productSearchItem
+                        .source.id,
+                    sourceRef: productSearchItem
+                        .source.ref))
 
-        do {
-            let request = AddInventoryItemRequest(item: AddInventoryItemRequest.InventoryItem(expiryDate: formState.expiryDate.isoString,
-                                                                                              storageLocation: formState.inventoryStore.rawValue,
-                                                                                              status: formState.status.rawValue,
-                                                                                              expiryType: formState.expiryType.rawValue),
-                                                  product: AddInventoryItemRequest.ProductData(name: productSearchItem.name, brand: productSearchItem.brand,
-                                                                                               expiryType: recommendedExpiryType.rawValue,
-                                                                                               storageLocation: recommendedStorageLocation.rawValue,
-                                                                                               barcode: productSearchItem.source.ref, unit: productSearchItem.unit,
-                                                                                               amount: productSearchItem.amount, categoryId: productSearchItem.category.id,
-                                                                                               sourceId: productSearchItem.source.id, sourceRef: productSearchItem.source.ref))
+        let temporaryId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
 
-            let response = try await api.createInventoryItem(request)
+        inventory.addItem(
+            request: request,
+            catgeory: productSearchItem.category,
+            productId: temporaryId,
+            imageURL: productSearchItem.imageURL)
 
-            print("inventoryItemId", response.inventoryItemId)
-
-            router.popToRoot(for: .search)
-        } catch {
-            print("Adding inventory item failed with error: \(error)")
-
-            if let urlError = error as? URLError {
-                print("URL Error details: \(urlError.localizedDescription)")
-            }
-
-            if let httpError = error as? DecodingError {
-                print("Decoding error: \(httpError)")
-            }
-
-            print("Full error details: \(String(describing: error))")
-        }
+        router.popToRoot(for: .search)
     }
 
     public var body: some View {
@@ -128,23 +139,21 @@ public struct AddInventoryItemView: View {
                             HStack {
                                 Text(productSearchItem.category.name)
                                     .font(.callout).foregroundStyle(.gray600)
-                                if productSearchItem.amount != nil, productSearchItem.unit != nil {
+                                if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
                                     Circle()
                                         .frame(width: 4, height: 4)
                                         .foregroundStyle(.gray600)
 
-                                    Text(
-                                        "\(String(format: "%.0f", productSearchItem.amount!))\(productSearchItem.unit!)"
-                                    )
-                                    .foregroundStyle(.gray600)
-                                    .font(.callout)
+                                    Text("\(String(format: "%.0f", amount))\(unit)")
+                                        .foregroundStyle(.gray600)
+                                        .font(.callout)
                                 }
                             }
                             Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
 
-                            if inventory.isLoading {
+                            if item.isLoading {
                                 ProgressView()
                             } else {
                                 VStack {
@@ -200,7 +209,14 @@ public struct AddInventoryItemView: View {
                                         }
                                         Spacer()
                                     }
-                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.blue100).cornerRadius(20).padding(.bottom, 10)
+                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(
+                                    maxWidth: .infinity,
+                                    alignment: .center)
+                                    .background(.blue100)
+                                    .cornerRadius(20)
+                                    .padding(
+                                        .bottom,
+                                        10)
 
                                 Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                                     GridRow {
@@ -211,7 +227,7 @@ public struct AddInventoryItemView: View {
                                             .font(.callout)
                                             .foregroundStyle(.gray600)
                                             .multilineTextAlignment(.center)
-                                            .lineLimit(2 ... 2)
+                                            .lineLimit(2...2)
 
                                         Spacer()
                                     }
@@ -223,33 +239,45 @@ public struct AddInventoryItemView: View {
                                             .font(.callout)
                                             .foregroundStyle(.gray600)
                                             .multilineTextAlignment(.center)
-                                            .lineLimit(2 ... 2)
+                                            .lineLimit(2...2)
                                         Spacer()
                                     }
 
                                 }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
 
                                 VStack(spacing: 15) {
-                                    InventoryCategory(quantity: $formState.quantity, status: $formState.status,
-                                                      expiryDate: $formState.expiryDate,
-                                                      inventoryStore: $formState.inventoryStore,
-                                                      isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                                      isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Expiry)
-                                    InventoryCategory(quantity: $formState.quantity, status: $formState.status,
-                                                      expiryDate: $formState.expiryDate,
-                                                      inventoryStore: $formState.inventoryStore,
-                                                      isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                                      isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Storage)
-                                    InventoryCategory(quantity: $formState.quantity, status: $formState.status,
-                                                      expiryDate: $formState.expiryDate,
-                                                      inventoryStore: $formState.inventoryStore,
-                                                      isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                                      isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Status)
-                                    InventoryCategory(quantity: $formState.quantity, status: $formState.status,
-                                                      expiryDate: $formState.expiryDate,
-                                                      inventoryStore: $formState.inventoryStore,
-                                                      isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                                      isRecommendedStorageLocation: isRecommendedStorageLocation, type: .Quantity)
+                                    InventoryCategory(
+                                        quantity: $formState.quantity,
+                                        status: $formState.status,
+                                        expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore,
+                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        isRecommendedStorageLocation: isRecommendedStorageLocation,
+                                        type: .Expiry)
+                                    InventoryCategory(
+                                        quantity: $formState.quantity,
+                                        status: $formState.status,
+                                        expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore,
+                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        isRecommendedStorageLocation: isRecommendedStorageLocation,
+                                        type: .Storage)
+                                    InventoryCategory(
+                                        quantity: $formState.quantity,
+                                        status: $formState.status,
+                                        expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore,
+                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        isRecommendedStorageLocation: isRecommendedStorageLocation,
+                                        type: .Status)
+                                    InventoryCategory(
+                                        quantity: $formState.quantity,
+                                        status: $formState.status,
+                                        expiryDate: $formState.expiryDate,
+                                        inventoryStore: $formState.inventoryStore,
+                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                        isRecommendedStorageLocation: isRecommendedStorageLocation,
+                                        type: .Quantity)
                                 }
                             }
                         }
@@ -260,15 +288,14 @@ public struct AddInventoryItemView: View {
                 }.background(.white200)
 
                 ZStack(alignment: .bottom) {
-                    UnevenRoundedRectangle(
-                        cornerRadii: RectangleCornerRadii(topLeading: 0,
-                                                          bottomLeading: 40,
-                                                          bottomTrailing: 40,
-                                                          topTrailing: 0)
-                    )
-                    .fill(.white200)
-                    .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
-                    .frame(height: 80)
+                    UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                        topLeading: 0,
+                        bottomLeading: 40,
+                        bottomTrailing: 40,
+                        topTrailing: 0))
+                        .fill(.white200)
+                        .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
+                        .frame(height: 80)
 
                     Button {
                         Task {
@@ -292,7 +319,7 @@ public struct AddInventoryItemView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    Task {
+                    Task.detached {
                         try await addToInventory()
                     }
                 } label: {
@@ -304,10 +331,10 @@ public struct AddInventoryItemView: View {
         }
         .onAppear {
             Task {
-                await inventory.fetchInventorySuggestions(for: productSearchItem.category.id)
+                await item.fetchInventorySuggestions(for: productSearchItem.category.id)
             }
         }
-        .onChange(of: inventory.suggestions) { _, newSuggestions in
+        .onChange(of: item.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
         .onChange(of: calculatedExpiryDate) { oldDate, newDate in
@@ -318,7 +345,7 @@ public struct AddInventoryItemView: View {
     }
 
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
-        guard let suggestions, inventory.isLoading else { return }
+        guard let suggestions else { return }
 
         formState.inventoryStore = suggestions.recommendedStorageLocation
 

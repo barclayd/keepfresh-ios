@@ -3,17 +3,24 @@ import Foundation
 public actor APIClient {
     private let baseURL: URL
     private let session: URLSession
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
+    private let decoder: JSONDecoder
+    private let encoder: JSONEncoder
 
     public init(baseURL: String, session: URLSession = .shared) {
         self.baseURL = URL(string: baseURL)!
         self.session = session
+
+        decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
     }
 
-    public func fetch<T: Decodable>(_ type: T.Type,
-                                    path: String,
-                                    queryParameters: [String: String]? = nil) async throws -> T
+    public func fetch<T: Decodable>(
+        _ type: T.Type,
+        path: String,
+        queryParameters: [String: String]? = nil) async throws -> T
     {
         guard
             var components = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: true)
@@ -37,19 +44,18 @@ public actor APIClient {
             throw APIError.invalidResponse
         }
 
-        guard (200 ... 299).contains(httpResponse.statusCode) else {
+        guard (200...299).contains(httpResponse.statusCode) else {
             let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
             throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
         }
 
-        decoder.dateDecodingStrategy = .iso8601
-
         return try decoder.decode(type, from: data)
     }
 
-    public func post<T: Decodable>(_ type: T.Type,
-                                   path: String,
-                                   body: some Encodable) async throws -> T
+    public func post<T: Decodable>(
+        _ type: T.Type,
+        path: String,
+        body: some Encodable) async throws -> T
     {
         let url = baseURL.appendingPathComponent(path)
 
@@ -64,7 +70,7 @@ public actor APIClient {
             throw APIError.invalidResponse
         }
 
-        guard (200 ... 299).contains(httpResponse.statusCode) else {
+        guard (200...299).contains(httpResponse.statusCode) else {
             let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
             throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
         }
@@ -72,8 +78,9 @@ public actor APIClient {
         return try decoder.decode(type, from: data)
     }
 
-    public func patch(path: String,
-                      body: some Encodable) async throws
+    public func patch(
+        path: String,
+        body: some Encodable) async throws
     {
         let url = baseURL.appendingPathComponent(path)
 
@@ -88,7 +95,7 @@ public actor APIClient {
             throw APIError.invalidResponse
         }
 
-        guard (200 ... 299).contains(httpResponse.statusCode) else {
+        guard (200...299).contains(httpResponse.statusCode) else {
             let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
             throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
         }

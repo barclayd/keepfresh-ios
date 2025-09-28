@@ -69,9 +69,10 @@ public struct RelativeTime {
     }
 }
 
-public func relativeTime(_ direction: TimeDirection,
-                         from date: Date,
-                         to referenceDate: Date = Date()) -> RelativeTime
+public func relativeTime(
+    _ direction: TimeDirection,
+    from date: Date,
+    to referenceDate: Date = Date()) -> RelativeTime
 {
     let calendar = Calendar.current
 

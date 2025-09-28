@@ -7,6 +7,7 @@ import TodayUI
 
 struct InventoryStat: Identifiable {
     var icon: String
+    var customIcon: String?
     var amount: Int?
 
     var id: String { icon }
@@ -19,7 +20,7 @@ struct StatsView: View {
     var stats: [InventoryStat] {
         [
             .init(icon: "list.number", amount: locationDetails?.itemsCount),
-            .init(icon: "envelope.open.fill", amount: locationDetails?.openItemsCount),
+            .init(icon: "envelope.open.fill", customIcon: "tin.open", amount: locationDetails?.openItemsCount),
             .init(icon: "hourglass", amount: locationDetails?.expiringSoonCount),
         ]
     }
@@ -34,11 +35,24 @@ struct StatsView: View {
                     HStack(alignment: .bottom, spacing: 12) {
                         ForEach(stats) { stat in
                             if let amount = stat.amount, amount > 0 {
-                                HStack(alignment: .lastTextBaseline, spacing: 4) {
-                                    Image(systemName: stat.icon)
-                                        .font(.system(size: 18)).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                                HStack(alignment: .bottom, spacing: 4) {
+                                    if let customIcon = stat.customIcon {
+                                        Image(customIcon).renderingMode(.template)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 22, height: 22)
+                                            .foregroundStyle(inventoryStore.foregorundColor)
+                                    } else {
+                                        Image(systemName: stat.icon).font(.system(size: 18))
+                                            .foregroundStyle(
+                                                stat.icon == "hourglass" ? locationDetails
+                                                    .expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                                    }
 
-                                    Text("\(amount)").font(.body).foregroundStyle(stat.icon == "hourglass" ? locationDetails.expiryStatusPercentageColor : inventoryStore.foregorundColor)
+                                    Text("\(amount)").font(.body)
+                                        .foregroundStyle(
+                                            stat.icon == "hourglass" ? locationDetails
+                                                .expiryStatusPercentageColor : inventoryStore.foregorundColor)
                                 }
                             }
                         }
@@ -52,7 +66,9 @@ struct StatsView: View {
                                 .font(.system(size: 18))
                                 .foregroundStyle(inventoryStore.foregorundColor)
                                 .opacity(Double(recentItemImages.count - index) / Double(recentItemImages.count))
-                                .offset(x: CGFloat(recentItemImages.count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
+                                .offset(x: CGFloat(
+                                    recentItemImages
+                                        .count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
                         }
                     }
                 }
@@ -61,17 +77,19 @@ struct StatsView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .padding(.horizontal, 12)
-        .background(
-            UnevenRoundedRectangle(topLeadingRadius: 0,
-                                   bottomLeadingRadius: 20,
-                                   bottomTrailingRadius: 20,
-                                   topTrailingRadius: 0,
-                                   style: .continuous).fill(
-                LinearGradient(stops: [
-                    Gradient.Stop(color: inventoryStore.previewGradientStops.start, location: 0),
-                    Gradient.Stop(color: inventoryStore.previewGradientStops.end, location: 1),
-                ], startPoint: .leading, endPoint: .trailing))
-        )
+        .background(UnevenRoundedRectangle(
+            topLeadingRadius: 0,
+            bottomLeadingRadius: 20,
+            bottomTrailingRadius: 20,
+            topTrailingRadius: 0,
+            style: .continuous).fill(LinearGradient(stops: [
+            Gradient.Stop(
+                color: inventoryStore.previewGradientStops.start,
+                location: 0),
+            Gradient.Stop(
+                color: inventoryStore.previewGradientStops.end,
+                location: 1),
+        ], startPoint: .leading, endPoint: .trailing)))
     }
 }
 

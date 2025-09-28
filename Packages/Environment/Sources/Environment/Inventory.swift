@@ -23,8 +23,8 @@ public struct InventoryLocationDetails: Hashable {
 
     public var expiryStatusPercentageColor: Color {
         switch expiryPercentage {
-        case 0 ... 33: .green600
-        case 33 ... 66: .yellow400
+        case 0...33: .green600
+        case 33...66: .yellow400
         default: .red500
         }
     }
@@ -61,7 +61,16 @@ public final class Inventory {
         itemsByLocation = Dictionary(grouping: items, by: \.storageLocation)
 
         detailsByLocation = itemsByLocation.mapValues { items in
-            InventoryLocationDetails(expiryPercentage: 59, lastUpdated: items.map(\.createdAt).max(), expiringSoonCount: items.count(where: { $0.expiryDate.timeUntil.totalDays < 4 }), recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"], openItemsCount: items.count(where: { $0.openedAt != nil }), itemsCount: items.count, recentlyAddedItemsCount: items.count(where: { $0.createdAt.timeSince.totalDays < 4 }), expiringTodayCount: items.count(where: { $0.expiryDate.timeUntil.totalDays == 0 }))
+            InventoryLocationDetails(
+                expiryPercentage: 59,
+                lastUpdated: items.map(\.createdAt).max(),
+                expiringSoonCount: items.count(where: { $0.expiryDate.timeUntil.totalDays < 4 }),
+                recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"],
+                openItemsCount: items.count(where: { $0.openedAt != nil }),
+                itemsCount: items.count,
+                recentlyAddedItemsCount: items
+                    .count(where: { $0.createdAt.timeSince.totalDays < 4 }),
+                expiringTodayCount: items.count(where: { $0.expiryDate.timeUntil.totalDays == 0 }))
         }
 
         var counts: [Int: Int] = [:]
@@ -89,13 +98,41 @@ public final class Inventory {
 
         do {
             items = try await api.getInventoryItems().inventoryItems
-            print("item length: \(items.count)")
         } catch {
             state = .error
             return
         }
 
         state = .loaded
+    }
+
+    public func addItem(request: AddInventoryItemRequest, catgeory: ProductSearchItemCategory, productId: Int, imageURL: String?) {
+        let item = InventoryItem(from: request, category: catgeory, id: productId, imageURL: imageURL)
+
+        items.append(item)
+
+        Task.detached { [weak self] in
+            do {
+                let response = try await self?.api.createInventoryItem(request)
+
+                if let inventoryItemId = response?.inventoryItemId {
+                    print("newItemId: \(inventoryItemId)")
+                }
+
+            } catch {
+                print("Adding inventory item failed with error: \(error)")
+
+                if let urlError = error as? URLError {
+                    print("URL Error details: \(urlError.localizedDescription)")
+                }
+
+                if let httpError = error as? DecodingError {
+                    print("Decoding error: \(httpError)")
+                }
+
+                print("Full error details: \(String(describing: error))")
+            }
+        }
     }
 
     public func updateItemStatus(id: Int, status: InventoryItemStatus) {

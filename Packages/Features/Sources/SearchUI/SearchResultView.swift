@@ -10,9 +10,7 @@ public struct SearchResultView: View {
         ScrollView {
             LazyVStack(spacing: 20) {
                 ForEach(products) { product in
-                    NavigationLink(
-                        value: RouterDestination.addProduct(product: product)
-                    ) {
+                    NavigationLink(value: RouterDestination.addProduct(product: product)) {
                         SearchResultCard(product: product)
                             .toolbarVisibility(.hidden, for: .tabBar)
                             .frame(maxWidth: .infinity)
@@ -70,14 +68,13 @@ public struct SearchResultCard: View {
                         .font(.subheadline)
                         .foregroundStyle(.brandSainsburys)
 
-                    if product.amount != nil, product.unit != nil {
+                    if let amount = product.amount, let unit = product.unit {
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.blue700)
 
-                        Text(
-                            "\(String(format: "%.0f", product.amount ?? 1))\(product.unit ?? "g")"
-                        ).foregroundStyle(.gray500)
+                        Text("\(String(format: "%.0f", amount))\(unit)")
+                            .foregroundStyle(.gray500)
                             .font(.subheadline)
                     }
 
@@ -87,13 +84,12 @@ public struct SearchResultCard: View {
                         .foregroundStyle(.blue700)
                 }
             }.padding(.horizontal, 5).padding(10).padding(.bottom, 5)
-                .background(
-                    UnevenRoundedRectangle(topLeadingRadius: 0,
-                                           bottomLeadingRadius: 20,
-                                           bottomTrailingRadius: 20,
-                                           topTrailingRadius: 0,
-                                           style: .continuous).fill(.white)
-                )
+                .background(UnevenRoundedRectangle(
+                    topLeadingRadius: 0,
+                    bottomLeadingRadius: 20,
+                    bottomTrailingRadius: 20,
+                    topTrailingRadius: 0,
+                    style: .continuous).fill(.white))
         }
         .background(.blue400)
         .cornerRadius(20)

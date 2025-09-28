@@ -4,23 +4,34 @@ import Models
 import Router
 import SwiftUI
 
-@MainActor let productSearchItem: ProductSearchItemResponse = .init(name: "Semi Skimmed Milk",
-                                                                    brand: "Sainburys",
-                                                                    category: ProductSearchItemCategory(id: 123, name: "Milk", path: "Fresh Food > Milk"),
-                                                                    amount: 4,
-                                                                    unit: "pints",
-                                                                    icon: nil,
-                                                                    imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
-                                                                    source: ProductSearchItemSource(id: 1, ref: "Local Store"))
+@MainActor let productSearchItem: ProductSearchItemResponse = .init(
+    name: "Semi Skimmed Milk",
+    brand: "Sainburys",
+    category: ProductSearchItemCategory(
+        id: 123,
+        name: "Milk",
+        path: "Fresh Food > Milk"),
+    amount: 4,
+    unit: "pints",
+    icon: nil,
+    imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
+    source: ProductSearchItemSource(
+        id: 1,
+        ref: "Local Store"))
 
-func roundedRectangleWithHoleInMask(in rect: CGRect, shapeWidthOffset: CGFloat, shapeHeightOffset: CGFloat, shapeWidth: CGFloat,
-                                    shapeHeight: CGFloat) -> Path
+func roundedRectangleWithHoleInMask(
+    in rect: CGRect,
+    shapeWidthOffset: CGFloat,
+    shapeHeightOffset: CGFloat,
+    shapeWidth: CGFloat,
+    shapeHeight: CGFloat) -> Path
 {
     var shape = Rectangle().path(in: rect)
-    shape.addPath(
-        RoundedRectangle(cornerRadius: 25).path(
-            in: CGRect(x: shapeWidthOffset, y: shapeHeightOffset, width: shapeWidth, height: shapeHeight))
-    )
+    shape.addPath(RoundedRectangle(cornerRadius: 25).path(in: CGRect(
+        x: shapeWidthOffset,
+        y: shapeHeightOffset,
+        width: shapeWidth,
+        height: shapeHeight)))
     return shape
 }
 
@@ -68,19 +79,28 @@ public struct BarcodeView: View {
                     Rectangle()
                         .fill(Color.blue800).opacity(0.95)
                         .mask(
-                            roundedRectangleWithHoleInMask(in: CGRect(x: 0, y: 0, width: geometry.size.width, height: geometry.size.height * 1.5),
-                                                           shapeWidthOffset: (geometry.size.width - shapeWidth(geometry: geometry)) / 2,
-                                                           shapeHeightOffset: shapeHeightOffset(geometry: geometry),
-                                                           shapeWidth: shapeWidth(geometry: geometry),
-                                                           shapeHeight: shapeHeight(geometry: geometry)).fill(style: FillStyle(eoFill: true)))
+                            roundedRectangleWithHoleInMask(
+                                in: CGRect(
+                                    x: 0,
+                                    y: 0,
+                                    width: geometry.size.width,
+                                    height: geometry.size.height * 1.5),
+                                shapeWidthOffset: (
+                                    geometry.size
+                                        .width - shapeWidth(geometry: geometry)) / 2,
+                                shapeHeightOffset: shapeHeightOffset(geometry: geometry),
+                                shapeWidth: shapeWidth(geometry: geometry),
+                                shapeHeight: shapeHeight(geometry: geometry))
+                                .fill(style: FillStyle(eoFill: true)))
 
                     VStack(spacing: 20) {
                         Image(systemName: barcodeIcons[barcodeIndex])
                             .foregroundStyle(.white200)
                             .font(.system(size: 36))
                             .offset(x: offsetX)
-                            .animation(Animation.easeInOut(duration: 3)
-                                .repeatForever(autoreverses: true),
+                            .animation(
+                                Animation.easeInOut(duration: 3)
+                                    .repeatForever(autoreverses: true),
                                 value: offsetX)
                             .frame(height: 50)
                             .onReceive(timer) { _ in
@@ -107,8 +127,8 @@ public struct BarcodeView: View {
                 .onAppear {
                     withAnimation(
                         Animation.easeInOut(duration: 3)
-                            .repeatForever(autoreverses: true)
-                    ) {
+                            .repeatForever(autoreverses: true))
+                    {
                         offsetX = (shapeWidth(geometry: geometry) / 2) - 20
                     }
                 }

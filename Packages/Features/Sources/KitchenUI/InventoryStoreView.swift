@@ -143,13 +143,11 @@ public struct InventoryStoreView: View {
                             .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 15) {
-                            Image(systemName: inventoryStore.icon).font(.system(size: 78)).foregroundColor(
-                                inventoryStore == .freezer ? .white200 : .blue700
-                            )
+                            Image(systemName: inventoryStore.icon).font(.system(size: 78))
+                                .foregroundColor(inventoryStore == .freezer ? .white200 : .blue700)
 
-                            Text(inventoryStore.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(
-                                .blue700
-                            ).fontWeight(.bold)
+                            Text(inventoryStore.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(.blue700)
+                                .fontWeight(.bold)
 
                             if let locationDetails {
                                 VStack {
@@ -169,7 +167,8 @@ public struct InventoryStoreView: View {
                                 Grid(horizontalSpacing: 15, verticalSpacing: 10) {
                                     GridRow {
                                         VStack(spacing: 0) {
-                                            Text(locationDetails.expiringSoonCount.formatted()).foregroundStyle(.green600)
+                                            Text(locationDetails.expiringSoonCount.formatted())
+                                                .foregroundStyle(.green600)
                                                 .fontWeight(.bold).font(.headline)
                                             Text("Expiring soon").foregroundStyle(.green600).fontWeight(.light).font(
                                                 .subheadline
@@ -182,19 +181,16 @@ public struct InventoryStoreView: View {
                                             .font(.system(size: 28)).fontWeight(.bold)
                                             .foregroundStyle(.blue700)
                                         VStack(spacing: 0) {
-                                            Text(locationDetails.expiringTodayCount.formatted()).fontWeight(.bold).font(
-                                                .headline
-                                            ).foregroundStyle(.blue700)
+                                            Text(locationDetails.expiringTodayCount.formatted()).fontWeight(.bold)
+                                                .font(.headline).foregroundStyle(.blue700)
                                             Text("Expire\(locationDetails.expiringTodayCount == 1 ? "s" : "") today")
-                                                .fontWeight(.light).font(.subheadline).foregroundStyle(
-                                                    .blue700)
+                                                .fontWeight(.light).font(.subheadline).foregroundStyle(.blue700)
                                         }
                                     }
                                     GridRow {
                                         VStack(spacing: 0) {
-                                            Text(locationDetails.recentlyAddedItemsCount.formatted()).foregroundStyle(
-                                                .blue700
-                                            ).fontWeight(.bold).font(.headline)
+                                            Text(locationDetails.recentlyAddedItemsCount.formatted())
+                                                .foregroundStyle(.blue700).fontWeight(.bold).font(.headline)
                                             Text("Recently added").foregroundStyle(.blue700).fontWeight(.light).font(
                                                 .subheadline
                                             ).lineLimit(1)
@@ -206,31 +202,41 @@ public struct InventoryStoreView: View {
                                             .font(.system(size: 28)).fontWeight(.bold)
                                             .foregroundStyle(.blue700)
                                         VStack(spacing: 0) {
-                                            Text(locationDetails.itemsCount.formatted()).fontWeight(.bold).font(.headline)
+                                            Text(locationDetails.itemsCount.formatted()).fontWeight(.bold)
+                                                .font(.headline)
                                                 .foregroundStyle(.blue700)
                                             Text("Total item\(locationDetails.itemsCount > 1 ? "s" : "")").fontWeight(
                                                 .light
-                                            ).font(.subheadline).foregroundStyle(
-                                                .blue700)
+                                            ).font(.subheadline).foregroundStyle(.blue700)
                                         }
                                     }
-                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center).background(.blue150).cornerRadius(20)
+                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(
+                                    maxWidth: .infinity,
+                                    alignment: .center)
+                                    .background(.blue150)
+                                    .cornerRadius(20)
 
                                 HStack {
                                     Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                     Spacer()
                                     HStack(spacing: 8) {
-                                        SortButton(sortMode: $sortMode, type: .dateAdded(direction: .forward), icon: "clock")
-                                        SortButton(sortMode: $sortMode, type: .alphabetical(direction: .forward),
-                                                   icon: "arrow.up.arrow.down")
-                                        SortButton(sortMode: $sortMode, type: .expiryDate(direction: .forward), icon: "hourglass")
+                                        SortButton(
+                                            sortMode: $sortMode,
+                                            type: .dateAdded(direction: .forward),
+                                            icon: "clock")
+                                        SortButton(
+                                            sortMode: $sortMode,
+                                            type: .alphabetical(direction: .forward),
+                                            icon: "arrow.up.arrow.down")
+                                        SortButton(
+                                            sortMode: $sortMode,
+                                            type: .expiryDate(direction: .forward),
+                                            icon: "hourglass")
                                     }
                                 }.padding(.vertical, 5)
 
                                 ForEach(sortedItems) { inventoryItem in
-                                    InventoryItemView(
-                                        inventoryItem: inventoryItem
-                                    )
+                                    InventoryItemView(inventoryItem: inventoryItem)
                                 }
                             }
 
