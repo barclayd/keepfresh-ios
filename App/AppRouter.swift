@@ -18,8 +18,8 @@ public struct AppRouter: ViewModifier {
                     TodayView()
                 case let .addProduct(productSearchItem):
                     AddInventoryItemView(productSearchItem: productSearchItem)
-                case let .inventoryStoreView(inventoryStore):
-                    InventoryStoreView(inventoryStore: inventoryStore)
+                case let .storageLocationView(storageLocation):
+                    StorageLocationView(storageLocation: storageLocation)
                 case .barcodeScan:
                     BarcodeView()
                 }

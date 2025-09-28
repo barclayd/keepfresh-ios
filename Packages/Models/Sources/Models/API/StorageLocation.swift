@@ -1,7 +1,7 @@
 import DesignSystem
 import SwiftUI
 
-public enum InventoryStore: String, Codable, Identifiable, CaseIterable, Equatable, Sendable {
+public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equatable, Sendable {
     public var id: Self { self }
 
     case pantry = "Pantry"

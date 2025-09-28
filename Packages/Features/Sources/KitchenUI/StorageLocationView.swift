@@ -111,24 +111,24 @@ private struct SortButton: View {
     }
 }
 
-public struct InventoryStoreView: View {
+public struct StorageLocationView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
 
     @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
 
     private var sortedItems: [InventoryItem] {
-        sortMode.sort(items: inventory.itemsByLocation[inventoryStore] ?? [])
+        sortMode.sort(items: inventory.itemsByStorageLocation[storageLocation] ?? [])
     }
 
-    public var inventoryStore: InventoryStore
+    public var storageLocation: StorageLocation
 
-    public init(inventoryStore: InventoryStore) {
-        self.inventoryStore = inventoryStore
+    public init(storageLocation: StorageLocation) {
+        self.storageLocation = storageLocation
     }
 
     var locationDetails: InventoryLocationDetails? {
-        inventory.detailsByLocation[inventoryStore]
+        inventory.detailsByStorageLocation[storageLocation]
     }
 
     public var body: some View {
@@ -136,17 +136,17 @@ public struct InventoryStoreView: View {
             ZStack(alignment: .bottom) {
                 ScrollView(showsIndicators: false) {
                     ZStack {
-                        LinearGradient(stops: inventoryStore.viewGradientStops, startPoint: .top, endPoint: .bottom)
+                        LinearGradient(stops: storageLocation.viewGradientStops, startPoint: .top, endPoint: .bottom)
                             .ignoresSafeArea(edges: .top)
                             .offset(y: -geometry.safeAreaInsets.top)
                             .frame(height: geometry.size.height)
                             .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 15) {
-                            Image(systemName: inventoryStore.icon).font(.system(size: 78))
-                                .foregroundColor(inventoryStore == .freezer ? .white200 : .blue700)
+                            Image(systemName: storageLocation.icon).font(.system(size: 78))
+                                .foregroundColor(storageLocation == .freezer ? .white200 : .blue700)
 
-                            Text(inventoryStore.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(.blue700)
+                            Text(storageLocation.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(.blue700)
                                 .fontWeight(.bold)
 
                             if let locationDetails {

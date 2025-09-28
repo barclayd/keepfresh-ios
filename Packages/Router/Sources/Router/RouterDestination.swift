@@ -8,11 +8,11 @@ public enum RouterDestination: Hashable {
     case barcodeScan
     case kitchen
     case addProduct(product: ProductSearchItemResponse)
-    case inventoryStoreView(inventoryStore: InventoryStore)
+    case storageLocationView(storageLocation: StorageLocation)
 
     public var tint: Color? {
         switch self {
-        case .addProduct, .inventoryStoreView:
+        case .addProduct, .storageLocationView:
             .white200
         case .today, .kitchen, .search, .barcodeScan:
             nil

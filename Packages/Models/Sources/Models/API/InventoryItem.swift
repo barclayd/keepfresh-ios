@@ -23,12 +23,12 @@ public extension InventoryItemStatus {
 
 public struct UpdateInventoryItemRequest: Codable, Sendable {
     public let status: InventoryItemStatus?
-    public let storageLocation: InventoryStore?
+    public let storageLocation: StorageLocation?
     public let percentageRemaining: Double?
 
     public init(
         status: InventoryItemStatus? = nil,
-        storageLocation: InventoryStore? = nil,
+        storageLocation: StorageLocation? = nil,
         percentageRemaining: Double?)
     {
         self.storageLocation = storageLocation
@@ -48,11 +48,11 @@ public struct AddInventoryItemRequest: Codable, Sendable {
 
     public struct InventoryItem: Codable, Sendable {
         public let expiryDate: Date
-        public let storageLocation: InventoryStore
+        public let storageLocation: StorageLocation
         public let status: ProductSearchItemStatus
         public let expiryType: ExpiryType
 
-        public init(expiryDate: Date, storageLocation: InventoryStore, status: ProductSearchItemStatus, expiryType: ExpiryType) {
+        public init(expiryDate: Date, storageLocation: StorageLocation, status: ProductSearchItemStatus, expiryType: ExpiryType) {
             self.expiryDate = expiryDate
             self.storageLocation = storageLocation
             self.status = status
@@ -64,7 +64,7 @@ public struct AddInventoryItemRequest: Codable, Sendable {
         public let name: String
         public let brand: String
         public let expiryType: ExpiryType
-        public let storageLocation: InventoryStore
+        public let storageLocation: StorageLocation
         public let barcode: String?
         public let unit: String?
         public let amount: Double?
@@ -76,7 +76,7 @@ public struct AddInventoryItemRequest: Codable, Sendable {
             name: String,
             brand: String,
             expiryType: ExpiryType,
-            storageLocation: InventoryStore,
+            storageLocation: StorageLocation,
             barcode: String?,
             unit: String?,
             amount: Double?,
@@ -113,7 +113,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
         updatedAt: Date,
         openedAt: Date? = nil,
         status: InventoryItemStatus,
-        storageLocation: InventoryStore,
+        storageLocation: StorageLocation,
         consumptionPrediction: Int,
         expiryDate: Date,
         expiryType: ExpiryType,
@@ -136,7 +136,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
     public var updatedAt: Date
     public var openedAt: Date?
     public var status: InventoryItemStatus
-    public var storageLocation: InventoryStore
+    public var storageLocation: StorageLocation
     public let consumptionPrediction: Int
     public let expiryDate: Date
     public let expiryType: ExpiryType

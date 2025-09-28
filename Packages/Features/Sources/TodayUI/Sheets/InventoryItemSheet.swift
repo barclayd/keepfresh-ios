@@ -15,7 +15,7 @@ struct NextBestAction {
 extension InventoryItem {
     func getNextBestAction(
         onOpen: @escaping () -> Void,
-        onMove: @escaping (InventoryStore) -> Void) -> NextBestAction?
+        onMove: @escaping (StorageLocation) -> Void) -> NextBestAction?
     {
         switch (status, storageLocation) {
         case (.unopened, _):
@@ -156,7 +156,7 @@ struct InventoryItemSheetView: View {
 
     func updateInventoryItem(
         status: InventoryItemStatus? = nil,
-        storageLocation: InventoryStore? = nil,
+        storageLocation: StorageLocation? = nil,
         percentageRemaining: Double? = nil)
     {
         let previousStatus = inventoryItem.status
@@ -200,7 +200,7 @@ struct InventoryItemSheetView: View {
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
-    func onMove(storageLocation: InventoryStore) {
+    func onMove(storageLocation: StorageLocation) {
         updateInventoryItem(storageLocation: storageLocation)
     }
 

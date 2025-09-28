@@ -3,7 +3,7 @@ import Foundation
 public struct InventorySuggestionsResponse: Codable, Sendable, Equatable {
     public let shelfLifeInDays: ShelfLifeInDays
     public let expiryType: ExpiryType
-    public let recommendedStorageLocation: InventoryStore
+    public let recommendedStorageLocation: StorageLocation
 }
 
 public struct ShelfLifeInDays: Codable, Equatable, Sendable {
@@ -24,8 +24,8 @@ public struct StorageOptions: Codable, Equatable, Sendable {
 }
 
 public extension StorageOptions {
-    subscript(_ store: InventoryStore) -> Int? {
-        switch store {
+    subscript(_ location: StorageLocation) -> Int? {
+        switch location {
         case .pantry: pantry
         case .fridge: fridge
         case .freezer: freezer

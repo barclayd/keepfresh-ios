@@ -50,17 +50,17 @@ public final class Inventory {
 
     let api = KeepFreshAPI()
 
-    public private(set) var itemsByLocation: [InventoryStore: [InventoryItem]] = [:]
+    public private(set) var itemsByStorageLocation: [StorageLocation: [InventoryItem]] = [:]
     public private(set) var productCounts: [Int: Int] = [:]
-    public private(set) var productCountsByLocation: [Int: [InventoryStore: Int]] = [:]
-    public private(set) var detailsByLocation: [InventoryStore: InventoryLocationDetails] = [:]
+    public private(set) var productCountsByLocation: [Int: [StorageLocation: Int]] = [:]
+    public private(set) var detailsByStorageLocation: [StorageLocation: InventoryLocationDetails] = [:]
 
     public init() {}
 
     private func updateCaches() {
-        itemsByLocation = Dictionary(grouping: items, by: \.storageLocation)
+        itemsByStorageLocation = Dictionary(grouping: items, by: \.storageLocation)
 
-        detailsByLocation = itemsByLocation.mapValues { items in
+        detailsByStorageLocation = itemsByStorageLocation.mapValues { items in
             InventoryLocationDetails(
                 expiryPercentage: 59,
                 lastUpdated: items.map(\.createdAt).max(),
@@ -74,7 +74,7 @@ public final class Inventory {
         }
 
         var counts: [Int: Int] = [:]
-        var locationCounts: [Int: [InventoryStore: Int]] = [:]
+        var locationCounts: [Int: [StorageLocation: Int]] = [:]
 
         for item in items {
             counts[item.product.id, default: 0] += 1
@@ -150,7 +150,7 @@ public final class Inventory {
         }
     }
 
-    public func updateItemStorageLocation(id: Int, storageLocation: InventoryStore) {
+    public func updateItemStorageLocation(id: Int, storageLocation: StorageLocation) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 
         items[index].storageLocation = storageLocation
