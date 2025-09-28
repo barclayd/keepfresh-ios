@@ -106,6 +106,35 @@ public final class Inventory {
         state = .loaded
     }
 
+    public func addItem(request: AddInventoryItemRequest, catgeory: ProductSearchItemCategory, productId: Int, imageURL: String?) {
+        let item = InventoryItem(from: request, category: catgeory, id: productId, imageURL: imageURL)
+
+        items.append(item)
+
+        Task.detached { [weak self] in
+            do {
+                let response = try await self?.api.createInventoryItem(request)
+
+                if let inventoryItemId = response?.inventoryItemId {
+                    print("newItemId: \(inventoryItemId)")
+                }
+
+            } catch {
+                print("Adding inventory item failed with error: \(error)")
+
+                if let urlError = error as? URLError {
+                    print("URL Error details: \(urlError.localizedDescription)")
+                }
+
+                if let httpError = error as? DecodingError {
+                    print("Decoding error: \(httpError)")
+                }
+
+                print("Full error details: \(String(describing: error))")
+            }
+        }
+    }
+
     public func updateItemStatus(id: Int, status: InventoryItemStatus) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 

@@ -22,7 +22,9 @@ public class InventoryItemSuggestions {
     }
 
     public var suggestions: InventorySuggestionsResponse? {
-        if case let .loaded(response) = state { return response }
+        if case let .loaded(response) = state {
+            return response
+        }
         return nil
     }
 

@@ -69,64 +69,44 @@ public struct AddInventoryItemView: View {
             return
         }
 
-        let api = KeepFreshAPI()
+        let request = AddInventoryItemRequest(
+            item: AddInventoryItemRequest
+                .InventoryItem(
+                    expiryDate: formState.expiryDate,
+                    storageLocation: formState
+                        .inventoryStore,
+                    status: formState.status,
+                    expiryType: formState
+                        .expiryType),
+            product: AddInventoryItemRequest
+                .ProductData(
+                    name: productSearchItem.name,
+                    brand: productSearchItem
+                        .brand,
+                    expiryType: recommendedExpiryType,
+                    storageLocation: recommendedStorageLocation,
+                    barcode: productSearchItem
+                        .source.ref,
+                    unit: productSearchItem
+                        .unit?.lowercased(),
+                    amount: productSearchItem
+                        .amount,
+                    categoryId: productSearchItem
+                        .category.id,
+                    sourceId: productSearchItem
+                        .source.id,
+                    sourceRef: productSearchItem
+                        .source.ref))
 
-        do {
-            let request = AddInventoryItemRequest(
-                item: AddInventoryItemRequest
-                    .InventoryItem(
-                        expiryDate: formState.expiryDate,
-                        storageLocation: formState
-                            .inventoryStore,
-                        status: formState.status,
-                        expiryType: formState
-                            .expiryType),
-                product: AddInventoryItemRequest
-                    .ProductData(
-                        name: productSearchItem.name,
-                        brand: productSearchItem
-                            .brand,
-                        expiryType: recommendedExpiryType,
-                        storageLocation: recommendedStorageLocation,
-                        barcode: productSearchItem
-                            .source.ref,
-                        unit: productSearchItem
-                            .unit?.lowercased(),
-                        amount: productSearchItem
-                            .amount,
-                        categoryId: productSearchItem
-                            .category.id,
-                        sourceId: productSearchItem
-                            .source.id,
-                        sourceRef: productSearchItem
-                            .source.ref))
+        let temporaryId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
 
-            let newItem = InventoryItem(
-                from: request,
-                category: productSearchItem.category,
-                id: (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1,
-                imageURL: productSearchItem.imageURL)
+        inventory.addItem(
+            request: request,
+            catgeory: productSearchItem.category,
+            productId: temporaryId,
+            imageURL: productSearchItem.imageURL)
 
-            inventory.items.append(newItem)
-
-            let response = try await api.createInventoryItem(request)
-
-            print("inventoryItemId", response.inventoryItemId)
-
-            router.popToRoot(for: .search)
-        } catch {
-            print("Adding inventory item failed with error: \(error)")
-
-            if let urlError = error as? URLError {
-                print("URL Error details: \(urlError.localizedDescription)")
-            }
-
-            if let httpError = error as? DecodingError {
-                print("Decoding error: \(httpError)")
-            }
-
-            print("Full error details: \(String(describing: error))")
-        }
+        router.popToRoot(for: .search)
     }
 
     public var body: some View {
@@ -339,7 +319,7 @@ public struct AddInventoryItemView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    Task {
+                    Task.detached {
                         try await addToInventory()
                     }
                 } label: {
@@ -365,7 +345,7 @@ public struct AddInventoryItemView: View {
     }
 
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
-        guard let suggestions, item.isLoading else { return }
+        guard let suggestions else { return }
 
         formState.inventoryStore = suggestions.recommendedStorageLocation
 
