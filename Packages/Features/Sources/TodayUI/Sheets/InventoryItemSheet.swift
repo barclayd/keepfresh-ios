@@ -4,13 +4,58 @@ import Models
 import Network
 import SwiftUI
 
+struct NextBestAction {
+    public let label: String
+    public let icon: String
+    public let textColor: Color
+    public let backgroundColor: Color
+    public let action: () -> Void
+}
+
+extension InventoryItem {
+    func getNextBestAction(
+        onOpen: @escaping () -> Void,
+        onMove: @escaping (InventoryStore) -> Void,
+        onConsume: @escaping () -> Void
+    ) -> NextBestAction? {
+        switch (status, storageLocation) {
+        case (.unopened, _):
+            return NextBestAction(
+                label: "Mark as opened",
+                icon: "door.right.hand.open",
+                textColor: .blue600,
+                backgroundColor: .gray200,
+                action: onOpen
+            )
+        case (.opened, .freezer):
+            return NextBestAction(
+                label: "Move to Fridge",
+                icon: "refrigerator.fill",
+                textColor: .white,
+                backgroundColor: .blue600,
+                action: { onMove(.fridge) }
+            )
+        case (.opened, .fridge):
+            return NextBestAction(
+                label: "Move to Freezer",
+                icon: "snowflake",
+                textColor: .white200,
+                backgroundColor: .blue700,
+                action: { onMove(.freezer) }
+            )
+        default:
+            return nil
+        }
+    }
+}
+
 struct InventoryItemSheetStatsGridRows: View {
     @Environment(Inventory.self) var inventory
-
+    
     let pageIndex: Int
-
+    
     var inventoryItem: InventoryItem
-
+    
     var body: some View {
         Group {
             if pageIndex == 0 {
@@ -33,7 +78,7 @@ struct InventoryItemSheetStatsGridRows: View {
                 }
                 GridRow {
                     Text(inventoryItem.storageLocation.rawValue).fontWeight(.bold).font(.headline)
-                    Image(systemName: "refrigerator")
+                    Image(systemName: inventoryItem.storageLocation.icon)
                         .font(.system(size: 28)).fontWeight(.bold)
                     Image(systemName: "circle.bottomrighthalf.pattern.checkered")
                         .font(.system(size: 28)).fontWeight(.bold)
@@ -75,7 +120,7 @@ struct InventoryItemSheetStatsGridRows: View {
 struct InventoryItemSheetStatsGrid: View {
     let pageIndex: Int
     let inventoryItem: InventoryItem
-
+    
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(horizontalSpacing: 30, verticalSpacing: 10) {
@@ -92,19 +137,86 @@ struct InventoryItemSheetStatsGrid: View {
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(\.dismiss) private var dismiss
-
+    
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
-
+    
     var inventoryItem: InventoryItem
-
+    
     init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
-
+        
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
-
+    
+    //Button(action: {
+    //}) {
+    //    HStack(spacing: 10) {
+    //        Image(systemName: "snowflake")
+    //            .font(.system(size: 18))
+    //            .frame(width: 20, alignment: .center)
+    //        Text("Move to Freezer")
+    //            .font(.headline)
+    //            .frame(width: 175, alignment: .center)
+    //    }
+    //    .foregroundStyle(.white200)
+    //    .fontWeight(.bold)
+    //    .padding()
+    //    .frame(maxWidth: .infinity)
+    //    .background(
+    //        RoundedRectangle(cornerRadius: 20)
+    //            .fill(.blue700)
+    //    )
+    //}
+    
+    func updateInventoryItem(
+        status: InventoryItemStatus? = nil,
+        storageLocation: InventoryStore? = nil,
+    ) {
+        let previousStatus = inventoryItem.status
+        
+        if let status = status {
+            inventory.updateItemStatus(id: inventoryItem.id, status: status)
+        }
+        
+        if let storageLocation = storageLocation {
+            inventory.updateItemStorageLocation(id: inventoryItem.id, storageLocation: storageLocation)
+        }
+        
+        Task {
+            let api = KeepFreshAPI()
+            
+            do {
+                try await api.updateInventoryItem(
+                    for: inventoryItem.id,
+                    UpdateInventoryItemRequest(status: status, storageLocation: storageLocation)
+                )
+                print("Updated inventoryItem with id: \(inventoryItem.id)")
+                dismiss()
+                
+            } catch {
+                print("Failed to update inventory item: \(error)")
+                
+                await MainActor.run {
+                    inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
+                }
+            }
+        }
+    }
+    
+    func onOpen() {
+        updateInventoryItem(status: .opened)
+    }
+    
+    func onConsume() {
+        updateInventoryItem(status: .consumed)
+    }
+    
+    func onMove(storageLocation: InventoryStore) {
+        updateInventoryItem(storageLocation: storageLocation)
+    }
+    
     var body: some View {
         Group {
             VStack(spacing: 10) {
@@ -125,7 +237,7 @@ struct InventoryItemSheetView: View {
                             .foregroundStyle(.gray600)
                     }
                 }.padding(.top, 10)
-
+                
                 AsyncImage(url: URL(string: inventoryItem.product.imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png")) { image in
                     image.resizable()
                 } placeholder: {
@@ -171,7 +283,7 @@ struct InventoryItemSheetView: View {
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2 ... 2)
-
+                            
                             Spacer()
                         }
                         GridRow {
@@ -209,7 +321,7 @@ struct InventoryItemSheetView: View {
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2 ... 2)
-
+                            
                             Spacer()
                         }
                         GridRow {
@@ -246,87 +358,68 @@ struct InventoryItemSheetView: View {
                             .fill(.green300)
                     )
                 }
-
-                if inventoryItem.status == .unopened {
-                    Button(action: {
-                        let previousStatus = inventoryItem.status
-                        inventory.updateItemStatus(id: inventoryItem.id, status: .opened)
-
-                        Task {
-                            let api = KeepFreshAPI()
-
-                            do {
-                                try await api.updateInventoryItem(for: inventoryItem.id, UpdateInventoryItemRequest(status: .opened))
-                                print("Updated inventoryItem with id: \(inventoryItem.id)")
-                                dismiss()
-                            } catch {
-                                print("Failed to update inventory item with id: \(error)")
-
-                                await MainActor.run {
-                                    inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
-                                }
-                            }
-                        }
-                    }) {
+                
+//                if inventoryItem.status == .unopened {
+//                    Button(action: {
+//                        let previousStatus = inventoryItem.status
+//                        inventory.updateItemStatus(id: inventoryItem.id, status: .opened)
+//                        
+//                        Task {
+//                            let api = KeepFreshAPI()
+//                            
+//                            do {
+//                                try await api.updateInventoryItem(for: inventoryItem.id, UpdateInventoryItemRequest(status: .opened))
+//                                print("Updated inventoryItem with id: \(inventoryItem.id)")
+//                                dismiss()
+//                            } catch {
+//                                print("Failed to update inventory item with id: \(error)")
+//                                
+//                                await MainActor.run {
+//                                    inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
+//                                }
+//                            }
+//                        }
+//                    }) {
+//                        HStack(spacing: 10) {
+//                            Image(systemName: "door.right.hand.open")
+//                                .font(.system(size: 18))
+//                                .frame(width: 20, alignment: .center)
+//                            Text("Mark as opened")
+//                                .font(.headline)
+//                                .frame(width: 175, alignment: .center)
+//                        }
+//                        .foregroundStyle(.blue600)
+//                        .fontWeight(.bold)
+//                        .padding()
+//                        .frame(maxWidth: .infinity)
+//                        .background(
+//                            RoundedRectangle(cornerRadius: 20)
+//                                .fill(.gray200)
+//                        )
+//                    }
+//                }
+                
+                if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove, onConsume: onConsume) {
+                    Button(action: nextBestAction.action) {
                         HStack(spacing: 10) {
-                            Image(systemName: "door.right.hand.open")
+                            Image(systemName: nextBestAction.icon)
                                 .font(.system(size: 18))
                                 .frame(width: 20, alignment: .center)
-                            Text("Mark as opened")
+                            Text(nextBestAction.label)
                                 .font(.headline)
                                 .frame(width: 175, alignment: .center)
                         }
-                        .foregroundStyle(.blue600)
+                        .foregroundStyle(nextBestAction.textColor)
                         .fontWeight(.bold)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(.gray200)
+                                .fill(nextBestAction.backgroundColor)
                         )
                     }
                 }
-
-                if inventoryItem.status == .opened {
-                    Button(action: {
-                        //                        let previousStatus = inventoryItem.status
-                        //                        inventory.updateItemStatus(id: inventoryItem.id, status: .opened)
-                        //
-                        //                        Task {
-                        //                            let api = KeepFreshAPI()
-                        //
-                        //                            do {
-                        //                                try await api.updateInventoryItem(for: inventoryItem.id,
-                        //                                                                  UpdateInventoryItemRequest(status: .opened))
-                        //                                print("Updated inventoryItem with id: \(inventoryItem.id)")
-                        //                                dismiss()
-                        //                            } catch {
-                        //                                print("Failed to update inventory item with id: \(error)")
-                        //
-                        //                                await MainActor.run {
-                        //                                    inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
-                        //                                }
-                        //                            }
-                        //                        }
-                    }) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "snowflake")
-                                .font(.system(size: 18))
-                                .frame(width: 20, alignment: .center)
-                            Text("Move to Freezer")
-                                .font(.headline)
-                                .frame(width: 175, alignment: .center)
-                        }
-                        .foregroundStyle(.white200)
-                        .fontWeight(.bold)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(.blue700)
-                        )
-                    }
-                }
+                
             }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
                 .padding(.horizontal, 10)
                 .sheet(isPresented: $showRemoveSheet) {
