@@ -66,12 +66,12 @@ struct InventoryItemSheetStatsGridRows: View {
                     Image(systemName: "hourglass")
                         .font(.system(size: 28)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
-                    Image(systemName: "percent")
+                    Image(systemName: "sparkles")
                         .font(.system(size: 28)).fontWeight(.bold)
-                        .foregroundStyle(.blue700)
+                        .foregroundStyle(.yellow400)
                     VStack(spacing: 0) {
                         Text("17").fontWeight(.bold).font(.headline)
-                        Text("Waste score").fontWeight(.light).font(.subheadline)
+                        Text("Predicted usage").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
                 GridRow {
