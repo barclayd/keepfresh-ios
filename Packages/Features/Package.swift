@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 import PackageDescription
 
 let baseDeps: [PackageDescription.Target.Dependency] = [
@@ -12,7 +12,7 @@ let baseDeps: [PackageDescription.Target.Dependency] = [
 
 let package = Package(
     name: "Features",
-    platforms: [.iOS(.v18)],
+    platforms: [.iOS("26.0")],
     products: [
         .library(name: "SearchUI", targets: ["SearchUI"]),
         .library(name: "TodayUI", targets: ["TodayUI"]),
