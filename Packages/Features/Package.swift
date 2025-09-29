@@ -12,7 +12,7 @@ let baseDeps: [PackageDescription.Target.Dependency] = [
 
 let package = Package(
     name: "Features",
-    platforms: [.iOS(.v18), .macOS(.v15)],
+    platforms: [.iOS(.v18)],
     products: [
         .library(name: "SearchUI", targets: ["SearchUI"]),
         .library(name: "TodayUI", targets: ["TodayUI"]),

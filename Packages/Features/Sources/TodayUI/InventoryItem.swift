@@ -8,11 +8,11 @@ struct IconsView: View {
         HStack {
             HStack(spacing: 0) {
                 if inventoryItem.createdAt.timeSince.amount > 0 {
-                    Image(systemName: "calendar")
+                    Image(systemName: "calendar.badge.plus")
                         .font(.system(size: 18))
-                        .foregroundStyle(.green600)
+                        .foregroundStyle(.green600).fontWeight(.bold)
                     Text(inventoryItem.createdAt.timeSince.abbreviated)
-                        .foregroundStyle(.green600)
+                        .foregroundStyle(.green600).padding(.leading, 2)
                 }
             }
 
@@ -32,7 +32,7 @@ struct IconsView: View {
             HStack(spacing: 2) {
                 Image(systemName: "sparkles")
                     .font(.system(size: 18)).foregroundStyle(.yellow500)
-                Text("17%").foregroundStyle(.green600)
+                Text("17%").foregroundStyle(.yellow500)
             }
 
             Spacer()
