@@ -345,6 +345,9 @@ public struct AddInventoryItemView: View {
                 }
             }
         }
+        .task {
+            usageGenerator.prewarmModel()
+        }
         .onAppear {
             Task {
                 let previewProduct = InventoryPreviewRequest.PreviewProduct(
