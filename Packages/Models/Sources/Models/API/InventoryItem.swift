@@ -24,7 +24,7 @@ public extension InventoryItemStatus {
 public struct UpdateInventoryItemRequest: Codable, Sendable {
     public let status: InventoryItemStatus?
     public let storageLocation: StorageLocation?
-    public let percentageRemaining: Double?
+    public let percentageRemaining: Int?
 
     public init(
         status: InventoryItemStatus? = nil,
@@ -33,7 +33,7 @@ public struct UpdateInventoryItemRequest: Codable, Sendable {
     {
         self.storageLocation = storageLocation
         self.status = status
-        self.percentageRemaining = percentageRemaining
+        self.percentageRemaining = percentageRemaining.map { Int($0 )}
     }
 }
 

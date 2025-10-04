@@ -8,6 +8,7 @@ let baseDeps: [PackageDescription.Target.Dependency] = [
     .product(name: "Router", package: "Router"),
     .product(name: "Environment", package: "Environment"),
     .product(name: "Extensions", package: "Extensions"),
+    .product(name: "Intelligence", package: "Intelligence"),
 ]
 
 let package = Package(
@@ -26,6 +27,7 @@ let package = Package(
         .package(path: "../Network"),
         .package(path: "../Environment"),
         .package(path: "../Extensions"),
+        .package(path: "../Intelligence"),
         .package(url: "https://github.com/twostraws/CodeScanner", from: "2.5.0"),
     ],
     targets: [

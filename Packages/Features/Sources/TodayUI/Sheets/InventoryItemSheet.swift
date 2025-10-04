@@ -171,6 +171,8 @@ struct InventoryItemSheetView: View {
 
         Task {
             let api = KeepFreshAPI()
+            
+            print("percentageRemaining: \(String(describing: percentageRemaining))")
 
             do {
                 try await api.updateInventoryItem(

@@ -155,7 +155,7 @@ public struct StorageLocationView: View {
                                         .yellow500
                                     ).fontWeight(.bold).lineSpacing(0)
                                     HStack(spacing: 0) {
-                                        Text("Predicted waste score").font(.subheadline).foregroundStyle(.black800)
+                                        Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
                                             .fontWeight(.light)
                                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
                                             .yellow500

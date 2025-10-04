@@ -1,6 +1,7 @@
 import DesignSystem
 import Environment
 import Foundation
+import Intelligence
 import Models
 import Network
 import Router
@@ -21,6 +22,7 @@ public struct AddInventoryItemView: View {
 
     @State private var item = InventoryItemSuggestions()
     @State private var formState = InventoryFormState()
+    @State private var usageGenerator = UsageGenerator()
 
     public let productSearchItem: ProductSearchItemResponse
 
@@ -157,10 +159,14 @@ public struct AddInventoryItemView: View {
                                 ProgressView()
                             } else {
                                 VStack {
-                                    Text("3%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(
-                                        0)
+                                    if let percentagePrediction = usageGenerator.percentagePrediction {
+                                        Text("\(percentagePrediction)").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(
+                                            0)
+                                    } else {
+                                        ProgressView().controlSize(.regular).tint(.yellow500)
+                                    }
                                     HStack(spacing: 0) {
-                                        Text("Predicted waste score").font(.subheadline).foregroundStyle(.black800)
+                                        Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
                                             .fontWeight(.light)
                                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
                                             .yellow500
@@ -332,6 +338,7 @@ public struct AddInventoryItemView: View {
         .onAppear {
             Task {
                 await item.fetchInventorySuggestions(for: productSearchItem.category.id)
+                await usageGenerator.generateUsagePrediction()
             }
         }
         .onChange(of: item.suggestions) { _, newSuggestions in
