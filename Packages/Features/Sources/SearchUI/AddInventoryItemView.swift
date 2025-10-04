@@ -1,6 +1,7 @@
 import DesignSystem
 import Environment
 import Foundation
+import Intelligence
 import Models
 import Network
 import Router
@@ -21,6 +22,7 @@ public struct AddInventoryItemView: View {
 
     @State private var item = InventoryItemSuggestions()
     @State private var formState = InventoryFormState()
+    @State private var usageGenerator = UsageGenerator()
 
     public let productSearchItem: ProductSearchItemResponse
 
@@ -157,10 +159,15 @@ public struct AddInventoryItemView: View {
                                 ProgressView()
                             } else {
                                 VStack {
-                                    Text("3%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(
-                                        0)
+                                    if let percentagePrediction = usageGenerator.percentagePrediction, usageGenerator.state != .loading {
+                                        Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold)
+                                            .lineSpacing(
+                                                0)
+                                    } else {
+                                        ProgressView().controlSize(.regular).tint(.yellow500)
+                                    }
                                     HStack(spacing: 0) {
-                                        Text("Predicted waste score").font(.subheadline).foregroundStyle(.black800)
+                                        Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
                                             .fontWeight(.light)
                                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
                                             .yellow500
@@ -331,7 +338,16 @@ public struct AddInventoryItemView: View {
         }
         .onAppear {
             Task {
-                await item.fetchInventorySuggestions(for: productSearchItem.category.id)
+                let previewProduct = InventoryPreviewRequest.PreviewProduct(
+                    name: productSearchItem.name,
+                    brand: productSearchItem.brand,
+                    barcode: productSearchItem.source.ref,
+                    unit: productSearchItem.unit,
+                    amount: productSearchItem.amount,
+                    categoryId: productSearchItem.category.id,
+                    sourceId: productSearchItem.source.id,
+                    sourceRef: productSearchItem.source.ref)
+                await item.fetchInventorySuggestions(product: previewProduct)
             }
         }
         .onChange(of: item.suggestions) { _, newSuggestions in
@@ -340,6 +356,34 @@ public struct AddInventoryItemView: View {
         .onChange(of: calculatedExpiryDate) { oldDate, newDate in
             if !newDate.isSameDay(as: oldDate) {
                 formState.expiryDate = newDate
+            }
+        }
+        .onChange(of: formState.expiryDate) { oldDate, newDate in
+            if newDate.isSameDay(as: oldDate) {
+                return
+            }
+
+            guard let predictions = item.predictions else {
+                print("no predictions found for \(productSearchItem.name)")
+                return
+            }
+
+            let quantityString: String? = {
+                if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
+                    return "\(amount)\(unit)"
+                }
+                return nil
+            }()
+
+            Task {
+                await usageGenerator.generateUsagePrediction(
+                    predictions: predictions,
+                    productName: productSearchItem.name,
+                    categoryName: productSearchItem.category.name,
+                    quantity: quantityString,
+                    storageLocation: formState.storageLocation.rawValue,
+                    daysUntilExpiry: newDate.timeUntil.totalDays,
+                    status: formState.status.rawValue)
             }
         }
     }

@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 import PackageDescription
 
 let baseDeps: [PackageDescription.Target.Dependency] = [
@@ -8,11 +8,12 @@ let baseDeps: [PackageDescription.Target.Dependency] = [
     .product(name: "Router", package: "Router"),
     .product(name: "Environment", package: "Environment"),
     .product(name: "Extensions", package: "Extensions"),
+    .product(name: "Intelligence", package: "Intelligence"),
 ]
 
 let package = Package(
     name: "Features",
-    platforms: [.iOS(.v18)],
+    platforms: [.iOS("26.0")],
     products: [
         .library(name: "SearchUI", targets: ["SearchUI"]),
         .library(name: "TodayUI", targets: ["TodayUI"]),
@@ -26,6 +27,7 @@ let package = Package(
         .package(path: "../Network"),
         .package(path: "../Environment"),
         .package(path: "../Extensions"),
+        .package(path: "../Intelligence"),
         .package(url: "https://github.com/twostraws/CodeScanner", from: "2.5.0"),
     ],
     targets: [

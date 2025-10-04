@@ -2,10 +2,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "Environment",
+    name: "Intelligence",
     platforms: [.iOS("26.0")],
     products: [
-        .library(name: "Environment", targets: ["Environment"]),
+        .library(name: "Intelligence", targets: ["Intelligence"]),
     ],
     dependencies: [
         .package(path: "../Models"),
@@ -14,6 +14,6 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Environment",
+            name: "Intelligence",
             dependencies: ["Models", "Network", "Extensions"]),
     ])
