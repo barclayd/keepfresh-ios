@@ -362,16 +362,8 @@ public struct AddInventoryItemView: View {
         .onChange(of: preview.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
-        .onChange(of: calculatedExpiryDate) { oldDate, newDate in
-            if !newDate.isSameDay(as: oldDate) {
-                formState.expiryDate = newDate
-            }
-        }
         .onChange(of: formState.expiryDate) { oldDate, newDate in
-            if newDate.isSameDay(as: oldDate) {
-                return
-            }
-
+            guard !newDate.isSameDay(as: oldDate) else { return }
             guard let predictions = preview.predictions else {
                 print("no predictions found for \(productSearchItem.name)")
                 return
@@ -401,7 +393,9 @@ public struct AddInventoryItemView: View {
         guard let suggestions else { return }
 
         formState.storageLocation = suggestions.recommendedStorageLocation
-
         formState.expiryType = suggestions.expiryType
+
+        // Set initial expiry date only when suggestions first load
+        formState.expiryDate = calculatedExpiryDate
     }
 }

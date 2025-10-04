@@ -10,7 +10,7 @@ import SwiftUI
     category: ProductSearchItemCategory(
         id: 123,
         name: "Milk",
-        path: "Fresh Food > Milk"),
+        path: "Fresh Food > Milk", recommendedStorageLocation: .fridge),
     amount: 4,
     unit: "pints",
     icon: nil,

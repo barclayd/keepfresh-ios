@@ -54,7 +54,7 @@ public struct SearchResultCard: View {
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 10)
-            .background(.blue400)
+            .background(product.category.recommendedStorageLocation.tileColor)
             .cornerRadius(20)
 
             VStack {
@@ -91,7 +91,7 @@ public struct SearchResultCard: View {
                     topTrailingRadius: 0,
                     style: .continuous).fill(.white))
         }
-        .background(.blue400)
+        .background(product.category.recommendedStorageLocation.tileColor)
         .cornerRadius(20)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
     }

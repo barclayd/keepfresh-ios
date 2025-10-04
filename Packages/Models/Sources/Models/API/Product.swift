@@ -9,15 +9,17 @@ public enum ProductSearchItemStatus: String, Codable, Identifiable, CaseIterable
 }
 
 public struct ProductSearchItemCategory: Identifiable, Codable, Equatable, Hashable, Sendable {
-    public init(id: Int, name: String, path: String) {
+    public init(id: Int, name: String, path: String, recommendedStorageLocation: StorageLocation) {
         self.id = id
         self.name = name
         self.path = path
+        self.recommendedStorageLocation = recommendedStorageLocation
     }
 
     public let id: Int
     public let name: String
     public let path: String
+    public let recommendedStorageLocation: StorageLocation
 }
 
 public struct ProductSearchItemSource: Codable, Hashable, Sendable {

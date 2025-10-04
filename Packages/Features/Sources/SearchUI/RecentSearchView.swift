@@ -107,6 +107,7 @@ public struct RecentSearchView: View {
             }
             .onDelete(perform: deleteRecentSearch)
             .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
         }
         .frame(maxWidth: .infinity)
         .listStyle(.plain)
