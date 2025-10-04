@@ -160,8 +160,9 @@ public struct AddInventoryItemView: View {
                             } else {
                                 VStack {
                                     if let percentagePrediction = usageGenerator.percentagePrediction {
-                                        Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(
-                                            0)
+                                        Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold)
+                                            .lineSpacing(
+                                                0)
                                     } else {
                                         ProgressView().controlSize(.regular).tint(.yellow500)
                                     }
@@ -347,13 +348,6 @@ public struct AddInventoryItemView: View {
                     sourceId: productSearchItem.source.id,
                     sourceRef: productSearchItem.source.ref)
                 await item.fetchInventorySuggestions(product: previewProduct)
-
-                guard let predictions = item.predictions else {
-                    print("no predictions found for \(productSearchItem.name)")
-                    return
-                }
-                
-                await usageGenerator.generateUsagePrediction(predictions: predictions)
             }
         }
         .onChange(of: item.suggestions) { _, newSuggestions in
@@ -362,6 +356,34 @@ public struct AddInventoryItemView: View {
         .onChange(of: calculatedExpiryDate) { oldDate, newDate in
             if !newDate.isSameDay(as: oldDate) {
                 formState.expiryDate = newDate
+            }
+        }
+        .onChange(of: formState.expiryDate) { oldDate, newDate in
+            if newDate.isSameDay(as: oldDate) {
+                return
+            }
+
+            guard let predictions = item.predictions else {
+                print("no predictions found for \(productSearchItem.name)")
+                return
+            }
+
+            let quantityString: String? = {
+                if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
+                    return "\(amount)\(unit)"
+                }
+                return nil
+            }()
+
+            Task {
+                await usageGenerator.generateUsagePrediction(
+                    predictions: predictions,
+                    productName: productSearchItem.name,
+                    categoryName: productSearchItem.category.name,
+                    quantity: quantityString,
+                    storageLocation: formState.storageLocation.rawValue,
+                    daysUntilExpiry: newDate.timeUntil.totalDays,
+                    status: formState.status.rawValue)
             }
         }
     }

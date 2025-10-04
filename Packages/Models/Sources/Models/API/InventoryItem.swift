@@ -33,7 +33,7 @@ public struct UpdateInventoryItemRequest: Codable, Sendable {
     {
         self.storageLocation = storageLocation
         self.status = status
-        self.percentageRemaining = percentageRemaining.map { Int($0 )}
+        self.percentageRemaining = percentageRemaining.map { Int($0) }
     }
 }
 
@@ -295,7 +295,7 @@ public struct InventoryPreviewRequest: Codable, Sendable {
             self.name = name
             self.brand = brand
             self.barcode = barcode
-            self.unit = unit
+            self.unit = unit?.lowercased()
             self.amount = amount
             self.categoryId = categoryId
             self.sourceId = sourceId
@@ -313,18 +313,27 @@ public struct InventoryPredictionsResponse: Codable, Sendable {
         public let purchaseCount: Int
         public let usagePercentages: [Int]
         public let averageUsage: Double
+        public let medianUsage: Double?
         public let standardDeviation: Double
+        public let averageDaysToConsumeOrDiscarded: Double
+        public let medianDaysToConsumeOrDiscarded: Double?
     }
 
     public struct CategoryHistory: Codable, Sendable {
         public let purchaseCount: Int
         public let averageUsage: Double
+        public let medianUsage: Double?
         public let standardDeviation: Double
+        public let averageDaysToConsumeOrDiscarded: Double
+        public let medianDaysToConsumeOrDiscarded: Double?
     }
 
     public struct UserBaseline: Codable, Sendable {
         public let averageUsage: Double
+        public let medianUsage: Double?
         public let totalItemsCount: Int
+        public let averageDaysToConsumeOrDiscarded: Double
+        public let medianDaysToConsumeOrDiscarded: Double?
     }
 }
 
