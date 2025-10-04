@@ -1,8 +1,10 @@
 import DesignSystem
+import Models
+import SwiftData
 import SwiftUI
 
 public struct RecentSearchItem: View {
-    let currentSearchText: String
+    let search: RecentSearch
     let onTap: (String) -> Void
     let onDelete: () -> Void
     let colorConfiguration: ColorConfiguration
@@ -14,18 +16,21 @@ public struct RecentSearchItem: View {
     }
 
     public var body: some View {
-        Button(action: { onTap(currentSearchText) }) {
+        Button(action: { onTap(search.text) }) {
             HStack {
                 HStack(spacing: 10) {
-                    AsyncImage(url: URL(string: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png")) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    } placeholder: {
-                        ProgressView()
+                    if let imageURL = search.imageURL {
+                        AsyncImage(url: URL(string: imageURL)) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(width: 35, height: 35)
                     }
-                    .frame(width: 35, height: 35)
-                    Text(currentSearchText)
+
+                    Text(search.text)
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundStyle(colorConfiguration.text)
@@ -53,7 +58,22 @@ public struct RecentSearchItem: View {
 }
 
 public struct RecentSearchView: View {
+    @Environment(\.modelContext) var modelContext
+
+    @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
+
     @Binding var searchText: String
+
+    private func deleteRecentSearch(at offsets: IndexSet) {
+        for offset in offsets {
+            let recentSearch = recentSearches[offset]
+            modelContext.delete(recentSearch)
+        }
+    }
+
+    private func deleteRecentSearch(_ recentSearch: RecentSearch) {
+        modelContext.delete(recentSearch)
+    }
 
     public var body: some View {
         List {
@@ -65,23 +85,27 @@ public struct RecentSearchView: View {
                 Spacer()
             }.padding(.top, 10)
 
-            ForEach(0 ..< 5) { _ in
+            ForEach(recentSearches) { recentSearch in
                 RecentSearchItem(
-                    currentSearchText: "Semi Skimmed Milk",
+                    search: recentSearch,
                     onTap: { previousSearchText in
                         searchText = previousSearchText
                     },
-                    onDelete: { print("delete") },
+                    onDelete: { deleteRecentSearch(recentSearch) },
                     colorConfiguration: .init(
                         text: .blue700,
                         background: .red200,
-                        closeIcon: .blue400)).listRowInsets(EdgeInsets(
-                    top: 5,
-                    leading: 10,
-                    bottom: 5,
-                    trailing: 10))
+                        closeIcon: .blue400))
+                    .listRowInsets(EdgeInsets(
+                        top: 5,
+                        leading: 10,
+                        bottom: 5,
+                        trailing: 10))
             }
+            .onDelete(perform: deleteRecentSearch)
             .listRowSeparator(.hidden)
-        }.frame(maxWidth: .infinity).listStyle(.plain)
+        }
+        .frame(maxWidth: .infinity)
+        .listStyle(.plain)
     }
 }

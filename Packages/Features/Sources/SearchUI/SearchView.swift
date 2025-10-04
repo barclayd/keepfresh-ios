@@ -2,6 +2,7 @@ import DesignSystem
 import Models
 import Network
 import Router
+import SwiftData
 import SwiftUI
 
 let searchTabItems = ["All", "Foods", "Categories", "My Foods"]
@@ -23,6 +24,12 @@ class Search {
 
     private var searchTask: Task<Void, Never>?
 
+    private let onSaveSearch: (String, String?) -> Void
+
+    init(onSaveSearch: @escaping (String, String?) -> Void) {
+        self.onSaveSearch = onSaveSearch
+    }
+
     private func debounceSearch() async {
         searchTask?.cancel()
 
@@ -30,7 +37,7 @@ class Search {
             do {
                 try await Task.sleep(for: .seconds(1))
 
-                if !Task.isCancelled {
+                if !Task.isCancelled && debouncedSearchText != searchText {
                     debouncedSearchText = searchText
                     print("Debounced value: '\(searchText)'")
 
@@ -38,9 +45,7 @@ class Search {
                         await sendSearchRequest(searchTerm: searchText)
                     }
                 }
-            } catch {
-                print("Search request failed for searchText=\(searchText)")
-            }
+            } catch {}
         }
     }
 
@@ -54,6 +59,10 @@ class Search {
             searchResults = searchResponse.products
             print("Search successful: Found \(searchResults.count) products")
 
+            if let firstResult = searchResults.first(where: { $0.imageURL != nil }) {
+                onSaveSearch(searchTerm, firstResult.imageURL)
+            }
+
         } catch {
             print("Search failed with error: \(error)")
             searchResults = []
@@ -65,7 +74,11 @@ class Search {
 
 @MainActor
 public struct SearchView: View {
-    @State private var searchManager = Search()
+    @Environment(\.modelContext) var modelContext
+
+    @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
+
+    @State private var search: Search?
     @State private var currentPage: Int = 0
     @State private var dragOffset: CGFloat = 0
     @State private var canDrag: Bool = true
@@ -75,8 +88,38 @@ public struct SearchView: View {
         UIScrollView.appearance().bounces = false
     }
 
+    private func saveRecentSearch(text: String, imageURL: String?) {
+        let existingSearch = recentSearches.first(where: { $0.text.lowercased() == text.lowercased() })
+
+        guard existingSearch == nil else {
+            existingSearch?.date = Date()
+            return
+        }
+
+        let recentSearch = RecentSearch(
+            imageURL: imageURL,
+            text: text,
+            date: Date())
+        modelContext.insert(recentSearch)
+
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save search: \(error)")
+        }
+    }
+
     private var isSearching: Bool {
-        !searchManager.debouncedSearchText.isEmpty
+        guard let debouncedSearchText = search?.debouncedSearchText else {
+            return false
+        }
+        return !debouncedSearchText.isEmpty
+    }
+
+    private var searchTextBinding: Binding<String> {
+        Binding(
+            get: { search?.searchText ?? "" },
+            set: { search?.searchText = $0 })
     }
 
     public var body: some View {
@@ -121,9 +164,11 @@ public struct SearchView: View {
 
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< searchTabItems.count, id: \.self) { index in
-                        SearchResultView(products: searchManager.searchResults)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .tag(index)
+                        if let searchResults = search?.searchResults {
+                            SearchResultView(products: searchResults)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .tag(index)
+                        }
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -142,7 +187,7 @@ public struct SearchView: View {
                         ? DragGesture(minimumDistance: 10)
                         .onChanged { value in
                             if abs(value.translation.height) > abs(value.translation.width) {
-                                return // Ignore primarily vertical drags
+                                return
                             }
 
                             let screenWidth = UIScreen.main.bounds.width
@@ -169,10 +214,16 @@ public struct SearchView: View {
                         }
                         : nil)
             } else {
-                RecentSearchView(searchText: $searchManager.searchText)
+                RecentSearchView(searchText: searchTextBinding)
             }
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationBarSearch(searchText: $searchManager.searchText)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationBarSearch(searchText: searchTextBinding)
+        .task {
+            if search == nil {
+                search = Search(onSaveSearch: saveRecentSearch)
+            }
+        }
     }
 }
 
