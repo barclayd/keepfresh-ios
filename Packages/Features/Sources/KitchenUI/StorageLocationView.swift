@@ -195,7 +195,7 @@ public struct StorageLocationView: View {
                                                 .subheadline
                                             ).lineLimit(1)
                                         }
-                                        Image(systemName: "calendar.badge.plus")
+                                        Image(systemName: "calendar.badge.clock")
                                             .font(.system(size: 28)).fontWeight(.bold)
                                             .foregroundStyle(.blue700)
                                         Image(systemName: "list.number")

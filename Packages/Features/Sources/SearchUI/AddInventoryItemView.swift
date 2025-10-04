@@ -20,7 +20,7 @@ public struct AddInventoryItemView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
 
-    @State private var item = InventoryItemSuggestions()
+    @State private var preview = InventoryItemPreview()
     @State private var formState = InventoryFormState()
     @State private var usageGenerator = UsageGenerator()
 
@@ -32,7 +32,7 @@ public struct AddInventoryItemView: View {
 
     var isRecommendedExpiryDate: Bool {
         guard
-            let recommendedNumberOfDays = item.suggestions?.shelfLifeInDays[formState.status][
+            let recommendedNumberOfDays = preview.suggestions?.shelfLifeInDays[formState.status][
                 formState.storageLocation
             ]
         else {
@@ -42,12 +42,12 @@ public struct AddInventoryItemView: View {
     }
 
     var isRecommendedStorageLocation: Bool {
-        formState.storageLocation == item.suggestions?.recommendedStorageLocation
+        formState.storageLocation == preview.suggestions?.recommendedStorageLocation
     }
 
     var calculatedExpiryDate: Date {
         guard
-            let shelfLife = item.suggestions?.shelfLifeInDays,
+            let shelfLife = preview.suggestions?.shelfLifeInDays,
             let expiry = getExpiryDateForSelection(
                 storage: formState.storageLocation,
                 status: formState.status,
@@ -65,8 +65,8 @@ public struct AddInventoryItemView: View {
             "quantity: \(formState.quantity)",
             "status: \(formState.status.rawValue)")
 
-        guard let recommendedExpiryType = item.suggestions?.expiryType,
-              let recommendedStorageLocation = item.suggestions?.recommendedStorageLocation
+        guard let recommendedExpiryType = preview.suggestions?.expiryType,
+              let recommendedStorageLocation = preview.suggestions?.recommendedStorageLocation
         else {
             return
         }
@@ -156,7 +156,7 @@ public struct AddInventoryItemView: View {
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
 
-                            if item.isLoading {
+                            if preview.isLoading {
                                 ProgressView()
                             } else {
                                 VStack {
@@ -181,17 +181,17 @@ public struct AddInventoryItemView: View {
                                     GridRow {
                                         Spacer()
                                         VStack(spacing: 0) {
-                                            Text("32").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                            Text("Addded").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                            Text("\(preview.predictions?.productHistory.purchaseCount ?? 0)").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
                                                 .foregroundStyle(.blue700)
                                         }
                                         Spacer()
-                                        Image(systemName: "calendar.badge.plus")
+                                        Image(systemName: "calendar.badge.clock")
                                             .font(.system(size: 32)).fontWeight(.bold)
                                             .foregroundStyle(.blue700)
                                         Spacer()
                                         VStack(spacing: 0) {
-                                            Text("31").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("\(preview.predictions?.productHistory.consumedCount ?? 0)").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
                                             Text("Consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
                                                 .blue700)
                                         }
@@ -348,10 +348,10 @@ public struct AddInventoryItemView: View {
                     categoryId: productSearchItem.category.id,
                     sourceId: productSearchItem.source.id,
                     sourceRef: productSearchItem.source.ref)
-                await item.fetchInventorySuggestions(product: previewProduct)
+                await preview.fetchInventorySuggestions(product: previewProduct)
             }
         }
-        .onChange(of: item.suggestions) { _, newSuggestions in
+        .onChange(of: preview.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
         .onChange(of: calculatedExpiryDate) { oldDate, newDate in
@@ -364,7 +364,7 @@ public struct AddInventoryItemView: View {
                 return
             }
 
-            guard let predictions = item.predictions else {
+            guard let predictions = preview.predictions else {
                 print("no predictions found for \(productSearchItem.name)")
                 return
             }

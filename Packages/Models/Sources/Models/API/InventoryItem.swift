@@ -313,6 +313,7 @@ public struct InventoryPredictionsResponse: Codable, Sendable {
 
     public struct ProductHistory: Codable, Sendable {
         public let purchaseCount: Int
+        public let consumedCount: Int
         public let usagePercentages: [Int]
         public let averageUsage: Double
         public let medianUsage: Double?

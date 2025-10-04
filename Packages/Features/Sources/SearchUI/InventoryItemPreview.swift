@@ -4,7 +4,7 @@ import Network
 
 @MainActor
 @Observable
-public class InventoryItemSuggestions {
+public class InventoryItemPreview {
     public enum LoadingState {
         case idle
         case loading

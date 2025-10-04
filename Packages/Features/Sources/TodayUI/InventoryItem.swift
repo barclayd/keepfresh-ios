@@ -8,7 +8,7 @@ struct IconsView: View {
         HStack {
             HStack(spacing: 0) {
                 if inventoryItem.createdAt.timeSince.amount > 0 {
-                    Image(systemName: "calendar.badge.plus")
+                    Image(systemName: "calendar.badge.clock")
                         .font(.system(size: 18))
                         .foregroundStyle(.green600).fontWeight(.bold)
                     Text(inventoryItem.createdAt.timeSince.abbreviated)
@@ -32,7 +32,7 @@ struct IconsView: View {
             HStack(spacing: 2) {
                 Image(systemName: "sparkles")
                     .font(.system(size: 18)).foregroundStyle(.yellow500)
-                Text("17%").foregroundStyle(.yellow500)
+                Text("\(inventoryItem.consumptionPrediction)%").foregroundStyle(.yellow500)
             }
 
             Spacer()
