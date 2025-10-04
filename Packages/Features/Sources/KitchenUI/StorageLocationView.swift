@@ -49,6 +49,17 @@ private enum InventoryItemSortMode {
         }
     }
 
+    var title: String {
+        switch self {
+        case .alphabetical(direction: .forward): "Alphabetical (A–Z)"
+        case .alphabetical(direction: .backward): "Reverse Alphabetical (Z–A)"
+        case .dateAdded(direction: .forward): "Recently added"
+        case .dateAdded(direction: .backward): "Oldest items"
+        case .expiryDate(direction: .forward): "Expiring first"
+        case .expiryDate(direction: .backward): "Expiring last"
+        }
+    }
+
     func sort(items: [InventoryItem]) -> [InventoryItem] {
         switch self {
         case let .dateAdded(direction):
@@ -115,7 +126,7 @@ public struct StorageLocationView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
 
-    @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
+    @State private var sortMode: InventoryItemSortMode = .expiryDate(direction: .forward)
 
     private var sortedItems: [InventoryItem] {
         sortMode.sort(items: inventory.itemsByStorageLocation[storageLocation] ?? [])
@@ -218,7 +229,7 @@ public struct StorageLocationView: View {
                                 .cornerRadius(20)
 
                                 HStack {
-                                    Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
+                                    Text(sortMode.title).font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                     Spacer()
                                     HStack(spacing: 8) {
                                         SortButton(
