@@ -51,12 +51,14 @@ public struct AddInventoryItemRequest: Codable, Sendable {
         public let storageLocation: StorageLocation
         public let status: ProductSearchItemStatus
         public let expiryType: ExpiryType
+        public let consumptionPrediction: Int?
 
-        public init(expiryDate: Date, storageLocation: StorageLocation, status: ProductSearchItemStatus, expiryType: ExpiryType) {
+        public init(expiryDate: Date, storageLocation: StorageLocation, status: ProductSearchItemStatus, expiryType: ExpiryType, consumptionPrediction: Int?) {
             self.expiryDate = expiryDate
             self.storageLocation = storageLocation
             self.status = status
             self.expiryType = expiryType
+            self.consumptionPrediction = consumptionPrediction
         }
     }
 

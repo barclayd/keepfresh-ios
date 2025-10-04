@@ -54,7 +54,8 @@ private extension InventoryItemFormType {
 
 private extension Date {
     var formattedWithOrdinal: String {
-        let day = Calendar.current.component(.day, from: self)
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: self)
         let suffix = switch day {
         case 1, 21, 31: "st"
         case 2, 22: "nd"
@@ -62,8 +63,16 @@ private extension Date {
         default: "th"
         }
 
+        let currentYear = calendar.component(.year, from: Date())
+        let dateYear = calendar.component(.year, from: self)
+
         let formatter = DateFormatter()
-        formatter.dateFormat = "d'\(suffix)' MMMM"
+        if dateYear != currentYear {
+            formatter.dateFormat = "d'\(suffix)' MMMM yy"
+        } else {
+            formatter.dateFormat = "d'\(suffix)' MMMM"
+        }
+
         return formatter.string(from: self)
     }
 
@@ -157,7 +166,7 @@ private extension InventoryItemFormType {
                 .labelsHidden()
                 .disabled(true)
         case .Quantity:
-            Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
+            Stepper(value: quantity, in: 1 ... 10, step: 1) {}.tint(.blue700)
         }
     }
 

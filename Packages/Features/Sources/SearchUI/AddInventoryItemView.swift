@@ -79,7 +79,8 @@ public struct AddInventoryItemView: View {
                         .storageLocation,
                     status: formState.status,
                     expiryType: formState
-                        .expiryType),
+                        .expiryType,
+                consumptionPrediction: usageGenerator.percentagePrediction),
             product: AddInventoryItemRequest
                 .ProductData(
                     name: productSearchItem.name,
