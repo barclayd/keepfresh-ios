@@ -1,5 +1,6 @@
 import DesignSystem
 import Environment
+import Extensions
 import Models
 import SwiftUI
 
@@ -36,7 +37,9 @@ public struct TodayView: View {
             .padding(.horizontal, 20)
             .padding(.top, 20)
             .padding(.bottom, 10)
+            .redactedShimmer(when: inventory.state == .loading)
         }
         .background(.white200)
+        
     }
 }

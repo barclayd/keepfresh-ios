@@ -46,7 +46,7 @@ public final class Inventory {
         }
     }
 
-    public var state: FetchState = .empty
+    public var state: FetchState = .loading
 
     let api = KeepFreshAPI()
 
@@ -55,7 +55,9 @@ public final class Inventory {
     public private(set) var productCountsByLocation: [Int: [StorageLocation: Int]] = [:]
     public private(set) var detailsByStorageLocation: [StorageLocation: InventoryLocationDetails] = [:]
 
-    public init() {}
+    public init(initialState: [InventoryItem] = InventoryItem.mocks(count: 5)) {
+        items = initialState
+    }
 
     private func updateCaches() {
         itemsByStorageLocation = Dictionary(grouping: items, by: \.storageLocation)
@@ -101,13 +103,12 @@ public final class Inventory {
         state = .loading
 
         do {
+            try await Task.sleep(for: .seconds(10))
             items = try await api.getInventoryItems().inventoryItems
+            state = .loaded
         } catch {
             state = .error
-            return
         }
-
-        state = .loaded
     }
 
     public func addItem(

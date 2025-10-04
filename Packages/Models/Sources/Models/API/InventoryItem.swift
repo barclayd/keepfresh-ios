@@ -358,3 +358,43 @@ public struct InventoryPreviewAndSuggestionsResponse: Codable, Sendable {
     public let predictions: InventoryPredictionsResponse
     public let suggestions: InventorySuggestionsResponse
 }
+
+// MARK: - Mock Data
+
+public extension InventoryItem {
+    static var mock: InventoryItem {
+        mock(id: 1)
+    }
+
+    static func mock(id: Int) -> InventoryItem {
+        InventoryItem(
+            id: id,
+            createdAt: Date().addingTimeInterval(-86400 * 2),
+            updatedAt: Date(),
+            openedAt: nil,
+            status: .unopened,
+            storageLocation: .fridge,
+            consumptionPrediction: 85,
+            expiryDate: Date().addingTimeInterval(86400 * 3),
+            expiryType: .BestBefore,
+            product: Product(
+                id: id,
+                name: "Sample Product",
+                unit: "g",
+                brand: .tesco,
+                amount: 500,
+                imageUrl: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
+                category: CategoryDetails(
+                    icon: "carrot.fill",
+                    name: "Vegetables",
+                    imageUrl: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
+                    pathDisplay: "Food > Vegetables"
+                )
+            )
+        )
+    }
+
+    static func mocks(count: Int) -> [InventoryItem] {
+        (1...count).map { mock(id: $0) }
+    }
+}
