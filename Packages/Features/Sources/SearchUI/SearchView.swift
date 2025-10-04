@@ -37,7 +37,7 @@ class Search {
             do {
                 try await Task.sleep(for: .seconds(1))
 
-                if !Task.isCancelled && debouncedSearchText != searchText {
+                if !Task.isCancelled, debouncedSearchText != searchText {
                     debouncedSearchText = searchText
                     print("Debounced value: '\(searchText)'")
 

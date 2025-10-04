@@ -152,7 +152,14 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
 }
 
 public extension InventoryItem {
-    init(from request: AddInventoryItemRequest, category: ProductSearchItemCategory, id: Int, productId: Int, imageURL: String?, createdAt: Date = Date()) {
+    init(
+        from request: AddInventoryItemRequest,
+        category: ProductSearchItemCategory,
+        id: Int,
+        productId: Int,
+        imageURL: String?,
+        createdAt: Date = Date())
+    {
         self.id = id
         self.createdAt = createdAt
         updatedAt = createdAt
