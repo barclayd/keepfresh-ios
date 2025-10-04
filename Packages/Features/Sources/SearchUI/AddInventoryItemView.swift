@@ -159,7 +159,7 @@ public struct AddInventoryItemView: View {
                                 ProgressView()
                             } else {
                                 VStack {
-                                    if let percentagePrediction = usageGenerator.percentagePrediction {
+                                    if let percentagePrediction = usageGenerator.percentagePrediction, usageGenerator.state != .loading {
                                         Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold)
                                             .lineSpacing(
                                                 0)
