@@ -122,11 +122,7 @@ public struct AddInventoryItemView: View {
             ZStack(alignment: .bottom) {
                 ScrollView(showsIndicators: false) {
                     ZStack {
-                        LinearGradient(stops: [
-                            Gradient.Stop(color: .blue700, location: 0),
-                            Gradient.Stop(color: .blue500, location: 0.2),
-                            Gradient.Stop(color: .white200, location: 0.375),
-                        ], startPoint: .top, endPoint: .bottom)
+                        LinearGradient(stops: formState.storageLocation.viewGradientStops, startPoint: .top, endPoint: .bottom)
                             .ignoresSafeArea(edges: .top)
                             .offset(y: -geometry.safeAreaInsets.top)
                             .frame(height: geometry.size.height)
