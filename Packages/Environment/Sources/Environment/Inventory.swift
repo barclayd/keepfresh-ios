@@ -110,7 +110,13 @@ public final class Inventory {
         state = .loaded
     }
 
-    public func addItem(request: AddInventoryItemRequest, catgeory: ProductSearchItemCategory, inventoryItemId: Int, productId: Int, imageURL: String?) {
+    public func addItem(
+        request: AddInventoryItemRequest,
+        catgeory: ProductSearchItemCategory,
+        inventoryItemId: Int,
+        productId: Int,
+        imageURL: String?)
+    {
         let item = InventoryItem(from: request, category: catgeory, id: inventoryItemId, productId: productId, imageURL: imageURL)
 
         items.append(item)

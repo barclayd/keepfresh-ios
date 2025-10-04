@@ -1,6 +1,8 @@
 import DesignSystem
 import Environment
+import Models
 import Router
+import SwiftData
 import SwiftUI
 
 public class FontRegistration {
@@ -29,6 +31,7 @@ struct KeepFreshApp: App {
             AppTabRootView()
                 .environment(router)
                 .environment(inventory)
+                .modelContainer(for: RecentSearch.self)
                 .task {
                     await inventory.fetchItems()
                 }

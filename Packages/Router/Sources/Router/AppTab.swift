@@ -36,9 +36,9 @@ public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
 
     public var toolbarBackground: Color {
         switch self {
-        case .today: .white
+        case .today: .clear
         case .search: .blue600
-        case .kitchen: .white
+        case .kitchen: .clear
         }
     }
 }
