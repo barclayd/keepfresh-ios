@@ -5,12 +5,12 @@ import Network
 @MainActor
 @Observable
 public class InventoryItemSuggestions {
-    private static var globalCache: [Int: InventorySuggestionsResponse] = [:]
+    private static var globalCache: [Int: InventoryPreviewAndSuggestionsResponse] = [:]
 
     public enum LoadingState {
         case idle
         case loading
-        case loaded(InventorySuggestionsResponse)
+        case loaded(InventoryPreviewAndSuggestionsResponse)
         case failed(Error)
     }
 
@@ -23,7 +23,14 @@ public class InventoryItemSuggestions {
 
     public var suggestions: InventorySuggestionsResponse? {
         if case let .loaded(response) = state {
-            return response
+            return response.suggestions
+        }
+        return nil
+    }
+
+    public var predictions: InventoryPredictionsResponse? {
+        if case let .loaded(response) = state {
+            return response.predictions
         }
         return nil
     }
@@ -37,7 +44,9 @@ public class InventoryItemSuggestions {
 
     public init() {}
 
-    public func fetchInventorySuggestions(for categoryId: Int) async {
+    public func fetchInventorySuggestions(product: InventoryPreviewRequest.PreviewProduct) async {
+        let categoryId = product.categoryId
+
         if currentCategoryId != categoryId {
             currentCategoryId = categoryId
             state = .idle
@@ -45,7 +54,7 @@ public class InventoryItemSuggestions {
 
         if let cachedSuggestions = Self.globalCache[categoryId] {
             state = .loaded(cachedSuggestions)
-            print("Using cached inventory suggestions for category: \(categoryId)")
+            print("Using cached inventory preview for category: \(categoryId)")
             return
         }
 
@@ -54,7 +63,8 @@ public class InventoryItemSuggestions {
         let api = KeepFreshAPI()
 
         do {
-            let response = try await api.getInventorySuggestions(categoryId: categoryId)
+            let request = InventoryPreviewRequest(product: product)
+            let response = try await api.getInventoryPreview(request)
 
             Self.globalCache[categoryId] = response
 
@@ -62,18 +72,22 @@ public class InventoryItemSuggestions {
                 state = .loaded(response)
             }
 
-            print("Fetched inventory suggestions for category: \(categoryId)")
+            print("Fetched inventory preview for category: \(categoryId)")
 
         } catch {
             if currentCategoryId == categoryId {
                 state = .failed(error)
             }
-            print("Failed to fetch inventory suggestions: \(error)")
+            print("Failed to fetch inventory preview: \(error)")
         }
     }
 
     public func getCachedSuggestions(for categoryId: Int) -> InventorySuggestionsResponse? {
-        Self.globalCache[categoryId]
+        Self.globalCache[categoryId]?.suggestions
+    }
+
+    public func getCachedPredictions(for categoryId: Int) -> InventoryPredictionsResponse? {
+        Self.globalCache[categoryId]?.predictions
     }
 
     public static func clearGlobalCache() {

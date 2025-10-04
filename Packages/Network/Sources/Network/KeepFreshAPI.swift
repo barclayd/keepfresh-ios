@@ -17,14 +17,6 @@ public struct KeepFreshAPI: Sendable {
             queryParameters: ["search": query])
     }
 
-    // MARK: - Categories
-
-    public func getInventorySuggestions(categoryId: Int) async throws -> InventorySuggestionsResponse {
-        try await client.fetch(
-            InventorySuggestionsResponse.self,
-            path: "v1/categories/\(categoryId)/inventory-suggestions")
-    }
-
     public func getInventoryItems() async throws -> InventoryItemsResponse {
         try await client.fetch(
             InventoryItemsResponse.self,
@@ -43,5 +35,12 @@ public struct KeepFreshAPI: Sendable {
 
     public func updateInventoryItem(for itemId: Int, _ request: UpdateInventoryItemRequest) async throws {
         try await client.patch(path: "v1/inventory/items/\(itemId)", body: request)
+    }
+
+    public func getInventoryPreview(_ request: InventoryPreviewRequest) async throws -> InventoryPreviewAndSuggestionsResponse {
+        try await client.post(
+            InventoryPreviewAndSuggestionsResponse.self,
+            path: "v1/inventory/preview",
+            body: request)
     }
 }

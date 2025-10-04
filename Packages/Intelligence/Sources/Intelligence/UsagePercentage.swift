@@ -1,4 +1,5 @@
 import FoundationModels
+import Models
 import Network
 import SwiftUI
 
@@ -21,12 +22,12 @@ public final class UsageGenerator {
 
     public init() {}
 
-    public func generateUsagePrediction() async {
+    public func generateUsagePrediction(predictions: InventoryPredictionsResponse) async {
         guard model.availability == .available else {
             print("Unable to use Apple Intelligence")
             return
         }
-        
+
         state = .loading
 
         do {
@@ -52,7 +53,7 @@ public final class UsageGenerator {
 
             Return your prediction as a string, specifying the number only. e.g. 89
             """)
-            
+
             let response = try await session.respond(to: """
             ITEM DETAILS:
             - Name: Chicken Thighs
@@ -69,11 +70,11 @@ public final class UsageGenerator {
 
             Predict the usage percentage for this item.
             """)
-            
+
             print("Model response: \(response)")
-            
+
             percentagePrediction = Int(response.content) ?? 75
-            
+
             state = .loaded
 
         } catch {

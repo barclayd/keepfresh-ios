@@ -262,3 +262,73 @@ public extension Brand {
         self = Self.knownBrands[brandString] ?? .unknown(brandString)
     }
 }
+
+// MARK: - Inventory Preview
+
+public struct InventoryPreviewRequest: Codable, Sendable {
+    public let product: PreviewProduct
+
+    public init(product: PreviewProduct) {
+        self.product = product
+    }
+
+    public struct PreviewProduct: Codable, Sendable {
+        public let name: String
+        public let brand: String
+        public let barcode: String?
+        public let unit: String?
+        public let amount: Double?
+        public let categoryId: Int
+        public let sourceId: Int
+        public let sourceRef: String
+
+        public init(
+            name: String,
+            brand: String,
+            barcode: String? = nil,
+            unit: String? = nil,
+            amount: Double? = nil,
+            categoryId: Int,
+            sourceId: Int,
+            sourceRef: String)
+        {
+            self.name = name
+            self.brand = brand
+            self.barcode = barcode
+            self.unit = unit
+            self.amount = amount
+            self.categoryId = categoryId
+            self.sourceId = sourceId
+            self.sourceRef = sourceRef
+        }
+    }
+}
+
+public struct InventoryPredictionsResponse: Codable, Sendable {
+    public let productHistory: ProductHistory
+    public let categoryHistory: CategoryHistory
+    public let userBaseline: UserBaseline
+
+    public struct ProductHistory: Codable, Sendable {
+        public let purchaseCount: Int
+        public let usagePercentages: [Int]
+        public let averageUsage: Double
+        public let standardDeviation: Double
+    }
+
+    public struct CategoryHistory: Codable, Sendable {
+        public let purchaseCount: Int
+        public let averageUsage: Double
+        public let standardDeviation: Double
+    }
+
+    public struct UserBaseline: Codable, Sendable {
+        public let averageUsage: Double
+        public let totalItemsCount: Int
+    }
+}
+
+public struct InventoryPreviewAndSuggestionsResponse: Codable, Sendable {
+    public let predictions: InventoryPredictionsResponse
+    public let suggestions: InventorySuggestionsResponse
+}

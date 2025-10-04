@@ -160,7 +160,7 @@ public struct AddInventoryItemView: View {
                             } else {
                                 VStack {
                                     if let percentagePrediction = usageGenerator.percentagePrediction {
-                                        Text("\(percentagePrediction)").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(
+                                        Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold).lineSpacing(
                                             0)
                                     } else {
                                         ProgressView().controlSize(.regular).tint(.yellow500)
@@ -337,8 +337,23 @@ public struct AddInventoryItemView: View {
         }
         .onAppear {
             Task {
-                await item.fetchInventorySuggestions(for: productSearchItem.category.id)
-                await usageGenerator.generateUsagePrediction()
+                let previewProduct = InventoryPreviewRequest.PreviewProduct(
+                    name: productSearchItem.name,
+                    brand: productSearchItem.brand,
+                    barcode: productSearchItem.source.ref,
+                    unit: productSearchItem.unit,
+                    amount: productSearchItem.amount,
+                    categoryId: productSearchItem.category.id,
+                    sourceId: productSearchItem.source.id,
+                    sourceRef: productSearchItem.source.ref)
+                await item.fetchInventorySuggestions(product: previewProduct)
+
+                guard let predictions = item.predictions else {
+                    print("no predictions found for \(productSearchItem.name)")
+                    return
+                }
+                
+                await usageGenerator.generateUsagePrediction(predictions: predictions)
             }
         }
         .onChange(of: item.suggestions) { _, newSuggestions in
