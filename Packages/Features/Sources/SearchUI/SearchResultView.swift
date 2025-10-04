@@ -1,10 +1,12 @@
 import DesignSystem
+import Extensions
 import Models
 import Router
 import SwiftUI
 
 public struct SearchResultView: View {
     var products: [ProductSearchItemResponse]
+    var isLoading: Bool = false
 
     public var body: some View {
         ScrollView {
@@ -20,6 +22,7 @@ public struct SearchResultView: View {
             }
             .padding(.top, 15)
             .padding(.horizontal, 16)
+            .redactedShimmer(when: isLoading)
         }
     }
 }

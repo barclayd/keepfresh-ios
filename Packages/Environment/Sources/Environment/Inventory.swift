@@ -103,7 +103,6 @@ public final class Inventory {
         state = .loading
 
         do {
-            try await Task.sleep(for: .seconds(10))
             items = try await api.getInventoryItems().inventoryItems
             state = .loaded
         } catch {

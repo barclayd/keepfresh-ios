@@ -228,7 +228,7 @@ public struct AddInventoryItemView: View {
                                 }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                     maxWidth: .infinity,
                                     alignment: .center)
-                                    .background(.blue100)
+                                    .glassEffect(.regular.tint(.blue100), in: .rect(cornerRadius: 20))
                                     .cornerRadius(20)
                                     .padding(
                                         .bottom,

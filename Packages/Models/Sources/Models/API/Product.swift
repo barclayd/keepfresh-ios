@@ -78,3 +78,33 @@ public enum ExpiryType: String, Codable, Identifiable, CaseIterable, Sendable {
 public struct ProductSearchResponse: Codable, Sendable {
     public let products: [ProductSearchItemResponse]
 }
+
+// MARK: - Mock Data
+
+public extension ProductSearchItemResponse {
+    static var mock: ProductSearchItemResponse {
+        mock(id: 1)
+    }
+
+    static func mock(id: Int) -> ProductSearchItemResponse {
+        ProductSearchItemResponse(
+            name: "Sample Product",
+            brand: "Tesco",
+            category: ProductSearchItemCategory(
+                id: id,
+                name: "Sample Category",
+                path: "Food > Sample",
+                recommendedStorageLocation: .fridge
+            ),
+            amount: 500,
+            unit: "g",
+            icon: "carrot.fill",
+            imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
+            source: ProductSearchItemSource(id: id, ref: "sample-\(id)")
+        )
+    }
+
+    static func mocks(count: Int) -> [ProductSearchItemResponse] {
+        (1...count).map { mock(id: $0) }
+    }
+}
