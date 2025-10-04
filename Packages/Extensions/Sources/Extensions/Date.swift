@@ -47,9 +47,9 @@ public struct RelativeTime {
     public let totalDays: Int
 
     init(amount: Int, unit: TimeUnit, totalDays: Int) {
-        self.amount = abs(amount)
+        self.amount = amount
         self.unit = unit
-        self.totalDays = abs(totalDays)
+        self.totalDays = totalDays
     }
 
     public var abbreviated: String {
@@ -57,13 +57,13 @@ public struct RelativeTime {
     }
 
     public var formatted: String {
-        guard amount > 0 else { return "Today" }
+        guard amount != 0 else { return "Today" }
 
         return "\(amount) \(unit.pluralised(for: amount))"
     }
 
     public var formattedElapsedTime: String {
-        guard amount > 0 else { return "Today" }
+        guard amount != 0 else { return "Today" }
 
         return "\(formatted) ago"
     }
@@ -91,22 +91,23 @@ public func relativeTime(
     }
 
     let dayComponents = calendar.dateComponents([.day], from: fromDate, to: toDate)
-    let days = abs(dayComponents.day ?? 0)
+    let days = dayComponents.day ?? 0
 
     let weekComponents = calendar.dateComponents([.weekOfYear], from: fromDate, to: toDate)
-    let weeks = abs(weekComponents.weekOfYear ?? 0)
+    let weeks = weekComponents.weekOfYear ?? 0
 
     let monthComponents = calendar.dateComponents([.month], from: fromDate, to: toDate)
-    let months = abs(monthComponents.month ?? 0)
+    let months = monthComponents.month ?? 0
 
     let yearComponents = calendar.dateComponents([.year], from: fromDate, to: toDate)
-    let years = abs(yearComponents.year ?? 0)
+    let years = yearComponents.year ?? 0
 
-    let (value, unit): (Int, TimeUnit) = if days <= 7 {
+    let absDays = abs(days)
+    let (value, unit): (Int, TimeUnit) = if absDays <= 7 {
         (days, .day)
-    } else if days <= 28 {
+    } else if absDays <= 28 {
         (weeks, .week)
-    } else if months <= 12 {
+    } else if abs(months) <= 12 {
         (months, .month)
     } else {
         (years, .year)
