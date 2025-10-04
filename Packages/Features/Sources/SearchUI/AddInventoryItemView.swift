@@ -80,7 +80,7 @@ public struct AddInventoryItemView: View {
                     status: formState.status,
                     expiryType: formState
                         .expiryType,
-                consumptionPrediction: usageGenerator.percentagePrediction),
+                    consumptionPrediction: usageGenerator.percentagePrediction),
             product: AddInventoryItemRequest
                 .ProductData(
                     name: productSearchItem.name,
@@ -101,12 +101,17 @@ public struct AddInventoryItemView: View {
                     sourceRef: productSearchItem
                         .source.ref))
 
-        let temporaryId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
+        let temporaryInventoryItemId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
+
+        guard let productId = preview.productId else {
+            return
+        }
 
         inventory.addItem(
             request: request,
             catgeory: productSearchItem.category,
-            productId: temporaryId,
+            inventoryItemId: temporaryInventoryItemId,
+            productId: productId,
             imageURL: productSearchItem.imageURL)
 
         router.popToRoot(for: .search)
@@ -181,7 +186,8 @@ public struct AddInventoryItemView: View {
                                     GridRow {
                                         Spacer()
                                         VStack(spacing: 0) {
-                                            Text("\(preview.predictions?.productHistory.purchaseCount ?? 0)").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("\(preview.predictions?.productHistory.purchaseCount ?? 0)").fontWeight(.bold)
+                                                .font(.headline).foregroundStyle(.blue700)
                                             Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
                                                 .foregroundStyle(.blue700)
                                         }
@@ -191,31 +197,35 @@ public struct AddInventoryItemView: View {
                                             .foregroundStyle(.blue700)
                                         Spacer()
                                         VStack(spacing: 0) {
-                                            Text("\(preview.predictions?.productHistory.consumedCount ?? 0)").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                            Text("\(preview.predictions?.productHistory.consumedCount ?? 0)").fontWeight(.bold)
+                                                .font(.headline).foregroundStyle(.blue700)
                                             Text("Consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
                                                 .blue700)
                                         }
                                         Spacer()
                                     }
-                                    GridRow {
-                                        Spacer()
-                                        VStack(spacing: 0) {
-                                            Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+
+                                    if let productId = preview.productId {
+                                        GridRow {
+                                            Spacer()
+                                            VStack(spacing: 0) {
+                                                Text("\(inventory.productCountsByLocation[productId]?[.fridge] ?? 0)").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                                    .foregroundStyle(.blue700)
+                                                Text("In Fridge").fontWeight(.light).font(.subheadline)
+                                                    .foregroundStyle(.blue700)
+                                            }
+                                            Spacer()
+                                            Image(systemName: "house")
+                                                .font(.system(size: 32)).fontWeight(.bold)
                                                 .foregroundStyle(.blue700)
-                                            Text("In Fridge").fontWeight(.light).font(.subheadline)
-                                                .foregroundStyle(.blue700)
+                                            Spacer()
+                                            VStack(spacing: 0) {
+                                                Text("\(inventory.productCountsByLocation[productId]?[.freezer] ?? 0)").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
+                                                Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                                    .blue700)
+                                            }
+                                            Spacer()
                                         }
-                                        Spacer()
-                                        Image(systemName: "house")
-                                            .font(.system(size: 32)).fontWeight(.bold)
-                                            .foregroundStyle(.blue700)
-                                        Spacer()
-                                        VStack(spacing: 0) {
-                                            Text("2").fontWeight(.bold).font(.headline).foregroundStyle(.blue700)
-                                            Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                                .blue700)
-                                        }
-                                        Spacer()
                                     }
                                 }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                     maxWidth: .infinity,

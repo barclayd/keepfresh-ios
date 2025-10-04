@@ -33,6 +33,13 @@ public class InventoryItemPreview {
         return nil
     }
 
+    public var productId: Int? {
+        if case let .loaded(response) = state {
+            return response.productId
+        }
+        return nil
+    }
+
     public var error: Error? {
         if case let .failed(error) = state { return error }
         return nil
