@@ -51,12 +51,20 @@ public struct AddInventoryItemRequest: Codable, Sendable {
         public let storageLocation: StorageLocation
         public let status: ProductSearchItemStatus
         public let expiryType: ExpiryType
+        public let consumptionPrediction: Int?
 
-        public init(expiryDate: Date, storageLocation: StorageLocation, status: ProductSearchItemStatus, expiryType: ExpiryType) {
+        public init(
+            expiryDate: Date,
+            storageLocation: StorageLocation,
+            status: ProductSearchItemStatus,
+            expiryType: ExpiryType,
+            consumptionPrediction: Int?)
+        {
             self.expiryDate = expiryDate
             self.storageLocation = storageLocation
             self.status = status
             self.expiryType = expiryType
+            self.consumptionPrediction = consumptionPrediction
         }
     }
 
@@ -144,7 +152,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
 }
 
 public extension InventoryItem {
-    init(from request: AddInventoryItemRequest, category: ProductSearchItemCategory, id: Int, imageURL: String?, createdAt: Date = Date()) {
+    init(from request: AddInventoryItemRequest, category: ProductSearchItemCategory, id: Int, productId: Int, imageURL: String?, createdAt: Date = Date()) {
         self.id = id
         self.createdAt = createdAt
         updatedAt = createdAt
@@ -154,7 +162,7 @@ public extension InventoryItem {
         expiryDate = request.item.expiryDate
         expiryType = request.item.expiryType
         product = Product(
-            id: 15,
+            id: productId,
             name: request.product.name,
             unit: request.product.unit,
             brand: Brand(from: request.product.brand),
@@ -311,6 +319,7 @@ public struct InventoryPredictionsResponse: Codable, Sendable {
 
     public struct ProductHistory: Codable, Sendable {
         public let purchaseCount: Int
+        public let consumedCount: Int
         public let usagePercentages: [Int]
         public let averageUsage: Double
         public let medianUsage: Double?
@@ -338,6 +347,7 @@ public struct InventoryPredictionsResponse: Codable, Sendable {
 }
 
 public struct InventoryPreviewAndSuggestionsResponse: Codable, Sendable {
+    public let productId: Int
     public let predictions: InventoryPredictionsResponse
     public let suggestions: InventorySuggestionsResponse
 }

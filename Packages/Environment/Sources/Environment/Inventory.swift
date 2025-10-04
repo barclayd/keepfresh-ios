@@ -78,7 +78,11 @@ public final class Inventory {
 
         for item in items {
             counts[item.product.id, default: 0] += 1
-            locationCounts[item.product.id, default: [:]][item.storageLocation, default: 0] += 1
+
+            if locationCounts[item.product.id] == nil {
+                locationCounts[item.product.id] = [:]
+            }
+            locationCounts[item.product.id]![item.storageLocation, default: 0] += 1
         }
 
         productCounts = counts
@@ -89,7 +93,7 @@ public final class Inventory {
         items.sorted { $0.createdAt > $1.createdAt }
     }
 
-    public var itemsSortedByExpiryDescending: [InventoryItem] {
+    public var itemsSortedByExpiryAscending: [InventoryItem] {
         items.sorted { $0.expiryDate < $1.expiryDate }
     }
 
@@ -106,8 +110,8 @@ public final class Inventory {
         state = .loaded
     }
 
-    public func addItem(request: AddInventoryItemRequest, catgeory: ProductSearchItemCategory, productId: Int, imageURL: String?) {
-        let item = InventoryItem(from: request, category: catgeory, id: productId, imageURL: imageURL)
+    public func addItem(request: AddInventoryItemRequest, catgeory: ProductSearchItemCategory, inventoryItemId: Int, productId: Int, imageURL: String?) {
+        let item = InventoryItem(from: request, category: catgeory, id: inventoryItemId, productId: productId, imageURL: imageURL)
 
         items.append(item)
 

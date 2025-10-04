@@ -4,7 +4,7 @@ import Network
 
 @MainActor
 @Observable
-public class InventoryItemSuggestions {
+public class InventoryItemPreview {
     public enum LoadingState {
         case idle
         case loading
@@ -29,6 +29,13 @@ public class InventoryItemSuggestions {
     public var predictions: InventoryPredictionsResponse? {
         if case let .loaded(response) = state {
             return response.predictions
+        }
+        return nil
+    }
+
+    public var productId: Int? {
+        if case let .loaded(response) = state {
+            return response.productId
         }
         return nil
     }

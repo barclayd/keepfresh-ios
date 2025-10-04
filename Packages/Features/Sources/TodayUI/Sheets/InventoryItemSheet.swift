@@ -70,7 +70,7 @@ struct InventoryItemSheetStatsGridRows: View {
                         .font(.system(size: 28)).fontWeight(.bold)
                         .foregroundStyle(.yellow400)
                     VStack(spacing: 0) {
-                        Text("17").fontWeight(.bold).font(.headline)
+                        Text("\(inventoryItem.consumptionPrediction)%").fontWeight(.bold).font(.headline)
                         Text("Predicted usage").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
@@ -88,9 +88,9 @@ struct InventoryItemSheetStatsGridRows: View {
                 GridRow {
                     VStack(spacing: 0) {
                         Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
-                        Text("\(inventoryItem.createdAt.timeSince.formatted) ago").fontWeight(.bold).font(.headline)
+                        Text(inventoryItem.createdAt.timeSince.formattedElapsedTime).fontWeight(.bold).font(.headline)
                     }.foregroundStyle(.blue700)
-                    Image(systemName: "calendar.badge.plus")
+                    Image(systemName: "calendar.badge.clock")
                         .font(.system(size: 32)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
                     VStack(spacing: 0) {

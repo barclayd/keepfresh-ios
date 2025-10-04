@@ -29,7 +29,7 @@ public struct TodayView: View {
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 14) {
-                ForEach(inventory.itemsSortedByExpiryDescending) { inventoryItem in
+                ForEach(inventory.itemsSortedByExpiryAscending) { inventoryItem in
                     InventoryItemView(inventoryItem: inventoryItem)
                 }
             }
