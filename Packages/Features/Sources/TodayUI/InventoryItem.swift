@@ -52,7 +52,7 @@ struct IconsView: View {
                     .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
                     .alignmentGuide(.firstTextBaseline) { d in
                         d[.bottom]
-                    }
+                    }.padding(.trailing, 20)
             }
         }
         .padding(.vertical, 10)
@@ -107,7 +107,7 @@ public struct InventoryItemView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 } placeholder: {
-                    ProgressView()
+                    ProgressView().tint(inventoryItem.consumptionUrgency.tileColor.foreground)
                 }
                 .frame(width: 40, height: 40)
                 VStack(spacing: 4) {
@@ -140,7 +140,7 @@ public struct InventoryItemView: View {
                         Spacer()
 
                         ProgressRing(
-                            progress: 0.85,
+                            progress: inventoryItem.progress,
                             backgroundColor: inventoryItem.consumptionUrgency.tileColor.background,
                             foregroundColor: inventoryItem.consumptionUrgency.tileColor.foreground)
                             .frame(width: 40, height: 40)

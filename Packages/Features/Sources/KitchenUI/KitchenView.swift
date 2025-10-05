@@ -41,18 +41,18 @@ struct StatsView: View {
                                             .resizable()
                                             .scaledToFit()
                                             .frame(width: 22, height: 22)
-                                            .foregroundStyle(storageLocation.foregorundColor)
+                                            .foregroundStyle(storageLocation.foregroundColor)
                                     } else {
                                         Image(systemName: stat.icon).font(.system(size: 18))
                                             .foregroundStyle(
                                                 stat.icon == "hourglass" ? locationDetails
-                                                    .expiryStatusPercentageColor : storageLocation.foregorundColor)
+                                                    .expiryStatusPercentageColor : storageLocation.foregroundColor)
                                     }
 
                                     Text("\(amount)").font(.body)
                                         .foregroundStyle(
                                             stat.icon == "hourglass" ? locationDetails
-                                                .expiryStatusPercentageColor : storageLocation.foregorundColor)
+                                                .expiryStatusPercentageColor : storageLocation.foregroundColor)
                                 }
                             }
                         }
@@ -64,7 +64,7 @@ struct StatsView: View {
                         ForEach(Array(recentItemImages.reversed().enumerated()), id: \.offset) { index, image in
                             Image(systemName: image)
                                 .font(.system(size: 18))
-                                .foregroundStyle(storageLocation.foregorundColor)
+                                .foregroundStyle(storageLocation.foregroundColor)
                                 .opacity(Double(recentItemImages.count - index) / Double(recentItemImages.count))
                                 .offset(x: CGFloat(
                                     recentItemImages

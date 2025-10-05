@@ -29,9 +29,9 @@ class Search {
 
     private var searchTask: Task<Void, Never>?
 
-    private let onSaveSearch: (String, String?) -> Void
+    private let onSaveSearch: (String, StorageLocation, String?) -> Void
 
-    init(onSaveSearch: @escaping (String, String?) -> Void) {
+    init(onSaveSearch: @escaping (String, StorageLocation, String?) -> Void) {
         self.onSaveSearch = onSaveSearch
     }
 
@@ -63,9 +63,21 @@ class Search {
             let searchResponse = try await api.searchProducts(query: searchTerm)
             searchResults = searchResponse.products
             print("Search successful: Found \(searchResults.count) products")
+            
+            let (locationCounts, imageURLCounts) = searchResults.prefix(10).reduce(into: ([StorageLocation: Int](), [String: Int]())) { result, item in
+                result.0[item.category.recommendedStorageLocation, default: 0] += 1
+                
+                if let imageURL = item.imageURL {
+                    result.1[imageURL, default: 0] += 1
+                }
+            }
 
-            if let firstResult = searchResults.first(where: { $0.imageURL != nil }) {
-                onSaveSearch(searchTerm, firstResult.imageURL)
+            let mostCommonStorageLocation = locationCounts.max(by: { $0.value < $1.value })?.key
+            let mostCommonImageURL = imageURLCounts.max(by: { $0.value < $1.value })?.key
+            
+            if let storageLocation = mostCommonStorageLocation,
+               let imageURL = mostCommonImageURL {
+                onSaveSearch(searchTerm, storageLocation, imageURL)
             }
 
         } catch {
@@ -89,7 +101,7 @@ public struct SearchView: View {
         UIScrollView.appearance().bounces = false
     }
 
-    private func saveRecentSearch(text: String, imageURL: String?) {
+    private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, imageURL: String?) {
         let existingSearch = recentSearches.first(where: { $0.text.lowercased() == text.lowercased() })
 
         guard existingSearch == nil else {
@@ -100,6 +112,7 @@ public struct SearchView: View {
         let recentSearch = RecentSearch(
             imageURL: imageURL,
             text: text,
+            recommendedStorageLocation: recommendedStorageLocation,
             date: Date())
         modelContext.insert(recentSearch)
 

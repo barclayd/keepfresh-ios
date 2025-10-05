@@ -81,7 +81,8 @@ public struct AddInventoryItemView: View {
                     status: formState.status,
                     expiryType: formState
                         .expiryType,
-                    consumptionPrediction: usageGenerator.percentagePrediction),
+                    consumptionPrediction: usageGenerator.percentagePrediction,
+                    consumptionPredictionChangedAt: usageGenerator.percentagePrediction != nil ? Date() : nil),
             product: AddInventoryItemRequest
                 .ProductData(
                     name: productSearchItem.name,

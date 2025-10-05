@@ -49,7 +49,7 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         }
     }
 
-    public var foregorundColor: Color {
+    public var foregroundColor: Color {
         switch self {
         case .pantry, .fridge: .gray700
         case .freezer: .gray100
@@ -68,6 +68,14 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         case .pantry: .brown300
         case .fridge: .blue400
         case .freezer: .blue800
+        }
+    }
+
+    public var textColor: Color {
+        switch self {
+        case .pantry: .blue800
+        case .fridge: .white200
+        case .freezer: .white200
         }
     }
 }
