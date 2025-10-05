@@ -49,6 +49,17 @@ private enum InventoryItemSortMode {
         }
     }
 
+    var title: String {
+        switch self {
+        case .alphabetical(direction: .forward): "Sorted (A–Z)"
+        case .alphabetical(direction: .backward): "Sorted (Z–A)"
+        case .dateAdded(direction: .forward): "Recently added"
+        case .dateAdded(direction: .backward): "Oldest items"
+        case .expiryDate(direction: .forward): "Expiring first"
+        case .expiryDate(direction: .backward): "Expiring last"
+        }
+    }
+
     func sort(items: [InventoryItem]) -> [InventoryItem] {
         switch self {
         case let .dateAdded(direction):
@@ -115,7 +126,7 @@ public struct StorageLocationView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
 
-    @State private var sortMode: InventoryItemSortMode = .alphabetical(direction: .forward)
+    @State private var sortMode: InventoryItemSortMode = .expiryDate(direction: .forward)
 
     private var sortedItems: [InventoryItem] {
         sortMode.sort(items: inventory.itemsByStorageLocation[storageLocation] ?? [])
@@ -144,9 +155,10 @@ public struct StorageLocationView: View {
 
                         VStack(spacing: 15) {
                             Image(systemName: storageLocation.icon).font(.system(size: 78))
-                                .foregroundColor(storageLocation == .freezer ? .white200 : .blue700)
+                                .foregroundColor(storageLocation == .pantry ? .blue700 : .white200)
 
-                            Text(storageLocation.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(.blue700)
+                            Text(storageLocation.rawValue).font(.largeTitle).lineSpacing(0)
+                                .foregroundStyle(storageLocation == .pantry ? .blue700 : .white200)
                                 .fontWeight(.bold)
 
                             if let locationDetails {
@@ -155,7 +167,8 @@ public struct StorageLocationView: View {
                                         .yellow500
                                     ).fontWeight(.bold).lineSpacing(0)
                                     HStack(spacing: 0) {
-                                        Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
+                                        Text("Predicted usage").font(.subheadline)
+                                            .foregroundStyle(storageLocation == .pantry ? .blue700 : .white200)
                                             .fontWeight(.light)
                                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
                                             .yellow500
@@ -213,11 +226,11 @@ public struct StorageLocationView: View {
                                 }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                     maxWidth: .infinity,
                                     alignment: .center)
-                                    .background(.blue150)
+                                    .glassEffect(.regular.tint(.blue150), in: .rect(cornerRadius: 20))
                                     .cornerRadius(20)
 
                                 HStack {
-                                    Text("Recently added").font(.title).foregroundStyle(.blue700).fontWeight(.bold)
+                                    Text(sortMode.title).font(.title).foregroundStyle(.blue700).fontWeight(.bold)
                                     Spacer()
                                     HStack(spacing: 8) {
                                         SortButton(
@@ -245,7 +258,7 @@ public struct StorageLocationView: View {
                             .padding(.horizontal, 20)
                             .frame(maxWidth: .infinity)
                     }
-                }.background(.white200)
+                }.background(storageLocation == .freezer ? .blue200 : .white200)
             }
             .frame(maxHeight: geometry.size.height)
         }

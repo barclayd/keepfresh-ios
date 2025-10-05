@@ -31,20 +31,20 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         case .pantry:
             [
                 Gradient.Stop(color: .brown300, location: 0),
-                Gradient.Stop(color: .brown100, location: 0.2),
-                Gradient.Stop(color: .white200, location: 0.375),
+                Gradient.Stop(color: .brown100, location: 0.4),
+                Gradient.Stop(color: .white200, location: 0.75),
             ]
         case .fridge:
             [
                 Gradient.Stop(color: .blue700, location: 0),
-                Gradient.Stop(color: .blue500, location: 0.2),
-                Gradient.Stop(color: .white200, location: 0.375),
+                Gradient.Stop(color: .blue500, location: 0.4),
+                Gradient.Stop(color: .white200, location: 0.75),
             ]
         case .freezer:
             [
                 Gradient.Stop(color: .blue800, location: 0),
-                Gradient.Stop(color: .blue600, location: 0.25),
-                Gradient.Stop(color: .white200, location: 0.375),
+                Gradient.Stop(color: .blue600, location: 0.4),
+                Gradient.Stop(color: .blue200, location: 0.75),
             ]
         }
     }
@@ -60,6 +60,14 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         switch self {
         case .pantry, .fridge: .blue700
         case .freezer: .blue100
+        }
+    }
+
+    public var tileColor: Color {
+        switch self {
+        case .pantry: .brown300
+        case .fridge: .blue400
+        case .freezer: .blue800
         }
     }
 }

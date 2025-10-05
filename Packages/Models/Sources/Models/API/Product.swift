@@ -9,15 +9,17 @@ public enum ProductSearchItemStatus: String, Codable, Identifiable, CaseIterable
 }
 
 public struct ProductSearchItemCategory: Identifiable, Codable, Equatable, Hashable, Sendable {
-    public init(id: Int, name: String, path: String) {
+    public init(id: Int, name: String, path: String, recommendedStorageLocation: StorageLocation) {
         self.id = id
         self.name = name
         self.path = path
+        self.recommendedStorageLocation = recommendedStorageLocation
     }
 
     public let id: Int
     public let name: String
     public let path: String
+    public let recommendedStorageLocation: StorageLocation
 }
 
 public struct ProductSearchItemSource: Codable, Hashable, Sendable {
@@ -75,4 +77,32 @@ public enum ExpiryType: String, Codable, Identifiable, CaseIterable, Sendable {
 
 public struct ProductSearchResponse: Codable, Sendable {
     public let products: [ProductSearchItemResponse]
+}
+
+// MARK: - Mock Data
+
+public extension ProductSearchItemResponse {
+    static var mock: ProductSearchItemResponse {
+        mock(id: 1)
+    }
+
+    static func mock(id: Int) -> ProductSearchItemResponse {
+        ProductSearchItemResponse(
+            name: "Sample Product",
+            brand: "Tesco",
+            category: ProductSearchItemCategory(
+                id: id,
+                name: "Sample Category",
+                path: "Food > Sample",
+                recommendedStorageLocation: .fridge),
+            amount: 500,
+            unit: "g",
+            icon: "carrot.fill",
+            imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
+            source: ProductSearchItemSource(id: id, ref: "sample-\(id)"))
+    }
+
+    static func mocks(count: Int) -> [ProductSearchItemResponse] {
+        (1...count).map { mock(id: $0) }
+    }
 }

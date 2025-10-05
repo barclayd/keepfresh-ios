@@ -122,11 +122,7 @@ public struct AddInventoryItemView: View {
             ZStack(alignment: .bottom) {
                 ScrollView(showsIndicators: false) {
                     ZStack {
-                        LinearGradient(stops: [
-                            Gradient.Stop(color: .blue700, location: 0),
-                            Gradient.Stop(color: .blue500, location: 0.2),
-                            Gradient.Stop(color: .white200, location: 0.375),
-                        ], startPoint: .top, endPoint: .bottom)
+                        LinearGradient(stops: formState.storageLocation.viewGradientStops, startPoint: .top, endPoint: .bottom)
                             .ignoresSafeArea(edges: .top)
                             .offset(y: -geometry.safeAreaInsets.top)
                             .frame(height: geometry.size.height)
@@ -232,7 +228,7 @@ public struct AddInventoryItemView: View {
                                 }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                     maxWidth: .infinity,
                                     alignment: .center)
-                                    .background(.blue100)
+                                    .glassEffect(.regular.tint(.blue100), in: .rect(cornerRadius: 20))
                                     .cornerRadius(20)
                                     .padding(
                                         .bottom,
@@ -349,6 +345,9 @@ public struct AddInventoryItemView: View {
                 }
             }
         }
+        .task {
+            usageGenerator.prewarmModel()
+        }
         .onAppear {
             Task {
                 let previewProduct = InventoryPreviewRequest.PreviewProduct(
@@ -366,16 +365,8 @@ public struct AddInventoryItemView: View {
         .onChange(of: preview.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
-        .onChange(of: calculatedExpiryDate) { oldDate, newDate in
-            if !newDate.isSameDay(as: oldDate) {
-                formState.expiryDate = newDate
-            }
-        }
         .onChange(of: formState.expiryDate) { oldDate, newDate in
-            if newDate.isSameDay(as: oldDate) {
-                return
-            }
-
+            guard !newDate.isSameDay(as: oldDate) else { return }
             guard let predictions = preview.predictions else {
                 print("no predictions found for \(productSearchItem.name)")
                 return
@@ -405,7 +396,9 @@ public struct AddInventoryItemView: View {
         guard let suggestions else { return }
 
         formState.storageLocation = suggestions.recommendedStorageLocation
-
         formState.expiryType = suggestions.expiryType
+
+        // Set initial expiry date only when suggestions first load
+        formState.expiryDate = calculatedExpiryDate
     }
 }

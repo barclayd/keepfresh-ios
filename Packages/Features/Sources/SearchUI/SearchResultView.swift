@@ -1,10 +1,12 @@
 import DesignSystem
+import Extensions
 import Models
 import Router
 import SwiftUI
 
 public struct SearchResultView: View {
     var products: [ProductSearchItemResponse]
+    var isLoading: Bool = false
 
     public var body: some View {
         ScrollView {
@@ -20,6 +22,7 @@ public struct SearchResultView: View {
             }
             .padding(.top, 15)
             .padding(.horizontal, 16)
+            .redactedShimmer(when: isLoading)
         }
     }
 }
@@ -54,7 +57,7 @@ public struct SearchResultCard: View {
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 10)
-            .background(.blue400)
+            .background(product.category.recommendedStorageLocation.tileColor)
             .cornerRadius(20)
 
             VStack {
@@ -91,7 +94,7 @@ public struct SearchResultCard: View {
                     topTrailingRadius: 0,
                     style: .continuous).fill(.white))
         }
-        .background(.blue400)
+        .background(product.category.recommendedStorageLocation.tileColor)
         .cornerRadius(20)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
     }

@@ -12,6 +12,13 @@ let searchTabItems = ["All", "Foods", "Categories", "My Foods"]
 class Search {
     var searchText: String = "" {
         didSet {
+            if !searchText.isEmpty {
+                searchResults = ProductSearchItemResponse.mocks(count: 5)
+                isLoading = true
+            } else {
+                searchResults = []
+                isLoading = false
+            }
             Task {
                 await debounceSearch()
             }
@@ -164,8 +171,8 @@ public struct SearchView: View {
 
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< searchTabItems.count, id: \.self) { index in
-                        if let searchResults = search?.searchResults {
-                            SearchResultView(products: searchResults)
+                        if let search {
+                            SearchResultView(products: search.searchResults, isLoading: search.isLoading)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .tag(index)
                         }

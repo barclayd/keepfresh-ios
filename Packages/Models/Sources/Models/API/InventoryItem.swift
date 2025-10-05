@@ -1,4 +1,5 @@
 import DesignSystem
+import Extensions
 import SwiftUI
 
 public enum InventoryItemStatus: String, Codable, Identifiable, CaseIterable, Sendable {
@@ -114,6 +115,29 @@ public struct InventoryItemsResponse: Codable, Sendable {
     public let inventoryItems: [InventoryItem]
 }
 
+public struct TileColor {
+    public let foreground: Color
+    public let background: Color
+    public let ai: Color
+}
+
+public enum ConsumptionUrgency: String, CaseIterable {
+    case critical
+    case attention
+    case good
+
+    public var tileColor: TileColor {
+        switch self {
+        case .critical:
+            TileColor(foreground: .red800, background: .red200, ai: .yellow700)
+        case .attention:
+            TileColor(foreground: .yellow600, background: .yellow100, ai: .yellow600)
+        case .good:
+            TileColor(foreground: .green600, background: .green300, ai: .yellow500)
+        }
+    }
+}
+
 public struct InventoryItem: Codable, Sendable, Identifiable {
     public init(
         id: Int,
@@ -177,6 +201,25 @@ public extension InventoryItem {
             imageUrl: imageURL,
             category: CategoryDetails(name: category.name, pathDisplay: category.path))
         consumptionPrediction = 100
+    }
+}
+
+public extension InventoryItem {
+    var consumptionUrgency: ConsumptionUrgency {
+        let days = expiryDate.timeUntil.totalDays
+        let prediction = consumptionPrediction
+
+        if days <= 0 { return .critical }
+        if days == 1, prediction < 60 { return .critical }
+
+        if days <= 7 {
+            if prediction < 35 { return .critical }
+            if prediction < 65 || days <= 3 { return .attention }
+            return .good
+        }
+
+        if prediction < 30 { return .attention }
+        return .good
     }
 }
 
@@ -357,4 +400,41 @@ public struct InventoryPreviewAndSuggestionsResponse: Codable, Sendable {
     public let productId: Int
     public let predictions: InventoryPredictionsResponse
     public let suggestions: InventorySuggestionsResponse
+}
+
+// MARK: - Mock Data
+
+public extension InventoryItem {
+    static var mock: InventoryItem {
+        mock(id: 1)
+    }
+
+    static func mock(id: Int) -> InventoryItem {
+        InventoryItem(
+            id: id,
+            createdAt: Date().addingTimeInterval(-86400 * 2),
+            updatedAt: Date(),
+            openedAt: nil,
+            status: .unopened,
+            storageLocation: .fridge,
+            consumptionPrediction: 85,
+            expiryDate: Date().addingTimeInterval(86400 * 5),
+            expiryType: .BestBefore,
+            product: Product(
+                id: id,
+                name: "Sample Product",
+                unit: "g",
+                brand: .tesco,
+                amount: 500,
+                imageUrl: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
+                category: CategoryDetails(
+                    icon: "carrot.fill",
+                    name: "Vegetables",
+                    imageUrl: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
+                    pathDisplay: "Food > Vegetables")))
+    }
+
+    static func mocks(count: Int) -> [InventoryItem] {
+        (1...count).map { mock(id: $0) }
+    }
 }

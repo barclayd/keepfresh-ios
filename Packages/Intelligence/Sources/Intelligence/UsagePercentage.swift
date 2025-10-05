@@ -27,7 +27,50 @@ public final class UsageGenerator {
     let api = KeepFreshAPI()
     let model = SystemLanguageModel.default
 
+    let session = LanguageModelSession(instructions: """
+    You are a food consumption prediction expert. Your task is to predict what percentage (0-100) of a food item will be consumed before disposal.
+
+    PREDICTION RULES:
+    1. Data Priority: Trust the strongest available signal in this order:
+       - Product-specific history (most reliable)
+       - Category history (if product has no history)
+       - User baseline (fallback)
+
+    2. Zero History Signal: If product or category shows 0% usage, this is a strong negative signal. Predict pessimistically near the user's baseline.
+
+    3. Time Constraints: If the item has insufficient time before expiry compared to typical consumption speed, scale the prediction down proportionally.
+
+    4. Low User Baseline: If user baseline is below 20%, the user tends to waste most food. Predict conservatively.
+
+    5. Don't Average: Trust the strongest signal; don't average weak or missing data.
+
+    OUTPUT EXAMPLES:
+    Example 1:
+    - Product: No history, Category: No history, User: 10% median
+    - Analysis: No specific data, use user baseline
+    - Prediction: 10%
+
+    Example 2:
+    - Product: No history, User: 28% average, 9.5% median
+    - Analysis: Median is more reliable than average for typical behavior
+    - Prediction: 15% (closer to median, accounting for pessimism)
+
+    Example 3:
+    - Product: 80% median, Typical: 10 days to consume, Days left: 3
+    - Analysis: Strong product history but insufficient time (3/10 = 30%)
+    - Prediction: 24% (time-limited: 30% of 80%)
+
+    Example 4:
+    - Product: No history, Category: 60% median (5+ items), User: 50%
+    - Analysis: Category history is stronger signal than user baseline
+    - Prediction: 60%
+    """)
+
     public init() {}
+
+    public func prewarmModel() {
+        session.prewarm()
+    }
 
     public func generateUsagePrediction(
         predictions: InventoryPredictionsResponse,
@@ -46,45 +89,6 @@ public final class UsageGenerator {
         state = .loading
 
         do {
-            let session = LanguageModelSession(instructions: """
-            You are a food consumption prediction expert. Your task is to predict what percentage (0-100) of a food item will be consumed before disposal.
-
-            PREDICTION RULES:
-            1. Data Priority: Trust the strongest available signal in this order:
-               - Product-specific history (most reliable)
-               - Category history (if product has no history)
-               - User baseline (fallback)
-
-            2. Zero History Signal: If product or category shows 0% usage, this is a strong negative signal. Predict pessimistically near the user's baseline.
-
-            3. Time Constraints: If the item has insufficient time before expiry compared to typical consumption speed, scale the prediction down proportionally.
-
-            4. Low User Baseline: If user baseline is below 20%, the user tends to waste most food. Predict conservatively.
-
-            5. Don't Average: Trust the strongest signal; don't average weak or missing data.
-
-            OUTPUT EXAMPLES:
-            Example 1:
-            - Product: No history, Category: No history, User: 10% median
-            - Analysis: No specific data, use user baseline
-            - Prediction: 10%
-
-            Example 2:
-            - Product: No history, User: 28% average, 9.5% median
-            - Analysis: Median is more reliable than average for typical behavior
-            - Prediction: 15% (closer to median, accounting for pessimism)
-
-            Example 3:
-            - Product: 80% median, Typical: 10 days to consume, Days left: 3
-            - Analysis: Strong product history but insufficient time (3/10 = 30%)
-            - Prediction: 24% (time-limited: 30% of 80%)
-
-            Example 4:
-            - Product: No history, Category: 60% median (5+ items), User: 50%
-            - Analysis: Category history is stronger signal than user baseline
-            - Prediction: 60%
-            """)
-
             let response = try await session.respond(
                 to: buildPredictionPrompt(
                     predictions: predictions,
