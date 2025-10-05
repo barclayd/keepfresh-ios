@@ -17,81 +17,58 @@ struct AppTabRootView: View {
 
         TabView(selection: $router.selectedTab) {
             Tab(value: AppTab.today) {
-                NavigationStack(path: $router[.today]) {
-                    TodayView()
-                        .withAppRouter()
-                        .environment(inventory)
-                        .environment(\.currentTab, .today)
-                        .toolbarRole(.browser)
-                        .toolbar {
-                            AppTab.today.toolbarContent(router: router)
-                        }
-                        .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
-                        .toolbarBackground(AppTab.today.toolbarBackground, for: .navigationBar)
-                        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .tint(router.customTintColor ?? router.defaultTintColor)
+                makeNavigationStack(for: .today, router: router)
             } label: {
                 AppTab.today.label
             }
 
             Tab(value: AppTab.search, role: .search) {
-                NavigationStack(path: $router[.search]) {
-                    SearchView()
-                        .withAppRouter()
-                        .environment(inventory)
-                        .environment(\.currentTab, .search)
-                        .toolbarRole(.browser)
-                        .toolbar {
-                            AppTab.search.toolbarContent(router: router)
-                        }
-                        .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
-                        .toolbarBackground(AppTab.search.toolbarBackground, for: .navigationBar)
-                        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .tint(router.customTintColor ?? router.defaultTintColor)
+                makeNavigationStack(for: .search, router: router)
             } label: {
                 AppTab.search.label
             }
 
             Tab(value: AppTab.kitchen) {
-                NavigationStack(path: $router[.kitchen]) {
-                    KitchenView()
-                        .withAppRouter()
-                        .environment(inventory)
-                        .environment(\.currentTab, .kitchen)
-                        .toolbarRole(.browser)
-                        .toolbar {
-                            AppTab.kitchen.toolbarContent(router: router)
-                        }
-                        .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
-                        .toolbarBackground(AppTab.kitchen.toolbarBackground, for: .navigationBar)
-                        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .tint(router.customTintColor ?? router.defaultTintColor)
+                makeNavigationStack(for: .kitchen, router: router)
             } label: {
                 AppTab.kitchen.label
             }
         }
         .tabBarMinimizeBehavior(.onScrollDown)
-        .sheet(
-            item: $router.presentedSheet,
-            content: { presentedSheet in
-                switch presentedSheet {
-                case .barcodeScan:
-                    BarcodeView()
+        .sheet(item: $router.presentedSheet) { presentedSheet in
+            switch presentedSheet {
+            case .barcodeScan:
+                BarcodeView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func makeNavigationStack(for tab: AppTab, router: Router) -> some View {
+        @Bindable var router = router
+
+        NavigationStack(path: $router[tab]) {
+            tab.rootView()
+                .withAppRouter()
+                .environment(inventory)
+                .environment(\.currentTab, tab)
+                .toolbarRole(.browser)
+                .toolbar {
+                    tab.toolbarContent(router: router)
                 }
-            })
+                .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
+                .toolbarBackground(tab.toolbarBackground, for: .navigationBar)
+                .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+                .navigationBarTitleDisplayMode(.inline)
+        }
+        .tint(router.customTintColor ?? router.defaultTintColor)
     }
 }
 
 @MainActor
 private extension AppTab {
     @ViewBuilder
-    func rootView(searchText: Binding<String>) -> some View {
+    func rootView() -> some View {
         switch self {
         case .today:
             TodayView()

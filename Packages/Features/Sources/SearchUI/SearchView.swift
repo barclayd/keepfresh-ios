@@ -84,10 +84,6 @@ public struct SearchView: View {
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
 
     @State private var search: Search?
-    @State private var currentPage: Int = 0
-    @State private var dragOffset: CGFloat = 0
-    @State private var canDrag: Bool = true
-    @Namespace private var animationNamespace
 
     public init() {
         UIScrollView.appearance().bounces = false
