@@ -6,7 +6,7 @@ public extension EnvironmentValues {
 }
 
 public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
-    case today, search, kitchen
+    case today, kitchen, search
 
     public var id: String { rawValue }
 

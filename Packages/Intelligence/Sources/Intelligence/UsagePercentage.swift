@@ -149,8 +149,6 @@ public final class UsageGenerator {
         "Based on the above data and the prediction rules, predict what percentage (0-100) of this food item will be consumed before disposal:"
     }
 
-    // MARK: - Helper Methods
-
     private func buildProductContext(
         productName: String,
         quantity: String?,

@@ -12,39 +12,56 @@ struct AppTabRootView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
 
-    @State private var searchText = ""
-
     var body: some View {
         @Bindable var router = router
 
         TabView(selection: $router.selectedTab) {
-            ForEach(AppTab.allCases) { tab in
-                NavigationStack(path: $router[tab]) {
-                    tab.rootView()
-                        .withAppRouter()
-                        .environment(inventory)
-                        .environment(\.currentTab, tab)
-                        .toolbarRole(.browser)
-                        .toolbar {
-                            router.selectedTab.toolbarContent(router: router)
-                        }
-                        .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
-                        .toolbarBackground(router.selectedTab.toolbarBackground, for: .navigationBar)
-                        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .tint(router.customTintColor ?? router.defaultTintColor)
-                .tabItem { tab.label }
-                .tag(tab)
+            Tab(value: AppTab.today) {
+                makeNavigationStack(for: .today, router: router)
+            } label: {
+                AppTab.today.label
             }
-        }.sheet(
-            item: $router.presentedSheet,
-            content: { presentedSheet in
-                switch presentedSheet {
-                case .barcodeScan:
-                    BarcodeView()
+
+            Tab(value: AppTab.search, role: .search) {
+                makeNavigationStack(for: .search, router: router)
+            } label: {
+                AppTab.search.label
+            }
+
+            Tab(value: AppTab.kitchen) {
+                makeNavigationStack(for: .kitchen, router: router)
+            } label: {
+                AppTab.kitchen.label
+            }
+        }
+        .tabBarMinimizeBehavior(.onScrollDown)
+        .sheet(item: $router.presentedSheet) { presentedSheet in
+            switch presentedSheet {
+            case .barcodeScan:
+                BarcodeView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func makeNavigationStack(for tab: AppTab, router: Router) -> some View {
+        @Bindable var router = router
+
+        NavigationStack(path: $router[tab]) {
+            tab.rootView()
+                .withAppRouter()
+                .environment(inventory)
+                .environment(\.currentTab, tab)
+                .toolbarRole(.browser)
+                .toolbar {
+                    tab.toolbarContent(router: router)
                 }
-            })
+                .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
+                .toolbarBackground(tab.toolbarBackground, for: .navigationBar)
+                .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+                .navigationBarTitleDisplayMode(.inline)
+        }
+        .tint(router.customTintColor ?? router.defaultTintColor)
     }
 }
 
@@ -70,6 +87,7 @@ public extension AppTab {
             .environment(\.symbolVariants, symbolVariants)
     }
 
+    @MainActor
     @ToolbarContentBuilder
     func toolbarContent(router: Router) -> some ToolbarContent {
         switch self {
@@ -105,8 +123,9 @@ public extension AppTab {
                     print("Barcode scan")
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.white200)
+                        .frame(width: 24, height: 24)
                 }
+                .buttonStyle(.plain).tint(.white200)
             }
         }
     }

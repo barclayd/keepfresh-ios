@@ -59,7 +59,7 @@ struct InventoryItemSheetStatsGridRows: View {
                     VStack(spacing: 0) {
                         Text("\(inventoryItem.expiryDate.timeUntil.amount)").foregroundStyle(.green600)
                             .fontWeight(.bold).font(.headline)
-                        Text("\(inventoryItem.expiryDate.timeUntil.formattedUnit.capitalized) to expiry")
+                        Text(inventoryItem.expiryDate.timeUntil.formattedToExpiry)
                             .foregroundStyle(.green600).fontWeight(.light).font(.subheadline)
                             .lineLimit(1)
                     }

@@ -129,9 +129,11 @@ public final class Inventory {
                 let response = try await self?.api.createInventoryItem(request)
 
                 if let inventoryItemId = response?.inventoryItemId {
-                    print("newItemId: \(inventoryItemId)")
+                    await MainActor.run { [weak self] in
+                        guard let self, !self.items.isEmpty else { return }
+                        self.items[self.items.count - 1].id = inventoryItemId
+                    }
                 }
-
             } catch {
                 print("Adding inventory item failed with error: \(error)")
 
