@@ -163,7 +163,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
         self.product = product
     }
 
-    public let id: Int
+    public var id: Int
     public let createdAt: Date
     public var updatedAt: Date
     public var openedAt: Date?

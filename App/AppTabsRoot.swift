@@ -12,32 +12,72 @@ struct AppTabRootView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
 
-    @State private var searchText = ""
-
     var body: some View {
         @Bindable var router = router
 
         TabView(selection: $router.selectedTab) {
-            ForEach(AppTab.allCases) { tab in
-                NavigationStack(path: $router[tab]) {
-                    tab.rootView()
+            Tab(value: AppTab.today) {
+                NavigationStack(path: $router[.today]) {
+                    TodayView()
                         .withAppRouter()
                         .environment(inventory)
-                        .environment(\.currentTab, tab)
+                        .environment(\.currentTab, .today)
                         .toolbarRole(.browser)
                         .toolbar {
-                            router.selectedTab.toolbarContent(router: router)
+                            AppTab.today.toolbarContent(router: router)
                         }
                         .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
-                        .toolbarBackground(router.selectedTab.toolbarBackground, for: .navigationBar)
+                        .toolbarBackground(AppTab.today.toolbarBackground, for: .navigationBar)
                         .toolbarBackgroundVisibility(.visible, for: .navigationBar)
                         .navigationBarTitleDisplayMode(.inline)
                 }
                 .tint(router.customTintColor ?? router.defaultTintColor)
-                .tabItem { tab.label }
-                .tag(tab)
+            } label: {
+                AppTab.today.label
             }
-        }.sheet(
+
+            Tab(value: AppTab.search, role: .search) {
+                NavigationStack(path: $router[.search]) {
+                    SearchView()
+                        .withAppRouter()
+                        .environment(inventory)
+                        .environment(\.currentTab, .search)
+                        .toolbarRole(.browser)
+                        .toolbar {
+                            AppTab.search.toolbarContent(router: router)
+                        }
+                        .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
+                        .toolbarBackground(AppTab.search.toolbarBackground, for: .navigationBar)
+                        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+                .tint(router.customTintColor ?? router.defaultTintColor)
+            } label: {
+                AppTab.search.label
+            }
+
+            Tab(value: AppTab.kitchen) {
+                NavigationStack(path: $router[.kitchen]) {
+                    KitchenView()
+                        .withAppRouter()
+                        .environment(inventory)
+                        .environment(\.currentTab, .kitchen)
+                        .toolbarRole(.browser)
+                        .toolbar {
+                            AppTab.kitchen.toolbarContent(router: router)
+                        }
+                        .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
+                        .toolbarBackground(AppTab.kitchen.toolbarBackground, for: .navigationBar)
+                        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+                .tint(router.customTintColor ?? router.defaultTintColor)
+            } label: {
+                AppTab.kitchen.label
+            }
+        }
+        .tabBarMinimizeBehavior(.onScrollDown)
+        .sheet(
             item: $router.presentedSheet,
             content: { presentedSheet in
                 switch presentedSheet {
@@ -51,7 +91,7 @@ struct AppTabRootView: View {
 @MainActor
 private extension AppTab {
     @ViewBuilder
-    func rootView() -> some View {
+    func rootView(searchText: Binding<String>) -> some View {
         switch self {
         case .today:
             TodayView()
@@ -70,6 +110,7 @@ public extension AppTab {
             .environment(\.symbolVariants, symbolVariants)
     }
 
+    @MainActor
     @ToolbarContentBuilder
     func toolbarContent(router: Router) -> some ToolbarContent {
         switch self {
@@ -105,8 +146,9 @@ public extension AppTab {
                     print("Barcode scan")
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.white200)
+                        .frame(width: 24, height: 24)
                 }
+                .buttonStyle(.plain).tint(.white200)
             }
         }
     }

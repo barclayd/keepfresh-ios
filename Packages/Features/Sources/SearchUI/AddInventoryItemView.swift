@@ -1,5 +1,6 @@
 import DesignSystem
 import Environment
+import Extensions
 import Foundation
 import Intelligence
 import Models
@@ -137,9 +138,11 @@ public struct AddInventoryItemView: View {
                                 ProgressView()
                             }
                             .frame(height: 150)
+
                             Text("\(productSearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
-                            ).fontWeight(.bold)
+                            ).fontWeight(.bold).multilineTextAlignment(.center)
+
                             HStack {
                                 Text(productSearchItem.category.name)
                                     .font(.callout).foregroundStyle(.gray600)
@@ -157,149 +160,146 @@ public struct AddInventoryItemView: View {
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
 
-                            if preview.isLoading {
-                                ProgressView()
-                            } else {
-                                VStack {
-                                    if let percentagePrediction = usageGenerator.percentagePrediction, usageGenerator.state != .loading {
-                                        Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold)
-                                            .lineSpacing(
-                                                0)
-                                    } else {
-                                        ProgressView().controlSize(.regular).tint(.yellow500)
-                                    }
-                                    HStack(spacing: 0) {
-                                        Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
-                                            .fontWeight(.light)
-                                        Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
-                                            .yellow500
-                                        )
-                                        .offset(x: -2, y: -10)
-                                    }.offset(y: -5)
-                                }.padding(.top, 10)
+                            VStack {
+                                if let percentagePrediction = usageGenerator.percentagePrediction, usageGenerator.state != .loading {
+                                    Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold)
+                                        .lineSpacing(
+                                            0)
+                                } else {
+                                    ProgressView().controlSize(.regular).tint(.yellow500)
+                                }
+                                HStack(spacing: 0) {
+                                    Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
+                                        .fontWeight(.light)
+                                    Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
+                                        .yellow500
+                                    )
+                                    .offset(x: -2, y: -10)
+                                }.offset(y: -5)
+                            }.padding(.top, 10)
 
-                                Grid {
+                            Grid {
+                                GridRow {
+                                    Spacer()
+                                    VStack(spacing: 0) {
+                                        Text("\(preview.predictions?.productHistory.purchaseCount ?? 0)").fontWeight(.bold)
+                                            .font(.headline).foregroundStyle(.blue700)
+                                        Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                            .foregroundStyle(.blue700)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "calendar.badge.clock")
+                                        .font(.system(size: 32)).fontWeight(.bold)
+                                        .foregroundStyle(.blue700)
+                                    Spacer()
+                                    VStack(spacing: 0) {
+                                        Text("\(preview.predictions?.productHistory.consumedCount ?? 0)").fontWeight(.bold)
+                                            .font(.headline).foregroundStyle(.blue700)
+                                        Text("Consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                            .blue700)
+                                    }
+                                    Spacer()
+                                }
+
+                                if let productId = preview.productId {
                                     GridRow {
                                         Spacer()
                                         VStack(spacing: 0) {
-                                            Text("\(preview.predictions?.productHistory.purchaseCount ?? 0)").fontWeight(.bold)
+                                            Text("\(inventory.productCountsByLocation[productId]?[.fridge] ?? 0)").fontWeight(.bold)
                                                 .font(.headline).foregroundStyle(.blue700)
-                                            Text("Added").fontWeight(.light).font(.subheadline).lineLimit(1)
+                                                .foregroundStyle(.blue700)
+                                            Text("In Fridge").fontWeight(.light).font(.subheadline)
                                                 .foregroundStyle(.blue700)
                                         }
                                         Spacer()
-                                        Image(systemName: "calendar.badge.clock")
+                                        Image(systemName: "house")
                                             .font(.system(size: 32)).fontWeight(.bold)
                                             .foregroundStyle(.blue700)
                                         Spacer()
                                         VStack(spacing: 0) {
-                                            Text("\(preview.predictions?.productHistory.consumedCount ?? 0)").fontWeight(.bold)
+                                            Text("\(inventory.productCountsByLocation[productId]?[.freezer] ?? 0)").fontWeight(.bold)
                                                 .font(.headline).foregroundStyle(.blue700)
-                                            Text("Consumed").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                            Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
                                                 .blue700)
                                         }
                                         Spacer()
                                     }
-
-                                    if let productId = preview.productId {
-                                        GridRow {
-                                            Spacer()
-                                            VStack(spacing: 0) {
-                                                Text("\(inventory.productCountsByLocation[productId]?[.fridge] ?? 0)").fontWeight(.bold)
-                                                    .font(.headline).foregroundStyle(.blue700)
-                                                    .foregroundStyle(.blue700)
-                                                Text("In Fridge").fontWeight(.light).font(.subheadline)
-                                                    .foregroundStyle(.blue700)
-                                            }
-                                            Spacer()
-                                            Image(systemName: "house")
-                                                .font(.system(size: 32)).fontWeight(.bold)
-                                                .foregroundStyle(.blue700)
-                                            Spacer()
-                                            VStack(spacing: 0) {
-                                                Text("\(inventory.productCountsByLocation[productId]?[.freezer] ?? 0)").fontWeight(.bold)
-                                                    .font(.headline).foregroundStyle(.blue700)
-                                                Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                                    .blue700)
-                                            }
-                                            Spacer()
-                                        }
-                                    }
-                                }.padding(.horizontal, 15).padding(.vertical, 5).frame(
-                                    maxWidth: .infinity,
-                                    alignment: .center)
-                                    .glassEffect(.regular.tint(.blue100), in: .rect(cornerRadius: 20))
-                                    .cornerRadius(20)
-                                    .padding(
-                                        .bottom,
-                                        10)
-
-                                Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                                    GridRow {
-                                        Image(systemName: "checkmark.seal.fill").fontWeight(.bold)
-                                            .foregroundStyle(.yellow500)
-                                            .font(.system(size: 32))
-                                        Text("Looks like a good choice, you’re unlikely to waste any of this item")
-                                            .font(.callout)
-                                            .foregroundStyle(.gray600)
-                                            .multilineTextAlignment(.center)
-                                            .lineLimit(2...2)
-
-                                        Spacer()
-                                    }
-                                    GridRow {
-                                        Image(systemName: "beach.umbrella.fill")
-                                            .foregroundStyle(.blue600).fontWeight(.bold)
-                                            .font(.system(size: 32))
-                                        Text("You should only need to buy one of these before your next holiday")
-                                            .font(.callout)
-                                            .foregroundStyle(.gray600)
-                                            .multilineTextAlignment(.center)
-                                            .lineLimit(2...2)
-                                        Spacer()
-                                    }
-
-                                }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
-
-                                VStack(spacing: 15) {
-                                    InventoryCategory(
-                                        quantity: $formState.quantity,
-                                        status: $formState.status,
-                                        expiryDate: $formState.expiryDate,
-                                        storageLocation: $formState.storageLocation,
-                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                        isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                        type: .Expiry)
-                                    InventoryCategory(
-                                        quantity: $formState.quantity,
-                                        status: $formState.status,
-                                        expiryDate: $formState.expiryDate,
-                                        storageLocation: $formState.storageLocation,
-                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                        isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                        type: .Storage)
-                                    InventoryCategory(
-                                        quantity: $formState.quantity,
-                                        status: $formState.status,
-                                        expiryDate: $formState.expiryDate,
-                                        storageLocation: $formState.storageLocation,
-                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                        isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                        type: .Status)
-                                    InventoryCategory(
-                                        quantity: $formState.quantity,
-                                        status: $formState.status,
-                                        expiryDate: $formState.expiryDate,
-                                        storageLocation: $formState.storageLocation,
-                                        isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                        isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                        type: .Quantity)
                                 }
+                            }.padding(.horizontal, 15).padding(.vertical, 5).frame(
+                                maxWidth: .infinity,
+                                alignment: .center)
+                                .glassEffect(.regular.tint(.blue100), in: .rect(cornerRadius: 20))
+                                .cornerRadius(20)
+                                .padding(
+                                    .bottom,
+                                    10)
+
+                            Grid(horizontalSpacing: 16, verticalSpacing: 20) {
+                                GridRow {
+                                    Image(systemName: "checkmark.seal.fill").fontWeight(.bold)
+                                        .foregroundStyle(.yellow500)
+                                        .font(.system(size: 32))
+                                    Text("Looks like a good choice, you’re unlikely to waste any of this item")
+                                        .font(.callout)
+                                        .foregroundStyle(.gray600)
+                                        .multilineTextAlignment(.center)
+                                        .lineLimit(2...2)
+
+                                    Spacer()
+                                }
+                                GridRow {
+                                    Image(systemName: "beach.umbrella.fill")
+                                        .foregroundStyle(.blue600).fontWeight(.bold)
+                                        .font(.system(size: 32))
+                                    Text("You should only need to buy one of these before your next holiday")
+                                        .font(.callout)
+                                        .foregroundStyle(.gray600)
+                                        .multilineTextAlignment(.center)
+                                        .lineLimit(2...2)
+                                    Spacer()
+                                }
+
+                            }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
+
+                            VStack(spacing: 15) {
+                                InventoryCategory(
+                                    quantity: $formState.quantity,
+                                    status: $formState.status,
+                                    expiryDate: $formState.expiryDate,
+                                    storageLocation: $formState.storageLocation,
+                                    isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                    isRecommendedStorageLocation: isRecommendedStorageLocation,
+                                    type: .Expiry)
+                                InventoryCategory(
+                                    quantity: $formState.quantity,
+                                    status: $formState.status,
+                                    expiryDate: $formState.expiryDate,
+                                    storageLocation: $formState.storageLocation,
+                                    isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                    isRecommendedStorageLocation: isRecommendedStorageLocation,
+                                    type: .Storage)
+                                InventoryCategory(
+                                    quantity: $formState.quantity,
+                                    status: $formState.status,
+                                    expiryDate: $formState.expiryDate,
+                                    storageLocation: $formState.storageLocation,
+                                    isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                    isRecommendedStorageLocation: isRecommendedStorageLocation,
+                                    type: .Status)
+                                InventoryCategory(
+                                    quantity: $formState.quantity,
+                                    status: $formState.status,
+                                    expiryDate: $formState.expiryDate,
+                                    storageLocation: $formState.storageLocation,
+                                    isRecommendedExpiryDate: isRecommendedExpiryDate,
+                                    isRecommendedStorageLocation: isRecommendedStorageLocation,
+                                    type: .Quantity)
                             }
                         }
                         .padding(.bottom, 100)
                         .padding(.horizontal, 20)
                         .frame(maxWidth: geometry.size.width)
+                        .redactedShimmer(when: preview.isLoading)
                     }
                 }.background(.white200)
 
