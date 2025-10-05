@@ -163,7 +163,7 @@ public struct StorageLocationView: View {
 
                             if let locationDetails {
                                 VStack {
-                                    Text("\(locationDetails.expiryPercentage)%").font(.title).foregroundStyle(
+                                    Text("\(locationDetails.averageConsumptionPredictionPercentage)%").font(.title).foregroundStyle(
                                         .yellow500
                                     ).fontWeight(.bold).lineSpacing(0)
                                     HStack(spacing: 0) {
