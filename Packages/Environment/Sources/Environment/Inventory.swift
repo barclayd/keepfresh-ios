@@ -63,7 +63,8 @@ public final class Inventory {
         itemsByStorageLocation = Dictionary(grouping: items, by: \.storageLocation)
 
         detailsByStorageLocation = itemsByStorageLocation.mapValues { items in
-            let averageConsumptionPrediction = items.isEmpty ? 0 : Int((Double(items.map(\.consumptionPrediction).reduce(0, +)) / Double(items.count)).rounded())
+            let averageConsumptionPrediction = items
+                .isEmpty ? 0 : Int((Double(items.map(\.consumptionPrediction).reduce(0, +)) / Double(items.count)).rounded())
 
             return InventoryLocationDetails(
                 averageConsumptionPredictionPercentage: averageConsumptionPrediction,
@@ -105,8 +106,7 @@ public final class Inventory {
         state = .loading
 
         do {
-//            items = try await api.getInventoryItems().inventoryItems
-            items = []
+            items = try await api.getInventoryItems().inventoryItems
             state = .loaded
         } catch {
             state = .error

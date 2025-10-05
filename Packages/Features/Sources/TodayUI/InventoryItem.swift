@@ -5,19 +5,19 @@ struct IconsView: View {
     let inventoryItem: InventoryItem
 
     var body: some View {
-        HStack {
-            HStack(spacing: 0) {
-                if inventoryItem.createdAt.timeSince.amount > 0 {
-                    Image(systemName: "calendar.badge.clock")
-                        .font(.system(size: 18))
-                        .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground).fontWeight(.bold)
-                    Text(inventoryItem.createdAt.timeSince.abbreviated)
-                        .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground).padding(.leading, 2)
-                }
+        HStack(alignment: .firstTextBaseline, spacing: 3) {
+            if inventoryItem.createdAt.timeSince.totalDays > 0, inventoryItem.createdAt.timeSince.totalDays <= 31 {
+                Image(systemName: "\(inventoryItem.createdAt.timeSince.totalDays).calendar")
+                    .font(.system(size: 20))
+                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
+                    .fontWeight(.bold)
+                    .alignmentGuide(.firstTextBaseline) { d in
+                        d[.bottom] * 0.75
+                    }
             }
 
             Image(systemName: inventoryItem.storageLocation.iconFilled)
-                .font(.system(size: 18))
+                .font(.system(size: 20))
                 .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
 
             if inventoryItem.status == .opened {
@@ -27,26 +27,35 @@ struct IconsView: View {
                     .scaledToFit()
                     .frame(width: 22, height: 22)
                     .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
+                    .alignmentGuide(.firstTextBaseline) { d in
+                        d[.bottom] * 0.8
+                    }
             }
 
-            HStack(spacing: 2) {
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 18)).foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
-                Text("\(inventoryItem.consumptionPrediction)%").foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
+                    .font(.system(size: 20))
+                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
+
+                Text("\(inventoryItem.consumptionPrediction)%")
+                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai).font(.callout)
+                    .alignmentGuide(.firstTextBaseline) { d in
+                        d[.bottom] * 0.7
+                    }
             }
 
             Spacer()
 
-            HStack(spacing: 3) {
-                Image(systemName: "hourglass")
-                    .font(.system(size: 18))
-                    .fontWeight(.bold)
+            if inventoryItem.createdAt.timeSince.totalDays == 0 {
+                Circle()
+                    .frame(width: 12, height: 12)
                     .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
-                Text(inventoryItem.expiryDate.timeUntil.formatted)
-                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
+                    .alignmentGuide(.firstTextBaseline) { d in
+                        d[.bottom]
+                    }
             }
         }
-        .padding(.vertical, 15)
+        .padding(.vertical, 10)
         .padding(.horizontal, 10)
         .background(UnevenRoundedRectangle(
             topLeadingRadius: 0,
@@ -101,43 +110,51 @@ public struct InventoryItemView: View {
                     ProgressView()
                 }
                 .frame(width: 40, height: 40)
-                VStack(spacing: 2) {
+                VStack(spacing: 4) {
                     HStack {
-                        Text(inventoryItem.product.name)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.blue800)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(inventoryItem.product.name)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.blue800)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .lineLimit(1)
+
+                            Text(inventoryItem.product.brand.name)
+                                .foregroundStyle(inventoryItem.product.brand.color).font(.subheadline)
+
+                            HStack {
+                                Text(inventoryItem.product.category.name)
+                                    .foregroundStyle(.gray600).font(.subheadline)
+
+                                if let amount = inventoryItem.product.amount, let unit = inventoryItem.product.unitFormatted {
+                                    Circle()
+                                        .frame(width: 4, height: 4)
+                                        .foregroundStyle(.gray600)
+                                    Text("\(String(format: "%.0f", amount))\(unit)")
+                                        .foregroundStyle(.gray600).font(.subheadline)
+                                }
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .leading)
 
                         Spacer()
 
-                        Circle()
-                            .frame(width: 12, height: 12)
-                            .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
+                        ProgressRing(
+                            progress: 0.85,
+                            backgroundColor: inventoryItem.consumptionUrgency.tileColor.background,
+                            foregroundColor: inventoryItem.consumptionUrgency.tileColor.foreground)
+                            .frame(width: 40, height: 40)
+                            .overlay {
+                                Text(
+                                    inventoryItem.expiryDate.timeUntil.totalDays <= 7 ? inventoryItem.expiryDate.timeUntil.totalDays
+                                        .formatted() : "7+")
+                            }
                     }
-
-                    HStack {
-                        Text(inventoryItem.product.category.name)
-                            .foregroundStyle(.gray600)
-                        Circle()
-                            .frame(width: 4, height: 4)
-                            .foregroundStyle(.gray600)
-                        Text(inventoryItem.product.brand.name)
-                            .foregroundStyle(inventoryItem.product.brand.color)
-
-                        if let amount = inventoryItem.product.amount, let unit = inventoryItem.product.unitFormatted {
-                            Circle()
-                                .frame(width: 4, height: 4)
-                                .foregroundStyle(.gray600)
-                            Text("\(String(format: "%.0f", amount))\(unit)")
-                                .foregroundStyle(.gray600)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
                 }
             }
             .padding(.vertical, 10)
-            .padding(.horizontal, 5)
+            .padding(.horizontal, 10)
             .background(.white)
             .cornerRadius(20)
 
