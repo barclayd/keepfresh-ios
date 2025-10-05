@@ -79,6 +79,10 @@ public struct ProductSearchResponse: Codable, Sendable {
     public let products: [ProductSearchItemResponse]
 }
 
+public struct ProductSearchRandomResponse: Codable, Sendable {
+    public let product: ProductSearchItemResponse
+}
+
 // MARK: - Mock Data
 
 public extension ProductSearchItemResponse {

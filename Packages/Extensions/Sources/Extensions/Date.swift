@@ -62,6 +62,16 @@ public struct RelativeTime {
         return "\(amount) \(unit.pluralised(for: amount))"
     }
 
+    public var formattedUnit: String {
+        "\(unit.pluralised(for: amount))"
+    }
+
+    public var formattedToExpiry: String {
+        guard amount >= 0 else { return "\(unit.pluralised(for: amount).capitalized) past expiry" }
+
+        return "\(unit.pluralised(for: amount).capitalized) to expiry"
+    }
+
     public var formattedElapsedTime: String {
         guard amount != 0 else { return "Today" }
 

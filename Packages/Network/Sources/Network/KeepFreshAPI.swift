@@ -17,6 +17,13 @@ public struct KeepFreshAPI: Sendable {
             queryParameters: ["search": query])
     }
 
+    public func getRandomProduct() async throws -> ProductSearchRandomResponse {
+        try await client.fetch(
+            ProductSearchRandomResponse.self,
+            path: "v1/products/random",
+            queryParameters: nil)
+    }
+
     public func getInventoryItems() async throws -> InventoryItemsResponse {
         try await client.fetch(
             InventoryItemsResponse.self,

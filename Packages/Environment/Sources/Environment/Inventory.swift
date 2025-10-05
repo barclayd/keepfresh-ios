@@ -12,7 +12,7 @@ public enum FetchState {
 }
 
 public struct InventoryLocationDetails: Hashable {
-    public var expiryPercentage: Int
+    public var averageConsumptionPredictionPercentage: Int
     public var lastUpdated: Date?
     public var expiringSoonCount: Int
     public var recentlyUpdatedImages: [String]
@@ -22,7 +22,7 @@ public struct InventoryLocationDetails: Hashable {
     public var expiringTodayCount: Int
 
     public var expiryStatusPercentageColor: Color {
-        switch expiryPercentage {
+        switch averageConsumptionPredictionPercentage {
         case 0...33: .green600
         case 33...66: .yellow400
         default: .red500
@@ -63,8 +63,11 @@ public final class Inventory {
         itemsByStorageLocation = Dictionary(grouping: items, by: \.storageLocation)
 
         detailsByStorageLocation = itemsByStorageLocation.mapValues { items in
-            InventoryLocationDetails(
-                expiryPercentage: 59,
+            let averageConsumptionPrediction = items
+                .isEmpty ? 0 : Int((Double(items.map(\.consumptionPrediction).reduce(0, +)) / Double(items.count)).rounded())
+
+            return InventoryLocationDetails(
+                averageConsumptionPredictionPercentage: averageConsumptionPrediction,
                 lastUpdated: items.map(\.createdAt).max(),
                 expiringSoonCount: items.count(where: { $0.expiryDate.timeUntil.totalDays < 4 }),
                 recentlyUpdatedImages: ["popcorn.fill", "birthday.cake.fill", "carrot.fill"],
