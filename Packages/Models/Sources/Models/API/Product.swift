@@ -94,14 +94,12 @@ public extension ProductSearchItemResponse {
                 id: id,
                 name: "Sample Category",
                 path: "Food > Sample",
-                recommendedStorageLocation: .fridge
-            ),
+                recommendedStorageLocation: .fridge),
             amount: 500,
             unit: "g",
             icon: "carrot.fill",
             imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
-            source: ProductSearchItemSource(id: id, ref: "sample-\(id)")
-        )
+            source: ProductSearchItemSource(id: id, ref: "sample-\(id)"))
     }
 
     static func mocks(count: Int) -> [ProductSearchItemResponse] {

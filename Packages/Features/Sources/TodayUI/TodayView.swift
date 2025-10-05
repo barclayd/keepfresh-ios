@@ -40,6 +40,5 @@ public struct TodayView: View {
             .redactedShimmer(when: inventory.state == .loading)
         }
         .background(.white200)
-        
     }
 }

@@ -62,7 +62,7 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         case .freezer: .blue100
         }
     }
-    
+
     public var tileColor: Color {
         switch self {
         case .pantry: .brown300

@@ -210,7 +210,7 @@ public extension InventoryItem {
         let prediction = consumptionPrediction
 
         if days <= 0 { return .critical }
-        if days == 1 && prediction < 60 { return .critical }
+        if days == 1, prediction < 60 { return .critical }
 
         if days <= 7 {
             if prediction < 35 { return .critical }
@@ -435,6 +435,6 @@ public extension InventoryItem {
     }
 
     static func mocks(count: Int) -> [InventoryItem] {
-        (1 ... count).map { mock(id: $0) }
+        (1...count).map { mock(id: $0) }
     }
 }

@@ -171,7 +171,7 @@ public struct SearchView: View {
 
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< searchTabItems.count, id: \.self) { index in
-                        if let search = search {
+                        if let search {
                             SearchResultView(products: search.searchResults, isLoading: search.isLoading)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .tag(index)

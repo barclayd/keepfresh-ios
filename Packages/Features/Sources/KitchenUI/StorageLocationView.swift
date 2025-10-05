@@ -157,7 +157,8 @@ public struct StorageLocationView: View {
                             Image(systemName: storageLocation.icon).font(.system(size: 78))
                                 .foregroundColor(storageLocation == .pantry ? .blue700 : .white200)
 
-                            Text(storageLocation.rawValue).font(.largeTitle).lineSpacing(0).foregroundStyle(storageLocation == .pantry ? .blue700 : .white200)
+                            Text(storageLocation.rawValue).font(.largeTitle).lineSpacing(0)
+                                .foregroundStyle(storageLocation == .pantry ? .blue700 : .white200)
                                 .fontWeight(.bold)
 
                             if let locationDetails {
@@ -166,7 +167,8 @@ public struct StorageLocationView: View {
                                         .yellow500
                                     ).fontWeight(.bold).lineSpacing(0)
                                     HStack(spacing: 0) {
-                                        Text("Predicted usage").font(.subheadline).foregroundStyle(storageLocation == .pantry ? .blue700 : .white200)
+                                        Text("Predicted usage").font(.subheadline)
+                                            .foregroundStyle(storageLocation == .pantry ? .blue700 : .white200)
                                             .fontWeight(.light)
                                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
                                             .yellow500
@@ -223,10 +225,9 @@ public struct StorageLocationView: View {
                                     }
                                 }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                                     maxWidth: .infinity,
-                                    alignment: .center
-                                )
-                                .glassEffect(.regular.tint(.blue150), in: .rect(cornerRadius: 20))
-                                .cornerRadius(20)
+                                    alignment: .center)
+                                    .glassEffect(.regular.tint(.blue150), in: .rect(cornerRadius: 20))
+                                    .cornerRadius(20)
 
                                 HStack {
                                     Text(sortMode.title).font(.title).foregroundStyle(.blue700).fontWeight(.bold)
@@ -235,18 +236,15 @@ public struct StorageLocationView: View {
                                         SortButton(
                                             sortMode: $sortMode,
                                             type: .dateAdded(direction: .forward),
-                                            icon: "clock"
-                                        )
+                                            icon: "clock")
                                         SortButton(
                                             sortMode: $sortMode,
                                             type: .alphabetical(direction: .forward),
-                                            icon: "arrow.up.arrow.down"
-                                        )
+                                            icon: "arrow.up.arrow.down")
                                         SortButton(
                                             sortMode: $sortMode,
                                             type: .expiryDate(direction: .forward),
-                                            icon: "hourglass"
-                                        )
+                                            icon: "hourglass")
                                     }
                                 }.padding(.vertical, 5)
 
