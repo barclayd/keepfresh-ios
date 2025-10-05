@@ -2,6 +2,8 @@ import DesignSystem
 import Environment
 import Extensions
 import Models
+import Network
+import Router
 import SwiftUI
 
 public struct TodayView: View {
@@ -9,6 +11,7 @@ public struct TodayView: View {
     
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(Inventory.self) var inventory
+    @Environment(Router.self) var router
     
     private func getSheetFraction(height: CGFloat) -> CGFloat {
         if dynamicTypeSize >= .xxLarge {
@@ -54,10 +57,17 @@ public struct TodayView: View {
                 ).fontWeight(.bold)
                 
                 Button(action: {
-                    print("randomise")
+                    Task {
+                        let api = KeepFreshAPI()
+                        let product = try await api.getRandomProduct().product
+                        
+                        print("product", product)
+                        
+                        router.navigateTo(.addProduct(product: product))
+                    }
                 }) {
                     HStack(spacing: 10) {
-                        Image(systemName: "dice")
+                        Image(systemName: "dice.fill")
                             .font(.system(size: 18))
                             .frame(width: 20, alignment: .center)
                         Text("Random item")

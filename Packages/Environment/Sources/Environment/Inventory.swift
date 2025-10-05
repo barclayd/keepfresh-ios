@@ -105,7 +105,8 @@ public final class Inventory {
         state = .loading
 
         do {
-            items = try await api.getInventoryItems().inventoryItems
+//            items = try await api.getInventoryItems().inventoryItems
+            items = []
             state = .loaded
         } catch {
             state = .error
