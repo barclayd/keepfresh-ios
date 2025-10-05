@@ -51,8 +51,8 @@ private enum InventoryItemSortMode {
 
     var title: String {
         switch self {
-        case .alphabetical(direction: .forward): "Alphabetical (A–Z)"
-        case .alphabetical(direction: .backward): "Reverse Alphabetical (Z–A)"
+        case .alphabetical(direction: .forward): "Sorted (A–Z)"
+        case .alphabetical(direction: .backward): "Sorted (Z–A)"
         case .dateAdded(direction: .forward): "Recently added"
         case .dateAdded(direction: .backward): "Oldest items"
         case .expiryDate(direction: .forward): "Expiring first"

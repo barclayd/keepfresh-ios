@@ -1,3 +1,4 @@
+
 import SwiftUI
 import UIKit
 
@@ -62,12 +63,25 @@ public extension ShapeStyle where Self == Color {
         Color("brand-tesco", bundle: .module)
     }
 
+    static var yellow100: Color {
+        Color("yellow-100", bundle: .module)
+    }
+
     static var yellow400: Color {
         Color("yellow-400", bundle: .module)
     }
 
     static var yellow500: Color {
         Color("yellow-500", bundle: .module)
+    }
+
+    static var yellow600: Color {
+        Color("yellow-600", bundle: .module)
+    }
+
+
+    static var yellow700: Color {
+        Color("yellow-700", bundle: .module)
     }
 
     static var gray100: Color {
@@ -113,6 +127,14 @@ public extension ShapeStyle where Self == Color {
     static var red200: Color {
         Color("red-200", bundle: .module)
     }
+    
+    static var red500: Color {
+        Color("red-500", bundle: .module)
+    }
+
+    static var red800: Color {
+        Color("red-800", bundle: .module)
+    }
 
     static var brown100: Color {
         Color("brown-100", bundle: .module)
@@ -120,10 +142,6 @@ public extension ShapeStyle where Self == Color {
 
     static var brown300: Color {
         Color("brown-300", bundle: .module)
-    }
-
-    static var red500: Color {
-        Color("red-500", bundle: .module)
     }
 
     static var shadow: Color {

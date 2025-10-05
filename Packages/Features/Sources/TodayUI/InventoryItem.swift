@@ -10,15 +10,15 @@ struct IconsView: View {
                 if inventoryItem.createdAt.timeSince.amount > 0 {
                     Image(systemName: "calendar.badge.clock")
                         .font(.system(size: 18))
-                        .foregroundStyle(.green600).fontWeight(.bold)
+                        .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground).fontWeight(.bold)
                     Text(inventoryItem.createdAt.timeSince.abbreviated)
-                        .foregroundStyle(.green600).padding(.leading, 2)
+                        .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground).padding(.leading, 2)
                 }
             }
 
             Image(systemName: inventoryItem.storageLocation.iconFilled)
                 .font(.system(size: 18))
-                .foregroundStyle(.green600)
+                .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
 
             if inventoryItem.status == .opened {
                 Image("tin.open")
@@ -26,13 +26,13 @@ struct IconsView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 22, height: 22)
-                    .foregroundStyle(.green600)
+                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
             }
 
             HStack(spacing: 2) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 18)).foregroundStyle(.yellow500)
-                Text("\(inventoryItem.consumptionPrediction)%").foregroundStyle(.yellow500)
+                    .font(.system(size: 18)).foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
+                Text("\(inventoryItem.consumptionPrediction)%").foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
             }
 
             Spacer()
@@ -41,9 +41,9 @@ struct IconsView: View {
                 Image(systemName: "hourglass")
                     .font(.system(size: 18))
                     .fontWeight(.bold)
-                    .foregroundStyle(.green600)
+                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
                 Text(inventoryItem.expiryDate.timeUntil.formatted)
-                    .foregroundStyle(.green600)
+                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
             }
         }
         .padding(.vertical, 15)
@@ -54,7 +54,7 @@ struct IconsView: View {
             bottomTrailingRadius: 20,
             topTrailingRadius: 0,
             style: .continuous))
-        .foregroundStyle(.green300)
+        .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.background)
     }
 }
 
@@ -113,7 +113,7 @@ public struct InventoryItemView: View {
 
                         Circle()
                             .frame(width: 12, height: 12)
-                            .foregroundStyle(.green600)
+                            .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
                     }
 
                     HStack {
