@@ -31,11 +31,11 @@ struct StatsView: View {
         VStack(spacing: 20) {
             Spacer()
             HStack {
-                if let locationDetails {
+                if locationDetails != nil {
                     HStack(alignment: .bottom, spacing: 12) {
                         ForEach(stats) { stat in
-                            if let amount = stat.amount, amount > 0 {
-                                HStack(alignment: .bottom, spacing: 4) {
+                            if let amount = stat.amount {
+                                HStack(spacing: 4) {
                                     if let customIcon = stat.customIcon {
                                         Image(customIcon).renderingMode(.template)
                                             .resizable()
@@ -45,14 +45,11 @@ struct StatsView: View {
                                     } else {
                                         Image(systemName: stat.icon).font(.system(size: 18))
                                             .foregroundStyle(
-                                                stat.icon == "hourglass" ? locationDetails
-                                                    .expiryStatusPercentageColor : storageLocation.foregroundColor)
+                                                storageLocation.foregroundColor)
                                     }
 
                                     Text("\(amount)").font(.body)
-                                        .foregroundStyle(
-                                            stat.icon == "hourglass" ? locationDetails
-                                                .expiryStatusPercentageColor : storageLocation.foregroundColor)
+                                        .foregroundStyle(storageLocation.foregroundColor)
                                 }
                             }
                         }
@@ -70,6 +67,17 @@ struct StatsView: View {
                                     recentItemImages
                                         .count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
                         }
+                    }
+                } else {
+                    HStack {
+                        HStack(spacing: 4) {
+                            Image(systemName: "list.number")
+                                .font(.system(size: 18))
+                                .foregroundStyle(.white200)
+                            Text("0").font(.body)
+                                .foregroundStyle(.white200)
+                        }
+                        Spacer()
                     }
                 }
             }
