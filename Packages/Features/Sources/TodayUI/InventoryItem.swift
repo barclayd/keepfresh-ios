@@ -68,32 +68,12 @@ struct IconsView: View {
 }
 
 public struct InventoryItemView: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State var showInventoryItemSheet: Bool = false
 
     var inventoryItem: InventoryItem
 
     public init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
-    }
-
-    private func getSheetFraction(height: CGFloat) -> CGFloat {
-        if dynamicTypeSize >= .xxLarge {
-            return 0.8
-        }
-
-        print("Height: \(height)")
-
-        switch height {
-        case ..<668:
-            return 1 // iPhone SE
-        case ..<845:
-            return 0.9 // iPhone 13
-        case ..<957:
-            return 0.725 // iPhone 16 Pro Max
-        default:
-            return 0.5
-        }
     }
 
     public var body: some View {
@@ -167,12 +147,11 @@ public struct InventoryItemView: View {
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .onTapGesture {
-            // need to add haptics
             showInventoryItemSheet.toggle()
         }
         .sheet(isPresented: $showInventoryItemSheet) {
             InventoryItemSheetView(inventoryItem: inventoryItem)
-                .presentationDetents([.fraction(getSheetFraction(height: UIScreen.main.bounds.size.height))])
+                .presentationDetents([.custom(AdaptiveMediumDetent.self)])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }

@@ -9,26 +9,8 @@ import SwiftUI
 public struct TodayView: View {
     public init() {}
 
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
-
-    private func getSheetFraction(height: CGFloat) -> CGFloat {
-        if dynamicTypeSize >= .xxLarge {
-            return 0.8
-        }
-
-        switch height {
-        case ..<668:
-            return 1 // iPhone SE
-        case ..<845:
-            return 0.9 // iPhone 13
-        case ..<957:
-            return 0.85 // iPhone 16 Pro Max
-        default:
-            return 0.7
-        }
-    }
 
     public var body: some View {
         if inventory.items.isEmpty {
