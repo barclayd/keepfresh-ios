@@ -304,29 +304,11 @@ public struct AddInventoryItemView: View {
                     }
                 }.background(.white200)
 
-                ZStack(alignment: .bottom) {
-                    UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
-                        topLeading: 0,
-                        bottomLeading: 40,
-                        bottomTrailing: 40,
-                        topTrailing: 0))
-                        .fill(.white200)
-                        .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
-                        .frame(height: 80)
-
-                    Button {
-                        Task {
-                            try await addToInventory()
-                        }
-                    } label: {
-                        Text("Add to \(formState.storageLocation.rawValue.capitalized)")
-                            .font(.title2)
-                            .foregroundStyle(.blue600)
-                            .fontWeight(.medium)
-                            .padding()
-                            .padding(.vertical, 20)
-                    }
-                }
+                BottomActionButton(
+                    title: "Add to \(formState.storageLocation.rawValue.capitalized)",
+                    safeAreaInsets: geometry.safeAreaInsets,
+                    action: addToInventory
+                )
             }
             .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
         }
