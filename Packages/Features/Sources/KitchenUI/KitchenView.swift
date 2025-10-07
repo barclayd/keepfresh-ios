@@ -25,8 +25,6 @@ struct StatsView: View {
         ]
     }
 
-    let recentItemImages = ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -57,17 +55,6 @@ struct StatsView: View {
 
                     Spacer()
 
-                    HStack(spacing: 0) {
-                        ForEach(Array(recentItemImages.reversed().enumerated()), id: \.offset) { index, image in
-                            Image(systemName: image)
-                                .font(.system(size: 18))
-                                .foregroundStyle(storageLocation.foregroundColor)
-                                .opacity(Double(recentItemImages.count - index) / Double(recentItemImages.count))
-                                .offset(x: CGFloat(
-                                    recentItemImages
-                                        .count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
-                        }
-                    }
                 } else {
                     HStack {
                         HStack(spacing: 4) {
