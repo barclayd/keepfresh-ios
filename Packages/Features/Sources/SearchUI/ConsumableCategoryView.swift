@@ -76,6 +76,21 @@ private extension Date {
         return formatter.string(from: self)
     }
 
+    var formattedAbbreviation: String {
+        let calendar = Calendar.current
+        let currentYear = calendar.component(.year, from: Date())
+        let dateYear = calendar.component(.year, from: self)
+
+        let formatter = DateFormatter()
+        if dateYear != currentYear {
+            formatter.dateFormat = "d MMM yy"
+        } else {
+            formatter.dateFormat = "d MMM"
+        }
+
+        return formatter.string(from: self)
+    }
+
     var expiryDescription: String {
         let days = daysFromNow
         switch days {
@@ -117,23 +132,32 @@ private extension InventoryItemFormType {
         switch self {
         case .Expiry:
             VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 0) {
-                    Text(expiryDate.wrappedValue.formattedWithOrdinal).foregroundStyle(.gray600)
-                    if isRecommendedExpiryDate {
-                        Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
-                            .offset(y: -8)
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 0) {
+                            Text(expiryDate.wrappedValue.formattedWithOrdinal).foregroundStyle(.gray600)
+                        if isRecommendedExpiryDate {
+                            Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
+                                .offset(y: -8)
+                        }
+                    }
+                    HStack(spacing: 0) {
+                            Text(expiryDate.wrappedValue.formattedAbbreviation).foregroundStyle(.gray600)
+                        if isRecommendedExpiryDate {
+                            Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
+                                .offset(y: -8)
+                        }
                     }
                 }
                 Text(expiryDate.wrappedValue.expiryDescription).foregroundStyle(.black800).font(.footnote)
                     .fontWeight(.thin)
             }
-            .frame(width: 150, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
         case .Status:
             VStack(alignment: .leading, spacing: 0) {
                 Text(status.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
             }
-            .frame(width: 150, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
         case .Storage:
             VStack(alignment: .leading, spacing: 0) {
@@ -147,13 +171,13 @@ private extension InventoryItemFormType {
                     }
                 }
             }
-            .frame(width: 150, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
         case .Quantity:
             VStack(alignment: .leading, spacing: 0) {
                 Text("\(quantity.wrappedValue)").foregroundStyle(.gray600)
             }
-            .frame(width: 75, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -166,7 +190,7 @@ private extension InventoryItemFormType {
                 .labelsHidden()
                 .disabled(true)
         case .Quantity:
-            Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
+            Stepper(value: quantity, in: 1 ... 10, step: 1) {}.tint(.blue700)
         }
     }
 
@@ -258,7 +282,7 @@ struct IventoryItemStatusContent: View {
                             .font(.callout)
                             .lineLimit(1).border(.yellow)
                     }
-                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(width: 150, alignment: .leading)
+                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(maxWidth: .infinity, alignment: .leading)
 
                 Spacer()
             }
@@ -270,7 +294,7 @@ struct IventoryItemStatusContent: View {
                     bottomLeading: 20,
                     bottomTrailing: 20,
                     topTrailing: 0))
-                    .fill(.white))
+                    .fill(.white100))
     }
 }
 
@@ -300,7 +324,7 @@ struct InventoryItemStorageContent: View {
                             .font(.callout)
                             .lineLimit(1).border(.yellow)
                     }
-                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(width: 150, alignment: .leading)
+                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(maxWidth: .infinity, alignment: .leading)
 
                 Spacer()
             }
@@ -312,7 +336,7 @@ struct InventoryItemStorageContent: View {
                     bottomLeading: 20,
                     bottomTrailing: 20,
                     topTrailing: 0))
-                    .fill(.white))
+                    .fill(.white100))
     }
 }
 
@@ -343,7 +367,7 @@ struct InventoryItemExpiryDateContent: View {
                         .foregroundStyle(.gray600)
                         .font(.callout)
                         .lineLimit(1)
-                        .frame(width: 150, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
                 Spacer()
@@ -376,7 +400,7 @@ struct InventoryItemExpiryDateContent: View {
                             .font(.callout)
                             .lineLimit(1).border(.yellow)
                     }
-                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(width: 150, alignment: .leading)
+                }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(maxWidth: .infinity, alignment: .leading)
 
                 Spacer()
             }
@@ -388,7 +412,7 @@ struct InventoryItemExpiryDateContent: View {
                     bottomLeading: 20,
                     bottomTrailing: 20,
                     topTrailing: 0))
-                    .fill(.white))
+                    .fill(.white100))
     }
 }
 

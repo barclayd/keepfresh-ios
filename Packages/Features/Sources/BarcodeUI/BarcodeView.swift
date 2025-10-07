@@ -122,6 +122,7 @@ public struct BarcodeView: View {
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.gray200)
                         }
+                        .transaction { $0.animation = nil }
                     }
                 }
                 .onAppear {

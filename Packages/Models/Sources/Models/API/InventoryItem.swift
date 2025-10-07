@@ -26,15 +26,19 @@ public struct UpdateInventoryItemRequest: Codable, Sendable {
     public let status: InventoryItemStatus?
     public let storageLocation: StorageLocation?
     public let percentageRemaining: Int?
+    public let consumptionPredictionChangedAt: Date?
 
     public init(
         status: InventoryItemStatus? = nil,
         storageLocation: StorageLocation? = nil,
-        percentageRemaining: Double?)
+        percentageRemaining: Double?,
+        consumptionPredictionChangedAt: Date? = nil
+    )
     {
         self.storageLocation = storageLocation
         self.status = status
         self.percentageRemaining = percentageRemaining.map { Int($0) }
+        self.consumptionPredictionChangedAt = consumptionPredictionChangedAt
     }
 }
 
@@ -53,19 +57,22 @@ public struct AddInventoryItemRequest: Codable, Sendable {
         public let status: ProductSearchItemStatus
         public let expiryType: ExpiryType
         public let consumptionPrediction: Int?
+        public let consumptionPredictionChangedAt: Date?
 
         public init(
             expiryDate: Date,
             storageLocation: StorageLocation,
             status: ProductSearchItemStatus,
             expiryType: ExpiryType,
-            consumptionPrediction: Int?)
+            consumptionPrediction: Int?,
+            consumptionPredictionChangedAt: Date?)
         {
             self.expiryDate = expiryDate
             self.storageLocation = storageLocation
             self.status = status
             self.expiryType = expiryType
             self.consumptionPrediction = consumptionPrediction
+            self.consumptionPredictionChangedAt = consumptionPredictionChangedAt
         }
     }
 
@@ -147,6 +154,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
         status: InventoryItemStatus,
         storageLocation: StorageLocation,
         consumptionPrediction: Int,
+        consumptionPredictionChangedAt: Date?,
         expiryDate: Date,
         expiryType: ExpiryType,
         product: Product)
@@ -158,6 +166,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
         self.status = status
         self.storageLocation = storageLocation
         self.consumptionPrediction = consumptionPrediction
+        self.consumptionPredictionChangedAt = consumptionPredictionChangedAt
         self.expiryDate = expiryDate
         self.expiryType = expiryType
         self.product = product
@@ -170,6 +179,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
     public var status: InventoryItemStatus
     public var storageLocation: StorageLocation
     public let consumptionPrediction: Int
+    public let consumptionPredictionChangedAt: Date?
     public let expiryDate: Date
     public let expiryType: ExpiryType
     public let product: Product
@@ -201,6 +211,7 @@ public extension InventoryItem {
             imageUrl: imageURL,
             category: CategoryDetails(name: category.name, pathDisplay: category.path))
         consumptionPrediction = 100
+        consumptionPredictionChangedAt = Date()
     }
 }
 
@@ -220,6 +231,17 @@ public extension InventoryItem {
 
         if prediction < 30 { return .attention }
         return .good
+    }
+
+    var progress: Double {
+        let daysSinceCreation = createdAt.timeSince.totalDays
+        let daysUntilExpiry = expiryDate.timeUntil.totalDays
+        let totalDays = daysSinceCreation + daysUntilExpiry
+
+        guard totalDays > 0 else { return 1.0 }
+
+        let progress = Double(daysSinceCreation) / Double(totalDays)
+        return min(max(progress, 0.0), 1.0)
     }
 }
 
@@ -418,6 +440,7 @@ public extension InventoryItem {
             status: .unopened,
             storageLocation: .fridge,
             consumptionPrediction: 85,
+            consumptionPredictionChangedAt: Date(),
             expiryDate: Date().addingTimeInterval(86400 * 5),
             expiryType: .BestBefore,
             product: Product(
@@ -435,6 +458,6 @@ public extension InventoryItem {
     }
 
     static func mocks(count: Int) -> [InventoryItem] {
-        (1...count).map { mock(id: $0) }
+        (1 ... count).map { mock(id: $0) }
     }
 }

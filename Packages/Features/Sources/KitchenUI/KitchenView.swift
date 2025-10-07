@@ -25,34 +25,29 @@ struct StatsView: View {
         ]
     }
 
-    let recentItemImages = ["popcorn.fill", "birthday.cake.fill", "carrot.fill"]
-
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
             HStack {
-                if let locationDetails {
+                if locationDetails != nil {
                     HStack(alignment: .bottom, spacing: 12) {
                         ForEach(stats) { stat in
-                            if let amount = stat.amount, amount > 0 {
-                                HStack(alignment: .bottom, spacing: 4) {
+                            if let amount = stat.amount {
+                                HStack(spacing: 4) {
                                     if let customIcon = stat.customIcon {
                                         Image(customIcon).renderingMode(.template)
                                             .resizable()
                                             .scaledToFit()
                                             .frame(width: 22, height: 22)
-                                            .foregroundStyle(storageLocation.foregorundColor)
+                                            .foregroundStyle(storageLocation.foregroundColor)
                                     } else {
                                         Image(systemName: stat.icon).font(.system(size: 18))
                                             .foregroundStyle(
-                                                stat.icon == "hourglass" ? locationDetails
-                                                    .expiryStatusPercentageColor : storageLocation.foregorundColor)
+                                                storageLocation.foregroundColor)
                                     }
 
                                     Text("\(amount)").font(.body)
-                                        .foregroundStyle(
-                                            stat.icon == "hourglass" ? locationDetails
-                                                .expiryStatusPercentageColor : storageLocation.foregorundColor)
+                                        .foregroundStyle(storageLocation.foregroundColor)
                                 }
                             }
                         }
@@ -60,16 +55,16 @@ struct StatsView: View {
 
                     Spacer()
 
-                    HStack(spacing: 0) {
-                        ForEach(Array(recentItemImages.reversed().enumerated()), id: \.offset) { index, image in
-                            Image(systemName: image)
+                } else {
+                    HStack {
+                        HStack(spacing: 4) {
+                            Image(systemName: "list.number")
                                 .font(.system(size: 18))
-                                .foregroundStyle(storageLocation.foregorundColor)
-                                .opacity(Double(recentItemImages.count - index) / Double(recentItemImages.count))
-                                .offset(x: CGFloat(
-                                    recentItemImages
-                                        .count - index > 0 ? (recentItemImages.count - index - 1) * 10 : 0))
+                                .foregroundStyle(.white200)
+                            Text("0").font(.body)
+                                .foregroundStyle(.white200)
                         }
+                        Spacer()
                     }
                 }
             }
@@ -102,9 +97,9 @@ private struct StorageLocationTileView: View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
                 Image(systemName: storageLocation.icon)
-                    .font(.system(size: 36))
+                    .font(.system(size: 36)).foregroundStyle(.blue800)
 
-                Text(storageLocation.rawValue).foregroundStyle(.blue700).font(.title).fontWeight(.bold)
+                Text(storageLocation.rawValue).foregroundStyle(.blue800).font(.title).fontWeight(.bold)
 
                 Spacer()
 
@@ -120,14 +115,14 @@ private struct StorageLocationTileView: View {
             .padding(.vertical, 10)
             .padding(.top, 5)
             .padding(.horizontal, 10)
-            .background(Color.white)
+            .background(.white100)
             .cornerRadius(20)
 
             StatsView(storageLocation: storageLocation, locationDetails: inventory.detailsByStorageLocation[storageLocation])
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
-        .background(Color.white)
+        .background(.white100)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
@@ -150,6 +145,7 @@ public struct KitchenView: View {
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)
-        }.padding(.vertical, 10).background(.white200)
+        }
+        .containerBackground(.white200, for: .navigation)
     }
 }

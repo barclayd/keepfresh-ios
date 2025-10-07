@@ -120,7 +120,7 @@ public extension AppTab {
 
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
-                    print("Barcode scan")
+                    router.presentedSheet = .barcodeScan
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
                         .frame(width: 24, height: 24)

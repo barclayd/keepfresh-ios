@@ -75,30 +75,24 @@ public struct RecentSearchView: View {
         modelContext.delete(recentSearch)
     }
 
-    private func colorConfiguration(for index: Int) -> RecentSearchItem.ColorConfiguration {
-        index % 2 == 0
-            ? .init(text: .blue600, background: .red200, closeIcon: .blue400)
-            : .init(text: .white200, background: .blue500, closeIcon: .white200)
-    }
-
     public var body: some View {
         List {
             HStack {
                 Text("Recent Searches")
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.blue800)
                 Spacer()
             }.padding(.top, 10)
 
-            ForEach(Array(recentSearches.enumerated()), id: \.element.id) { index, recentSearch in
+            ForEach(recentSearches) { recentSearch in
                 RecentSearchItem(
                     search: recentSearch,
                     onTap: { previousSearchText in
                         searchText = previousSearchText
                     },
                     onDelete: { deleteRecentSearch(recentSearch) },
-                    colorConfiguration: colorConfiguration(for: index))
+                    colorConfiguration: RecentSearchItem.ColorConfiguration(text: recentSearch.recommendedStorageLocation.textColor, background: recentSearch.recommendedStorageLocation.tileColor, closeIcon: recentSearch.recommendedStorageLocation.textColor))
                     .listRowInsets(EdgeInsets(
                         top: 5,
                         leading: 10,

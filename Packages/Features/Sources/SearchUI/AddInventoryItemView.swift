@@ -81,7 +81,8 @@ public struct AddInventoryItemView: View {
                     status: formState.status,
                     expiryType: formState
                         .expiryType,
-                    consumptionPrediction: usageGenerator.percentagePrediction),
+                    consumptionPrediction: usageGenerator.percentagePrediction,
+                    consumptionPredictionChangedAt: usageGenerator.percentagePrediction != nil ? Date() : nil),
             product: AddInventoryItemRequest
                 .ProductData(
                     name: productSearchItem.name,
@@ -145,17 +146,16 @@ public struct AddInventoryItemView: View {
 
                             HStack {
                                 Text(productSearchItem.category.name)
-                                    .font(.callout).foregroundStyle(.gray600)
+                                    .font(.callout)
                                 if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
                                     Circle()
                                         .frame(width: 4, height: 4)
-                                        .foregroundStyle(.gray600)
 
                                     Text("\(String(format: "%.0f", amount))\(unit)")
-                                        .foregroundStyle(.gray600)
                                         .font(.callout)
                                 }
-                            }
+                            }.foregroundStyle(.blue800)
+                            
                             Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
@@ -303,29 +303,11 @@ public struct AddInventoryItemView: View {
                     }
                 }.background(.white200)
 
-                ZStack(alignment: .bottom) {
-                    UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
-                        topLeading: 0,
-                        bottomLeading: 40,
-                        bottomTrailing: 40,
-                        topTrailing: 0))
-                        .fill(.white200)
-                        .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 4, x: 0, y: -4)
-                        .frame(height: 80)
-
-                    Button {
-                        Task {
-                            try await addToInventory()
-                        }
-                    } label: {
-                        Text("Add to \(formState.storageLocation.rawValue.capitalized)")
-                            .font(.title2)
-                            .foregroundStyle(.blue600)
-                            .fontWeight(.medium)
-                            .padding()
-                            .padding(.vertical, 20)
-                    }
-                }
+                BottomActionButton(
+                    title: "Add to \(formState.storageLocation.rawValue.capitalized)",
+                    safeAreaInsets: geometry.safeAreaInsets,
+                    action: addToInventory
+                )
             }
             .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
         }

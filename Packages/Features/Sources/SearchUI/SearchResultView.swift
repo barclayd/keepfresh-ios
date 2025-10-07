@@ -92,7 +92,7 @@ public struct SearchResultCard: View {
                     bottomLeadingRadius: 20,
                     bottomTrailingRadius: 20,
                     topTrailingRadius: 0,
-                    style: .continuous).fill(.white))
+                    style: .continuous).fill(.white100))
         }
         .background(product.category.recommendedStorageLocation.tileColor)
         .cornerRadius(20)

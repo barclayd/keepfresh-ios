@@ -29,7 +29,7 @@ extension InventoryItem {
             NextBestAction(
                 label: "Move to Fridge",
                 icon: "refrigerator.fill",
-                textColor: .white,
+                textColor: .white100,
                 backgroundColor: .blue600,
                 action: { onMove(.fridge) })
         case (.opened, .fridge):
@@ -55,7 +55,7 @@ struct InventoryItemSheetStatsGridRows: View {
     var body: some View {
         Group {
             if pageIndex == 0 {
-                GridRow {
+                GridRow(alignment: .center,) {
                     VStack(spacing: 0) {
                         Text("\(inventoryItem.expiryDate.timeUntil.amount)").foregroundStyle(.green600)
                             .fontWeight(.bold).font(.headline)
@@ -71,10 +71,11 @@ struct InventoryItemSheetStatsGridRows: View {
                         .foregroundStyle(.yellow400)
                     VStack(spacing: 0) {
                         Text("\(inventoryItem.consumptionPrediction)%").fontWeight(.bold).font(.headline)
-                        Text("Predicted usage").fontWeight(.light).font(.subheadline)
+                        Text("Predicted use").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
-                GridRow {
+                
+                GridRow(alignment: .center) {
                     Text(inventoryItem.storageLocation.rawValue).fontWeight(.bold).font(.headline)
                     Image(systemName: inventoryItem.storageLocation.icon)
                         .font(.system(size: 28)).fontWeight(.bold)
@@ -101,6 +102,7 @@ struct InventoryItemSheetStatsGridRows: View {
                                 .formattedElapsedTime).fontWeight(.bold).font(.headline)
                     }.foregroundStyle(.blue700)
                 }
+                
                 GridRow {
                     VStack(spacing: 0) {
                         Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.fridge] ?? 0)")
@@ -127,10 +129,10 @@ struct InventoryItemSheetStatsGrid: View {
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
-            Grid(horizontalSpacing: 30, verticalSpacing: 10) {
+            Grid(alignment: .center, horizontalSpacing: 30, verticalSpacing: 10) {
                 InventoryItemSheetStatsGridRows(pageIndex: pageIndex, inventoryItem: inventoryItem)
             }
-            Grid(horizontalSpacing: 10, verticalSpacing: 10) {
+            Grid(alignment: .center, horizontalSpacing: 10, verticalSpacing: 10) {
                 InventoryItemSheetStatsGridRows(pageIndex: pageIndex, inventoryItem: inventoryItem)
             }
         }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center)
@@ -237,7 +239,7 @@ struct InventoryItemSheetView: View {
                 }
                 .frame(width: 80, height: 80)
                 .padding(.bottom, -8)
-                Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue800)
+                Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700)
                     .lineSpacing(0).padding(.bottom, -8)
                 HStack {
                     Text(inventoryItem.product.category.name)
