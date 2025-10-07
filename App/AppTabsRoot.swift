@@ -34,6 +34,7 @@ struct AppTabRootView: View {
                 AppTab.kitchen.label
             }
         }
+        .tint(.blue600)
         .tabBarMinimizeBehavior(.onScrollDown)
         .sheet(item: $router.presentedSheet) { presentedSheet in
             switch presentedSheet {
