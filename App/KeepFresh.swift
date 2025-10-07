@@ -35,6 +35,7 @@ struct KeepFreshApp: App {
                 .task {
                     await inventory.fetchItems()
                 }
+                .preferredColorScheme(.light)
         }
     }
 }

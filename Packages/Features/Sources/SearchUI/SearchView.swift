@@ -146,6 +146,7 @@ public struct SearchView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.white100)
         .task {
             if search == nil {
                 search = Search(onSaveSearch: saveRecentSearch)

@@ -81,7 +81,7 @@ public struct RecentSearchView: View {
                 Text("Recent Searches")
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.blue800)
                 Spacer()
             }.padding(.top, 10)
 

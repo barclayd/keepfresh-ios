@@ -3,6 +3,10 @@ import SwiftUI
 import UIKit
 
 public extension ShapeStyle where Self == Color {
+    static var white100: Color {
+        Color("white-100", bundle: .module)
+    }
+    
     static var white200: Color {
         Color("white-200", bundle: .module)
     }

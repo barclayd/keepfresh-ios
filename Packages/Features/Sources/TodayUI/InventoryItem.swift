@@ -127,7 +127,7 @@ public struct InventoryItemView: View {
                             .overlay {
                                 Text(
                                     inventoryItem.expiryDate.timeUntil.totalDays <= 7 ? inventoryItem.expiryDate.timeUntil.totalDays
-                                        .formatted() : "7+")
+                                        .formatted() : "7+").foregroundStyle(.blue800)
                             }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
@@ -135,14 +135,14 @@ public struct InventoryItemView: View {
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 10)
-            .background(.white)
+            .background(.white100)
             .cornerRadius(20)
 
             IconsView(inventoryItem: inventoryItem)
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
-        .background(.white)
+        .background(.white100)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)

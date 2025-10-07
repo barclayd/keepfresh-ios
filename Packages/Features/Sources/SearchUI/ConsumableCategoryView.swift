@@ -294,7 +294,7 @@ struct IventoryItemStatusContent: View {
                     bottomLeading: 20,
                     bottomTrailing: 20,
                     topTrailing: 0))
-                    .fill(.white))
+                    .fill(.white100))
     }
 }
 
@@ -336,7 +336,7 @@ struct InventoryItemStorageContent: View {
                     bottomLeading: 20,
                     bottomTrailing: 20,
                     topTrailing: 0))
-                    .fill(.white))
+                    .fill(.white100))
     }
 }
 
@@ -412,7 +412,7 @@ struct InventoryItemExpiryDateContent: View {
                     bottomLeading: 20,
                     bottomTrailing: 20,
                     topTrailing: 0))
-                    .fill(.white))
+                    .fill(.white100))
     }
 }
 

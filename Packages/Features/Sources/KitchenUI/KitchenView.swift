@@ -97,9 +97,9 @@ private struct StorageLocationTileView: View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
                 Image(systemName: storageLocation.icon)
-                    .font(.system(size: 36))
+                    .font(.system(size: 36)).foregroundStyle(.blue800)
 
-                Text(storageLocation.rawValue).foregroundStyle(.blue700).font(.title).fontWeight(.bold)
+                Text(storageLocation.rawValue).foregroundStyle(.blue800).font(.title).fontWeight(.bold)
 
                 Spacer()
 
@@ -115,14 +115,14 @@ private struct StorageLocationTileView: View {
             .padding(.vertical, 10)
             .padding(.top, 5)
             .padding(.horizontal, 10)
-            .background(Color.white)
+            .background(.white100)
             .cornerRadius(20)
 
             StatsView(storageLocation: storageLocation, locationDetails: inventory.detailsByStorageLocation[storageLocation])
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
-        .background(Color.white)
+        .background(.white100)
         .cornerRadius(20)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)

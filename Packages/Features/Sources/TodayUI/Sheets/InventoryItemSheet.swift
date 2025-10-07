@@ -29,7 +29,7 @@ extension InventoryItem {
             NextBestAction(
                 label: "Move to Fridge",
                 icon: "refrigerator.fill",
-                textColor: .white,
+                textColor: .white100,
                 backgroundColor: .blue600,
                 action: { onMove(.fridge) })
         case (.opened, .fridge):
@@ -239,7 +239,7 @@ struct InventoryItemSheetView: View {
                 }
                 .frame(width: 80, height: 80)
                 .padding(.bottom, -8)
-                Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue800)
+                Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700)
                     .lineSpacing(0).padding(.bottom, -8)
                 HStack {
                     Text(inventoryItem.product.category.name)
