@@ -48,7 +48,7 @@ public struct BottomActionButton: View {
                     .foregroundStyle(.blue600)
                     .fontWeight(.medium)
                     .padding()
-                    .padding(.vertical, safeAreaInsets.bottom > 20 ? 20 : 10)
+                    .padding(.vertical, safeAreaInsets.bottom > 20 ? 0 : 10)
             }
         }
     }
