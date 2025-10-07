@@ -146,17 +146,16 @@ public struct AddInventoryItemView: View {
 
                             HStack {
                                 Text(productSearchItem.category.name)
-                                    .font(.callout).foregroundStyle(.gray600)
+                                    .font(.callout)
                                 if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
                                     Circle()
                                         .frame(width: 4, height: 4)
-                                        .foregroundStyle(.gray600)
 
                                     Text("\(String(format: "%.0f", amount))\(unit)")
-                                        .foregroundStyle(.gray600)
                                         .font(.callout)
                                 }
-                            }
+                            }.foregroundStyle(.blue800)
+                            
                             Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
