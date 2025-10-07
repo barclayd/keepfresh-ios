@@ -145,6 +145,7 @@ public struct KitchenView: View {
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)
-        }.padding(.vertical, 10).background(.white200)
+        }
+        .containerBackground(.white200, for: .navigation)
     }
 }
