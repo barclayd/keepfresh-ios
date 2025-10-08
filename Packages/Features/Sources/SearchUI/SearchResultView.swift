@@ -33,14 +33,15 @@ public struct SearchResultCard: View {
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
-            HStack {
+            HStack(spacing: 0) {
                 GenmojiView(name: product.icon, fontSize: 28, tint: .white200)
                 
                 Text(product.name)
-                    .font(.title3)
+                    .font(.headline)
                     .fontWeight(.bold)
                     .foregroundStyle(.blue700)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .lineLimit(1)
                 Spacer()
                 Image(systemName: "plus")
                     .font(.system(size: 14))
@@ -49,7 +50,7 @@ public struct SearchResultCard: View {
                     .frame(width: 28, height: 28)
                     .background(Circle().fill(.blue700))
             }
-            .padding(.vertical, 10)
+            .padding(.vertical, 7.5)
             .padding(.horizontal, 10)
             .background(product.category.recommendedStorageLocation.tileColor)
             .cornerRadius(20)
