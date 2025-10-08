@@ -24,6 +24,13 @@ public struct KeepFreshAPI: Sendable {
             queryParameters: nil)
     }
 
+    public func getProduct(barcode: String) async throws -> ProductSearchItemResponse {
+        try await client.fetch(
+            ProductSearchItemResponse.self,
+            path: "v1/products/barcode/\(barcode)",
+            queryParameters: nil)
+    }
+
     public func getInventoryItems() async throws -> InventoryItemsResponse {
         try await client.fetch(
             InventoryItemsResponse.self,

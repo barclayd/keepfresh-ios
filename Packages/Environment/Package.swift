@@ -5,15 +5,16 @@ let package = Package(
     name: "Environment",
     platforms: [.iOS("26.0")],
     products: [
-        .library(name: "Environment", targets: ["Environment"]),
+        .library(name: "Environment", type: .static, targets: ["Environment"]),
     ],
     dependencies: [
         .package(path: "../Models"),
         .package(path: "../Network"),
         .package(path: "../Extensions"),
+        .package(path: "../DesignSystem"),
     ],
     targets: [
         .target(
             name: "Environment",
-            dependencies: ["Models", "Network", "Extensions"]),
+            dependencies: ["Models", "Network", "Extensions", "DesignSystem"]),
     ])

@@ -5,7 +5,7 @@ let package = Package(
     name: "Extensions",
     platforms: [.iOS("26.0")],
     products: [
-        .library(name: "Extensions", targets: ["Extensions"]),
+        .library(name: "Extensions", type: .static, targets: ["Extensions"]),
     ],
     dependencies: [
     ],

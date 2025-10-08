@@ -5,7 +5,7 @@ let package = Package(
     name: "Router",
     platforms: [.iOS("26.0")],
     products: [
-        .library(name: "Router", targets: ["Router"]),
+        .library(name: "Router", type: .static, targets: ["Router"]),
     ],
     dependencies: [
         .package(path: "../DesignSystem"),

@@ -15,11 +15,11 @@ let package = Package(
     name: "Features",
     platforms: [.iOS("26.0")],
     products: [
-        .library(name: "SearchUI", targets: ["SearchUI"]),
-        .library(name: "TodayUI", targets: ["TodayUI"]),
-        .library(name: "KitchenUI", targets: ["KitchenUI"]),
-        .library(name: "BarcodeUI", targets: ["BarcodeUI"]),
-        .library(name: "SharedUI", targets: ["SharedUI"]),
+        .library(name: "SearchUI", type: .static, targets: ["SearchUI"]),
+        .library(name: "TodayUI", type: .static, targets: ["TodayUI"]),
+        .library(name: "KitchenUI", type: .static, targets: ["KitchenUI"]),
+        .library(name: "BarcodeUI", type: .static, targets: ["BarcodeUI"]),
+        .library(name: "SharedUI", type: .static, targets: ["SharedUI"]),
     ],
     dependencies: [
         .package(path: "../Models"),
@@ -29,7 +29,7 @@ let package = Package(
         .package(path: "../Environment"),
         .package(path: "../Extensions"),
         .package(path: "../Intelligence"),
-        .package(url: "https://github.com/twostraws/CodeScanner", from: "2.5.0"),
+        .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.0"),
     ],
     targets: [
         .target(

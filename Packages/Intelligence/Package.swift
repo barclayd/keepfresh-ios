@@ -5,7 +5,7 @@ let package = Package(
     name: "Intelligence",
     platforms: [.iOS("26.0")],
     products: [
-        .library(name: "Intelligence", targets: ["Intelligence"]),
+        .library(name: "Intelligence", type: .static, targets: ["Intelligence"]),
     ],
     dependencies: [
         .package(path: "../Models"),

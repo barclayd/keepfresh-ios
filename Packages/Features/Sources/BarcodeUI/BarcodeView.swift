@@ -1,22 +1,9 @@
 import CodeScanner
 import DesignSystem
 import Models
+import Network
 import Router
 import SwiftUI
-
-@MainActor let productSearchItem: ProductSearchItemResponse = .init(
-    name: "Semi Skimmed Milk",
-    brand: "Sainburys",
-    category: ProductSearchItemCategory(
-        id: 123,
-        name: "Milk",
-        path: "Fresh Food > Milk", recommendedStorageLocation: .fridge),
-    amount: 4,
-    unit: "pints",
-    icon: "chicken",
-    source: ProductSearchItemSource(
-        id: 1,
-        ref: "Local Store"))
 
 func roundedRectangleWithHoleInMask(
     in rect: CGRect,
@@ -64,12 +51,21 @@ public struct BarcodeView: View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
-                    CodeScannerView(codeTypes: [.ean8, .ean13], simulatedData: "012345789") { response in
+                    CodeScannerView(codeTypes: [.ean8, .ean13], simulatedData: "5059697710001") { response in
                         switch response {
                         case let .success(result):
                             print("Found code: \(result.string)")
-                            router.navigateTo(.addProduct(product: productSearchItem))
-                            router.presentedSheet = nil
+                            Task {
+                                let api = KeepFreshAPI()
+                                do {
+                                    print("result: \(result.string)")
+                                    let product = try await api.getProduct(barcode: result.string)
+                                    router.navigateTo(.addProduct(product: product))
+                                    router.presentedSheet = nil
+                                } catch {
+                                    print("Error fetching product: \(error.localizedDescription)")
+                                }
+                            }
                         case let .failure(error):
                             print(error.localizedDescription)
                         }

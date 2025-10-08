@@ -7,13 +7,13 @@ let package = Package(
     name: "DesignSystem",
     platforms: [.iOS("26.0")],
     products: [
-        .library(name: "DesignSystem", targets: ["DesignSystem"]),
+        .library(name: "DesignSystem", type: .static, targets: ["DesignSystem"]),
     ],
     targets: [
         .target(
             name: "DesignSystem",
             dependencies: [],
             resources: [
-                .process("Shrikhand-Regular.ttf"),
+                .copy("Shrikhand-Regular.ttf"),
             ]),
     ])
