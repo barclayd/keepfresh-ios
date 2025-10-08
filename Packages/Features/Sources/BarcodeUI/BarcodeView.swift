@@ -36,13 +36,11 @@ func shapeWidth(geometry: GeometryProxy) -> CGFloat {
 public struct BarcodeView: View {
     @Environment(Router.self) var router
 
-    @State private var isFlashOn: Bool = false
-    @State private var offsetX: CGFloat = ((UIScreen.main.bounds.width / 10) * -3) + 20
     @State private var barcodeIndex: Int = 0
+    @State private var isAnimating: Bool = false
 
     public init() {}
 
-    let timer = Timer.publish(every: 3, tolerance: 1, on: .main, in: .common).autoconnect()
     let barcodeIcons = [
         "text.magnifyingglass", "text.page.badge.magnifyingglass", "rectangle.and.text.magnifyingglass",
     ]
@@ -92,14 +90,22 @@ public struct BarcodeView: View {
                         Image(systemName: barcodeIcons[barcodeIndex])
                             .foregroundStyle(.white200)
                             .font(.system(size: 36))
-                            .offset(x: offsetX)
-                            .animation(
-                                Animation.easeInOut(duration: 3)
-                                    .repeatForever(autoreverses: true),
-                                value: offsetX)
+                            .offset(x: isAnimating ?
+                                (shapeWidth(geometry: geometry) / 2) - 20 :
+                                ((shapeWidth(geometry: geometry) / 2) * -1) + 20
+                            )
                             .frame(height: 50)
-                            .onReceive(timer) { _ in
-                                barcodeIndex = (barcodeIndex + 1) % barcodeIcons.count
+                            .onAppear {
+                                withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
+                                    isAnimating = true
+                                }
+                            }
+                            .task {
+                                try? await Task.sleep(for: .seconds(3))
+                                while !Task.isCancelled {
+                                    barcodeIndex = (barcodeIndex + 1) % barcodeIcons.count
+                                    try? await Task.sleep(for: .seconds(3))
+                                }
                             }
 
                         Text("Scan a barcode")
@@ -118,14 +124,6 @@ public struct BarcodeView: View {
                                 .foregroundColor(.gray200)
                         }
                         .transaction { $0.animation = nil }
-                    }
-                }
-                .onAppear {
-                    withAnimation(
-                        Animation.easeInOut(duration: 3)
-                            .repeatForever(autoreverses: true))
-                    {
-                        offsetX = (shapeWidth(geometry: geometry) / 2) - 20
                     }
                 }
             }
