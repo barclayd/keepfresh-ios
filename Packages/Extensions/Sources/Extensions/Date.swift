@@ -71,13 +71,6 @@ public struct RelativeTime {
 
         return "\(unit.pluralised(for: amount).capitalized) to expiry"
     }
-    
-//
-//    public var formattedToExpiry: String {
-//        guard totalDays >= 0 else { return "Days expired" }
-//
-//        return "To expiry"
-//    }
 
     public var formattedElapsedTime: String {
         guard amount != 0 else { return "Today" }

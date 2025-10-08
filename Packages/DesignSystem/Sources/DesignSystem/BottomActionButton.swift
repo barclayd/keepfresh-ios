@@ -66,8 +66,6 @@ private struct LiquidGlassBackground: View {
     }
 }
 
-// MARK: - Action Button Component
-
 private struct ActionButton: View {
     let title: String
     let safeAreaInsets: EdgeInsets
@@ -87,10 +85,7 @@ private struct ActionButton: View {
             Task {
                 do {
                     try await action()
-                } catch {
-                    // Error handling - allow the calling view to handle errors
-                    // by propagating them through the async throws closure
-                }
+                } catch {}
                 isProcessing = false
             }
         } label: {
@@ -104,8 +99,6 @@ private struct ActionButton: View {
         .sensoryFeedback(.impact, trigger: isProcessing)
     }
 }
-
-// MARK: - Button Label Component
 
 private struct ButtonLabel: View {
     let title: String
