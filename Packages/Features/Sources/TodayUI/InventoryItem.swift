@@ -79,17 +79,7 @@ public struct InventoryItemView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                AsyncImage(url: URL(
-                    string: inventoryItem.product.category
-                        .imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png"))
-                { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } placeholder: {
-                    ProgressView().tint(inventoryItem.consumptionUrgency.tileColor.foreground)
-                }
-                .frame(width: 40, height: 40)
+                GenmojiView(name: "chicken", fontSize: 40, tint: inventoryItem.consumptionUrgency.tileColor.background)
                 VStack(spacing: 4) {
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {

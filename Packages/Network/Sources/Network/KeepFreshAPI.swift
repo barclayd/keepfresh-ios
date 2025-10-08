@@ -50,4 +50,19 @@ public struct KeepFreshAPI: Sendable {
             path: "v1/inventory/preview",
             body: request)
     }
+
+    // MARK: - Genmoji
+
+    public func uploadGenmoji(_ request: GenmojiUploadRequest) async throws {
+        try await client.post(
+            path: "v1/images/genmoji",
+            body: request)
+    }
+
+    public func getGenmoji(name: String) async throws -> GenmojiGetResponse {
+        try await client.fetch(
+            GenmojiGetResponse.self,
+            path: "v1/images/genmoji/\(name)",
+            queryParameters: nil)
+    }
 }
