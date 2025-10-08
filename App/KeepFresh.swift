@@ -31,7 +31,7 @@ struct KeepFreshApp: App {
             AppTabRootView()
                 .environment(router)
                 .environment(inventory)
-                .modelContainer(for: RecentSearch.self)
+                .modelContainer(for: [RecentSearch.self, GenmojiCache.self])
                 .task {
                     await inventory.fetchItems()
                 }

@@ -19,6 +19,7 @@ let package = Package(
         .library(name: "TodayUI", targets: ["TodayUI"]),
         .library(name: "KitchenUI", targets: ["KitchenUI"]),
         .library(name: "BarcodeUI", targets: ["BarcodeUI"]),
+        .library(name: "SharedUI", targets: ["SharedUI"]),
     ],
     dependencies: [
         .package(path: "../Models"),
@@ -33,14 +34,17 @@ let package = Package(
     targets: [
         .target(
             name: "SearchUI",
-            dependencies: baseDeps),
+            dependencies: baseDeps + ["SharedUI"]),
         .target(
             name: "TodayUI",
-            dependencies: baseDeps),
+            dependencies: baseDeps + ["SharedUI"]),
         .target(
             name: "KitchenUI",
-            dependencies: baseDeps + ["TodayUI"]),
+            dependencies: baseDeps + ["TodayUI", "SharedUI"]),
         .target(
             name: "BarcodeUI",
             dependencies: baseDeps + ["CodeScanner"]),
+        .target(
+            name: "SharedUI",
+            dependencies: baseDeps)
     ])

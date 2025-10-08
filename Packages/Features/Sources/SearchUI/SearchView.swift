@@ -63,21 +63,18 @@ class Search {
             let searchResponse = try await api.searchProducts(query: searchTerm)
             searchResults = searchResponse.products
             print("Search successful: Found \(searchResults.count) products")
-            
-            let (locationCounts, imageURLCounts) = searchResults.prefix(10).reduce(into: ([StorageLocation: Int](), [String: Int]())) { result, item in
+
+            let (locationCounts, iconCounts) = searchResults.prefix(10).reduce(into: ([StorageLocation: Int](), [String: Int]())) { result, item in
                 result.0[item.category.recommendedStorageLocation, default: 0] += 1
-                
-                if let imageURL = item.imageURL {
-                    result.1[imageURL, default: 0] += 1
-                }
+
+                result.1[item.icon, default: 0] += 1
             }
 
             let mostCommonStorageLocation = locationCounts.max(by: { $0.value < $1.value })?.key
-            let mostCommonImageURL = imageURLCounts.max(by: { $0.value < $1.value })?.key
-            
-            if let storageLocation = mostCommonStorageLocation,
-               let imageURL = mostCommonImageURL {
-                onSaveSearch(searchTerm, storageLocation, imageURL)
+            let mostCommonIcon = iconCounts.max(by: { $0.value < $1.value })?.key
+
+            if let storageLocation = mostCommonStorageLocation {
+                onSaveSearch(searchTerm, storageLocation, mostCommonIcon)
             }
 
         } catch {
@@ -101,7 +98,7 @@ public struct SearchView: View {
         UIScrollView.appearance().bounces = false
     }
 
-    private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, imageURL: String?) {
+    private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, icon: String?) {
         let existingSearch = recentSearches.first(where: { $0.text.lowercased() == text.lowercased() })
 
         guard existingSearch == nil else {
@@ -110,7 +107,7 @@ public struct SearchView: View {
         }
 
         let recentSearch = RecentSearch(
-            imageURL: imageURL,
+            icon: icon,
             text: text,
             recommendedStorageLocation: recommendedStorageLocation,
             date: Date())

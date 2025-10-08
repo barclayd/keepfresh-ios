@@ -13,8 +13,7 @@ import SwiftUI
         path: "Fresh Food > Milk", recommendedStorageLocation: .fridge),
     amount: 4,
     unit: "pints",
-    icon: nil,
-    imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/milk.png",
+    icon: "chicken",
     source: ProductSearchItemSource(
         id: 1,
         ref: "Local Store"))

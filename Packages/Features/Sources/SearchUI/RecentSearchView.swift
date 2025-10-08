@@ -2,6 +2,7 @@ import DesignSystem
 import Models
 import SwiftData
 import SwiftUI
+import SharedUI
 
 public struct RecentSearchItem: View {
     let search: RecentSearch
@@ -19,15 +20,8 @@ public struct RecentSearchItem: View {
         Button(action: { onTap(search.text) }) {
             HStack {
                 HStack(spacing: 10) {
-                    if let imageURL = search.imageURL {
-                        AsyncImage(url: URL(string: imageURL)) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(width: 35, height: 35)
+                    if let icon = search.icon {
+                        GenmojiView(name: icon, fontSize: 35, tint: colorConfiguration.background)
                     }
 
                     Text(search.text)
