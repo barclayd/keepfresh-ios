@@ -21,11 +21,18 @@ extension InventoryItem {
         case (.unopened, _):
             NextBestAction(
                 label: "Mark as opened",
-                icon: "door.right.hand.open",
+                icon: "door.right.hand.oapen",
                 textColor: .blue600,
                 backgroundColor: .gray200,
                 action: onOpen)
         case (.opened, .freezer):
+            NextBestAction(
+                label: "Move to Fridge",
+                icon: "refrigerator.fill",
+                textColor: .white100,
+                backgroundColor: .blue600,
+                action: { onMove(.fridge) })
+        case (.opened, .pantry):
             NextBestAction(
                 label: "Move to Fridge",
                 icon: "refrigerator.fill",
