@@ -1,4 +1,5 @@
 import DesignSystem
+import SharedUI
 import Extensions
 import Models
 import Router
@@ -33,15 +34,8 @@ public struct SearchResultCard: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                AsyncImage(url: product.imageURL.flatMap(URL.init)) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } placeholder: {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white200))
-                }
-                .frame(width: 28, height: 28)
+                GenmojiView(name: product.icon, fontSize: 28, tint: .white200)
+                
                 Text(product.name)
                     .font(.title3)
                     .fontWeight(.bold)

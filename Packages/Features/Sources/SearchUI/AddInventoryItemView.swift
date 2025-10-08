@@ -1,4 +1,5 @@
 import DesignSystem
+import SharedUI
 import Environment
 import Extensions
 import Foundation
@@ -113,8 +114,7 @@ public struct AddInventoryItemView: View {
             request: request,
             catgeory: productSearchItem.category,
             inventoryItemId: temporaryInventoryItemId,
-            productId: productId,
-            imageURL: productSearchItem.imageURL)
+            productId: productId)
 
         router.popToRoot(for: .search)
     }
@@ -131,15 +131,8 @@ public struct AddInventoryItemView: View {
                             .frame(maxHeight: .infinity, alignment: .top)
 
                         VStack(spacing: 5) {
-                            AsyncImage(url: productSearchItem.imageURL.flatMap(URL.init)) { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                            } placeholder: {
-                                ProgressView()
-                            }
-                            .frame(height: 150)
-
+                            GenmojiView(name: productSearchItem.icon, fontSize: 98, tint: .blue700)
+                            
                             Text("\(productSearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold).multilineTextAlignment(.center)

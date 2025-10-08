@@ -1,5 +1,6 @@
 import Models
 import SwiftUI
+import SharedUI
 
 struct IconsView: View {
     let inventoryItem: InventoryItem
@@ -78,8 +79,9 @@ public struct InventoryItemView: View {
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
-            HStack {
+            HStack(spacing: 0) {
                 GenmojiView(name: "chicken", fontSize: 40, tint: inventoryItem.consumptionUrgency.tileColor.background)
+
                 VStack(spacing: 4) {
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {

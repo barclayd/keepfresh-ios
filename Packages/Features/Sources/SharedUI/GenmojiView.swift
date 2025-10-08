@@ -1,15 +1,18 @@
 import DesignSystem
 import Models
 import Network
+import SwiftData
 import SwiftUI
 
 public struct GenmojiView: View {
+    @Environment(\.modelContext) private var modelContext
+
     private let name: String
     private let fontSize: CGFloat
     private let tint: Color
 
     @State private var genmojiImage: UIImage?
-    @State private var isLoading: Bool = true
+    @State private var isLoading: Bool = false
     @State private var error: String?
 
     public init(name: String, fontSize: CGFloat, tint: Color) {
@@ -27,25 +30,47 @@ public struct GenmojiView: View {
                 Image(uiImage: genmojiImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: fontSize)
             } else if let error = error {
                 Text("Error: \(error)")
                     .font(.caption)
                     .foregroundStyle(.red)
+            } else {
+                Color.clear
             }
-        }
+        }.frame(width: fontSize, height: fontSize)
         .task {
             await fetchGenmoji()
         }
     }
 
     private func fetchGenmoji() async {
-        isLoading = true
         error = nil
 
         do {
-            let api = KeepFreshAPI()
+            let descriptor = FetchDescriptor<GenmojiCache>(
+                predicate: #Predicate { $0.name == name }
+            )
 
+            if let cached = try modelContext.fetch(descriptor).first {
+                guard let uiImage = UIImage(data: cached.imageData) else {
+                    throw NSError(
+                        domain: "GenmojiView",
+                        code: -2,
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from cached data"]
+                    )
+                }
+
+                await MainActor.run {
+                    genmojiImage = uiImage
+                }
+                return
+            }
+
+            await MainActor.run {
+                isLoading = true
+            }
+
+            let api = KeepFreshAPI()
             let response = try await api.getGenmoji(name: name)
 
             guard let imageData = response.imageContentData else {
@@ -63,6 +88,11 @@ public struct GenmojiView: View {
                     userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from genmoji"]
                 )
             }
+
+            // 3. Save to cache
+            let cache = GenmojiCache(name: name, imageData: imageData)
+            modelContext.insert(cache)
+            try modelContext.save()
 
             await MainActor.run {
                 genmojiImage = uiImage

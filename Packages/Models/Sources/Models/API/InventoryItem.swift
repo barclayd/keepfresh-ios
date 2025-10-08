@@ -191,7 +191,6 @@ public extension InventoryItem {
         category: ProductSearchItemCategory,
         id: Int,
         productId: Int,
-        imageURL: String?,
         createdAt: Date = Date())
     {
         self.id = id
@@ -208,7 +207,6 @@ public extension InventoryItem {
             unit: request.product.unit,
             brand: Brand(from: request.product.brand),
             amount: request.product.amount,
-            imageUrl: imageURL,
             category: CategoryDetails(name: category.name, pathDisplay: category.path))
         consumptionPrediction = 100
         consumptionPredictionChangedAt = Date()
@@ -252,7 +250,6 @@ public struct Product: Codable, Sendable {
         unit: String?,
         brand: Brand,
         amount: Double?,
-        imageUrl: String? = nil,
         category: CategoryDetails)
     {
         self.id = id
@@ -260,7 +257,6 @@ public struct Product: Codable, Sendable {
         self.unit = unit
         self.brand = brand
         self.amount = amount
-        self.imageUrl = imageUrl
         self.category = category
     }
 
@@ -269,7 +265,6 @@ public struct Product: Codable, Sendable {
     public let unit: String?
     public let brand: Brand
     public let amount: Double?
-    public let imageUrl: String?
     public let category: CategoryDetails
 
     public var unitFormatted: String? {
@@ -285,16 +280,14 @@ public struct Product: Codable, Sendable {
 }
 
 public struct CategoryDetails: Codable, Sendable {
-    public init(icon: String? = nil, name: String, imageUrl: String? = nil, pathDisplay: String) {
+    public init(icon: String? = nil, name: String, pathDisplay: String) {
         self.icon = icon
         self.name = name
-        self.imageUrl = imageUrl
         self.pathDisplay = pathDisplay
     }
 
     public let icon: String?
     public let name: String
-    public let imageUrl: String?
     public let pathDisplay: String
 }
 
@@ -449,11 +442,9 @@ public extension InventoryItem {
                 unit: "g",
                 brand: .tesco,
                 amount: 500,
-                imageUrl: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
                 category: CategoryDetails(
-                    icon: "carrot.fill",
+                    icon: "chicken",
                     name: "Vegetables",
-                    imageUrl: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
                     pathDisplay: "Food > Vegetables")))
     }
 

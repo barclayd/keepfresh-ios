@@ -3,6 +3,7 @@ import Environment
 import Models
 import Network
 import SwiftUI
+import SharedUI
 
 struct NextBestAction {
     public let label: String
@@ -21,7 +22,7 @@ extension InventoryItem {
         case (.unopened, _):
             NextBestAction(
                 label: "Mark as opened",
-                icon: "door.right.hand.oapen",
+                icon: "door.right.hand.open",
                 textColor: .blue600,
                 backgroundColor: .gray200,
                 action: onOpen)
@@ -236,16 +237,9 @@ struct InventoryItemSheetView: View {
                     }
                 }.padding(.top, 10)
 
-                AsyncImage(url: URL(
-                    string: inventoryItem.product
-                        .imageUrl ?? "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png"))
-                { image in
-                    image.resizable()
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(width: 80, height: 80)
+                GenmojiView(name: "chicken", fontSize: 80, tint: inventoryItem.consumptionUrgency.tileColor.background)
                 .padding(.bottom, -8)
+                
                 Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700)
                     .lineSpacing(0).padding(.bottom, -8)
                 HStack {

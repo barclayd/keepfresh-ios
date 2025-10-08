@@ -39,8 +39,7 @@ public struct ProductSearchItemResponse: Identifiable, Hashable, Codable, Sendab
         category: ProductSearchItemCategory,
         amount: Double?,
         unit: String?,
-        icon: String?,
-        imageURL: String?,
+        icon: String,
         source: ProductSearchItemSource)
     {
         self.name = name
@@ -49,7 +48,6 @@ public struct ProductSearchItemResponse: Identifiable, Hashable, Codable, Sendab
         self.amount = amount
         self.unit = unit
         self.icon = icon
-        self.imageURL = imageURL
         self.source = source
     }
 
@@ -58,8 +56,7 @@ public struct ProductSearchItemResponse: Identifiable, Hashable, Codable, Sendab
     public let category: ProductSearchItemCategory
     public let amount: Double?
     public let unit: String?
-    public let icon: String?
-    public let imageURL: String?
+    public let icon: String
     public let source: ProductSearchItemSource
 
     public var id: String {
@@ -102,7 +99,6 @@ public extension ProductSearchItemResponse {
             amount: 500,
             unit: "g",
             icon: "carrot.fill",
-            imageURL: "https://keep-fresh-images.s3.eu-west-2.amazonaws.com/chicken-leg.png",
             source: ProductSearchItemSource(id: id, ref: "sample-\(id)"))
     }
 
