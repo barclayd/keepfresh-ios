@@ -58,7 +58,7 @@ public actor APIClient {
             let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
             throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
         }
-        
+
         return try decoder.decode(type, from: data)
     }
 

@@ -116,7 +116,7 @@ public struct AddInventoryItemView: View {
             inventoryItemId: temporaryInventoryItemId,
             productId: productId)
 
-        router.popToRoot(for: .search)
+        router.popToRoot()
     }
 
     public var body: some View {
