@@ -10,7 +10,7 @@
 		4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747F772D16F7A000DDCE17 /* KitchenUI */; };
 		4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747FB92D19F66900DDCE17 /* DesignSystem */; };
 		4E747FC12D19F7F000DDCE17 /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */; };
-		4E89529D2E98508B003F3366 /* Authentication in Frameworks */ = {isa = PBXBuildFile; productRef = 4E89529E2E98508B003F3366 /* Authentication */; };
+		4E8952D02E987903003F3366 /* Authentication in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8952CF2E987903003F3366 /* Authentication */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
 		4E95179F2D7BAD5700FAFC86 /* BarcodeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E95179E2D7BAD5700FAFC86 /* BarcodeUI */; };
 		4EAF44BE2E8B3CFE000B5A6B /* Intelligence in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF44BD2E8B3CFE000B5A6B /* Intelligence */; };
@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		4E747FB62D19F28D00DDCE17 /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = Packages/DesignSystem; sourceTree = "<group>"; };
 		4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/DesignSystem/Sources/DesignSystem/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
-		4E89529C2E985077003F3366 /* Authentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Authentication; path = Packages/Authentication; sourceTree = "<group>"; };
+		4E8952CE2E9878F8003F3366 /* Authentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Authentication; path = Packages/Authentication; sourceTree = "<group>"; };
 		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E9517A02D7BB56700FAFC86 /* KeepFresh-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KeepFresh-Info.plist"; sourceTree = "<group>"; };
 		4EAF44BC2E8B3902000B5A6B /* Intelligence */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Intelligence; path = Packages/Intelligence; sourceTree = "<group>"; };
@@ -54,11 +54,11 @@
 			files = (
 				4EF223D22E883E4A00A93567 /* Extensions in Frameworks */,
 				4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */,
+				4E8952D02E987903003F3366 /* Authentication in Frameworks */,
 				4EEEBA7B2E806E010049511B /* Network in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
 				4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */,
 				4EF223CF2E874ECA00A93567 /* Environment in Frameworks */,
-				4E89529D2E98508B003F3366 /* Authentication in Frameworks */,
 				4EAF44BE2E8B3CFE000B5A6B /* Intelligence in Frameworks */,
 				4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */,
 				4EEEBA792E806DFC0049511B /* Models in Frameworks */,
@@ -78,7 +78,7 @@
 				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
-				4E89529C2E985077003F3366 /* Authentication */,
+				4E8952CE2E9878F8003F3366 /* Authentication */,
 				4EAF44BC2E8B3902000B5A6B /* Intelligence */,
 				4EF223D02E883D3800A93567 /* Extensions */,
 				4ED27E822E849BA600296595 /* Environment */,
@@ -132,13 +132,13 @@
 				4E747F772D16F7A000DDCE17 /* KitchenUI */,
 				4E747FB92D19F66900DDCE17 /* DesignSystem */,
 				4E95179E2D7BAD5700FAFC86 /* BarcodeUI */,
-				4E89529E2E98508B003F3366 /* Authentication */,
 				4EEEBA782E806DFC0049511B /* Models */,
 				4EEEBA7A2E806E010049511B /* Network */,
 				4EEEBA7C2E8076900049511B /* Router */,
 				4EF223CE2E874ECA00A93567 /* Environment */,
 				4EF223D12E883E4A00A93567 /* Extensions */,
 				4EAF44BD2E8B3CFE000B5A6B /* Intelligence */,
+				4E8952CF2E987903003F3366 /* Authentication */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -461,7 +461,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignSystem;
 		};
-		4E89529E2E98508B003F3366 /* Authentication */ = {
+		4E8952CF2E987903003F3366 /* Authentication */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Authentication;
 		};

@@ -9,9 +9,10 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../Models"),
+        .package(path: "../Authentication"),
     ],
     targets: [
         .target(
             name: "Network",
-            dependencies: ["Models"]),
+            dependencies: ["Models", "Authentication"]),
     ])
