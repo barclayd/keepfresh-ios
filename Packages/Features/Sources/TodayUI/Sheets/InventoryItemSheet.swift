@@ -2,8 +2,8 @@ import DesignSystem
 import Environment
 import Models
 import Network
-import SwiftUI
 import SharedUI
+import SwiftUI
 
 struct NextBestAction {
     public let label: String
@@ -82,7 +82,7 @@ struct InventoryItemSheetStatsGridRows: View {
                         Text("Predicted use").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
-                
+
                 GridRow(alignment: .center) {
                     Text(inventoryItem.storageLocation.rawValue).fontWeight(.bold).font(.headline)
                     Image(systemName: inventoryItem.storageLocation.icon)
@@ -110,7 +110,7 @@ struct InventoryItemSheetStatsGridRows: View {
                                 .formattedElapsedTime).fontWeight(.bold).font(.headline)
                     }.foregroundStyle(.blue700)
                 }
-                
+
                 GridRow {
                     VStack(spacing: 0) {
                         Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.fridge] ?? 0)")
@@ -228,18 +228,11 @@ struct InventoryItemSheetView: View {
                             .foregroundStyle(.gray600)
                     }
                     Spacer()
-                    Button(action: {
-                        print("More options")
-                    }) {
-                        Image(systemName: "ellipsis")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.gray600)
-                    }
                 }.padding(.top, 10)
 
                 GenmojiView(name: "chicken", fontSize: 80, tint: inventoryItem.consumptionUrgency.tileColor.background)
-                .padding(.bottom, -8)
-                
+                    .padding(.bottom, -8)
+
                 Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700)
                     .lineSpacing(0).padding(.bottom, -8)
                 HStack {
@@ -335,7 +328,6 @@ struct InventoryItemSheetView: View {
                     }.padding(.bottom, 8)
                 }
                 Button(action: {
-                    print("Mark as done")
                     showRemoveSheet = true
                 }) {
                     HStack(spacing: 10) {

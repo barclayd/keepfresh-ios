@@ -1,8 +1,8 @@
 import DesignSystem
 import Models
+import SharedUI
 import SwiftData
 import SwiftUI
-import SharedUI
 
 public struct RecentSearchItem: View {
     let search: RecentSearch
@@ -86,7 +86,10 @@ public struct RecentSearchView: View {
                         searchText = previousSearchText
                     },
                     onDelete: { deleteRecentSearch(recentSearch) },
-                    colorConfiguration: RecentSearchItem.ColorConfiguration(text: recentSearch.recommendedStorageLocation.textColor, background: recentSearch.recommendedStorageLocation.tileColor, closeIcon: recentSearch.recommendedStorageLocation.textColor))
+                    colorConfiguration: RecentSearchItem.ColorConfiguration(
+                        text: recentSearch.recommendedStorageLocation.textColor,
+                        background: recentSearch.recommendedStorageLocation.tileColor,
+                        closeIcon: recentSearch.recommendedStorageLocation.textColor))
                     .listRowInsets(EdgeInsets(
                         top: 5,
                         leading: 10,

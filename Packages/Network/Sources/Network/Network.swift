@@ -1,3 +1,4 @@
+import Authentication
 import Foundation
 
 public actor APIClient {
@@ -15,6 +16,12 @@ public actor APIClient {
 
         encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
+    }
+
+    private func addAuthorizationHeader(to request: inout URLRequest) async {
+        if let token = try? await Authentication.shared.getAccessToken() {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
     }
 
     public func fetch<T: Decodable>(
@@ -38,7 +45,10 @@ public actor APIClient {
             throw APIError.invalidURL
         }
 
-        let (data, response) = try await session.data(from: url)
+        var request = URLRequest(url: url)
+        await addAuthorizationHeader(to: &request)
+
+        let (data, response) = try await session.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
@@ -63,6 +73,7 @@ public actor APIClient {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(body)
+        await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 
@@ -88,6 +99,7 @@ public actor APIClient {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(body)
+        await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 
@@ -111,6 +123,7 @@ public actor APIClient {
         request.httpMethod = "PATCH"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(body)
+        await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 

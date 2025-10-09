@@ -8,8 +8,8 @@ public struct BottomActionButton: View {
     public init(
         title: String,
         safeAreaInsets: EdgeInsets,
-        action: @escaping () async throws -> Void
-    ) {
+        action: @escaping () async throws -> Void)
+    {
         self.title = title
         self.safeAreaInsets = safeAreaInsets
         self.action = action
@@ -26,8 +26,7 @@ public struct BottomActionButton: View {
             ActionButton(
                 title: title,
                 safeAreaInsets: safeAreaInsets,
-                action: action
-            )
+                action: action)
         }
     }
 }
@@ -47,22 +46,17 @@ private struct LiquidGlassBackground: View {
                         topLeading: 0,
                         bottomLeading: cornerRadius,
                         bottomTrailing: cornerRadius,
-                        topTrailing: 0
-                    )
-                )
-            )
+                        topTrailing: 0)))
             .shadow(
                 color: Color(.sRGBLinear, white: 0, opacity: 0.08),
                 radius: 12,
                 x: 0,
-                y: -4
-            )
+                y: -4)
             .shadow(
                 color: Color(.sRGBLinear, white: 0, opacity: 0.04),
                 radius: 24,
                 x: 0,
-                y: -8
-            )
+                y: -8)
     }
 }
 
@@ -91,8 +85,7 @@ private struct ActionButton: View {
         } label: {
             ButtonLabel(
                 title: title,
-                isProcessing: isProcessing
-            )
+                isProcessing: isProcessing)
         }
         .disabled(isProcessing)
         .padding(.vertical, verticalPadding)

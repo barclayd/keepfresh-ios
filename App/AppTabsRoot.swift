@@ -136,8 +136,9 @@ public extension AppTab {
                 }
                 .buttonStyle(.plain).tint(.white200)
             }
+
         case .debug:
-            ToolbarItemGroup{}
+            ToolbarItemGroup {}
         }
     }
 }

@@ -12,8 +12,8 @@ public struct GenmojiUploadRequest: Codable, Sendable {
         contentIdentifier: String,
         contentDescription: String,
         imageContent: Data,
-        contentType: String
-    ) {
+        contentType: String)
+    {
         self.name = name
         self.contentIdentifier = contentIdentifier
         self.contentDescription = contentDescription
@@ -40,8 +40,8 @@ public struct GenmojiGetResponse: Codable, Sendable {
         contentDescription: String,
         imageContent: String,
         contentType: String,
-        contentIdentifier: String
-    ) {
+        contentIdentifier: String)
+    {
         self.contentDescription = contentDescription
         self.imageContent = imageContent
         self.contentType = contentType

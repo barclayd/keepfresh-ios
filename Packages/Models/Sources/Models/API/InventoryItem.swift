@@ -32,8 +32,7 @@ public struct UpdateInventoryItemRequest: Codable, Sendable {
         status: InventoryItemStatus? = nil,
         storageLocation: StorageLocation? = nil,
         percentageRemaining: Double?,
-        consumptionPredictionChangedAt: Date? = nil
-    )
+        consumptionPredictionChangedAt: Date? = nil)
     {
         self.storageLocation = storageLocation
         self.status = status
@@ -449,6 +448,6 @@ public extension InventoryItem {
     }
 
     static func mocks(count: Int) -> [InventoryItem] {
-        (1 ... count).map { mock(id: $0) }
+        (1...count).map { mock(id: $0) }
     }
 }

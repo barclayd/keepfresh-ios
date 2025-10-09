@@ -161,8 +161,8 @@ public struct DebugView: View {
 
         text.enumerateAttribute(
             .adaptiveImageGlyph,
-            in: NSRange(location: 0, length: text.length)
-        ) { value, range, _ in
+            in: NSRange(location: 0, length: text.length))
+        { value, range, _ in
             guard let glyph = value as? NSAdaptiveImageGlyph else { return }
 
             let model = GenmojiDatabaseModel(
@@ -171,8 +171,7 @@ public struct DebugView: View {
                 imageContent: glyph.imageContent,
                 contentType: NSAdaptiveImageGlyph.contentType,
                 location: range.location,
-                length: range.length
-            )
+                length: range.length)
 
             results.append(model)
 
@@ -238,8 +237,7 @@ public struct DebugView: View {
                         contentIdentifier: genmoji.contentIdentifier,
                         contentDescription: genmoji.contentDescription,
                         imageContent: genmoji.imageContent,
-                        contentType: genmoji.contentType.identifier
-                    )
+                        contentType: genmoji.contentType.identifier)
 
                     print("\n📤 Uploading Genmoji #\(index + 1)")
                     print("Name: \(genmojiName)")
@@ -297,8 +295,7 @@ public struct DebugView: View {
             mutableAttrString.addAttribute(
                 .adaptiveImageGlyph,
                 value: glyph,
-                range: NSRange(location: metadata.location, length: metadata.length)
-            )
+                range: NSRange(location: metadata.location, length: metadata.length))
         }
 
         reconstructedText = mutableAttrString
@@ -337,8 +334,7 @@ struct GenmojiDatabaseModel: Identifiable {
             imageContent: imageContent,
             contentTypeIdentifier: contentType.identifier,
             location: location,
-            length: length
-        )
+            length: length)
     }
 }
 
@@ -426,7 +422,7 @@ struct CustomTextEditor: UIViewRepresentable {
         return textView
     }
 
-    func updateUIView(_ uiView: UITextView, context: Context) {
+    func updateUIView(_ uiView: UITextView, context _: Context) {
         if uiView.attributedText != text {
             uiView.attributedText = text
         }
@@ -455,20 +451,19 @@ struct GenmojiLabel: UIViewRepresentable {
     let attributedText: NSAttributedString
     let fontSize: CGFloat
 
-    func makeUIView(context: Context) -> UILabel {
+    func makeUIView(context _: Context) -> UILabel {
         let label = UILabel()
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         return label
     }
 
-    func updateUIView(_ uiView: UILabel, context: Context) {
+    func updateUIView(_ uiView: UILabel, context _: Context) {
         let mutableAttrString = NSMutableAttributedString(attributedString: attributedText)
         mutableAttrString.addAttribute(
             .font,
             value: UIFont.systemFont(ofSize: fontSize),
-            range: NSRange(location: 0, length: 1)
-        )
+            range: NSRange(location: 0, length: 1))
 
         uiView.attributedText = mutableAttrString
     }

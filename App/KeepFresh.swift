@@ -1,3 +1,4 @@
+import Authentication
 import DesignSystem
 import Environment
 import Models
@@ -33,6 +34,8 @@ struct KeepFreshApp: App {
                 .environment(inventory)
                 .modelContainer(for: [RecentSearch.self, GenmojiCache.self])
                 .task {
+                    try? await Authentication.shared.signInAnonymously()
+
                     await inventory.fetchItems()
                 }
                 .preferredColorScheme(.light)

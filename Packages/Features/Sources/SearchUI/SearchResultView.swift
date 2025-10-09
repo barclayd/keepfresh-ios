@@ -1,8 +1,8 @@
 import DesignSystem
-import SharedUI
 import Extensions
 import Models
 import Router
+import SharedUI
 import SwiftUI
 
 public struct SearchResultView: View {
@@ -35,7 +35,7 @@ public struct SearchResultCard: View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
                 GenmojiView(name: product.icon, fontSize: 28, tint: .white200)
-                
+
                 Text(product.name)
                     .font(.headline)
                     .fontWeight(.bold)
@@ -57,7 +57,7 @@ public struct SearchResultCard: View {
 
             VStack {
                 HStack {
-                    Text(product.category.path)
+                    Text(product.category.name)
                         .font(.subheadline).foregroundStyle(.gray500)
                     Spacer()
                 }

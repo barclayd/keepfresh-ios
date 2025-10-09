@@ -26,11 +26,11 @@ public struct GenmojiView: View {
             if isLoading {
                 ProgressView()
                     .tint(tint)
-            } else if let genmojiImage = genmojiImage {
+            } else if let genmojiImage {
                 Image(uiImage: genmojiImage)
                     .resizable()
                     .scaledToFit()
-            } else if let error = error {
+            } else if let error {
                 Text("Error: \(error)")
                     .font(.caption)
                     .foregroundStyle(.red)
@@ -38,9 +38,9 @@ public struct GenmojiView: View {
                 Color.clear
             }
         }.frame(width: fontSize, height: fontSize)
-        .task {
-            await fetchGenmoji()
-        }
+            .task {
+                await fetchGenmoji()
+            }
     }
 
     private func fetchGenmoji() async {
@@ -48,16 +48,14 @@ public struct GenmojiView: View {
 
         do {
             let descriptor = FetchDescriptor<GenmojiCache>(
-                predicate: #Predicate { $0.name == name }
-            )
+                predicate: #Predicate { $0.name == name })
 
             if let cached = try modelContext.fetch(descriptor).first {
                 guard let uiImage = UIImage(data: cached.imageData) else {
                     throw NSError(
                         domain: "GenmojiView",
                         code: -2,
-                        userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from cached data"]
-                    )
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from cached data"])
                 }
 
                 await MainActor.run {
@@ -77,16 +75,14 @@ public struct GenmojiView: View {
                 throw NSError(
                     domain: "GenmojiView",
                     code: -1,
-                    userInfo: [NSLocalizedDescriptionKey: "Failed to decode base64 image content"]
-                )
+                    userInfo: [NSLocalizedDescriptionKey: "Failed to decode base64 image content"])
             }
 
             guard let uiImage = UIImage(data: imageData) else {
                 throw NSError(
                     domain: "GenmojiView",
                     code: -2,
-                    userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from genmoji"]
-                )
+                    userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from genmoji"])
             }
 
             // 3. Save to cache

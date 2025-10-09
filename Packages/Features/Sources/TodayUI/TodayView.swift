@@ -41,9 +41,7 @@ public struct TodayView: View {
                 Button(action: {
                     Task {
                         let api = KeepFreshAPI()
-                        let product = try await api.getRandomProduct().product
-
-                        print("product", product)
+                        let product = try await api.getRandomProduct()
 
                         router.navigateTo(.addProduct(product: product))
                     }

@@ -52,11 +52,9 @@ public struct BarcodeView: View {
                     CodeScannerView(codeTypes: [.ean8, .ean13], simulatedData: "5059697710001") { response in
                         switch response {
                         case let .success(result):
-                            print("Found code: \(result.string)")
                             Task {
                                 let api = KeepFreshAPI()
                                 do {
-                                    print("result: \(result.string)")
                                     let product = try await api.getProduct(barcode: result.string)
                                     router.navigateTo(.addProduct(product: product))
                                     router.presentedSheet = nil
@@ -90,10 +88,10 @@ public struct BarcodeView: View {
                         Image(systemName: barcodeIcons[barcodeIndex])
                             .foregroundStyle(.white200)
                             .font(.system(size: 36))
-                            .offset(x: isAnimating ?
-                                (shapeWidth(geometry: geometry) / 2) - 20 :
-                                ((shapeWidth(geometry: geometry) / 2) * -1) + 20
-                            )
+                            .offset(
+                                x: isAnimating ?
+                                    (shapeWidth(geometry: geometry) / 2) - 20 :
+                                    ((shapeWidth(geometry: geometry) / 2) * -1) + 20)
                             .frame(height: 50)
                             .onAppear {
                                 withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {

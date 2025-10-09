@@ -130,7 +130,7 @@ public final class Inventory {
                 if let inventoryItemId = response?.inventoryItemId {
                     await MainActor.run { [weak self] in
                         guard let self, !self.items.isEmpty else { return }
-                        self.items[self.items.count - 1].id = inventoryItemId
+                        items[items.count - 1].id = inventoryItemId
                     }
                 }
             } catch {
