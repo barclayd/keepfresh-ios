@@ -134,14 +134,14 @@ private extension InventoryItemFormType {
             VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: 0) {
-                            Text(expiryDate.wrappedValue.formattedWithOrdinal).foregroundStyle(.gray600)
+                        Text(expiryDate.wrappedValue.formattedWithOrdinal).foregroundStyle(.gray600)
                         if isRecommendedExpiryDate {
                             Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                                 .offset(y: -8)
                         }
                     }
                     HStack(spacing: 0) {
-                            Text(expiryDate.wrappedValue.formattedAbbreviation).foregroundStyle(.gray600)
+                        Text(expiryDate.wrappedValue.formattedAbbreviation).foregroundStyle(.gray600)
                         if isRecommendedExpiryDate {
                             Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                                 .offset(y: -8)
@@ -190,7 +190,7 @@ private extension InventoryItemFormType {
                 .labelsHidden()
                 .disabled(true)
         case .Quantity:
-            Stepper(value: quantity, in: 1 ... 10, step: 1) {}.tint(.blue700)
+            Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
         }
     }
 

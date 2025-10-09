@@ -1,3 +1,4 @@
+import Authentication
 import DesignSystem
 import Environment
 import Models
@@ -22,6 +23,10 @@ struct KeepFreshApp: App {
     @State var router: Router = .init()
     @State var inventory: Inventory = .init()
 
+    let authClient = AuthenticationClient(
+        supabaseURL: URL(string: "https://ajvsqwbowwilmcqyynye.supabase.co")!,
+        supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqdnNxd2Jvd3dpbG1jcXl5bnllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNTIxMjAsImV4cCI6MjA3MjcyODEyMH0.usZ16otRQ8_FZt-uu2fkzqZq7fZZm1oWS5kK6-gm94M")
+
     init() {
         FontRegistration.registerFonts()
     }
@@ -33,6 +38,8 @@ struct KeepFreshApp: App {
                 .environment(inventory)
                 .modelContainer(for: [RecentSearch.self, GenmojiCache.self])
                 .task {
+                    try? await authClient.signInAnonymously()
+
                     await inventory.fetchItems()
                 }
                 .preferredColorScheme(.light)

@@ -1,5 +1,4 @@
 import DesignSystem
-import SharedUI
 import Environment
 import Extensions
 import Foundation
@@ -7,6 +6,7 @@ import Intelligence
 import Models
 import Network
 import Router
+import SharedUI
 import SwiftUI
 
 @Observable
@@ -132,7 +132,7 @@ public struct AddInventoryItemView: View {
 
                         VStack(spacing: 5) {
                             GenmojiView(name: productSearchItem.icon, fontSize: 98, tint: .blue700)
-                            
+
                             Text("\(productSearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold).multilineTextAlignment(.center)
@@ -148,7 +148,7 @@ public struct AddInventoryItemView: View {
                                         .font(.callout)
                                 }
                             }.foregroundStyle(.blue800)
-                            
+
                             Text(productSearchItem.brand)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(.brandSainsburys)
@@ -299,8 +299,7 @@ public struct AddInventoryItemView: View {
                 BottomActionButton(
                     title: "Add to \(formState.storageLocation.rawValue.capitalized)",
                     safeAreaInsets: geometry.safeAreaInsets,
-                    action: addToInventory
-                )
+                    action: addToInventory)
             }
             .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
         }

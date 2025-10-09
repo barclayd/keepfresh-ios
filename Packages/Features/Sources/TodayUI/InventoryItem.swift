@@ -1,6 +1,6 @@
 import Models
-import SwiftUI
 import SharedUI
+import SwiftUI
 
 struct IconsView: View {
     let inventoryItem: InventoryItem

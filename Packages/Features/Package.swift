@@ -46,5 +46,5 @@ let package = Package(
             dependencies: baseDeps + ["CodeScanner"]),
         .target(
             name: "SharedUI",
-            dependencies: baseDeps)
+            dependencies: baseDeps),
     ])

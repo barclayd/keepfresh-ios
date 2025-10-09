@@ -64,7 +64,10 @@ class Search {
             searchResults = searchResponse.products
             print("Search successful: Found \(searchResults.count) products")
 
-            let (locationCounts, iconCounts) = searchResults.prefix(10).reduce(into: ([StorageLocation: Int](), [String: Int]())) { result, item in
+            let (locationCounts, iconCounts) = searchResults.prefix(10).reduce(into: (
+                [StorageLocation: Int](),
+                [String: Int]()))
+            { result, item in
                 result.0[item.category.recommendedStorageLocation, default: 0] += 1
 
                 result.1[item.icon, default: 0] += 1
@@ -135,7 +138,7 @@ public struct SearchView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            if isSearching, let search = search {
+            if isSearching, let search {
                 SearchResultView(products: search.searchResults, isLoading: search.isLoading)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {

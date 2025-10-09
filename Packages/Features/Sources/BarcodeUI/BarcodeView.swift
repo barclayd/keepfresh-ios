@@ -90,10 +90,10 @@ public struct BarcodeView: View {
                         Image(systemName: barcodeIcons[barcodeIndex])
                             .foregroundStyle(.white200)
                             .font(.system(size: 36))
-                            .offset(x: isAnimating ?
-                                (shapeWidth(geometry: geometry) / 2) - 20 :
-                                ((shapeWidth(geometry: geometry) / 2) * -1) + 20
-                            )
+                            .offset(
+                                x: isAnimating ?
+                                    (shapeWidth(geometry: geometry) / 2) - 20 :
+                                    ((shapeWidth(geometry: geometry) / 2) * -1) + 20)
                             .frame(height: 50)
                             .onAppear {
                                 withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
