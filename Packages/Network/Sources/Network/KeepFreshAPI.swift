@@ -17,25 +17,22 @@ public struct KeepFreshAPI: Sendable {
             queryParameters: ["search": query])
     }
 
-    public func getRandomProduct() async throws -> ProductSearchRandomResponse {
+    public func getRandomProduct() async throws -> ProductSearchItemResponse {
         try await client.fetch(
-            ProductSearchRandomResponse.self,
-            path: "v1/products/random",
-            queryParameters: nil)
+            ProductSearchItemResponse.self,
+            path: "v1/products/random")
     }
 
     public func getProduct(barcode: String) async throws -> ProductSearchItemResponse {
         try await client.fetch(
             ProductSearchItemResponse.self,
-            path: "v1/products/barcode/\(barcode)",
-            queryParameters: nil)
+            path: "v1/products/barcode/\(barcode)")
     }
 
     public func getInventoryItems() async throws -> InventoryItemsResponse {
         try await client.fetch(
             InventoryItemsResponse.self,
-            path: "v1/inventory",
-            queryParameters: nil)
+            path: "v1/inventory")
     }
 
     // MARK: - Inventory
@@ -69,7 +66,6 @@ public struct KeepFreshAPI: Sendable {
     public func getGenmoji(name: String) async throws -> GenmojiGetResponse {
         try await client.fetch(
             GenmojiGetResponse.self,
-            path: "v1/images/genmoji/\(name)",
-            queryParameters: nil)
+            path: "v1/images/genmoji/\(name)")
     }
 }

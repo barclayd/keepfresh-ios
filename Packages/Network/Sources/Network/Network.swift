@@ -20,7 +20,6 @@ public actor APIClient {
 
     private func addAuthorizationHeader(to request: inout URLRequest) async {
         if let token = try? await Authentication.shared.getAccessToken() {
-            print("token: \(token)")
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
     }
@@ -59,7 +58,7 @@ public actor APIClient {
             let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
             throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
         }
-
+        
         return try decoder.decode(type, from: data)
     }
 

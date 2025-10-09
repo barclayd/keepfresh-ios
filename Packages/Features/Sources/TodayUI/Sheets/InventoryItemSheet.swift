@@ -228,13 +228,6 @@ struct InventoryItemSheetView: View {
                             .foregroundStyle(.gray600)
                     }
                     Spacer()
-                    Button(action: {
-                        print("More options")
-                    }) {
-                        Image(systemName: "ellipsis")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.gray600)
-                    }
                 }.padding(.top, 10)
 
                 GenmojiView(name: "chicken", fontSize: 80, tint: inventoryItem.consumptionUrgency.tileColor.background)
@@ -335,7 +328,6 @@ struct InventoryItemSheetView: View {
                     }.padding(.bottom, 8)
                 }
                 Button(action: {
-                    print("Mark as done")
                     showRemoveSheet = true
                 }) {
                     HStack(spacing: 10) {
