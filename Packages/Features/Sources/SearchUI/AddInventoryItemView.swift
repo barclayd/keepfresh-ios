@@ -21,17 +21,17 @@ public class InventoryFormState {
 public struct AddInventoryItemView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
-    
+
     @State private var preview = InventoryItemPreview()
     @State private var formState = InventoryFormState()
     @State private var usageGenerator = UsageGenerator()
-    
+
     public let productSearchItem: ProductSearchItemResponse
-    
+
     public init(productSearchItem: ProductSearchItemResponse) {
         self.productSearchItem = productSearchItem
     }
-    
+
     var isRecommendedExpiryDate: Bool {
         guard
             let recommendedNumberOfDays = preview.suggestions?.shelfLifeInDays[formState.status][
@@ -42,11 +42,11 @@ public struct AddInventoryItemView: View {
         }
         return formState.expiryDate.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
     }
-    
+
     var isRecommendedStorageLocation: Bool {
         formState.storageLocation == preview.suggestions?.recommendedStorageLocation
     }
-    
+
     var calculatedExpiryDate: Date {
         guard
             let shelfLife = preview.suggestions?.shelfLifeInDays,
@@ -59,20 +59,20 @@ public struct AddInventoryItemView: View {
         }
         return expiry
     }
-    
+
     func addToInventory() async throws {
         print(
             "Expiry date: \(formState.expiryDate)",
             "Storage location: \(formState.storageLocation.rawValue)",
             "quantity: \(formState.quantity)",
             "status: \(formState.status.rawValue)")
-        
+
         guard let recommendedExpiryType = preview.suggestions?.expiryType,
               let recommendedStorageLocation = preview.suggestions?.recommendedStorageLocation
         else {
             return
         }
-        
+
         let request = AddInventoryItemRequest(
             item: AddInventoryItemRequest
                 .InventoryItem(
@@ -103,22 +103,22 @@ public struct AddInventoryItemView: View {
                         .source.id,
                     sourceRef: productSearchItem
                         .source.ref))
-        
+
         let temporaryInventoryItemId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
-        
+
         guard let productId = preview.productId else {
             return
         }
-        
+
         inventory.addItem(
             request: request,
             catgeory: productSearchItem.category,
             inventoryItemId: temporaryInventoryItemId,
             productId: productId)
-        
+
         router.popToRoot()
     }
-    
+
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
@@ -129,30 +129,30 @@ public struct AddInventoryItemView: View {
                             .offset(y: -geometry.safeAreaInsets.top)
                             .frame(height: geometry.size.height)
                             .frame(maxHeight: .infinity, alignment: .top)
-                        
+
                         VStack(spacing: 5) {
                             GenmojiView(name: productSearchItem.icon, fontSize: 98, tint: .blue700)
-                            
+
                             Text("\(productSearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
                                 .blue700
                             ).fontWeight(.bold).multilineTextAlignment(.center)
-                            
+
                             HStack {
                                 Text(productSearchItem.category.name)
                                     .font(.callout)
                                 if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
                                     Circle()
                                         .frame(width: 4, height: 4)
-                                    
+
                                     Text("\(String(format: "%.0f", amount))\(unit)")
                                         .font(.callout)
                                 }
                             }.foregroundStyle(.blue800)
-                            
+
                             Text(productSearchItem.brand.name)
                                 .font(.headline).fontWeight(.bold)
                                 .foregroundStyle(productSearchItem.brand.color)
-                            
+
                             if usageGenerator.isAvailable {
                                 VStack {
                                     if let percentagePrediction = usageGenerator.percentagePrediction, usageGenerator.state != .loading {
@@ -162,7 +162,7 @@ public struct AddInventoryItemView: View {
                                     } else {
                                         ProgressView().controlSize(.regular).tint(.yellow500)
                                     }
-                                    
+
                                     HStack(spacing: 0) {
                                         Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
                                             .fontWeight(.light)
@@ -173,7 +173,7 @@ public struct AddInventoryItemView: View {
                                     }.offset(y: -5)
                                 }.padding(.top, 10)
                             }
-                            
+
                             Grid {
                                 GridRow {
                                     Spacer()
@@ -196,7 +196,7 @@ public struct AddInventoryItemView: View {
                                     }
                                     Spacer()
                                 }
-                                
+
                                 if let productId = preview.productId {
                                     GridRow {
                                         Spacer()
@@ -229,7 +229,7 @@ public struct AddInventoryItemView: View {
                                 .padding(
                                     .bottom,
                                     10)
-                            
+
                             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                                 GridRow {
                                     Image(systemName: "checkmark.seal.fill").fontWeight(.bold)
@@ -240,7 +240,7 @@ public struct AddInventoryItemView: View {
                                         .foregroundStyle(.gray600)
                                         .multilineTextAlignment(.center)
                                         .lineLimit(2...2)
-                                    
+
                                     Spacer()
                                 }
                                 GridRow {
@@ -254,9 +254,9 @@ public struct AddInventoryItemView: View {
                                         .lineLimit(2...2)
                                     Spacer()
                                 }
-                                
+
                             }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
-                            
+
                             VStack(spacing: 15) {
                                 InventoryCategory(
                                     quantity: $formState.quantity,
@@ -298,7 +298,7 @@ public struct AddInventoryItemView: View {
                         .redactedShimmer(when: preview.isLoading)
                     }
                 }.background(.white200)
-                
+
                 BottomActionButton(
                     title: "Add to \(formState.storageLocation.rawValue.capitalized)",
                     safeAreaInsets: geometry.safeAreaInsets,
@@ -348,14 +348,14 @@ public struct AddInventoryItemView: View {
                 print("no predictions found for \(productSearchItem.name)")
                 return
             }
-            
+
             let quantityString: String? = {
                 if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
                     return "\(amount)\(unit)"
                 }
                 return nil
             }()
-            
+
             Task {
                 await usageGenerator.generateUsagePrediction(
                     predictions: predictions,
@@ -368,13 +368,13 @@ public struct AddInventoryItemView: View {
             }
         }
     }
-    
+
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
         guard let suggestions else { return }
-        
+
         formState.storageLocation = suggestions.recommendedStorageLocation
         formState.expiryType = suggestions.expiryType
-        
+
         // Set initial expiry date only when suggestions first load
         formState.expiryDate = calculatedExpiryDate
     }

@@ -79,7 +79,7 @@ public struct GenmojiView: View {
                     code: -2,
                     userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from genmoji"])
             }
-            
+
             await MainActor.run {
                 genmojiImage = uiImage
                 isLoading = false

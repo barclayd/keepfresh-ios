@@ -61,9 +61,9 @@ class Search {
         do {
             let searchResponse = try await api.searchProducts(query: searchTerm)
             searchResults = searchResponse.products
-            
+
             state = .loaded
-            
+
             print("Search successful: Found \(searchResults.count) products")
 
             let (locationCounts, iconCounts) = searchResults.prefix(10).reduce(into: (

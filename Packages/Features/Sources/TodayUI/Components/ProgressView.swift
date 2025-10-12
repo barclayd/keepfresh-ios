@@ -35,7 +35,6 @@ struct ProgressRing: View {
                         lineWidth: lineWidth,
                         lineCap: .round))
                 .rotationEffect(.degrees(-90))
-
         }
         .onAppear {
             withAnimation {

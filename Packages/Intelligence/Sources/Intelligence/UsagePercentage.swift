@@ -26,7 +26,7 @@ public final class UsageGenerator {
 
     let api = KeepFreshAPI()
     let model = SystemLanguageModel.default
-    
+
     public var isAvailable: Bool {
         model.availability == .available
     }
@@ -77,7 +77,7 @@ public final class UsageGenerator {
             print("Unable to use Apple Intelligence")
             return
         }
-        
+
         session.prewarm()
     }
 

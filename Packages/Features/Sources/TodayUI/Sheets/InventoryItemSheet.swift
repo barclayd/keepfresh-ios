@@ -230,7 +230,10 @@ struct InventoryItemSheetView: View {
                     Spacer()
                 }.padding(.top, 10)
 
-                GenmojiView(name: inventoryItem.product.category.icon ?? "chicken", fontSize: 80, tint: inventoryItem.consumptionUrgency.tileColor.background)
+                GenmojiView(
+                    name: inventoryItem.product.category.icon ?? "chicken",
+                    fontSize: 80,
+                    tint: inventoryItem.consumptionUrgency.tileColor.background)
                     .padding(.bottom, -8)
 
                 Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700).lineLimit(2)
