@@ -1,9 +1,11 @@
 import Models
 import SharedUI
 import SwiftUI
+import Intelligence
 
 struct IconsView: View {
     let inventoryItem: InventoryItem
+    let usageGenerator =  UsageGenerator()
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 3) {
@@ -33,16 +35,18 @@ struct IconsView: View {
                     }
             }
 
-            HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 20))
-                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
-
-                Text("\(inventoryItem.consumptionPrediction)%")
-                    .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai).font(.callout)
-                    .alignmentGuide(.firstTextBaseline) { d in
-                        d[.bottom] * 0.7
-                    }
+            if usageGenerator.isAvailable {
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 20))
+                        .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
+                    
+                    Text("\(inventoryItem.consumptionPrediction)%")
+                        .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai).font(.callout)
+                        .alignmentGuide(.firstTextBaseline) { d in
+                            d[.bottom] * 0.7
+                        }
+                }
             }
 
             Spacer()
@@ -80,7 +84,7 @@ public struct InventoryItemView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
-                GenmojiView(name: "chicken", fontSize: 40, tint: inventoryItem.consumptionUrgency.tileColor.background)
+                GenmojiView(name: inventoryItem.product.category.icon ?? "chicken", fontSize: 48, tint: inventoryItem.consumptionUrgency.tileColor.background)
 
                 VStack(spacing: 4) {
                     HStack {
@@ -119,7 +123,7 @@ public struct InventoryItemView: View {
                             .overlay {
                                 Text(
                                     inventoryItem.expiryDate.timeUntil.totalDays <= 7 ? inventoryItem.expiryDate.timeUntil.totalDays
-                                        .formatted() : "7+").foregroundStyle(.blue800)
+                                        .formatted() : "7+").foregroundStyle(.blue800).fontWeight(.bold)
                             }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)

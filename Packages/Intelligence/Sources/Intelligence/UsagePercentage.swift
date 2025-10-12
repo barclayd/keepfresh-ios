@@ -26,6 +26,10 @@ public final class UsageGenerator {
 
     let api = KeepFreshAPI()
     let model = SystemLanguageModel.default
+    
+    public var isAvailable: Bool {
+        model.availability == .available
+    }
 
     let session = LanguageModelSession(instructions: """
     You are a food consumption prediction expert. Your task is to predict what percentage (0-100) of a food item will be consumed before disposal.
@@ -69,6 +73,11 @@ public final class UsageGenerator {
     public init() {}
 
     public func prewarmModel() {
+        guard model.availability == .available else {
+            print("Unable to use Apple Intelligence")
+            return
+        }
+        
         session.prewarm()
     }
 

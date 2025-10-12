@@ -117,10 +117,6 @@ public struct AddInventoryItemResponse: Codable, Sendable {
     public let inventoryItemId: Int
 }
 
-public struct InventoryItemsResponse: Codable, Sendable {
-    public let inventoryItems: [InventoryItem]
-}
-
 public struct TileColor {
     public let foreground: Color
     public let background: Color
@@ -231,13 +227,13 @@ public extension InventoryItem {
     }
 
     var progress: Double {
-        let daysSinceCreation = createdAt.timeSince.totalDays
         let daysUntilExpiry = expiryDate.timeUntil.totalDays
-        let totalDays = daysSinceCreation + daysUntilExpiry
 
-        guard totalDays > 0 else { return 1.0 }
+        let daysToExpiryWhenFirstAdded = expiryDate.time(.until, from: createdAt).totalDays
 
-        let progress = Double(daysSinceCreation) / Double(totalDays)
+        guard daysToExpiryWhenFirstAdded > 0 else { return 1.0 }
+
+        let progress = Double(daysUntilExpiry) / Double(daysToExpiryWhenFirstAdded)
         return min(max(progress, 0.0), 1.0)
     }
 }
@@ -293,11 +289,23 @@ public struct CategoryDetails: Codable, Sendable {
 public enum Brand: Codable, Equatable, Hashable, Sendable {
     case tesco
     case sainsburys
+    case marksAndSpencer
+    case coop
+    case lidl
+    case aldi
+    case morrisons
+    case asda
     case unknown(String)
 
     private static let brandData: [(Brand, String, Color)] = [
         (.tesco, "Tesco", .brandTesco),
         (.sainsburys, "Sainsbury's", .brandSainsburys),
+        (.marksAndSpencer, "Marks & Spencer", .brandMarksAndSpencer),
+        (.coop, "Co-op", .brandCoop),
+        (.lidl, "Lidl", .brandLidl),
+        (.aldi, "Aldi", .brandAldi),
+        (.morrisons, "Morrisons", .brandMorrisons),
+        (.asda, "Asda", .brandAsda),
     ]
 
     private static let knownBrands: [String: Brand] = Dictionary(uniqueKeysWithValues: brandData.map { ($0.1, $0.0) })
@@ -314,7 +322,7 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
     }
 
     public var color: Color {
-        Self.brandColors[self] ?? .gray
+        Self.brandColors[self] ?? .blue700
     }
 
     public init(from decoder: Decoder) throws {
@@ -346,7 +354,7 @@ public struct InventoryPreviewRequest: Codable, Sendable {
 
     public struct PreviewProduct: Codable, Sendable {
         public let name: String
-        public let brand: String
+        public let brand: Brand
         public let barcode: String?
         public let unit: String?
         public let amount: Double?
@@ -356,7 +364,7 @@ public struct InventoryPreviewRequest: Codable, Sendable {
 
         public init(
             name: String,
-            brand: String,
+            brand: Brand,
             barcode: String? = nil,
             unit: String? = nil,
             amount: Double? = nil,
@@ -426,14 +434,14 @@ public extension InventoryItem {
     static func mock(id: Int) -> InventoryItem {
         InventoryItem(
             id: id,
-            createdAt: Date().addingTimeInterval(-86400 * 2),
+            createdAt: Date().addingTimeInterval(86400 * 30),
             updatedAt: Date(),
             openedAt: nil,
             status: .unopened,
             storageLocation: .fridge,
             consumptionPrediction: 85,
             consumptionPredictionChangedAt: Date(),
-            expiryDate: Date().addingTimeInterval(86400 * 5),
+            expiryDate: Date().addingTimeInterval(86400 * 30),
             expiryType: .BestBefore,
             product: Product(
                 id: id,

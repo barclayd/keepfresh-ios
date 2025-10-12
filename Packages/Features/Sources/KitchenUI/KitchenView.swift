@@ -9,14 +9,14 @@ struct InventoryStat: Identifiable {
     var icon: String
     var customIcon: String?
     var amount: Int?
-
+    
     var id: String { icon }
 }
 
 struct StatsView: View {
     let storageLocation: StorageLocation
     let locationDetails: InventoryLocationDetails?
-
+    
     var stats: [InventoryStat] {
         [
             .init(icon: "list.number", amount: locationDetails?.itemsCount),
@@ -24,7 +24,7 @@ struct StatsView: View {
             .init(icon: "hourglass", amount: locationDetails?.expiringSoonCount),
         ]
     }
-
+    
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -45,27 +45,25 @@ struct StatsView: View {
                                             .foregroundStyle(
                                                 storageLocation.foregroundColor)
                                     }
-
+                                    
                                     Text("\(amount)").font(.body)
                                         .foregroundStyle(storageLocation.foregroundColor)
                                 }
                             }
                         }
                     }
-
+                    
                     Spacer()
-
+                    
                 } else {
                     HStack {
                         HStack(spacing: 4) {
                             Image(systemName: "list.number")
                                 .font(.system(size: 18))
-                                .foregroundStyle(.white200)
                             Text("0").font(.body)
-                                .foregroundStyle(.white200)
                         }
                         Spacer()
-                    }
+                    }.foregroundStyle(storageLocation.foregroundColor)
                 }
             }
         }
@@ -90,19 +88,19 @@ struct StatsView: View {
 
 private struct StorageLocationTileView: View {
     @Environment(Inventory.self) var inventory
-
+    
     let storageLocation: StorageLocation
-
+    
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
                 Image(systemName: storageLocation.icon)
                     .font(.system(size: 36)).foregroundStyle(.blue800)
-
+                
                 Text(storageLocation.rawValue).foregroundStyle(.blue800).font(.title).fontWeight(.bold)
-
+                
                 Spacer()
-
+                
                 if let locationDetails = inventory.detailsByStorageLocation[storageLocation] {
                     VStack {
                         Circle()
@@ -117,7 +115,7 @@ private struct StorageLocationTileView: View {
             .padding(.horizontal, 10)
             .background(.white100)
             .cornerRadius(20)
-
+            
             StatsView(storageLocation: storageLocation, locationDetails: inventory.detailsByStorageLocation[storageLocation])
         }
         .padding(.bottom, 4)
@@ -131,7 +129,7 @@ private struct StorageLocationTileView: View {
 
 public struct KitchenView: View {
     public init() {}
-
+    
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 25) {

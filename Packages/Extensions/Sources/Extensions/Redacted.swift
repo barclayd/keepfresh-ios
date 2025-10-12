@@ -35,5 +35,6 @@ struct Shimmer: ViewModifier {
                     endPoint: isAnimating ? .init(x: 0, y: 0) : .init(x: 1.3, y: 1.3)))
             .animation(.linear(duration: 1.5).repeatForever(autoreverses: false), value: isAnimating)
             .onAppear { isAnimating = true }
+            .disabled(isAnimating)
     }
 }

@@ -11,11 +11,10 @@ class Search {
     var searchText: String = "" {
         didSet {
             if !searchText.isEmpty {
+                state = .loading
                 searchResults = ProductSearchItemResponse.mocks(count: 5)
-                isLoading = true
             } else {
                 searchResults = []
-                isLoading = false
             }
             Task {
                 await debounceSearch()
@@ -25,7 +24,7 @@ class Search {
 
     var debouncedSearchText: String = ""
     var searchResults: [ProductSearchItemResponse] = []
-    var isLoading: Bool = false
+    var state: FetchState = .empty
 
     private var searchTask: Task<Void, Never>?
 
@@ -55,13 +54,16 @@ class Search {
     }
 
     private func sendSearchRequest(searchTerm: String) async {
-        isLoading = true
+        state = .loading
 
         let api = KeepFreshAPI()
 
         do {
             let searchResponse = try await api.searchProducts(query: searchTerm)
             searchResults = searchResponse.products
+            
+            state = .loaded
+            
             print("Search successful: Found \(searchResults.count) products")
 
             let (locationCounts, iconCounts) = searchResults.prefix(10).reduce(into: (
@@ -83,9 +85,8 @@ class Search {
         } catch {
             print("Search failed with error: \(error)")
             searchResults = []
+            state = .error
         }
-
-        isLoading = false
     }
 }
 
@@ -139,7 +140,7 @@ public struct SearchView: View {
     public var body: some View {
         VStack(spacing: 0) {
             if isSearching, let search {
-                SearchResultView(products: search.searchResults, isLoading: search.isLoading)
+                SearchResultView(products: search.searchResults, isLoading: search.state != .loaded)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 RecentSearchView(searchText: searchTextBinding)
