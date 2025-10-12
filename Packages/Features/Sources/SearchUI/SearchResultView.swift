@@ -24,6 +24,7 @@ public struct SearchResultView: View {
             .padding(.top, 15)
             .padding(.horizontal, 16)
             .redactedShimmer(when: isLoading)
+            .scrollDismissesKeyboard(.immediately)
         }
     }
 }
@@ -62,9 +63,9 @@ public struct SearchResultCard: View {
                     Spacer()
                 }
                 HStack {
-                    Text(product.brand)
+                    Text(product.brand.name)
                         .font(.subheadline)
-                        .foregroundStyle(.brandSainsburys)
+                        .foregroundStyle(product.brand.color)
 
                     if let amount = product.amount, let unit = product.unit {
                         Circle()

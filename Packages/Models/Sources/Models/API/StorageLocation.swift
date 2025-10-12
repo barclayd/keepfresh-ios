@@ -43,8 +43,8 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         case .freezer:
             [
                 Gradient.Stop(color: .blue800, location: 0),
-                Gradient.Stop(color: .blue600, location: 0.4),
-                Gradient.Stop(color: .blue200, location: 0.75),
+                Gradient.Stop(color: .blue700, location: 0.4),
+                Gradient.Stop(color: .blue600, location: 0.75),
             ]
         }
     }
@@ -77,6 +77,14 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         case .pantry: .blue800
         case .fridge: .white200
         case .freezer: .white200
+        }
+    }
+
+    public var statsBackgroundTint: Color {
+        switch self {
+        case .pantry: .brown100
+        case .fridge: .blue100
+        case .freezer: .blue100
         }
     }
 }

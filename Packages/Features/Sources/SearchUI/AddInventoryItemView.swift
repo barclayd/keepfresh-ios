@@ -88,7 +88,7 @@ public struct AddInventoryItemView: View {
                 .ProductData(
                     name: productSearchItem.name,
                     brand: productSearchItem
-                        .brand,
+                        .brand.name,
                     expiryType: recommendedExpiryType,
                     storageLocation: recommendedStorageLocation,
                     barcode: productSearchItem
@@ -149,27 +149,30 @@ public struct AddInventoryItemView: View {
                                 }
                             }.foregroundStyle(.blue800)
 
-                            Text(productSearchItem.brand)
+                            Text(productSearchItem.brand.name)
                                 .font(.headline).fontWeight(.bold)
-                                .foregroundStyle(.brandSainsburys)
+                                .foregroundStyle(productSearchItem.brand.color)
 
-                            VStack {
-                                if let percentagePrediction = usageGenerator.percentagePrediction, usageGenerator.state != .loading {
-                                    Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold)
-                                        .lineSpacing(
-                                            0)
-                                } else {
-                                    ProgressView().controlSize(.regular).tint(.yellow500)
-                                }
-                                HStack(spacing: 0) {
-                                    Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
-                                        .fontWeight(.light)
-                                    Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
-                                        .yellow500
-                                    )
-                                    .offset(x: -2, y: -10)
-                                }.offset(y: -5)
-                            }.padding(.top, 10)
+                            if usageGenerator.isAvailable {
+                                VStack {
+                                    if let percentagePrediction = usageGenerator.percentagePrediction, usageGenerator.state != .loading {
+                                        Text("\(percentagePrediction)%").font(.title).foregroundStyle(.yellow500).fontWeight(.bold)
+                                            .lineSpacing(
+                                                0)
+                                    } else {
+                                        ProgressView().controlSize(.regular).tint(.yellow500)
+                                    }
+
+                                    HStack(spacing: 0) {
+                                        Text("Predicted usage").font(.subheadline).foregroundStyle(.black800)
+                                            .fontWeight(.light)
+                                        Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(
+                                            .yellow500
+                                        )
+                                        .offset(x: -2, y: -10)
+                                    }.offset(y: -5)
+                                }.padding(.top, 10)
+                            }
 
                             Grid {
                                 GridRow {

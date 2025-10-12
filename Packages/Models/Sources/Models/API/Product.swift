@@ -35,7 +35,7 @@ public struct ProductSearchItemSource: Codable, Hashable, Sendable {
 public struct ProductSearchItemResponse: Identifiable, Hashable, Codable, Sendable {
     public init(
         name: String,
-        brand: String,
+        brand: Brand,
         category: ProductSearchItemCategory,
         amount: Double?,
         unit: String?,
@@ -52,7 +52,7 @@ public struct ProductSearchItemResponse: Identifiable, Hashable, Codable, Sendab
     }
 
     public let name: String
-    public let brand: String
+    public let brand: Brand
     public let category: ProductSearchItemCategory
     public let amount: Double?
     public let unit: String?
@@ -86,7 +86,7 @@ public extension ProductSearchItemResponse {
     static func mock(id: Int) -> ProductSearchItemResponse {
         ProductSearchItemResponse(
             name: "Sample Product",
-            brand: "Tesco",
+            brand: .tesco,
             category: ProductSearchItemCategory(
                 id: id,
                 name: "Sample Category",

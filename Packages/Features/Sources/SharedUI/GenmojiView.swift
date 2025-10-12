@@ -23,24 +23,19 @@ public struct GenmojiView: View {
 
     public var body: some View {
         Group {
-            if isLoading {
-                ProgressView()
-                    .tint(tint)
-            } else if let genmojiImage {
+            if let genmojiImage {
                 Image(uiImage: genmojiImage)
                     .resizable()
                     .scaledToFit()
-            } else if let error {
-                Text("Error: \(error)")
-                    .font(.caption)
-                    .foregroundStyle(.red)
             } else {
-                Color.clear
+                ProgressView()
+                    .tint(tint)
             }
-        }.frame(width: fontSize, height: fontSize)
-            .task {
-                await fetchGenmoji()
-            }
+        }
+        .frame(width: fontSize, height: fontSize)
+        .task {
+            await fetchGenmoji()
+        }
     }
 
     private func fetchGenmoji() async {
@@ -85,15 +80,14 @@ public struct GenmojiView: View {
                     userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from genmoji"])
             }
 
-            // 3. Save to cache
-            let cache = GenmojiCache(name: name, imageData: imageData)
-            modelContext.insert(cache)
-            try modelContext.save()
-
             await MainActor.run {
                 genmojiImage = uiImage
                 isLoading = false
             }
+
+            let cache = GenmojiCache(name: name, imageData: imageData)
+            modelContext.insert(cache)
+            try modelContext.save()
         } catch {
             await MainActor.run {
                 self.error = error.localizedDescription

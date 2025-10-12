@@ -144,7 +144,7 @@ struct InventoryItemSheetStatsGrid: View {
                 InventoryItemSheetStatsGridRows(pageIndex: pageIndex, inventoryItem: inventoryItem)
             }
         }.padding(.horizontal, 15).padding(.vertical, 5).frame(maxWidth: .infinity, alignment: .center)
-            .background(.white300).cornerRadius(20)
+            .glassEffect(.regular.tint(inventoryItem.storageLocation.statsBackgroundTint), in: .rect(cornerRadius: 20))
     }
 }
 
@@ -230,11 +230,14 @@ struct InventoryItemSheetView: View {
                     Spacer()
                 }.padding(.top, 10)
 
-                GenmojiView(name: "chicken", fontSize: 80, tint: inventoryItem.consumptionUrgency.tileColor.background)
+                GenmojiView(
+                    name: inventoryItem.product.category.icon ?? "chicken",
+                    fontSize: 80,
+                    tint: inventoryItem.consumptionUrgency.tileColor.background)
                     .padding(.bottom, -8)
 
-                Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700)
-                    .lineSpacing(0).padding(.bottom, -8)
+                Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700).lineLimit(2)
+                    .lineSpacing(0).padding(.bottom, -8).multilineTextAlignment(.center)
                 HStack {
                     Text(inventoryItem.product.category.name)
                         .font(.callout)

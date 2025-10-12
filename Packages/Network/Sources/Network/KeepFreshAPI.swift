@@ -29,9 +29,9 @@ public struct KeepFreshAPI: Sendable {
             path: "v1/products/barcode/\(barcode)")
     }
 
-    public func getInventoryItems() async throws -> InventoryItemsResponse {
+    public func getInventoryItems() async throws -> [InventoryItem] {
         try await client.fetch(
-            InventoryItemsResponse.self,
+            [InventoryItem].self,
             path: "v1/inventory")
     }
 

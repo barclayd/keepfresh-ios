@@ -4,13 +4,6 @@ import Models
 import Network
 import SwiftUI
 
-public enum FetchState {
-    case empty
-    case loading
-    case loaded
-    case error
-}
-
 public struct InventoryLocationDetails: Hashable {
     public var averageConsumptionPredictionPercentage: Int
     public var lastUpdated: Date?
@@ -23,9 +16,9 @@ public struct InventoryLocationDetails: Hashable {
 
     public var expiryStatusPercentageColor: Color {
         switch averageConsumptionPredictionPercentage {
-        case 0...33: .green600
+        case 0...33: .red500
         case 33...66: .yellow400
-        default: .red500
+        default: .green600
         }
     }
 
@@ -46,7 +39,7 @@ public final class Inventory {
         }
     }
 
-    public var state: FetchState = .loading
+    public var state: FetchState = .empty
 
     let api = KeepFreshAPI()
 
@@ -106,7 +99,7 @@ public final class Inventory {
         state = .loading
 
         do {
-            items = try await api.getInventoryItems().inventoryItems
+            items = try await api.getInventoryItems()
             state = .loaded
         } catch {
             state = .error

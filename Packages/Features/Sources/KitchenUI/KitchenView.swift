@@ -60,12 +60,10 @@ struct StatsView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "list.number")
                                 .font(.system(size: 18))
-                                .foregroundStyle(.white200)
                             Text("0").font(.body)
-                                .foregroundStyle(.white200)
                         }
                         Spacer()
-                    }
+                    }.foregroundStyle(storageLocation.foregroundColor)
                 }
             }
         }
