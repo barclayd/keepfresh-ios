@@ -7,10 +7,10 @@
           "image-name" : "logo3.png",
           "name" : "logo3",
           "position" : {
-            "scale" : 1.4,
+            "scale" : 1.8,
             "translation-in-points" : [
-              -18.062500000000114,
-              34.75
+              63.312500000000114,
+              153
             ]
           }
         }
