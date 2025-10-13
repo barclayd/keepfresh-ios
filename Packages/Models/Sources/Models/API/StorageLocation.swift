@@ -57,6 +57,14 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         }
     }
 
+    public var backgroundColor: Color {
+        switch self {
+        case .pantry: .brown300
+        case .fridge: .blue700
+        case .freezer: .blue800
+        }
+    }
+
     public var expiryIconColor: Color {
         switch self {
         case .pantry, .fridge: .blue700
@@ -77,6 +85,14 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         case .pantry: .blue800
         case .fridge: .white200
         case .freezer: .white200
+        }
+    }
+
+    public var infoColor: Color {
+        switch self {
+        case .pantry: .gray600
+        case .fridge: .white400
+        case .freezer: .gray200
         }
     }
 
