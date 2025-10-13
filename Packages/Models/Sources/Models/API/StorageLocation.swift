@@ -44,7 +44,7 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
             [
                 Gradient.Stop(color: .blue800, location: 0),
                 Gradient.Stop(color: .blue700, location: 0.4),
-                Gradient.Stop(color: .blue600, location: 0.75),
+                Gradient.Stop(color: .blue600, location: 1),
             ]
         }
     }
