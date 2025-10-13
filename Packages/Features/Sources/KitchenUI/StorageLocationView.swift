@@ -162,8 +162,7 @@ public struct StorageLocationView: View {
                             .font(.subheadline).foregroundStyle(
                                 storageLocation == .freezer ? .white200 : .blue700).multilineTextAlignment(.center).padding(
                                 .horizontal,
-                                20
-                            )
+                                20)
                     }
                     Spacer()
                 } else {
@@ -231,10 +230,9 @@ public struct StorageLocationView: View {
                             }
                         }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                             maxWidth: .infinity,
-                            alignment: .center
-                        )
-                        .glassEffect(.regular.tint(.blue150), in: .rect(cornerRadius: 20))
-                        .cornerRadius(20)
+                            alignment: .center)
+                            .glassEffect(.regular.tint(.blue150), in: .rect(cornerRadius: 20))
+                            .cornerRadius(20)
 
                         HStack {
                             Text(sortMode.title).font(.title).foregroundStyle(.blue700).fontWeight(.bold)
@@ -243,18 +241,15 @@ public struct StorageLocationView: View {
                                 SortButton(
                                     sortMode: $sortMode,
                                     type: .dateAdded(direction: .forward),
-                                    icon: "clock"
-                                )
+                                    icon: "clock")
                                 SortButton(
                                     sortMode: $sortMode,
                                     type: .alphabetical(direction: .forward),
-                                    icon: "arrow.up.arrow.down"
-                                )
+                                    icon: "arrow.up.arrow.down")
                                 SortButton(
                                     sortMode: $sortMode,
                                     type: .expiryDate(direction: .forward),
-                                    icon: "hourglass"
-                                )
+                                    icon: "hourglass")
                             }
                         }.padding(.vertical, 5)
 
