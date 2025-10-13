@@ -33,10 +33,14 @@ public struct BottomActionButton: View {
 
 // MARK: - Liquid Glass Background
 
-private struct LiquidGlassBackground: View {
+public struct LiquidGlassBackground: View {
     let cornerRadius: CGFloat
 
-    var body: some View {
+    public init(cornerRadius: CGFloat) {
+        self.cornerRadius = cornerRadius
+    }
+
+    public var body: some View {
         Color.clear
             .frame(height: 80)
             .glassEffect(

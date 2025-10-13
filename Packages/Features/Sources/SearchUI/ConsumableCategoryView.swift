@@ -451,11 +451,12 @@ public struct InventoryCategory: View {
             .padding(.vertical, 14)
             .padding(.horizontal, 10)
             .frame(maxWidth: .infinity)
-            .background(UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
-                topLeading: 20,
-                bottomLeading: isToggable ? 0 : 20,
-                bottomTrailing: isToggable ? 0 : 20,
-                topTrailing: 20)).fill(.gray200))
+            .background(
+                UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                    topLeading: 20,
+                    bottomLeading: isToggable ? 0 : 20,
+                    bottomTrailing: isToggable ? 0 : 20,
+                    topTrailing: 20)).fill(storageLocation.statsBackgroundTint))
             .onTapGesture {
                 withAnimation(.easeInOut) {
                     isExpandedToggled.toggle()

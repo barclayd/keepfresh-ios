@@ -40,7 +40,7 @@ public struct SearchResultCard: View {
                 Text(product.name)
                     .font(.headline)
                     .fontWeight(.bold)
-                    .foregroundStyle(.blue700)
+                    .foregroundStyle(product.category.recommendedStorageLocation == .freezer ? .white200 : .blue700)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
                 Spacer()
