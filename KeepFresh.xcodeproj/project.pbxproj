@@ -10,8 +10,7 @@
 		4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747F772D16F7A000DDCE17 /* KitchenUI */; };
 		4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747FB92D19F66900DDCE17 /* DesignSystem */; };
 		4E747FC12D19F7F000DDCE17 /* Shrikhand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */; };
-		4E7AEB4F2E9C554400BE4A5E /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4E7AEB4E2E9C554400BE4A5E /* AppIcon.icon */; };
-		4E7AEB6B2E9C5EA700BE4A5E /* AppIcon2.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4E7AEB6A2E9C5EA700BE4A5E /* AppIcon2.icon */; };
+		4E7AEB852E9D82DB00BE4A5E /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */; };
 		4E8952D02E987903003F3366 /* Authentication in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8952CF2E987903003F3366 /* Authentication */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
 		4E95179F2D7BAD5700FAFC86 /* BarcodeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E95179E2D7BAD5700FAFC86 /* BarcodeUI */; };
@@ -27,8 +26,7 @@
 /* Begin PBXFileReference section */
 		4E747FB62D19F28D00DDCE17 /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = Packages/DesignSystem; sourceTree = "<group>"; };
 		4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Shrikhand-Regular.ttf"; path = "Packages/DesignSystem/Sources/DesignSystem/Shrikhand-Regular.ttf"; sourceTree = "<group>"; };
-		4E7AEB4E2E9C554400BE4A5E /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
-		4E7AEB6A2E9C5EA700BE4A5E /* AppIcon2.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon2.icon; sourceTree = "<group>"; };
+		4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		4E8952CE2E9878F8003F3366 /* Authentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Authentication; path = Packages/Authentication; sourceTree = "<group>"; };
 		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E9517A02D7BB56700FAFC86 /* KeepFresh-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KeepFresh-Info.plist"; sourceTree = "<group>"; };
@@ -77,8 +75,7 @@
 		9F21421A2CE9DAA1004167D7 = {
 			isa = PBXGroup;
 			children = (
-				4E7AEB4E2E9C554400BE4A5E /* AppIcon.icon */,
-				4E7AEB6A2E9C5EA700BE4A5E /* AppIcon2.icon */,
+				4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */,
 				4E9517A02D7BB56700FAFC86 /* KeepFresh-Info.plist */,
 				4E747FC02D19F7F000DDCE17 /* Shrikhand-Regular.ttf */,
 				9F2142252CE9DAA1004167D7 /* App */,
@@ -193,8 +190,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E7AEB4F2E9C554400BE4A5E /* AppIcon.icon in Resources */,
-				4E7AEB6B2E9C5EA700BE4A5E /* AppIcon2.icon in Resources */,
+				4E7AEB852E9D82DB00BE4A5E /* AppIcon.icon in Resources */,
 				4E747FC12D19F7F000DDCE17 /* Shrikhand-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -335,7 +331,7 @@
 		9F2142492CE9DAA3004167D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = App/KeepFresh.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
@@ -382,7 +378,7 @@
 		9F21424A2CE9DAA3004167D7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = App/KeepFresh.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
