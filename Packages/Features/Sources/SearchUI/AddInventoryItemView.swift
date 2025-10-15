@@ -114,7 +114,7 @@ public struct AddInventoryItemView: View {
             request: request,
             catgeory: productSearchItem.category,
             inventoryItemId: temporaryInventoryItemId,
-            productId: productId)
+            productId: productId, icon: productSearchItem.icon)
 
         router.popToRoot()
     }

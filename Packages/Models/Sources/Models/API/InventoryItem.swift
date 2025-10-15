@@ -186,6 +186,7 @@ public extension InventoryItem {
         category: ProductSearchItemCategory,
         id: Int,
         productId: Int,
+        icon: String,
         createdAt: Date = Date())
     {
         self.id = id
@@ -202,7 +203,7 @@ public extension InventoryItem {
             unit: request.product.unit,
             brand: Brand(from: request.product.brand),
             amount: request.product.amount,
-            category: CategoryDetails(name: category.name, pathDisplay: category.path))
+            category: CategoryDetails(icon: icon, name: category.name, pathDisplay: category.path))
         consumptionPrediction = 100
         consumptionPredictionChangedAt = Date()
     }

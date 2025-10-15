@@ -9,7 +9,7 @@ import TodayUI
 private enum SortDirection {
     case forward
     case backward
-    
+
     func toggle() -> SortDirection {
         switch self {
         case .forward: .backward
@@ -22,7 +22,7 @@ private enum InventoryItemSortMode {
     case dateAdded(direction: SortDirection)
     case alphabetical(direction: SortDirection)
     case expiryDate(direction: SortDirection)
-    
+
     func toggleDirection() -> InventoryItemSortMode {
         switch self {
         case let .dateAdded(direction):
@@ -33,7 +33,7 @@ private enum InventoryItemSortMode {
             .expiryDate(direction: direction.toggle())
         }
     }
-    
+
     func updateSortMode() -> InventoryItemSortMode {
         switch self {
         case .dateAdded: .dateAdded(direction: .forward)
@@ -41,7 +41,7 @@ private enum InventoryItemSortMode {
         case .expiryDate: .expiryDate(direction: .forward)
         }
     }
-    
+
     var baseCase: String {
         switch self {
         case .dateAdded: "dateAdded"
@@ -49,7 +49,7 @@ private enum InventoryItemSortMode {
         case .expiryDate: "expiryDate"
         }
     }
-    
+
     var title: String {
         switch self {
         case .alphabetical(direction: .forward): "Sorted (A–Z)"
@@ -60,7 +60,7 @@ private enum InventoryItemSortMode {
         case .expiryDate(direction: .backward): "Expiring last"
         }
     }
-    
+
     func sort(items: [InventoryItem]) -> [InventoryItem] {
         switch self {
         case let .dateAdded(direction):
@@ -73,11 +73,11 @@ private enum InventoryItemSortMode {
         case let .alphabetical(direction):
             items.sorted { lhs, rhs in
                 let comparison = lhs.product.name.localizedCaseInsensitiveCompare(rhs.product.name)
-                
+
                 if comparison == .orderedSame {
                     return lhs.id < rhs.id
                 }
-                
+
                 switch direction {
                 case .forward: return comparison == .orderedAscending
                 case .backward: return comparison == .orderedDescending
@@ -98,13 +98,13 @@ private struct SortButton: View {
     @Binding var sortMode: InventoryItemSortMode
     let type: InventoryItemSortMode
     let icon: String
-    
+
     @State private var rotationAngle: Double = 0
-    
+
     var isActive: Bool {
         type.baseCase == sortMode.baseCase
     }
-    
+
     public var body: some View {
         Button(action: {
             withAnimation {
@@ -126,35 +126,35 @@ private struct SortButton: View {
 public struct StorageLocationView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
-    
+
     @State private var sortMode: InventoryItemSortMode = .expiryDate(direction: .forward)
-    
+
     @State private var usageGenerator = UsageGenerator()
-    
+
     private var sortedItems: [InventoryItem] {
         sortMode.sort(items: inventory.itemsByStorageLocation[storageLocation] ?? [])
     }
-    
+
     public var storageLocation: StorageLocation
-    
+
     public init(storageLocation: StorageLocation) {
         self.storageLocation = storageLocation
     }
-    
+
     var locationDetails: InventoryLocationDetails? {
         inventory.detailsByStorageLocation[storageLocation]
     }
-    
+
     public var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 15) {
                 Image(systemName: storageLocation.icon).font(.system(size: 78))
                     .foregroundColor(storageLocation == .pantry ? .blue700 : .white200)
-                
+
                 Text(storageLocation.rawValue).font(.largeTitle).lineSpacing(0)
                     .foregroundStyle(storageLocation == .pantry ? .blue700 : .white200)
                     .fontWeight(.bold)
-                
+
                 if sortedItems.isEmpty {
                     Spacer()
                     VStack(spacing: 16) {
@@ -165,8 +165,7 @@ public struct StorageLocationView: View {
                             .font(.subheadline).foregroundStyle(
                                 storageLocation == .freezer ? .white200 : .blue700).multilineTextAlignment(.center).padding(
                                 .horizontal,
-                                20
-                            )
+                                20)
                     }
                     Spacer()
                 } else {
@@ -176,7 +175,7 @@ public struct StorageLocationView: View {
                                 Text("\(locationDetails.averageConsumptionPredictionPercentage)%").font(.title).foregroundStyle(
                                     .yellow500
                                 ).fontWeight(.bold).lineSpacing(0)
-                                
+
                                 HStack(spacing: 0) {
                                     Text("Predicted usage").font(.subheadline)
                                         .foregroundStyle(storageLocation == .pantry ? .blue700 : .white200)
@@ -188,7 +187,7 @@ public struct StorageLocationView: View {
                                 }.offset(y: -5)
                             }
                         }
-                        
+
                         Grid(horizontalSpacing: 15, verticalSpacing: 10) {
                             GridRow {
                                 VStack(spacing: 0) {
@@ -237,33 +236,30 @@ public struct StorageLocationView: View {
                             }
                         }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                             maxWidth: .infinity,
-                            alignment: .center
-                        )
-                        .glassEffect(.regular.tint(.blue150), in: .rect(cornerRadius: 20))
-                        .cornerRadius(20)
-                        
+                            alignment: .center)
+                            .glassEffect(.regular.tint(.blue150), in: .rect(cornerRadius: 20))
+                            .cornerRadius(20)
+
                         HStack {
-                            Text(sortMode.title).font(.title3).foregroundStyle(storageLocation == .freezer ? .white200 : .blue700).fontWeight(.bold)
+                            Text(sortMode.title).font(.title3).foregroundStyle(storageLocation == .freezer ? .white200 : .blue700)
+                                .fontWeight(.bold)
                             Spacer()
                             HStack(spacing: 8) {
                                 SortButton(
                                     sortMode: $sortMode,
                                     type: .dateAdded(direction: .forward),
-                                    icon: "clock"
-                                )
+                                    icon: "clock")
                                 SortButton(
                                     sortMode: $sortMode,
                                     type: .alphabetical(direction: .forward),
-                                    icon: "arrow.up.arrow.down"
-                                )
+                                    icon: "arrow.up.arrow.down")
                                 SortButton(
                                     sortMode: $sortMode,
                                     type: .expiryDate(direction: .forward),
-                                    icon: "hourglass"
-                                )
+                                    icon: "hourglass")
                             }
                         }.padding(.vertical, 5)
-                        
+
                         ForEach(sortedItems) { inventoryItem in
                             InventoryItemView(inventoryItem: inventoryItem)
                         }

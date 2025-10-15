@@ -248,7 +248,7 @@ struct InventoryItemSheetView: View {
                             .frame(width: 6, height: 6)
                             .foregroundStyle(.gray600)
                             .padding(.horizontal, 4)
-                        Text("\(String(format: "%.0f", amount)) \(unit)")
+                        Text("\(String(format: "%.0f", amount))\(unit)")
                             .font(.callout)
                             .foregroundStyle(.gray600)
                     }

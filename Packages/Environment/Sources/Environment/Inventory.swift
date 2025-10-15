@@ -110,9 +110,10 @@ public final class Inventory {
         request: AddInventoryItemRequest,
         catgeory: ProductSearchItemCategory,
         inventoryItemId: Int,
-        productId: Int)
+        productId: Int,
+        icon: String)
     {
-        let item = InventoryItem(from: request, category: catgeory, id: inventoryItemId, productId: productId)
+        let item = InventoryItem(from: request, category: catgeory, id: inventoryItemId, productId: productId, icon: icon)
 
         items.append(item)
 
