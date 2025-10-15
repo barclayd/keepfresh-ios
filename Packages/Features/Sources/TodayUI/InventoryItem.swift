@@ -6,7 +6,7 @@ import SwiftUI
 struct IconsView: View {
     let inventoryItem: InventoryItem
     let usageGenerator = UsageGenerator()
-
+    
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 3) {
             if inventoryItem.createdAt.timeSince.totalDays > 0, inventoryItem.createdAt.timeSince.totalDays <= 31 {
@@ -18,11 +18,11 @@ struct IconsView: View {
                         d[.bottom] * 0.75
                     }
             }
-
+            
             Image(systemName: inventoryItem.storageLocation.iconFilled)
                 .font(.system(size: 20))
                 .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
-
+            
             if inventoryItem.status == .opened {
                 Image("tin.open")
                     .renderingMode(.template)
@@ -34,13 +34,13 @@ struct IconsView: View {
                         d[.bottom] * 0.8
                     }
             }
-
+            
             if usageGenerator.isAvailable {
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Image(systemName: "sparkles")
                         .font(.system(size: 20))
                         .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
-
+                    
                     Text("\(inventoryItem.consumptionPrediction)%")
                         .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai).font(.callout)
                         .alignmentGuide(.firstTextBaseline) { d in
@@ -48,9 +48,9 @@ struct IconsView: View {
                         }
                 }
             }
-
+            
             Spacer()
-
+            
             if inventoryItem.createdAt.timeSince.totalDays == 0 {
                 Circle()
                     .frame(width: 12, height: 12)
@@ -60,7 +60,7 @@ struct IconsView: View {
                     }.padding(.trailing, 20)
             }
         }
-        .padding(.vertical, 10)
+        .padding(.vertical, 6)
         .padding(.horizontal, 10)
         .background(UnevenRoundedRectangle(
             topLeadingRadius: 0,
@@ -74,60 +74,47 @@ struct IconsView: View {
 
 public struct InventoryItemView: View {
     @State var showInventoryItemSheet: Bool = false
-
+    
     var inventoryItem: InventoryItem
-
+    
     public init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
     }
-
+    
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
                 GenmojiView(
                     name: inventoryItem.product.category.icon ?? "chicken",
-                    fontSize: 48,
+                    fontSize: 35,
                     tint: inventoryItem.consumptionUrgency.tileColor.background)
-
-                VStack(spacing: 4) {
+                
+                VStack {
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {
                             Text(inventoryItem.product.name)
-                                .font(.title3)
-                                .fontWeight(.bold)
+                                .font(.headline)
                                 .foregroundStyle(.blue800)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .lineLimit(1)
-
+                            
                             Text(inventoryItem.product.brand.name)
                                 .foregroundStyle(inventoryItem.product.brand.color).font(.subheadline)
-
-                            HStack {
-                                Text(inventoryItem.product.category.name)
-                                    .foregroundStyle(.gray600).font(.subheadline)
-
-                                if let amount = inventoryItem.product.amount, let unit = inventoryItem.product.unitFormatted {
-                                    Circle()
-                                        .frame(width: 4, height: 4)
-                                        .foregroundStyle(.gray600)
-                                    Text("\(String(format: "%.0f", amount))\(unit)")
-                                        .foregroundStyle(.gray600).font(.subheadline)
-                                }
-                            }
+                            
                         }.frame(maxWidth: .infinity, alignment: .leading)
-
+                        
                         Spacer()
-
+                        
                         ProgressRing(
                             progress: inventoryItem.progress,
                             backgroundColor: inventoryItem.consumptionUrgency.tileColor.background,
                             foregroundColor: inventoryItem.consumptionUrgency.tileColor.foreground)
-                            .frame(width: 40, height: 40)
-                            .overlay {
-                                Text(
-                                    inventoryItem.expiryDate.timeUntil.totalDays <= 7 ? inventoryItem.expiryDate.timeUntil.totalDays
-                                        .formatted() : "7+").foregroundStyle(.blue800).fontWeight(.bold)
-                            }
+                        .frame(width: 35, height: 35)
+                        .overlay {
+                            Text(
+                                inventoryItem.expiryDate.timeUntil.totalDaysFormatted)
+                            .foregroundStyle(.blue800).fontWeight(.bold).font(.footnote)
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
                 }
@@ -136,7 +123,7 @@ public struct InventoryItemView: View {
             .padding(.horizontal, 10)
             .background(.white100)
             .cornerRadius(20)
-
+            
             IconsView(inventoryItem: inventoryItem)
         }
         .padding(.bottom, 4)
