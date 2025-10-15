@@ -6,7 +6,7 @@ import SwiftUI
 struct IconsView: View {
     let inventoryItem: InventoryItem
     let usageGenerator = UsageGenerator()
-    
+
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 3) {
             if inventoryItem.createdAt.timeSince.totalDays > 0, inventoryItem.createdAt.timeSince.totalDays <= 31 {
@@ -18,11 +18,11 @@ struct IconsView: View {
                         d[.bottom] * 0.75
                     }
             }
-            
+
             Image(systemName: inventoryItem.storageLocation.iconFilled)
                 .font(.system(size: 20))
                 .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
-            
+
             if inventoryItem.status == .opened {
                 Image("tin.open")
                     .renderingMode(.template)
@@ -34,13 +34,13 @@ struct IconsView: View {
                         d[.bottom] * 0.8
                     }
             }
-            
+
             if usageGenerator.isAvailable {
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Image(systemName: "sparkles")
                         .font(.system(size: 20))
                         .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai)
-                    
+
                     Text("\(inventoryItem.consumptionPrediction)%")
                         .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.ai).font(.callout)
                         .alignmentGuide(.firstTextBaseline) { d in
@@ -48,9 +48,9 @@ struct IconsView: View {
                         }
                 }
             }
-            
+
             Spacer()
-            
+
             if inventoryItem.createdAt.timeSince.totalDays == 0 {
                 Circle()
                     .frame(width: 12, height: 12)
@@ -74,13 +74,13 @@ struct IconsView: View {
 
 public struct InventoryItemView: View {
     @State var showInventoryItemSheet: Bool = false
-    
+
     var inventoryItem: InventoryItem
-    
+
     public init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
     }
-    
+
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
@@ -88,7 +88,7 @@ public struct InventoryItemView: View {
                     name: inventoryItem.product.category.icon ?? "chicken",
                     fontSize: 35,
                     tint: inventoryItem.consumptionUrgency.tileColor.background)
-                
+
                 VStack {
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {
@@ -97,14 +97,14 @@ public struct InventoryItemView: View {
                                 .foregroundStyle(.blue800)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .lineLimit(1)
-                            
+
                             Text(inventoryItem.product.brand.name)
                                 .foregroundStyle(inventoryItem.product.brand.color).font(.subheadline)
-                            
+
                         }.frame(maxWidth: .infinity, alignment: .leading)
-                        
+
                         Spacer()
-                        
+
                         ProgressRing(
                             progress: inventoryItem.progress,
                             backgroundColor: inventoryItem.consumptionUrgency.tileColor.background,
@@ -123,7 +123,7 @@ public struct InventoryItemView: View {
             .padding(.horizontal, 10)
             .background(.white100)
             .cornerRadius(20)
-            
+
             IconsView(inventoryItem: inventoryItem)
         }
         .padding(.bottom, 4)
@@ -137,7 +137,9 @@ public struct InventoryItemView: View {
         }
         .sheet(isPresented: $showInventoryItemSheet) {
             InventoryItemSheetView(inventoryItem: inventoryItem)
-                .presentationDetents(inventoryItem.product.name.count > 27 ? [.custom(AdaptiveMediumDetentLarge.self)] : [.custom(AdaptiveMediumDetent.self)])
+                .presentationDetents(
+                    inventoryItem.product.name
+                        .count > 27 ? [.custom(AdaptiveMediumDetentLarge.self)] : [.custom(AdaptiveMediumDetent.self)])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }
