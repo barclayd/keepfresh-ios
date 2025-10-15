@@ -99,7 +99,6 @@ public final class Inventory {
         state = .loading
 
         do {
-            print("items")
             items = try await api.getInventoryItems()
             state = .loaded
         } catch {
