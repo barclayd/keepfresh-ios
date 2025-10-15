@@ -55,11 +55,11 @@ extension InventoryItem {
 
 struct InventoryItemSheetStatsGridRows: View {
     @Environment(Inventory.self) var inventory
-
+    
     let pageIndex: Int
-
+    
     var inventoryItem: InventoryItem
-
+    
     var body: some View {
         Group {
             if pageIndex == 0 {
@@ -82,7 +82,7 @@ struct InventoryItemSheetStatsGridRows: View {
                         Text("Predicted use").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
-
+                
                 GridRow(alignment: .center) {
                     Text(inventoryItem.storageLocation.rawValue).fontWeight(.bold).font(.headline)
                     Image(systemName: inventoryItem.storageLocation.icon)
@@ -110,7 +110,7 @@ struct InventoryItemSheetStatsGridRows: View {
                                 .formattedElapsedTime).fontWeight(.bold).font(.headline)
                     }.foregroundStyle(.blue700)
                 }
-
+                
                 GridRow {
                     VStack(spacing: 0) {
                         Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.fridge] ?? 0)")
@@ -134,7 +134,7 @@ struct InventoryItemSheetStatsGridRows: View {
 struct InventoryItemSheetStatsGrid: View {
     let pageIndex: Int
     let inventoryItem: InventoryItem
-
+    
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(alignment: .center, horizontalSpacing: 30, verticalSpacing: 10) {
@@ -151,39 +151,39 @@ struct InventoryItemSheetStatsGrid: View {
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(\.dismiss) private var dismiss
-
+    
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
-
+    
     var inventoryItem: InventoryItem
-
+    
     init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
-
+        
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
-
+    
     func updateInventoryItem(
         status: InventoryItemStatus? = nil,
         storageLocation: StorageLocation? = nil,
         percentageRemaining: Double? = nil)
     {
         let previousStatus = inventoryItem.status
-
+        
         if let status {
             inventory.updateItemStatus(id: inventoryItem.id, status: status)
         }
-
+        
         if let storageLocation {
             inventory.updateItemStorageLocation(id: inventoryItem.id, storageLocation: storageLocation)
         }
-
+        
         Task {
             let api = KeepFreshAPI()
-
+            
             print("percentageRemaining: \(String(describing: percentageRemaining))")
-
+            
             do {
                 try await api.updateInventoryItem(
                     for: inventoryItem.id,
@@ -193,29 +193,29 @@ struct InventoryItemSheetView: View {
                         percentageRemaining: percentageRemaining))
                 print("Updated inventoryItem with id: \(inventoryItem.id)")
                 dismiss()
-
+                
             } catch {
                 print("Failed to update inventory item: \(error)")
-
+                
                 await MainActor.run {
                     inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
                 }
             }
         }
     }
-
+    
     func onOpen() {
         updateInventoryItem(status: .opened)
     }
-
+    
     func onMarkAsDone(wastePercentage: Double) {
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
-
+    
     func onMove(storageLocation: StorageLocation) {
         updateInventoryItem(storageLocation: storageLocation)
     }
-
+    
     var body: some View {
         Group {
             VStack(spacing: 10) {
@@ -229,16 +229,16 @@ struct InventoryItemSheetView: View {
                     }
                     Spacer()
                 }.padding(.top, 10)
-
+                
                 GenmojiView(
                     name: inventoryItem.product.category.icon ?? "chicken",
                     fontSize: 80,
                     tint: inventoryItem.consumptionUrgency.tileColor.background)
                     .padding(.bottom, -8)
-
+                
                 Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700).lineLimit(2)
                     .lineSpacing(0).padding(.bottom, -8).multilineTextAlignment(.center)
-
+                
                 HStack {
                     Text(inventoryItem.product.category.name)
                         .font(.callout)
@@ -248,7 +248,7 @@ struct InventoryItemSheetView: View {
                             .frame(width: 6, height: 6)
                             .foregroundStyle(.gray600)
                             .padding(.horizontal, 4)
-                        Text("\(String(format: "%.0f", amount)) \(unit)")
+                        Text("\(String(format: "%.0f", amount))\(unit)")
                             .font(.callout)
                             .foregroundStyle(.gray600)
                     }
@@ -277,7 +277,7 @@ struct InventoryItemSheetView: View {
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2...2)
-
+                            
                             Spacer()
                         }
                         GridRow {
@@ -315,7 +315,7 @@ struct InventoryItemSheetView: View {
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2...2)
-
+                            
                             Spacer()
                         }
                         GridRow {
@@ -350,7 +350,7 @@ struct InventoryItemSheetView: View {
                         RoundedRectangle(cornerRadius: 20)
                             .fill(.green300))
                 }
-
+                
                 if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                     Button(action: nextBestAction.action) {
                         HStack(spacing: 10) {
@@ -370,7 +370,7 @@ struct InventoryItemSheetView: View {
                                 .fill(nextBestAction.backgroundColor))
                     }
                 }
-
+                
             }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
                 .padding(.horizontal, 10)
                 .sheet(isPresented: $showRemoveSheet) {

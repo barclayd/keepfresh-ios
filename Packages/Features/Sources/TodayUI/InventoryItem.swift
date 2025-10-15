@@ -109,12 +109,12 @@ public struct InventoryItemView: View {
                             progress: inventoryItem.progress,
                             backgroundColor: inventoryItem.consumptionUrgency.tileColor.background,
                             foregroundColor: inventoryItem.consumptionUrgency.tileColor.foreground)
-                        .frame(width: 35, height: 35)
-                        .overlay {
-                            Text(
-                                inventoryItem.expiryDate.timeUntil.totalDaysFormatted)
-                            .foregroundStyle(.blue800).fontWeight(.bold).font(.footnote)
-                        }
+                            .frame(width: 35, height: 35)
+                            .overlay {
+                                Text(
+                                    inventoryItem.expiryDate.timeUntil.totalDaysFormatted)
+                                    .foregroundStyle(.blue800).fontWeight(.bold).font(.footnote)
+                            }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
                 }
@@ -137,7 +137,7 @@ public struct InventoryItemView: View {
         }
         .sheet(isPresented: $showInventoryItemSheet) {
             InventoryItemSheetView(inventoryItem: inventoryItem)
-                .presentationDetents([.custom(AdaptiveMediumDetent.self)])
+                .presentationDetents(inventoryItem.product.name.count > 27 ? [.custom(AdaptiveMediumDetentLarge.self)] : [.custom(AdaptiveMediumDetent.self)])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }
