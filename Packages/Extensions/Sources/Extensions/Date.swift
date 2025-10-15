@@ -120,13 +120,12 @@ public func relativeTime(
     let yearComponents = calendar.dateComponents([.year], from: fromDate, to: toDate)
     let years = yearComponents.year ?? 0
     
-    let absDays = abs(days)
-    let (value, unit): (Int, TimeUnit) = if absDays <= 7 {
+    let (value, unit): (Int, TimeUnit) = if days <= 7 {
         (days, .day)
-    } else if absDays <= 28 {
+    } else if days <= 28 {
         (weeks, .week)
-    } else if abs(months) <= 12 {
-        (months, .month)
+    } else if months < 12 {
+        (max(months, 1), .month)
     } else {
         (years, .year)
     }
