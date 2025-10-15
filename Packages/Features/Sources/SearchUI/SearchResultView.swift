@@ -34,7 +34,7 @@ public struct SearchResultCard: View {
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
-            HStack(spacing: 0) {
+            HStack {
                 GenmojiView(name: product.icon, fontSize: 28, tint: .white200)
 
                 Text(product.name)
@@ -51,14 +51,14 @@ public struct SearchResultCard: View {
                     .frame(width: 28, height: 28)
                     .background(Circle().fill(.blue700))
             }
-            .padding(.vertical, 7.5)
+            .padding(.vertical, 10)
             .padding(.horizontal, 10)
             .background(product.category.recommendedStorageLocation.tileColor)
             .cornerRadius(20)
 
             VStack {
                 HStack {
-                    Text(product.category.name)
+                    Text(product.category.path)
                         .font(.subheadline).foregroundStyle(.gray500)
                     Spacer()
                 }
@@ -78,9 +78,6 @@ public struct SearchResultCard: View {
                     }
 
                     Spacer()
-                    Image(systemName: "clock")
-                        .font(.callout)
-                        .foregroundStyle(.blue700)
                 }
             }.padding(.horizontal, 5).padding(10).padding(.bottom, 5)
                 .background(UnevenRoundedRectangle(

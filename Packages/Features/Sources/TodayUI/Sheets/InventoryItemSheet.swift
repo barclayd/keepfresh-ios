@@ -238,6 +238,7 @@ struct InventoryItemSheetView: View {
 
                 Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700).lineLimit(2)
                     .lineSpacing(0).padding(.bottom, -8).multilineTextAlignment(.center)
+
                 HStack {
                     Text(inventoryItem.product.category.name)
                         .font(.callout)

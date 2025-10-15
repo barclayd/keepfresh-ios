@@ -10,7 +10,7 @@ struct ProgressRing: View {
 
     init(
         progress: Double,
-        lineWidth: CGFloat = 5,
+        lineWidth: CGFloat = 4,
         backgroundColor: Color = Color.gray.opacity(0.2),
         foregroundColor: Color = .blue)
     {
@@ -37,7 +37,7 @@ struct ProgressRing: View {
                 .rotationEffect(.degrees(-90))
         }
         .onAppear {
-            withAnimation {
+            withAnimation() {
                 animatedProgress = progress
             }
         }
