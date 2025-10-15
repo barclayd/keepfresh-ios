@@ -6,7 +6,7 @@ struct ProgressRing: View {
     let backgroundColor: Color
     let foregroundColor: Color
 
-    @State private var animatedProgress: Double = 100
+    @State private var animatedProgress: Double = 1.0
 
     init(
         progress: Double,
@@ -35,11 +35,10 @@ struct ProgressRing: View {
                         lineWidth: lineWidth,
                         lineCap: .round))
                 .rotationEffect(.degrees(-90))
+                .animation(.easeInOut(duration: 3), value: animatedProgress)
         }
         .onAppear {
-            withAnimation() {
-                animatedProgress = progress
-            }
+            animatedProgress = progress
         }
         .onChange(of: progress) { _, newValue in
             animatedProgress = newValue
