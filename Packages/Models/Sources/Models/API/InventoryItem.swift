@@ -263,15 +263,13 @@ public struct Product: Codable, Sendable {
     public let amount: Double?
     public let category: CategoryDetails
 
-    public var unitFormatted: String? {
+    public var amountUnitFormatted: String? {
         guard let unit else { return nil }
+        guard let amount else { return unit }
 
-        switch unit {
-        case "l":
-            return unit.uppercased(with: .current)
-        default:
-            return unit
-        }
+        let formattedUnit = unit == "l" ? "L" : unit
+
+        return "\(String(format: "%.0f", amount))\(formattedUnit)"
     }
 }
 
@@ -385,12 +383,21 @@ public struct InventoryPreviewRequest: Codable, Sendable {
     }
 }
 
+public protocol Prediction {
+    var purchaseCount: Int { get }
+    var averageUsage: Double { get }
+    var medianUsage: Double? { get }
+    var standardDeviation: Double { get }
+    var averageDaysToConsumeOrDiscarded: Double { get }
+    var medianDaysToConsumeOrDiscarded: Double? { get }
+}
+
 public struct InventoryPredictionsResponse: Codable, Sendable {
     public let productHistory: ProductHistory
     public let categoryHistory: CategoryHistory
     public let userBaseline: UserBaseline
 
-    public struct ProductHistory: Codable, Sendable {
+    public struct ProductHistory: Codable, Sendable, Prediction {
         public let purchaseCount: Int
         public let consumedCount: Int
         public let usagePercentages: [Int]
@@ -401,7 +408,7 @@ public struct InventoryPredictionsResponse: Codable, Sendable {
         public let medianDaysToConsumeOrDiscarded: Double?
     }
 
-    public struct CategoryHistory: Codable, Sendable {
+    public struct CategoryHistory: Codable, Sendable, Prediction {
         public let purchaseCount: Int
         public let averageUsage: Double
         public let medianUsage: Double?

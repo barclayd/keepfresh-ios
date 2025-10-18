@@ -22,7 +22,7 @@ extension InventoryItem {
         case (.unopened, _):
             NextBestAction(
                 label: "Mark as opened",
-                icon: "door.right.hand.open",
+                icon: "tin.open",
                 textColor: .blue600,
                 backgroundColor: .gray200,
                 action: onOpen)
@@ -243,12 +243,12 @@ struct InventoryItemSheetView: View {
                     Text(inventoryItem.product.category.name)
                         .font(.callout)
                         .foregroundStyle(.gray600)
-                    if let amount = inventoryItem.product.amount, let unit = inventoryItem.product.unitFormatted {
+                    if let amountUnit = inventoryItem.product.amountUnitFormatted {
                         Circle()
                             .frame(width: 6, height: 6)
                             .foregroundStyle(.gray600)
                             .padding(.horizontal, 4)
-                        Text("\(String(format: "%.0f", amount))\(unit)")
+                        Text(amountUnit)
                             .font(.callout)
                             .foregroundStyle(.gray600)
                     }
@@ -354,9 +354,18 @@ struct InventoryItemSheetView: View {
                 if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                     Button(action: nextBestAction.action) {
                         HStack(spacing: 10) {
-                            Image(systemName: nextBestAction.icon)
-                                .font(.system(size: 18))
-                                .frame(width: 20, alignment: .center)
+                            if nextBestAction.icon == "tin.open" {
+                                Image("tin.open")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 22, height: 22)
+                            } else {
+                                Image(systemName: nextBestAction.icon)
+                                    .font(.system(size: 18))
+                                    .frame(width: 20, alignment: .center)
+                            }
+
                             Text(nextBestAction.label)
                                 .font(.headline)
                                 .frame(width: 175, alignment: .center)
@@ -375,9 +384,11 @@ struct InventoryItemSheetView: View {
                 .padding(.horizontal, 10)
                 .sheet(isPresented: $showRemoveSheet) {
                     RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                        .presentationDetents(
+                            inventoryItem.product.name
+                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(25)
-                        .presentationDetents([.fraction(0.4)])
                 }
         }
     }

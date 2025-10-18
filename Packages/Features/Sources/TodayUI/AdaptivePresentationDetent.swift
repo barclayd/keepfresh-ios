@@ -1,5 +1,21 @@
 import SwiftUI
 
+struct AdaptiveExtraSmallDetent: CustomPresentationDetent {
+    static func height(in context: Context) -> CGFloat? {
+        let maxHeight = context.maxDetentValue
+
+        return maxHeight < 700 ? maxHeight * 0.45 : maxHeight * 0.375
+    }
+}
+
+struct AdaptiveSmallDetent: CustomPresentationDetent {
+    static func height(in context: Context) -> CGFloat? {
+        let maxHeight = context.maxDetentValue
+
+        return maxHeight < 700 ? maxHeight * 0.475 : maxHeight * 0.4
+    }
+}
+
 struct AdaptiveMediumDetent: CustomPresentationDetent {
     static func height(in context: Context) -> CGFloat? {
         let maxHeight = context.maxDetentValue
@@ -8,7 +24,7 @@ struct AdaptiveMediumDetent: CustomPresentationDetent {
     }
 }
 
-struct AdaptiveMediumDetentLarge: CustomPresentationDetent {
+struct AdaptiveLargeDetent: CustomPresentationDetent {
     static func height(in context: Context) -> CGFloat? {
         let maxHeight = context.maxDetentValue
 
