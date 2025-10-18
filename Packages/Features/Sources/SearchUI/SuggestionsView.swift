@@ -1,5 +1,6 @@
 import Extensions
 import Models
+import SharedUI
 import SwiftUI
 
 enum HistoryType {
@@ -27,6 +28,7 @@ func getStorageLocation(storageLocation: StorageLocation?) -> String {
 }
 
 @ViewBuilder
+@MainActor
 func historyView(
     type: HistoryType,
     sentiment: Sentiment,
@@ -97,28 +99,6 @@ func historyView(
             iconColor: .yellow700,
             text: "Your overall usage is average for \(countryName) at \(String(format: "%.0f", medianTotalUsage))%",
             textColor: storageLocation.infoColor)
-    }
-}
-
-public struct Suggestion: View {
-    let icon: String
-    let iconColor: Color
-    let text: String
-    let textColor: Color
-
-    public var body: some View {
-        GridRow {
-            Image(systemName: icon).fontWeight(.bold)
-                .foregroundStyle(iconColor)
-                .font(.system(size: 32))
-            Text(text)
-                .font(.callout)
-                .foregroundStyle(textColor)
-                .multilineTextAlignment(.center)
-                .lineLimit(2...2)
-
-            Spacer()
-        }
     }
 }
 
@@ -216,7 +196,7 @@ public struct SuggestionsView: View {
                 Suggestion(
                     icon: "book.fill",
                     iconColor: .yellow700,
-                    text: "You haven’t added \(categoryName) before",
+                    text: "You haven’t added \(categoryName) before. Usage will make predictions smarter",
                     textColor: storageLocation.infoColor)
 
                 if suggestions.expiryType == .UseBy {

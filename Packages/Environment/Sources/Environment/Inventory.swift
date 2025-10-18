@@ -45,7 +45,7 @@ public final class Inventory {
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [InventoryItem]] = [:]
     public private(set) var productCounts: [Int: Int] = [:]
-    public private(set) var productCountsByLocation: [Int: [StorageLocation: Int]] = [:]
+    public private(set) var productsByLocation: [Int: [StorageLocation: [InventoryItem]]] = [:]
     public private(set) var detailsByStorageLocation: [StorageLocation: InventoryLocationDetails] = [:]
 
     public init(initialState: [InventoryItem] = InventoryItem.mocks(count: 5)) {
@@ -72,7 +72,7 @@ public final class Inventory {
         }
 
         var counts: [Int: Int] = [:]
-        var locationCounts: [Int: [StorageLocation: Int]] = [:]
+        var locationCounts: [Int: [StorageLocation: [InventoryItem]]] = [:]
 
         for item in items {
             counts[item.product.id, default: 0] += 1
@@ -80,11 +80,14 @@ public final class Inventory {
             if locationCounts[item.product.id] == nil {
                 locationCounts[item.product.id] = [:]
             }
-            locationCounts[item.product.id]![item.storageLocation, default: 0] += 1
+            if locationCounts[item.product.id]![item.storageLocation] == nil {
+                locationCounts[item.product.id]![item.storageLocation] = []
+            }
+            locationCounts[item.product.id]![item.storageLocation]!.append(item)
         }
 
         productCounts = counts
-        productCountsByLocation = locationCounts
+        productsByLocation = locationCounts
     }
 
     public var itemsSortedByRecentlyAddedDescending: [InventoryItem] {
@@ -108,12 +111,13 @@ public final class Inventory {
 
     public func addItem(
         request: AddInventoryItemRequest,
-        catgeory: ProductSearchItemCategory,
+        category: ProductSearchItemCategory,
+        categorySuggestions: InventorySuggestionsResponse?,
         inventoryItemId: Int,
         productId: Int,
         icon: String)
     {
-        let item = InventoryItem(from: request, category: catgeory, id: inventoryItemId, productId: productId, icon: icon)
+        let item = InventoryItem(from: request, category: category, id: inventoryItemId, productId: productId, icon: icon)
 
         items.append(item)
 
@@ -126,6 +130,10 @@ public final class Inventory {
                         guard let self, !self.items.isEmpty else { return }
                         items[items.count - 1].id = inventoryItemId
                     }
+                }
+
+                if let categorySuggestions {
+                    await SuggestionsCache.shared.saveSuggestions(categoryId: category.id, categorySuggestions: categorySuggestions)
                 }
             } catch {
                 print("Adding inventory item failed with error: \(error)")

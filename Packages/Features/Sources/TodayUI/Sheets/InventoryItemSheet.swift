@@ -113,7 +113,7 @@ struct InventoryItemSheetStatsGridRows: View {
 
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.fridge] ?? 0)")
+                        Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.fridge]?.count ?? 0)")
                             .fontWeight(.bold).font(.headline)
                         Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }.foregroundStyle(.blue700)
@@ -121,7 +121,7 @@ struct InventoryItemSheetStatsGridRows: View {
                         .font(.system(size: 32)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
                     VStack(spacing: 0) {
-                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.freezer] ?? 0)")
+                        Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.freezer]?.count ?? 0)")
                             .fontWeight(.bold).font(.headline)
                         Text("Located in Freezer").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
@@ -148,12 +148,121 @@ struct InventoryItemSheetStatsGrid: View {
     }
 }
 
+enum SuggestionType {
+    case onTrack(ConsumptionUrgency)
+    case move(StorageLocation)
+    case multipleInInventory
+    case relativeDate(Double)
+    case buying(String, ConsumptionUrgency)
+}
+
+func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
+    let date = Calendar.current.date(byAdding: .day, value: Int(medianNumberOfDays), to: Date())!
+
+    if date.timeUntil.totalDays == 0 {
+        return "today"
+    }
+
+    if date.timeUntil.totalDays == 1 {
+        return "by tomorrow"
+    }
+
+    if date.timeUntil.totalDays < 8 {
+        return "on \(date.formatted(.dateTime.weekday(.wide)))"
+    }
+
+    return "in \(date.timeUntil.formatted)"
+}
+
+@ViewBuilder
+@MainActor
+func suggestionView(suggestion: SuggestionType) -> some View {
+    switch suggestion {
+    case let .onTrack(urgency):
+        switch urgency {
+        case .critical:
+            Suggestion(
+                icon: "exclamationmark.triangle.fill",
+                iconColor: .red800,
+                text: "It's looking unlikely that you'll use all of this item before expiry",
+                textColor: .gray600)
+        case .attention:
+            Suggestion(
+                icon: "info.triangle.fill",
+                iconColor: .yellow700,
+                text: "You're not on track to use all of this item before expiry",
+                textColor: .gray600)
+        case .good:
+            Suggestion(
+                icon: "checkmark.seal.fill",
+                iconColor: .green600,
+                text: "Great work, you're on track to use all of this item",
+                textColor: .gray600)
+        }
+    case .multipleInInventory:
+        Suggestion(
+            icon: "plus.square.fill.on.square.fill",
+            iconColor: .red800,
+            text: "You already have one of these in your inventory. Make sure to use that first",
+            textColor: .gray600)
+    case let .move(storageLocation):
+        switch storageLocation {
+        case .pantry:
+            Suggestion(
+                icon: StorageLocation.pantry.icon,
+                iconColor: StorageLocation.pantry.backgroundColor,
+                text: "Consider moving this item to your pantry to extend expiry",
+                textColor: .gray600)
+        case .fridge:
+            Suggestion(
+                icon: StorageLocation.fridge.icon,
+                iconColor: StorageLocation.fridge.backgroundColor,
+                text: "Consider moving this item to your fridge to extend expiry",
+                textColor: .gray600)
+        case .freezer:
+            Suggestion(
+                icon: StorageLocation.freezer.icon,
+                iconColor: StorageLocation.freezer.backgroundColor,
+                text: "Consider freezing this item before expiry to extend its shelf life",
+                textColor: .gray600)
+        }
+    case let .relativeDate(days):
+        Suggestion(
+            icon: "calendar.badge",
+            iconColor: .green600,
+            text: "At your usual pace, you'll finish this \(getRelativeDateInFuture(medianNumberOfDays: days))",
+            textColor: .gray600)
+    case let .buying(categoryName, urgency):
+        switch urgency {
+        case .critical:
+            Suggestion(
+                icon: "storefront.fill",
+                iconColor: .red800,
+                text: "Consider other \(categoryName.truncated(to: 15)) options that you will be more likely to consume",
+                textColor: .gray600)
+        case .attention:
+            Suggestion(
+                icon: "storefront.fill",
+                iconColor: .yellow700,
+                text: "Consider other \(categoryName.truncated(to: 15)) options that you will be more likely to consume",
+                textColor: .gray600)
+        case .good:
+            Suggestion(
+                icon: "cart.fill.badge.plus",
+                iconColor: .green600,
+                text: "Based on your usage history, it's a great idea to buy this again",
+                textColor: .gray600)
+        }
+    }
+}
+
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
+    @State private var usageStats: ProductUsageStatsResponse? = nil
 
     var inventoryItem: InventoryItem
 
@@ -181,8 +290,6 @@ struct InventoryItemSheetView: View {
 
         Task {
             let api = KeepFreshAPI()
-
-            print("percentageRemaining: \(String(describing: percentageRemaining))")
 
             do {
                 try await api.updateInventoryItem(
@@ -214,6 +321,58 @@ struct InventoryItemSheetView: View {
 
     func onMove(storageLocation: StorageLocation) {
         updateInventoryItem(storageLocation: storageLocation)
+    }
+
+    var storageLocationToExtendExpiry: StorageLocation? {
+        guard let suggestions = SuggestionsCache.shared.getSuggestions(for: inventoryItem.product.category.id) else {
+            return nil
+        }
+
+        let pantryShelfLife = suggestions.shelfLifeInDays.unopened.pantry
+        let fridgeShelfLife = suggestions.shelfLifeInDays.unopened.fridge
+        let freezerShelfLife = suggestions.shelfLifeInDays.unopened.freezer
+
+        if inventoryItem.storageLocation == .pantry,
+           let pantryShelfLife,
+           let fridgeShelfLife,
+           fridgeShelfLife > pantryShelfLife
+        {
+            return .fridge
+        }
+
+        if inventoryItem.storageLocation == .pantry,
+           let pantryShelfLife,
+           let freezerShelfLife,
+           freezerShelfLife > pantryShelfLife
+        {
+            return .freezer
+        }
+
+        if inventoryItem.storageLocation == .fridge,
+           let fridgeShelfLife,
+           let freezerShelfLife,
+           freezerShelfLife > fridgeShelfLife
+        {
+            return .freezer
+        }
+
+        return nil
+    }
+
+    var hasEarlierExpiringDuplicate: Bool {
+        let inventoryItemsForStorageLocation = inventory.productsByLocation[inventoryItem.product.id]?[inventoryItem.storageLocation] ?? []
+
+        guard !inventoryItemsForStorageLocation.isEmpty else { return false }
+
+        let duplicateProducts = inventoryItemsForStorageLocation.filter { $0.product.id == inventoryItem.product.id }
+
+        guard duplicateProducts.count > 1 else { return false }
+
+        let itemWithShorterExpiryDate = duplicateProducts.first { $0.expiryDate.timeUntil.totalDays <
+            inventoryItem.expiryDate.timeUntil.totalDays
+        }
+
+        return itemWithShorterExpiryDate != nil
     }
 
     var body: some View {
@@ -265,72 +424,29 @@ struct InventoryItemSheetView: View {
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                 .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
                 .offset(x: 0, y: -8)
-                ViewThatFits(in: .vertical) {
-                    Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                        GridRow {
-                            Image(systemName: "checkmark.seal.fill")
-                                .fontWeight(.bold)
-                                .foregroundStyle(.yellow500)
-                                .font(.system(size: 32))
-                            Text("Great work, you're on track to finish this before it expires")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
 
-                            Spacer()
-                        }
-                        GridRow {
-                            Image(systemName: "cart.circle.fill")
-                                .fontWeight(.bold)
-                                .foregroundStyle(.blue600)
-                                .font(.system(size: 32))
-                            Text("Based on your waste history for this item, you should buy this again")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
-                            Spacer()
-                        }
-                        GridRow {
-                            Image(systemName: "beach.umbrella.fill")
-                                .foregroundStyle(.green500)
-                                .font(.system(size: 32))
-                            Text("You should only need to buy one of these before your next holiday")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
-                            Spacer()
-                        }
-                    }.padding(.bottom, 8)
-                    Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                        GridRow {
-                            Image(systemName: "checkmark.seal.fill")
-                                .fontWeight(.bold)
-                                .foregroundStyle(.yellow500)
-                                .font(.system(size: 32))
-                            Text("Great work, you're on track to finish this before it expires")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
+                Grid(alignment: .center, horizontalSpacing: 16, verticalSpacing: 20) {
+                    suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
 
-                            Spacer()
-                        }
-                        GridRow {
-                            Image(systemName: "cart.circle.fill")
-                                .foregroundStyle(.blue600)
-                                .font(.system(size: 32))
-                            Text("Based on your waste history for this item, you should buy this again")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
-                            Spacer()
-                        }
-                    }.padding(.bottom, 8)
+                    if hasEarlierExpiringDuplicate {
+                        suggestionView(suggestion: .multipleInInventory)
+                    } else if let medianDaysToOutcome = usageStats?.medianDaysToOutcome, inventoryItem.consumptionUrgency != .critical,
+                              medianDaysToOutcome >= Double(inventoryItem.createdAt.timeSince.totalDays)
+                    {
+                        suggestionView(suggestion: .relativeDate(medianDaysToOutcome - Double(inventoryItem.createdAt.timeSince.totalDays)))
+                    } else if let suggestedStorageLocation = storageLocationToExtendExpiry {
+                        suggestionView(suggestion: .move(suggestedStorageLocation))
+                    } else {
+                        suggestionView(suggestion: .buying(inventoryItem.product.category.name, inventoryItem.consumptionUrgency))
+                    }
                 }
+                .padding(.bottom, 8)
+                .task {
+                    let api = KeepFreshAPI()
+
+                    usageStats = try? await api.getProductUsageStats(productId: inventoryItem.product.id)
+                }
+
                 Button(action: {
                     showRemoveSheet = true
                 }) {
@@ -379,17 +495,17 @@ struct InventoryItemSheetView: View {
                                 .fill(nextBestAction.backgroundColor))
                     }
                 }
-
-            }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
-                .padding(.horizontal, 10)
-                .sheet(isPresented: $showRemoveSheet) {
-                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
-                        .presentationDetents(
-                            inventoryItem.product.name
-                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
-                        .presentationDragIndicator(.visible)
-                        .presentationCornerRadius(25)
-                }
+            }
+            .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
+            .padding(.horizontal, 10)
+            .sheet(isPresented: $showRemoveSheet) {
+                RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                    .presentationDetents(
+                        inventoryItem.product.name
+                            .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+            }
         }
     }
 }
