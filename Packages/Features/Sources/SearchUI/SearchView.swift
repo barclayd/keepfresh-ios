@@ -10,12 +10,17 @@ import SwiftUI
 class Search {
     var searchText: String = "" {
         didSet {
+            guard searchText != debouncedSearchText, searchText != lastSearchedTerm else {
+                return
+            }
+
             if !searchText.isEmpty {
                 state = .loading
                 searchResults = ProductSearchItemResponse.mocks(count: 5)
             } else {
                 searchResults = []
             }
+
             Task {
                 await debounceSearch()
             }
@@ -25,6 +30,7 @@ class Search {
     var debouncedSearchText: String = ""
     var searchResults: [ProductSearchItemResponse] = []
     var state: FetchState = .empty
+    var lastSearchedTerm = ""
 
     private var searchTask: Task<Void, Never>?
 
@@ -34,26 +40,31 @@ class Search {
         self.onSaveSearch = onSaveSearch
     }
 
-    private func debounceSearch() async {
+    public func debounceSearch(shouldWait: Bool = true) async {
         searchTask?.cancel()
 
         searchTask = Task {
             do {
-                try await Task.sleep(for: .seconds(1))
+                if shouldWait {
+                    try await Task.sleep(for: .seconds(1))
+                }
 
-                if !Task.isCancelled, debouncedSearchText != searchText {
+                print(debouncedSearchText, searchText, lastSearchedTerm)
+                if !Task.isCancelled, debouncedSearchText != searchText, searchText != lastSearchedTerm {
                     debouncedSearchText = searchText
                     print("Debounced value: '\(searchText)'")
 
                     if !searchText.isEmpty {
                         await sendSearchRequest(searchTerm: searchText)
                     }
+                } else {
+                    state = .loaded
                 }
             } catch {}
         }
     }
 
-    private func sendSearchRequest(searchTerm: String) async {
+    public func sendSearchRequest(searchTerm: String) async {
         state = .loading
 
         let api = KeepFreshAPI()
@@ -63,6 +74,7 @@ class Search {
             searchResults = searchResponse.products
 
             state = .loaded
+            lastSearchedTerm = searchTerm
 
             print("Search successful: Found \(searchResults.count) products")
 
@@ -86,6 +98,7 @@ class Search {
             print("Search failed with error: \(error)")
             searchResults = []
             state = .error
+            lastSearchedTerm = ""
         }
     }
 }
@@ -154,5 +167,11 @@ public struct SearchView: View {
             }
         }
         .searchable(text: searchTextBinding)
+        .onSubmit(of: .search) {
+            Task {
+                guard search?.state != .loading else { return }
+                await search?.debounceSearch(shouldWait: false)
+            }
+        }
     }
 }
