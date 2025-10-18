@@ -223,32 +223,14 @@ public struct AddInventoryItemView: View {
                                 .bottom,
                                 10)
 
-                        Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                            GridRow {
-                                Image(systemName: "checkmark.seal.fill").fontWeight(.bold)
-                                    .foregroundStyle(.yellow500)
-                                    .font(.system(size: 32))
-                                Text("Looks like a good choice, you’re unlikely to waste any of this item")
-                                    .font(.callout)
-                                    .foregroundStyle(formState.storageLocation.infoColor)
-                                    .multilineTextAlignment(.center)
-                                    .lineLimit(2...2)
-
-                                Spacer()
-                            }
-                            GridRow {
-                                Image(systemName: "beach.umbrella.fill")
-                                    .foregroundStyle(.blue600).fontWeight(.bold)
-                                    .font(.system(size: 32))
-                                Text("You should only need to buy one of these before your next holiday")
-                                    .font(.callout)
-                                    .foregroundStyle(formState.storageLocation.infoColor)
-                                    .multilineTextAlignment(.center)
-                                    .lineLimit(2...2)
-                                Spacer()
-                            }
-
-                        }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
+                        if let predictions = preview.predictions, let suggestions = preview.suggestions {
+                            SuggestionsView(
+                                storageLocation: formState.storageLocation,
+                                predictions: predictions,
+                                suggestions: suggestions,
+                                itemName: productSearchItem.name.truncated(to: 20),
+                                categoryName: productSearchItem.category.name.truncated(to: 18))
+                        }
 
                         VStack(spacing: 15) {
                             InventoryCategory(

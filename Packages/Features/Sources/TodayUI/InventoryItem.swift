@@ -98,8 +98,18 @@ public struct InventoryItemView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .lineLimit(1)
 
-                            Text(inventoryItem.product.brand.name)
-                                .foregroundStyle(inventoryItem.product.brand.color).font(.subheadline)
+                            HStack(spacing: 4) {
+                                Text(inventoryItem.product.brand.name)
+                                    .foregroundStyle(inventoryItem.product.brand.color).font(.caption)
+
+                                if let amountUnit = inventoryItem.product.amountUnitFormatted {
+                                    Circle()
+                                        .frame(width: 3, height: 3)
+                                        .foregroundStyle(.gray600)
+                                    Text(amountUnit)
+                                        .foregroundStyle(.gray600).font(.caption)
+                                }
+                            }
 
                         }.frame(maxWidth: .infinity, alignment: .leading)
 
@@ -139,7 +149,7 @@ public struct InventoryItemView: View {
             InventoryItemSheetView(inventoryItem: inventoryItem)
                 .presentationDetents(
                     inventoryItem.product.name
-                        .count > 27 ? [.custom(AdaptiveMediumDetentLarge.self)] : [.custom(AdaptiveMediumDetent.self)])
+                        .count > 27 ? [.custom(AdaptiveLargeDetent.self)] : [.custom(AdaptiveMediumDetent.self)])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }

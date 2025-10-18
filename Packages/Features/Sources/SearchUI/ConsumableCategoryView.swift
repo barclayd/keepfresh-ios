@@ -45,7 +45,7 @@ private extension InventoryItemFormType {
         case .Storage:
             "house"
         case .Status:
-            "door.right.hand.open"
+            "tin.open"
         case .Quantity:
             "list.number"
         }
@@ -228,12 +228,22 @@ struct InventoryItemOverview: View {
     let type: InventoryItemFormType
 
     var body: some View {
-        Image(systemName: type.icon)
-            .font(.system(size: 21))
-            .fontWeight(.bold)
-            .foregroundColor(.blue700)
-            .frame(width: 40, height: 40)
-            .background(Circle().fill(.blue200))
+        Group {
+            if type.icon == "tin.open" {
+                Image("tin.open")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 23, height: 23)
+            } else {
+                Image(systemName: type.icon)
+                    .font(.system(size: 21))
+                    .fontWeight(.bold)
+            }
+        }
+        .foregroundColor(.blue700)
+        .frame(width: 40, height: 40)
+        .background(Circle().fill(.blue200))
 
         Text(type.rawValue)
             .fontWeight(.bold)

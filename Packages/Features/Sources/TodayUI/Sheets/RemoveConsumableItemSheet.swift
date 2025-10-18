@@ -1,3 +1,4 @@
+import Extensions
 import Models
 import SwiftUI
 
@@ -21,10 +22,19 @@ public struct RemoveInventoryItemSheet: View {
         _wastePercentage = State(initialValue: predictedWastePercentage)
     }
 
+    var title: AttributedString {
+        var result = AttributedString("How much ")
+
+        result.append(AttributedString(inventoryItem.product.name.truncated(to: 25)))
+
+        result.append(AttributedString(" is left?"))
+        return result
+    }
+
     public var body: some View {
         VStack(spacing: 20) {
-            Text("How much \(inventoryItem.product.name) is left?").lineLimit(2).multilineTextAlignment(.center)
-                .fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
+            Text(title)
+                .lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
 
             VStack(spacing: 0) {
                 HStack(spacing: 30) {
@@ -41,11 +51,11 @@ public struct RemoveInventoryItemSheet: View {
                     EmptyView()
                         .frame(width: 20, alignment: .center)
                 }
-                HStack(spacing: 30) {
+                HStack(alignment: .center, spacing: 30) {
                     Image(systemName: "trash.slash.fill")
                         .foregroundStyle(.green500)
                         .font(.system(size: 32))
-                        .frame(width: 20, alignment: .center)
+                        .offset(y: -12)
 
                     GeometryReader { geometry in
                         Slider(value: $wastePercentage, in: 0...100).tint(.blue600).onAppear {
@@ -56,7 +66,7 @@ public struct RemoveInventoryItemSheet: View {
                     Image(systemName: "trash.fill")
                         .foregroundStyle(.red500)
                         .font(.system(size: 32))
-                        .frame(width: 20, alignment: .center)
+                        .offset(y: -12)
                 }
                 Text("% waste").font(.callout).fontWeight(.light).foregroundStyle(.gray700).offset(y: -4)
             }
