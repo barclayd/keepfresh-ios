@@ -152,25 +152,26 @@ enum SuggestionType {
     case onTrack(ConsumptionUrgency)
     case move(StorageLocation)
     case multipleInInventory
-    case relativeDate
+    case relativeDate(Double)
+    case buying(String, ConsumptionUrgency)
 }
 
 func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
     let date = Calendar.current.date(byAdding: .day, value: Int(medianNumberOfDays), to: Date())!
 
     if date.timeUntil.totalDays == 0 {
-        return "until today"
+        return "today"
     }
 
     if date.timeUntil.totalDays == 1 {
-        return "until tomorrow"
+        return "by tomorrow"
     }
 
     if date.timeUntil.totalDays < 8 {
-        return "until \(date.formatted(.dateTime.weekday(.wide)))"
+        return "on \(date.formatted(.dateTime.weekday(.wide)))"
     }
 
-    return "for \(date.timeUntil.formatted)"
+    return "in \(date.timeUntil.formatted)"
 }
 
 @ViewBuilder
@@ -225,12 +226,33 @@ func suggestionView(suggestion: SuggestionType) -> some View {
                 text: "Consider freezing this item before expiry to extend its shelf life",
                 textColor: .gray600)
         }
-    case .relativeDate:
+    case let .relativeDate(days):
         Suggestion(
             icon: "calendar.badge",
             iconColor: .green600,
-            text: "This will likely last you \(getRelativeDateInFuture(medianNumberOfDays: 2)) at your current usage rate",
+            text: "At your usual pace, you'll finish this \(getRelativeDateInFuture(medianNumberOfDays: days))",
             textColor: .gray600)
+    case let .buying(categoryName, urgency):
+        switch urgency {
+        case .critical:
+            Suggestion(
+                icon: "storefront.fill",
+                iconColor: .red800,
+                text: "Consider other \(categoryName.truncated(to: 15)) options that you will be more likely to consume",
+                textColor: .gray600)
+        case .attention:
+            Suggestion(
+                icon: "storefront.fill",
+                iconColor: .yellow700,
+                text: "Consider other \(categoryName.truncated(to: 15)) options that you will be more likely to consume",
+                textColor: .gray600)
+        case .good:
+            Suggestion(
+                icon: "cart.fill.badge.plus",
+                iconColor: .green600,
+                text: "Based on your usage history, it's a great idea to buy this again",
+                textColor: .gray600)
+        }
     }
 }
 
@@ -240,6 +262,7 @@ struct InventoryItemSheetView: View {
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
+    @State private var usageStats: ProductUsageStatsResponse? = nil
 
     var inventoryItem: InventoryItem
 
@@ -267,8 +290,6 @@ struct InventoryItemSheetView: View {
 
         Task {
             let api = KeepFreshAPI()
-
-            print("percentageRemaining: \(String(describing: percentageRemaining))")
 
             do {
                 try await api.updateInventoryItem(
@@ -306,8 +327,6 @@ struct InventoryItemSheetView: View {
         guard let suggestions = SuggestionsCache.shared.getSuggestions(for: inventoryItem.product.category.id) else {
             return nil
         }
-
-        print("suggestion: \(suggestions)")
 
         let pantryShelfLife = suggestions.shelfLifeInDays.unopened.pantry
         let fridgeShelfLife = suggestions.shelfLifeInDays.unopened.fridge
@@ -411,15 +430,22 @@ struct InventoryItemSheetView: View {
 
                     if hasEarlierExpiringDuplicate {
                         suggestionView(suggestion: .multipleInInventory)
-                    }
-//                    else if inventoryItem.consumptionUrgency == .good {
-//                        // TODO: make request to get medianExpiryDate
-//                        suggestionView(suggestion: .relativeDate)
-//                    }
-                    else if let suggestedStorageLocation = storageLocationToExtendExpiry {
+                    } else if let medianDaysToOutcome = usageStats?.medianDaysToOutcome, inventoryItem.consumptionUrgency != .critical,
+                              medianDaysToOutcome >= Double(inventoryItem.createdAt.timeSince.totalDays)
+                    {
+                        suggestionView(suggestion: .relativeDate(medianDaysToOutcome - Double(inventoryItem.createdAt.timeSince.totalDays)))
+                    } else if let suggestedStorageLocation = storageLocationToExtendExpiry {
                         suggestionView(suggestion: .move(suggestedStorageLocation))
+                    } else {
+                        suggestionView(suggestion: .buying(inventoryItem.product.category.name, inventoryItem.consumptionUrgency))
                     }
-                }.padding(.bottom, 8)
+                }
+                .padding(.bottom, 8)
+                .task {
+                    let api = KeepFreshAPI()
+
+                    usageStats = try? await api.getProductUsageStats(productId: inventoryItem.product.id)
+                }
 
                 Button(action: {
                     showRemoveSheet = true
@@ -469,17 +495,17 @@ struct InventoryItemSheetView: View {
                                 .fill(nextBestAction.backgroundColor))
                     }
                 }
-
-            }.padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
-                .padding(.horizontal, 10)
-                .sheet(isPresented: $showRemoveSheet) {
-                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
-                        .presentationDetents(
-                            inventoryItem.product.name
-                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
-                        .presentationDragIndicator(.visible)
-                        .presentationCornerRadius(25)
-                }
+            }
+            .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
+            .padding(.horizontal, 10)
+            .sheet(isPresented: $showRemoveSheet) {
+                RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                    .presentationDetents(
+                        inventoryItem.product.name
+                            .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+            }
         }
     }
 }
