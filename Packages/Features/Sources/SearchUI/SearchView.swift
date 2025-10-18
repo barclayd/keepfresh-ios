@@ -14,12 +14,7 @@ class Search {
                 return
             }
 
-            if !searchText.isEmpty {
-                state = .loading
-                searchResults = ProductSearchItemResponse.mocks(count: 5)
-            } else {
-                searchResults = []
-            }
+            state = .loading
 
             Task {
                 await debounceSearch()
@@ -49,13 +44,13 @@ class Search {
                     try await Task.sleep(for: .seconds(1))
                 }
 
-                print(debouncedSearchText, searchText, lastSearchedTerm)
-                if !Task.isCancelled, debouncedSearchText != searchText, searchText != lastSearchedTerm {
+                if !Task.isCancelled, debouncedSearchText != searchText, searchText != lastSearchedTerm, searchText != "" {
                     debouncedSearchText = searchText
-                    print("Debounced value: '\(searchText)'")
+                    print("Debounced value: '\(debouncedSearchText)'")
 
                     if !searchText.isEmpty {
-                        await sendSearchRequest(searchTerm: searchText)
+                        searchResults = ProductSearchItemResponse.mocks(count: 5)
+                        await sendSearchRequest(searchTerm: debouncedSearchText)
                     }
                 } else {
                     state = .loaded
@@ -64,7 +59,7 @@ class Search {
         }
     }
 
-    public func sendSearchRequest(searchTerm: String) async {
+    private func sendSearchRequest(searchTerm: String) async {
         state = .loading
 
         let api = KeepFreshAPI()
