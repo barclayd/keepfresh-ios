@@ -112,7 +112,7 @@ public struct AddInventoryItemView: View {
 
         inventory.addItem(
             request: request,
-            catgeory: productSearchItem.category,
+            category: productSearchItem.category,
             categorySuggestions: preview.suggestions,
             inventoryItemId: temporaryInventoryItemId,
             productId: productId, icon: productSearchItem.icon)
@@ -195,7 +195,7 @@ public struct AddInventoryItemView: View {
                                 GridRow {
                                     Spacer()
                                     VStack(spacing: 0) {
-                                        Text("\(inventory.productCountsByLocation[productId]?[.fridge] ?? 0)").fontWeight(.bold)
+                                        Text("\(inventory.productsByLocation[productId]?[.fridge]?.count ?? 0)").fontWeight(.bold)
                                             .font(.headline).foregroundStyle(.blue700)
                                             .foregroundStyle(.blue700)
                                         Text("In Fridge").fontWeight(.light).font(.subheadline)
@@ -207,7 +207,7 @@ public struct AddInventoryItemView: View {
                                         .foregroundStyle(.blue700)
                                     Spacer()
                                     VStack(spacing: 0) {
-                                        Text("\(inventory.productCountsByLocation[productId]?[.freezer] ?? 0)").fontWeight(.bold)
+                                        Text("\(inventory.productsByLocation[productId]?[.freezer]?.count ?? 0)").fontWeight(.bold)
                                             .font(.headline).foregroundStyle(.blue700)
                                         Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
                                             .blue700)

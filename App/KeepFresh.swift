@@ -37,7 +37,7 @@ struct KeepFreshApp: App {
                     try? await Authentication.shared.signInAnonymously()
 
                     await inventory.fetchItems()
-                    
+
                     Task.detached {
                         await SuggestionsCache.shared.load()
                     }

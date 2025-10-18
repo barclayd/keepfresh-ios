@@ -203,7 +203,7 @@ public extension InventoryItem {
             unit: request.product.unit,
             brand: Brand(from: request.product.brand),
             amount: request.product.amount,
-            category: CategoryDetails(icon: icon, name: category.name, pathDisplay: category.path))
+            category: CategoryDetails(icon: icon, id: category.id, name: category.name, pathDisplay: category.path))
         consumptionPrediction = 100
         consumptionPredictionChangedAt = Date()
     }
@@ -274,13 +274,15 @@ public struct Product: Codable, Sendable {
 }
 
 public struct CategoryDetails: Codable, Sendable {
-    public init(icon: String? = nil, name: String, pathDisplay: String) {
+    public init(icon: String? = nil, id: Int, name: String, pathDisplay: String) {
+        self.id = id
         self.icon = icon
         self.name = name
         self.pathDisplay = pathDisplay
     }
 
     public let icon: String?
+    public let id: Int
     public let name: String
     public let pathDisplay: String
 }
@@ -459,6 +461,7 @@ public extension InventoryItem {
                 amount: 500,
                 category: CategoryDetails(
                     icon: "chicken",
+                    id: 1,
                     name: "Vegetables",
                     pathDisplay: "Food > Vegetables")))
     }

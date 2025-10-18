@@ -196,7 +196,7 @@ public struct SuggestionsView: View {
                 Suggestion(
                     icon: "book.fill",
                     iconColor: .yellow700,
-                    text: "You haven’t added \(categoryName) before",
+                    text: "You haven’t added \(categoryName) before. Your usage rate will make predictions smarter",
                     textColor: storageLocation.infoColor)
 
                 if suggestions.expiryType == .UseBy {

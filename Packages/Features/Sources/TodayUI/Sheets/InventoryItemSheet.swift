@@ -113,7 +113,7 @@ struct InventoryItemSheetStatsGridRows: View {
 
                 GridRow {
                     VStack(spacing: 0) {
-                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.fridge] ?? 0)")
+                        Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.fridge]?.count ?? 0)")
                             .fontWeight(.bold).font(.headline)
                         Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }.foregroundStyle(.blue700)
@@ -121,7 +121,7 @@ struct InventoryItemSheetStatsGridRows: View {
                         .font(.system(size: 32)).fontWeight(.bold)
                         .foregroundStyle(.blue700)
                     VStack(spacing: 0) {
-                        Text("\(inventory.productCountsByLocation[inventoryItem.product.id]?[.freezer] ?? 0)")
+                        Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.freezer]?.count ?? 0)")
                             .fontWeight(.bold).font(.headline)
                         Text("Located in Freezer").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
@@ -177,28 +177,60 @@ func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
 @MainActor
 func suggestionView(suggestion: SuggestionType) -> some View {
     switch suggestion {
-    case .onTrack(let urgency):
+    case let .onTrack(urgency):
         switch urgency {
         case .critical:
-            Suggestion(icon: "exclamationmark.triangle.fill", iconColor: .red800, text: "It's looking unlikely that you'll use all of this item before expiry", textColor: .gray600)
+            Suggestion(
+                icon: "exclamationmark.triangle.fill",
+                iconColor: .red800,
+                text: "It's looking unlikely that you'll use all of this item before expiry",
+                textColor: .gray600)
         case .attention:
-            Suggestion(icon: "info.triangle.fill", iconColor: .yellow700, text: "You're not on track to use all of this item before expiry", textColor: .gray600)
+            Suggestion(
+                icon: "info.triangle.fill",
+                iconColor: .yellow700,
+                text: "You're not on track to use all of this item before expiry",
+                textColor: .gray600)
         case .good:
-            Suggestion(icon: "checkmark.seal", iconColor: .green600, text: "Great work, you're on track to use all of this item", textColor: .gray600)
+            Suggestion(
+                icon: "checkmark.seal.fill",
+                iconColor: .green600,
+                text: "Great work, you're on track to use all of this item",
+                textColor: .gray600)
         }
     case .multipleInInventory:
-        Suggestion(icon: "plus.square.fill.on.square.fill", iconColor: .red800, text: "You already have one of these in your inventory. Make sure to use that first", textColor: .gray600)
-    case .move(let storageLocation):
+        Suggestion(
+            icon: "plus.square.fill.on.square.fill",
+            iconColor: .red800,
+            text: "You already have one of these in your inventory. Make sure to use that first",
+            textColor: .gray600)
+    case let .move(storageLocation):
         switch storageLocation {
         case .pantry:
-            Suggestion(icon: StorageLocation.pantry.icon, iconColor: StorageLocation.pantry.backgroundColor, text: "Consider moving this item to your pantry to extend expiry", textColor: .gray600)
+            Suggestion(
+                icon: StorageLocation.pantry.icon,
+                iconColor: StorageLocation.pantry.backgroundColor,
+                text: "Consider moving this item to your pantry to extend expiry",
+                textColor: .gray600)
         case .fridge:
-            Suggestion(icon: StorageLocation.fridge.icon, iconColor: StorageLocation.fridge.backgroundColor, text: "Consider moving this item to your fridge to extend expiry", textColor: .gray600)
+            Suggestion(
+                icon: StorageLocation.fridge.icon,
+                iconColor: StorageLocation.fridge.backgroundColor,
+                text: "Consider moving this item to your fridge to extend expiry",
+                textColor: .gray600)
         case .freezer:
-            Suggestion(icon: StorageLocation.freezer.icon, iconColor: StorageLocation.freezer.backgroundColor, text: "Consider freezing this item before expiry to extend its shelf life", textColor: .gray600)
+            Suggestion(
+                icon: StorageLocation.freezer.icon,
+                iconColor: StorageLocation.freezer.backgroundColor,
+                text: "Consider freezing this item before expiry to extend its shelf life",
+                textColor: .gray600)
         }
     case .relativeDate:
-        Suggestion(icon: "calendar.badge", iconColor: .green600, text: "This will likely last you \(getRelativeDateInFuture(medianNumberOfDays: 2)) at your current usage rate", textColor: .gray600)
+        Suggestion(
+            icon: "calendar.badge",
+            iconColor: .green600,
+            text: "This will likely last you \(getRelativeDateInFuture(medianNumberOfDays: 2)) at your current usage rate",
+            textColor: .gray600)
     }
 }
 
@@ -208,8 +240,6 @@ struct InventoryItemSheetView: View {
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
-
-    // TODO: make request to get medianExpiryDate
 
     var inventoryItem: InventoryItem
 
@@ -272,43 +302,59 @@ struct InventoryItemSheetView: View {
         updateInventoryItem(storageLocation: storageLocation)
     }
 
-//    var storageLocationToExtendExpiry: StorageLocation? {
-//        guard SuggestionsCache.shared.getSuggestions(for: inventoryItem.product.category.id) != .freezer else { return nil }
-//
-//        let pantryShelfLife = suggestions.shelfLifeInDays.unopened.pantry
-//        let fridgeShelfLife = suggestions.shelfLifeInDays.unopened.fridge
-//        let freezerShelfLife = suggestions.shelfLifeInDays.unopened.freezer
-//
-//        if suggestions.recommendedStorageLocation == .pantry,
-//           let pantryShelfLife,
-//           let fridgeShelfLife,
-//           fridgeShelfLife > pantryShelfLife
-//        {
-//            return .fridge
-//        }
-//
-//        if suggestions.recommendedStorageLocation == .pantry,
-//           let pantryShelfLife,
-//           let freezerShelfLife,
-//           freezerShelfLife > pantryShelfLife
-//        {
-//            return .freezer
-//        }
-//
-//        if suggestions.recommendedStorageLocation == .fridge,
-//           let fridgeShelfLife,
-//           let freezerShelfLife,
-//           freezerShelfLife > fridgeShelfLife
-//        {
-//            return .freezer
-//        }
-//
-//        return nil
-//    }
-    
-//    var hasMultipleThatsExpiringSooner: Bool {
-//        inventory.
-//    }
+    var storageLocationToExtendExpiry: StorageLocation? {
+        guard let suggestions = SuggestionsCache.shared.getSuggestions(for: inventoryItem.product.category.id) else {
+            return nil
+        }
+
+        print("suggestion: \(suggestions)")
+
+        let pantryShelfLife = suggestions.shelfLifeInDays.unopened.pantry
+        let fridgeShelfLife = suggestions.shelfLifeInDays.unopened.fridge
+        let freezerShelfLife = suggestions.shelfLifeInDays.unopened.freezer
+
+        if inventoryItem.storageLocation == .pantry,
+           let pantryShelfLife,
+           let fridgeShelfLife,
+           fridgeShelfLife > pantryShelfLife
+        {
+            return .fridge
+        }
+
+        if inventoryItem.storageLocation == .pantry,
+           let pantryShelfLife,
+           let freezerShelfLife,
+           freezerShelfLife > pantryShelfLife
+        {
+            return .freezer
+        }
+
+        if inventoryItem.storageLocation == .fridge,
+           let fridgeShelfLife,
+           let freezerShelfLife,
+           freezerShelfLife > fridgeShelfLife
+        {
+            return .freezer
+        }
+
+        return nil
+    }
+
+    var hasEarlierExpiringDuplicate: Bool {
+        let inventoryItemsForStorageLocation = inventory.productsByLocation[inventoryItem.product.id]?[inventoryItem.storageLocation] ?? []
+
+        guard !inventoryItemsForStorageLocation.isEmpty else { return false }
+
+        let duplicateProducts = inventoryItemsForStorageLocation.filter { $0.product.id == inventoryItem.product.id }
+
+        guard duplicateProducts.count > 1 else { return false }
+
+        let itemWithShorterExpiryDate = duplicateProducts.first { $0.expiryDate.timeUntil.totalDays <
+            inventoryItem.expiryDate.timeUntil.totalDays
+        }
+
+        return itemWithShorterExpiryDate != nil
+    }
 
     var body: some View {
         Group {
@@ -363,13 +409,16 @@ struct InventoryItemSheetView: View {
                 Grid(alignment: .center, horizontalSpacing: 16, verticalSpacing: 20) {
                     suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
 
-                    if inventoryItem.consumptionUrgency == .good {
-                        suggestionView(suggestion: .relativeDate)
-                    } else {
-                        suggestionView(suggestion: .move(.pantry))
+                    if hasEarlierExpiringDuplicate {
+                        suggestionView(suggestion: .multipleInInventory)
                     }
-
-                    suggestionView(suggestion: .multipleInInventory)
+//                    else if inventoryItem.consumptionUrgency == .good {
+//                        // TODO: make request to get medianExpiryDate
+//                        suggestionView(suggestion: .relativeDate)
+//                    }
+                    else if let suggestedStorageLocation = storageLocationToExtendExpiry {
+                        suggestionView(suggestion: .move(suggestedStorageLocation))
+                    }
                 }.padding(.bottom, 8)
 
                 Button(action: {

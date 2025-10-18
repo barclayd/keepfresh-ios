@@ -7,7 +7,7 @@ public struct Suggestion: View {
     let text: String
     let textColor: Color
     let alignment: VerticalAlignment
-    
+
     public init(icon: String, iconColor: Color, text: String, textColor: Color, alignment: VerticalAlignment = VerticalAlignment.center) {
         self.icon = icon
         self.iconColor = iconColor
