@@ -10,12 +10,12 @@ import SwiftUI
 class Search {
     var searchText: String = "" {
         didSet {
-            if !searchText.isEmpty {
-                state = .loading
-                searchResults = ProductSearchItemResponse.mocks(count: 5)
-            } else {
-                searchResults = []
+            guard searchText != debouncedSearchText, searchText != lastSearchedTerm else {
+                return
             }
+
+            state = .loading
+
             Task {
                 await debounceSearch()
             }
@@ -25,6 +25,7 @@ class Search {
     var debouncedSearchText: String = ""
     var searchResults: [ProductSearchItemResponse] = []
     var state: FetchState = .empty
+    var lastSearchedTerm = ""
 
     private var searchTask: Task<Void, Never>?
 
@@ -34,20 +35,25 @@ class Search {
         self.onSaveSearch = onSaveSearch
     }
 
-    private func debounceSearch() async {
+    public func debounceSearch(shouldWait: Bool = true) async {
         searchTask?.cancel()
 
         searchTask = Task {
             do {
-                try await Task.sleep(for: .seconds(1))
+                if shouldWait {
+                    try await Task.sleep(for: .seconds(1))
+                }
 
-                if !Task.isCancelled, debouncedSearchText != searchText {
+                if !Task.isCancelled, debouncedSearchText != searchText, searchText != lastSearchedTerm, searchText != "" {
                     debouncedSearchText = searchText
-                    print("Debounced value: '\(searchText)'")
+                    print("Debounced value: '\(debouncedSearchText)'")
 
                     if !searchText.isEmpty {
-                        await sendSearchRequest(searchTerm: searchText)
+                        searchResults = ProductSearchItemResponse.mocks(count: 5)
+                        await sendSearchRequest(searchTerm: debouncedSearchText)
                     }
+                } else {
+                    state = .loaded
                 }
             } catch {}
         }
@@ -63,6 +69,7 @@ class Search {
             searchResults = searchResponse.products
 
             state = .loaded
+            lastSearchedTerm = searchTerm
 
             print("Search successful: Found \(searchResults.count) products")
 
@@ -86,6 +93,7 @@ class Search {
             print("Search failed with error: \(error)")
             searchResults = []
             state = .error
+            lastSearchedTerm = ""
         }
     }
 }
@@ -154,5 +162,11 @@ public struct SearchView: View {
             }
         }
         .searchable(text: searchTextBinding)
+        .onSubmit(of: .search) {
+            Task {
+                guard search?.state != .loading else { return }
+                await search?.debounceSearch(shouldWait: false)
+            }
+        }
     }
 }
