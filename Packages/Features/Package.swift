@@ -43,7 +43,10 @@ let package = Package(
             dependencies: baseDeps + ["TodayUI", "SharedUI"]),
         .target(
             name: "BarcodeUI",
-            dependencies: baseDeps + ["CodeScanner"]),
+            dependencies: baseDeps + ["CodeScanner"],
+            linkerSettings: [
+                .linkedFramework("Network")
+            ]),
         .target(
             name: "SharedUI",
             dependencies: baseDeps),
