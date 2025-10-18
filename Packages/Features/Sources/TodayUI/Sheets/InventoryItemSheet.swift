@@ -148,12 +148,68 @@ struct InventoryItemSheetStatsGrid: View {
     }
 }
 
+enum SuggestionType {
+    case onTrack(ConsumptionUrgency)
+    case move(StorageLocation)
+    case multipleInInventory
+    case relativeDate
+}
+
+func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
+    let date = Calendar.current.date(byAdding: .day, value: Int(medianNumberOfDays), to: Date())!
+
+    if date.timeUntil.totalDays == 0 {
+        return "until today"
+    }
+
+    if date.timeUntil.totalDays == 1 {
+        return "until tomorrow"
+    }
+
+    if date.timeUntil.totalDays < 8 {
+        return "until \(date.formatted(.dateTime.weekday(.wide)))"
+    }
+
+    return "for \(date.timeUntil.formatted)"
+}
+
+@ViewBuilder
+@MainActor
+func suggestionView(suggestion: SuggestionType) -> some View {
+    switch suggestion {
+    case .onTrack(let urgency):
+        switch urgency {
+        case .critical:
+            Suggestion(icon: "exclamationmark.triangle.fill", iconColor: .red800, text: "It's looking unlikely that you'll use all of this item before expiry", textColor: .gray600)
+        case .attention:
+            Suggestion(icon: "info.triangle.fill", iconColor: .yellow700, text: "You're not on track to use all of this item before expiry", textColor: .gray600)
+        case .good:
+            Suggestion(icon: "checkmark.seal", iconColor: .green600, text: "Great work, you're on track to use all of this item", textColor: .gray600)
+        }
+    case .multipleInInventory:
+        Suggestion(icon: "plus.square.fill.on.square.fill", iconColor: .red800, text: "You already have one of these in your inventory. Make sure to use that first", textColor: .gray600)
+    case .move(let storageLocation):
+        switch storageLocation {
+        case .pantry:
+            Suggestion(icon: StorageLocation.pantry.icon, iconColor: StorageLocation.pantry.backgroundColor, text: "Consider moving this item to your pantry to extend expiry", textColor: .gray600)
+        case .fridge:
+            Suggestion(icon: StorageLocation.fridge.icon, iconColor: StorageLocation.fridge.backgroundColor, text: "Consider moving this item to your fridge to extend expiry", textColor: .gray600)
+        case .freezer:
+            Suggestion(icon: StorageLocation.freezer.icon, iconColor: StorageLocation.freezer.backgroundColor, text: "Consider freezing this item before expiry to extend its shelf life", textColor: .gray600)
+        }
+    case .relativeDate:
+        Suggestion(icon: "calendar.badge", iconColor: .green600, text: "This will likely last you \(getRelativeDateInFuture(medianNumberOfDays: 2)) at your current usage rate", textColor: .gray600)
+    }
+}
+
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
+
+    // TODO: make request to get medianExpiryDate
 
     var inventoryItem: InventoryItem
 
@@ -216,6 +272,44 @@ struct InventoryItemSheetView: View {
         updateInventoryItem(storageLocation: storageLocation)
     }
 
+//    var storageLocationToExtendExpiry: StorageLocation? {
+//        guard SuggestionsCache.shared.getSuggestions(for: inventoryItem.product.category.id) != .freezer else { return nil }
+//
+//        let pantryShelfLife = suggestions.shelfLifeInDays.unopened.pantry
+//        let fridgeShelfLife = suggestions.shelfLifeInDays.unopened.fridge
+//        let freezerShelfLife = suggestions.shelfLifeInDays.unopened.freezer
+//
+//        if suggestions.recommendedStorageLocation == .pantry,
+//           let pantryShelfLife,
+//           let fridgeShelfLife,
+//           fridgeShelfLife > pantryShelfLife
+//        {
+//            return .fridge
+//        }
+//
+//        if suggestions.recommendedStorageLocation == .pantry,
+//           let pantryShelfLife,
+//           let freezerShelfLife,
+//           freezerShelfLife > pantryShelfLife
+//        {
+//            return .freezer
+//        }
+//
+//        if suggestions.recommendedStorageLocation == .fridge,
+//           let fridgeShelfLife,
+//           let freezerShelfLife,
+//           freezerShelfLife > fridgeShelfLife
+//        {
+//            return .freezer
+//        }
+//
+//        return nil
+//    }
+    
+//    var hasMultipleThatsExpiringSooner: Bool {
+//        inventory.
+//    }
+
     var body: some View {
         Group {
             VStack(spacing: 10) {
@@ -265,72 +359,19 @@ struct InventoryItemSheetView: View {
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                 .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
                 .offset(x: 0, y: -8)
-                ViewThatFits(in: .vertical) {
-                    Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                        GridRow {
-                            Image(systemName: "checkmark.seal.fill")
-                                .fontWeight(.bold)
-                                .foregroundStyle(.yellow500)
-                                .font(.system(size: 32))
-                            Text("Great work, you're on track to finish this before it expires")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
 
-                            Spacer()
-                        }
-                        GridRow {
-                            Image(systemName: "cart.circle.fill")
-                                .fontWeight(.bold)
-                                .foregroundStyle(.blue600)
-                                .font(.system(size: 32))
-                            Text("Based on your waste history for this item, you should buy this again")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
-                            Spacer()
-                        }
-                        GridRow {
-                            Image(systemName: "beach.umbrella.fill")
-                                .foregroundStyle(.green500)
-                                .font(.system(size: 32))
-                            Text("You should only need to buy one of these before your next holiday")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
-                            Spacer()
-                        }
-                    }.padding(.bottom, 8)
-                    Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                        GridRow {
-                            Image(systemName: "checkmark.seal.fill")
-                                .fontWeight(.bold)
-                                .foregroundStyle(.yellow500)
-                                .font(.system(size: 32))
-                            Text("Great work, you're on track to finish this before it expires")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
+                Grid(alignment: .center, horizontalSpacing: 16, verticalSpacing: 20) {
+                    suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
 
-                            Spacer()
-                        }
-                        GridRow {
-                            Image(systemName: "cart.circle.fill")
-                                .foregroundStyle(.blue600)
-                                .font(.system(size: 32))
-                            Text("Based on your waste history for this item, you should buy this again")
-                                .font(.callout)
-                                .foregroundStyle(.gray600)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2...2)
-                            Spacer()
-                        }
-                    }.padding(.bottom, 8)
-                }
+                    if inventoryItem.consumptionUrgency == .good {
+                        suggestionView(suggestion: .relativeDate)
+                    } else {
+                        suggestionView(suggestion: .move(.pantry))
+                    }
+
+                    suggestionView(suggestion: .multipleInInventory)
+                }.padding(.bottom, 8)
+
                 Button(action: {
                     showRemoveSheet = true
                 }) {

@@ -113,6 +113,7 @@ public struct AddInventoryItemView: View {
         inventory.addItem(
             request: request,
             catgeory: productSearchItem.category,
+            categorySuggestions: preview.suggestions,
             inventoryItemId: temporaryInventoryItemId,
             productId: productId, icon: productSearchItem.icon)
 
