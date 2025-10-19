@@ -1,5 +1,6 @@
 import DesignSystem
 import Environment
+import Extensions
 import Models
 import Network
 import SharedUI
@@ -148,13 +149,19 @@ struct InventoryItemSheetStatsGrid: View {
     }
 }
 
+enum BuyingRecommendation {
+    case buyProduct
+    case buyCategory
+    case buyAlternative
+}
+
 enum SuggestionType {
     case onTrack(ConsumptionUrgency)
     case move(StorageLocation)
     case multipleInInventory
     case useBy(ExpiryType)
     case relativeDate(Double)
-    case buying(String, Bool)
+    case buying(String, BuyingRecommendation)
 }
 
 func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
@@ -254,19 +261,25 @@ func suggestionView(suggestion: SuggestionType) -> some View {
             iconColor: .green600,
             text: "At your usual pace, you'll finish this \(getRelativeDateInFuture(medianNumberOfDays: days))",
             textColor: .gray600)
-    case let .buying(categoryName, shouldBuyAgain):
-        switch shouldBuyAgain {
-        case true:
+    case let .buying(categoryName, buyingRecommendation):
+        switch buyingRecommendation {
+        case .buyProduct:
             Suggestion(
                 icon: "cart.fill.badge.plus",
                 iconColor: .green600,
                 text: "Based on your usage history, it's a great idea to buy this again",
                 textColor: .gray600)
-        case false:
+        case .buyCategory:
             Suggestion(
                 icon: "cart.fill.badge.questionmark",
                 iconColor: .yellow700,
                 text: "Consider other \(categoryName.truncated(to: 15)) options that you will be more likely to consume",
+                textColor: .gray600)
+        case .buyAlternative:
+            Suggestion(
+                icon: "storefront.fill",
+                iconColor: .red800,
+                text: "Your usage of \(categoryName.truncated(to: 15)) is low. Consider alternatives",
                 textColor: .gray600)
         }
     }
@@ -278,7 +291,9 @@ struct InventoryItemSheetView: View {
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
+    
     @State private var usageStats: ProductUsageStatsResponse? = nil
+    @State private var isLoadingStats = true
 
     var inventoryItem: InventoryItem
 
@@ -374,6 +389,26 @@ struct InventoryItemSheetView: View {
 
         return nil
     }
+    
+    var buyingRecommendation: BuyingRecommendation? {
+        guard let productMedianUsage = usageStats?.product.medianUsage, let categoryMedianUsage = usageStats?.category.medianUsage else {
+            return nil
+        }
+        
+        if inventoryItem.consumptionPrediction >= 75, inventoryItem.consumptionPrediction >= Int(categoryMedianUsage) {
+            return .buyProduct
+        }
+        
+        if productMedianUsage >= 75, productMedianUsage >= categoryMedianUsage {
+            return .buyProduct
+        }
+        
+        if productMedianUsage < categoryMedianUsage, categoryMedianUsage >= 75  {
+            return .buyCategory
+        }
+        
+        return .buyAlternative
+    }
 
     var hasEarlierExpiringDuplicate: Bool {
         let inventoryItemsForStorageLocation = inventory.productsByLocation[inventoryItem.product.id]?[inventoryItem.storageLocation] ?? []
@@ -446,27 +481,27 @@ struct InventoryItemSheetView: View {
 
                     if hasEarlierExpiringDuplicate {
                         suggestionView(suggestion: .multipleInInventory)
-                    } else if let medianDaysToOutcome = usageStats?.medianDaysToOutcome,
+                    } else if let medianDaysToOutcome = usageStats?.product.medianDaysToOutcome,
                               medianDaysToOutcome >= Double(inventoryItem.createdAt.timeSince.totalDays)
                     {
                         suggestionView(suggestion: .relativeDate(medianDaysToOutcome - Double(inventoryItem.createdAt.timeSince.totalDays)))
                     } else if let suggestedStorageLocation = storageLocationToExtendExpiry {
                         suggestionView(suggestion: .move(suggestedStorageLocation))
                     }
-                    // if product.averageUsage < categoryHistory.averageUsage && consumptionPrediction < category.averageUsage
-                    else if let category = usageStats?.medianDaysToOutcome {
-                        suggestionView(suggestion: .buying(inventoryItem.product.category.name, inventoryItem.consumptionUrgency))
+                    else if let buyingRecommendation = buyingRecommendation {
+                        suggestionView(suggestion: .buying(inventoryItem.product.category.name, buyingRecommendation))
                     } else if inventoryItem.expiryType == .UseBy {
                         suggestionView(suggestion: .useBy(inventoryItem.expiryType))
                     }
                 }
-                .fixedSize(horizontal: false, vertical: false)
                 .padding(.bottom, 8)
                 .task {
                     let api = KeepFreshAPI()
 
                     usageStats = try? await api.getProductUsageStats(productId: inventoryItem.product.id)
+                    isLoadingStats = false
                 }
+                .redactedShimmer(when: isLoadingStats)
 
                 Button(action: {
                     showRemoveSheet = true
