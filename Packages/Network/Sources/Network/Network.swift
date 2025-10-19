@@ -20,7 +20,6 @@ public actor APIClient {
 
     private func addAuthorizationHeader(to request: inout URLRequest) async {
         if let token = try? await Authentication.shared.getAccessToken() {
-            print(token)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
     }
