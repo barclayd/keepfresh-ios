@@ -184,8 +184,7 @@ public struct SuggestionsView: View {
 
     public var body: some View {
         Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-            if predictions.productHistory.consumedCount > 0,
-            let medianNumberOfDays = predictions.productHistory.medianDaysToConsumeOrDiscarded {
+            if let medianNumberOfDays = predictions.productHistory.medianDaysToConsumeOrDiscarded {
                 Suggestion(
                     icon: "calendar.badge",
                     iconColor: .green600,
