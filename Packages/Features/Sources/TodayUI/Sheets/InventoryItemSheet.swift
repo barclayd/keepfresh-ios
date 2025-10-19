@@ -66,7 +66,8 @@ struct InventoryItemSheetStatsGridRows: View {
             if pageIndex == 0 {
                 GridRow(alignment: .center,) {
                     VStack(spacing: 0) {
-                        Text("\(inventoryItem.expiryDate.timeUntil.amount)").foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
+                        Text("\(inventoryItem.expiryDate.timeUntil.amount)")
+                            .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
                             .fontWeight(.bold).font(.headline)
                         Text(inventoryItem.expiryDate.timeUntil.formattedToExpiry)
                             .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground).fontWeight(.light).font(.subheadline)
@@ -291,7 +292,7 @@ struct InventoryItemSheetView: View {
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
-    
+
     @State private var usageStats: ProductUsageStatsResponse? = nil
     @State private var isLoadingStats = true
 
@@ -389,24 +390,24 @@ struct InventoryItemSheetView: View {
 
         return nil
     }
-    
+
     var buyingRecommendation: BuyingRecommendation? {
         guard let productMedianUsage = usageStats?.product.medianUsage, let categoryMedianUsage = usageStats?.category.medianUsage else {
             return nil
         }
-        
+
         if inventoryItem.consumptionPrediction >= 75, inventoryItem.consumptionPrediction >= Int(categoryMedianUsage) {
             return .buyProduct
         }
-        
+
         if productMedianUsage >= 75, productMedianUsage >= categoryMedianUsage {
             return .buyProduct
         }
-        
-        if productMedianUsage < categoryMedianUsage, categoryMedianUsage >= 75  {
+
+        if productMedianUsage < categoryMedianUsage, categoryMedianUsage >= 75 {
             return .buyCategory
         }
-        
+
         return .buyAlternative
     }
 
@@ -487,8 +488,7 @@ struct InventoryItemSheetView: View {
                         suggestionView(suggestion: .relativeDate(medianDaysToOutcome - Double(inventoryItem.createdAt.timeSince.totalDays)))
                     } else if let suggestedStorageLocation = storageLocationToExtendExpiry {
                         suggestionView(suggestion: .move(suggestedStorageLocation))
-                    }
-                    else if let buyingRecommendation = buyingRecommendation {
+                    } else if let buyingRecommendation {
                         suggestionView(suggestion: .buying(inventoryItem.product.category.name, buyingRecommendation))
                     } else if inventoryItem.expiryType == .UseBy {
                         suggestionView(suggestion: .useBy(inventoryItem.expiryType))
