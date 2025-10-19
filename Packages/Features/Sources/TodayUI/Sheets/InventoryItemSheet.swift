@@ -1,5 +1,6 @@
 import DesignSystem
 import Environment
+import Extensions
 import Models
 import Network
 import SharedUI
@@ -65,10 +66,11 @@ struct InventoryItemSheetStatsGridRows: View {
             if pageIndex == 0 {
                 GridRow(alignment: .center,) {
                     VStack(spacing: 0) {
-                        Text("\(inventoryItem.expiryDate.timeUntil.amount)").foregroundStyle(.green600)
+                        Text("\(inventoryItem.expiryDate.timeUntil.amount)")
+                            .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
                             .fontWeight(.bold).font(.headline)
                         Text(inventoryItem.expiryDate.timeUntil.formattedToExpiry)
-                            .foregroundStyle(.green600).fontWeight(.light).font(.subheadline)
+                            .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground).fontWeight(.light).font(.subheadline)
                             .lineLimit(1)
                     }
                     Image(systemName: "hourglass")
@@ -148,12 +150,19 @@ struct InventoryItemSheetStatsGrid: View {
     }
 }
 
+enum BuyingRecommendation {
+    case buyProduct
+    case buyCategory
+    case buyAlternative
+}
+
 enum SuggestionType {
     case onTrack(ConsumptionUrgency)
     case move(StorageLocation)
     case multipleInInventory
+    case useBy(ExpiryType)
     case relativeDate(Double)
-    case buying(String, ConsumptionUrgency)
+    case buying(String, BuyingRecommendation)
 }
 
 func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
@@ -184,13 +193,13 @@ func suggestionView(suggestion: SuggestionType) -> some View {
             Suggestion(
                 icon: "exclamationmark.triangle.fill",
                 iconColor: .red800,
-                text: "It's looking unlikely that you'll use all of this item before expiry",
+                text: "Consider looking at new recipes or storage options to reduce waste",
                 textColor: .gray600)
         case .attention:
             Suggestion(
                 icon: "info.triangle.fill",
                 iconColor: .yellow700,
-                text: "You're not on track to use all of this item before expiry",
+                text: "You're using this slower than usual, keep an eye on it",
                 textColor: .gray600)
         case .good:
             Suggestion(
@@ -205,6 +214,27 @@ func suggestionView(suggestion: SuggestionType) -> some View {
             iconColor: .red800,
             text: "You already have one of these in your inventory. Make sure to use that first",
             textColor: .gray600)
+    case let .useBy(expiryType):
+        switch expiryType {
+        case .BestBefore:
+            Suggestion(
+                icon: "hourglass.tophalf.filled",
+                iconColor: .blue600,
+                text: "This item may be consumable a little over the expiry date",
+                textColor: .gray600)
+        case .UseBy:
+            Suggestion(
+                icon: "hourglass.bottomhalf.filled",
+                iconColor: .blue600,
+                text: "This item spoils quickly close to the expiry date",
+                textColor: .gray600)
+        case .LongLife:
+            Suggestion(
+                icon: "hourglass.badge.lock",
+                iconColor: .blue600,
+                text: "This item never spoils, no need to worry about it",
+                textColor: .gray600)
+        }
     case let .move(storageLocation):
         switch storageLocation {
         case .pantry:
@@ -232,25 +262,25 @@ func suggestionView(suggestion: SuggestionType) -> some View {
             iconColor: .green600,
             text: "At your usual pace, you'll finish this \(getRelativeDateInFuture(medianNumberOfDays: days))",
             textColor: .gray600)
-    case let .buying(categoryName, urgency):
-        switch urgency {
-        case .critical:
-            Suggestion(
-                icon: "storefront.fill",
-                iconColor: .red800,
-                text: "Consider other \(categoryName.truncated(to: 15)) options that you will be more likely to consume",
-                textColor: .gray600)
-        case .attention:
-            Suggestion(
-                icon: "storefront.fill",
-                iconColor: .yellow700,
-                text: "Consider other \(categoryName.truncated(to: 15)) options that you will be more likely to consume",
-                textColor: .gray600)
-        case .good:
+    case let .buying(categoryName, buyingRecommendation):
+        switch buyingRecommendation {
+        case .buyProduct:
             Suggestion(
                 icon: "cart.fill.badge.plus",
                 iconColor: .green600,
                 text: "Based on your usage history, it's a great idea to buy this again",
+                textColor: .gray600)
+        case .buyCategory:
+            Suggestion(
+                icon: "cart.fill.badge.questionmark",
+                iconColor: .yellow700,
+                text: "Consider other \(categoryName.truncated(to: 15)) options that you will be more likely to consume",
+                textColor: .gray600)
+        case .buyAlternative:
+            Suggestion(
+                icon: "storefront.fill",
+                iconColor: .red800,
+                text: "Your usage of \(categoryName.truncated(to: 15)) is low. Consider alternatives",
                 textColor: .gray600)
         }
     }
@@ -262,7 +292,9 @@ struct InventoryItemSheetView: View {
 
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
+
     @State private var usageStats: ProductUsageStatsResponse? = nil
+    @State private var isLoadingStats = true
 
     var inventoryItem: InventoryItem
 
@@ -359,6 +391,26 @@ struct InventoryItemSheetView: View {
         return nil
     }
 
+    var buyingRecommendation: BuyingRecommendation? {
+        guard let productMedianUsage = usageStats?.product.medianUsage, let categoryMedianUsage = usageStats?.category.medianUsage else {
+            return nil
+        }
+
+        if inventoryItem.consumptionPrediction >= 75, inventoryItem.consumptionPrediction >= Int(categoryMedianUsage) {
+            return .buyProduct
+        }
+
+        if productMedianUsage >= 75, productMedianUsage >= categoryMedianUsage {
+            return .buyProduct
+        }
+
+        if productMedianUsage < categoryMedianUsage, categoryMedianUsage >= 75 {
+            return .buyCategory
+        }
+
+        return .buyAlternative
+    }
+
     var hasEarlierExpiringDuplicate: Bool {
         let inventoryItemsForStorageLocation = inventory.productsByLocation[inventoryItem.product.id]?[inventoryItem.storageLocation] ?? []
 
@@ -425,19 +477,21 @@ struct InventoryItemSheetView: View {
                 .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
                 .offset(x: 0, y: -8)
 
-                Grid(alignment: .center, horizontalSpacing: 16, verticalSpacing: 20) {
+                Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                     suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
 
                     if hasEarlierExpiringDuplicate {
                         suggestionView(suggestion: .multipleInInventory)
-                    } else if let medianDaysToOutcome = usageStats?.medianDaysToOutcome, inventoryItem.consumptionUrgency != .critical,
+                    } else if let medianDaysToOutcome = usageStats?.product.medianDaysToOutcome,
                               medianDaysToOutcome >= Double(inventoryItem.createdAt.timeSince.totalDays)
                     {
                         suggestionView(suggestion: .relativeDate(medianDaysToOutcome - Double(inventoryItem.createdAt.timeSince.totalDays)))
                     } else if let suggestedStorageLocation = storageLocationToExtendExpiry {
                         suggestionView(suggestion: .move(suggestedStorageLocation))
-                    } else {
-                        suggestionView(suggestion: .buying(inventoryItem.product.category.name, inventoryItem.consumptionUrgency))
+                    } else if let buyingRecommendation {
+                        suggestionView(suggestion: .buying(inventoryItem.product.category.name, buyingRecommendation))
+                    } else if inventoryItem.expiryType == .UseBy {
+                        suggestionView(suggestion: .useBy(inventoryItem.expiryType))
                     }
                 }
                 .padding(.bottom, 8)
@@ -445,7 +499,9 @@ struct InventoryItemSheetView: View {
                     let api = KeepFreshAPI()
 
                     usageStats = try? await api.getProductUsageStats(productId: inventoryItem.product.id)
+                    isLoadingStats = false
                 }
+                .redactedShimmer(when: isLoadingStats)
 
                 Button(action: {
                     showRemoveSheet = true

@@ -32,7 +32,7 @@ public struct KeepFreshAPI: Sendable {
     public func getProductUsageStats(productId: Int) async throws -> ProductUsageStatsResponse {
         try await client.fetch(
             ProductUsageStatsResponse.self,
-            path: "v1/products/\(productId)/usage-stats")
+            path: "v1/products/\(productId)/stats")
     }
 
     public func getInventoryItems() async throws -> [InventoryItem] {
