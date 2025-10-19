@@ -490,7 +490,7 @@ struct InventoryItemSheetView: View {
                         suggestionView(suggestion: .move(suggestedStorageLocation))
                     } else if let buyingRecommendation {
                         suggestionView(suggestion: .buying(inventoryItem.product.category.name, buyingRecommendation))
-                    } else if inventoryItem.expiryType == .UseBy {
+                    } else {
                         suggestionView(suggestion: .useBy(inventoryItem.expiryType))
                     }
                 }
