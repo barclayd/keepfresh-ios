@@ -3,102 +3,119 @@ import Models
 import SharedUI
 import SwiftUI
 
-enum HistoryType {
-    case product
-    case category
-    case user
-}
-
 enum Sentiment {
     case positive
     case negative
     case neutral
 }
 
-func getStorageLocation(storageLocation: StorageLocation?) -> String {
+enum UsageHistorySuggestion {
+    case product(
+        usage: Double,
+        sentiment: Sentiment,
+        itemName: String,
+        storageLocation: StorageLocation,
+        suggestedStorageLocation: StorageLocation?)
+
+    case category(
+        usage: Double,
+        sentiment: Sentiment,
+        categoryName: String,
+        storageLocation: StorageLocation,
+        suggestedStorageLocation: StorageLocation?)
+
+    case user(
+        usage: Double,
+        sentiment: Sentiment,
+        storageLocation: StorageLocation)
+}
+
+func getStorageSuggestion(for storageLocation: StorageLocation?) -> String {
     guard let storageLocation else {
         return "Consider alternatives for better usage"
     }
 
-    guard storageLocation == .freezer else {
+    switch storageLocation {
+    case .freezer:
+        return "Consider freezing early to extend expiry"
+    case .fridge, .pantry:
         return "Consider storing in the \(storageLocation.rawValue) to extend expiry"
     }
-
-    return "Consider freezing early to extend expiry"
 }
 
 @ViewBuilder
 @MainActor
-func historyView(
-    type: HistoryType,
-    sentiment: Sentiment,
-    storageLocation: StorageLocation,
-    suggestedStorageLocation: StorageLocation?,
-    itemName: String,
-    categoryName: String,
-    medianProductUsage: Double,
-    medianCategoryUsage: Double,
-    medianTotalUsage: Double) -> some View
-{
+func usageHistoryView(suggestion: UsageHistorySuggestion) -> some View {
     let countryName = Locale.current.region?.identifier ?? "UK"
 
-    let storageSuggestion = getStorageLocation(storageLocation: suggestedStorageLocation)
+    switch suggestion {
+    case let .product(usage, sentiment, itemName, storageLocation, _):
+        switch sentiment {
+        case .positive:
+            Suggestion(
+                icon: "checkmark.seal.fill",
+                iconColor: .green600,
+                text: "Your food usage for \(itemName) is very high at \(String(format: "%.0f", usage))%",
+                textColor: storageLocation.infoColor)
+        case .negative:
+            Suggestion(
+                icon: "exclamationmark.triangle.fill",
+                iconColor: .red800,
+                text: "Your usage for \(itemName) is very low at \(String(format: "%.0f", usage))%",
+                textColor: storageLocation.infoColor)
+        case .neutral:
+            Suggestion(
+                icon: "chart.xyaxis.line",
+                iconColor: .yellow700,
+                text: "Your usage for \(itemName) matches the average rate at \(String(format: "%.0f", usage))%",
+                textColor: storageLocation.infoColor)
+        }
 
-    switch (type, sentiment) {
-    case (.product, .positive):
-        Suggestion(
-            icon: "checkmark.seal.fill",
-            iconColor: .green600,
-            text: "Your food usage for \(itemName) is very high at \(String(format: "%.0f", medianProductUsage))%",
-            textColor: storageLocation.infoColor)
-    case (.product, .negative):
-        Suggestion(
-            icon: "exclamationmark.triangle.fill",
-            iconColor: .red800,
-            text: "Your usage for \(itemName) is very low at \(String(format: "%.0f", medianProductUsage))%",
-            textColor: storageLocation.infoColor)
-    case (.product, .neutral):
-        Suggestion(
-            icon: "chart.xyaxis.line",
-            iconColor: .yellow700,
-            text: "Your usage for \(itemName) matches the average rate at \(String(format: "%.0f", medianProductUsage))%",
-            textColor: storageLocation.infoColor)
-    case (.category, .positive):
-        Suggestion(
-            icon: "basket.fill",
-            iconColor: .green600,
-            text: "Great choice, your usage of \(categoryName) is excellent at \(String(format: "%.0f", medianCategoryUsage))%",
-            textColor: storageLocation.infoColor)
-    case (.category, .negative):
-        Suggestion(
-            icon: "cart.fill.badge.minus",
-            iconColor: .red800,
-            text: "Your usage of \(categoryName) is below average at \(String(format: "%.0f", medianCategoryUsage))%.\(storageSuggestion)",
-            textColor: storageLocation.infoColor)
-    case (.category, .neutral):
-        Suggestion(
-            icon: "cart.fill.badge.questionmark",
-            iconColor: .yellow700,
-            text: "This might be a good option, food usage for \(categoryName) is average at \(String(format: "%.0f", medianCategoryUsage))%. \(storageSuggestion)",
-            textColor: storageLocation.infoColor)
-    case (.user, .positive):
-        Suggestion(
-            icon: "chart.line.uptrend.xyaxis",
-            iconColor: .green600,
-            text: "Your overall usage is superb at \(String(format: "%.0f", medianTotalUsage))%, above average for \(countryName)",
-            textColor: storageLocation.infoColor)
-    case (.user, .negative):
-        Suggestion(
-            icon: "chart.line.downtrend.xyaxis",
-            iconColor: .red800,
-            text: "Your overall usage is below average for \(countryName) at \(String(format: "%.0f", medianTotalUsage))%",
-            textColor: storageLocation.infoColor)
-    case (.user, .neutral):
-        Suggestion(
-            icon: "chart.xyaxis.line",
-            iconColor: .yellow700,
-            text: "Your overall usage is average for \(countryName) at \(String(format: "%.0f", medianTotalUsage))%",
-            textColor: storageLocation.infoColor)
+    case let .category(usage, sentiment, categoryName, storageLocation, suggestedStorageLocation):
+        let storageSuggestion = getStorageSuggestion(for: suggestedStorageLocation)
+
+        switch sentiment {
+        case .positive:
+            Suggestion(
+                icon: "basket.fill",
+                iconColor: .green600,
+                text: "Great choice, your usage of \(categoryName) is excellent at \(String(format: "%.0f", usage))%",
+                textColor: storageLocation.infoColor)
+        case .negative:
+            Suggestion(
+                icon: "cart.fill.badge.minus",
+                iconColor: .red800,
+                text: "Your usage of \(categoryName) is below average at \(String(format: "%.0f", usage))%. \(storageSuggestion)",
+                textColor: storageLocation.infoColor)
+        case .neutral:
+            Suggestion(
+                icon: "cart.fill.badge.questionmark",
+                iconColor: .yellow700,
+                text: "This might be a good option, food usage for \(categoryName) is average at \(String(format: "%.0f", usage))%. \(storageSuggestion)",
+                textColor: storageLocation.infoColor)
+        }
+
+    case let .user(usage, sentiment, storageLocation):
+        switch sentiment {
+        case .positive:
+            Suggestion(
+                icon: "chart.line.uptrend.xyaxis",
+                iconColor: .green600,
+                text: "Your overall usage is superb at \(String(format: "%.0f", usage))%, above average for \(countryName)",
+                textColor: storageLocation.infoColor)
+        case .negative:
+            Suggestion(
+                icon: "chart.line.downtrend.xyaxis",
+                iconColor: .red800,
+                text: "Your overall usage is below average for \(countryName) at \(String(format: "%.0f", usage))%",
+                textColor: storageLocation.infoColor)
+        case .neutral:
+            Suggestion(
+                icon: "chart.xyaxis.line",
+                iconColor: .yellow700,
+                text: "Your overall usage is average for \(countryName) at \(String(format: "%.0f", usage))%",
+                textColor: storageLocation.infoColor)
+        }
     }
 }
 
@@ -199,14 +216,6 @@ public struct SuggestionsView: View {
                     text: "You haven’t added \(categoryName) before. Usage will make predictions smarter",
                     textColor: storageLocation.infoColor)
             }
-                        
-            if suggestions.expiryType == .UseBy {
-                Suggestion(
-                    icon: "hourglass.bottomhalf.filled",
-                    iconColor: .red800,
-                    text: "\(itemName) spoils quickly after the expiry date",
-                    textColor: storageLocation.infoColor)
-            }
 
             let differenceInExpiryAfterOpening = (suggestions.shelfLifeInDays.unopened[suggestions.recommendedStorageLocation] ?? 0) -
                 (suggestions.shelfLifeInDays.opened[suggestions.recommendedStorageLocation] ?? 0)
@@ -219,47 +228,41 @@ public struct SuggestionsView: View {
                     textColor: storageLocation.infoColor)
             }
 
-            if let productUsage = predictions.productHistory.medianUsage ?? predictions.productHistory
-                .averageUsage,
-               let medianProductUsage = predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage,
-               let medianCategoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage,
-               let medianTotalUsage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage {
-                historyView(
-                    type: .product,
-                    sentiment: getSentimentForUsage(
-                        usage: productUsage),
-                    storageLocation: storageLocation,
-                    suggestedStorageLocation: storageLocationToExtendExpiry,
-                    itemName: itemName,
-                    categoryName: categoryName,
-                    medianProductUsage: medianProductUsage,
-                    medianCategoryUsage: medianCategoryUsage,
-                    medianTotalUsage: medianTotalUsage)
+            if let productUsage = predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage {
+                usageHistoryView(
+                    suggestion: .product(
+                        usage: productUsage,
+                        sentiment: getSentimentForUsage(usage: productUsage),
+                        itemName: itemName,
+                        storageLocation: storageLocation,
+                        suggestedStorageLocation: storageLocationToExtendExpiry)
+                )
             }
 
-            if let categoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage, let medianProductUsage = predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage, let medianCategoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage, let medianTotalUsage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage {
-                historyView(
-                    type: .category,
-                    sentiment: getSentimentForUsage(
-                        usage: categoryUsage),
-                    storageLocation: storageLocation,
-                    suggestedStorageLocation: storageLocationToExtendExpiry,
-                    itemName: itemName,
-                    categoryName: categoryName,
-                    medianProductUsage: medianProductUsage,
-                    medianCategoryUsage: medianCategoryUsage,
-                    medianTotalUsage: medianTotalUsage)
-            } else if let usage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage, let medianProductUsage = predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage, let medianCategoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage, let medianTotalUsage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage  {
-                historyView(
-                    type: .user,
-                    sentiment: getSentimentForUsage(usage: usage),
-                    storageLocation: storageLocation,
-                    suggestedStorageLocation: storageLocationToExtendExpiry,
-                    itemName: itemName,
-                    categoryName: categoryName,
-                    medianProductUsage: medianProductUsage,
-                    medianCategoryUsage: medianCategoryUsage,
-                    medianTotalUsage: medianTotalUsage)
+            if let categoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage {
+                usageHistoryView(
+                    suggestion: .category(
+                        usage: categoryUsage,
+                        sentiment: getSentimentForUsage(usage: categoryUsage),
+                        categoryName: categoryName,
+                        storageLocation: storageLocation,
+                        suggestedStorageLocation: storageLocationToExtendExpiry)
+                )
+            } else if let userUsage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage {
+                usageHistoryView(
+                    suggestion: .user(
+                        usage: userUsage,
+                        sentiment: getSentimentForUsage(usage: userUsage),
+                        storageLocation: storageLocation)
+                )
+            }
+
+            if suggestions.expiryType == .UseBy {
+                Suggestion(
+                    icon: "hourglass.bottomhalf.filled",
+                    iconColor: .red800,
+                    text: "\(itemName) spoils quickly after the expiry date",
+                    textColor: storageLocation.infoColor)
             }
 
         }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
