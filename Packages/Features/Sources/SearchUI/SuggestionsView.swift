@@ -198,14 +198,14 @@ public struct SuggestionsView: View {
                     iconColor: .yellow700,
                     text: "You haven’t added \(categoryName) before. Usage will make predictions smarter",
                     textColor: storageLocation.infoColor)
-
-                if suggestions.expiryType == .UseBy {
-                    Suggestion(
-                        icon: "hourglass.bottomhalf.filled",
-                        iconColor: .red800,
-                        text: "\(itemName) spoils quickly after the expiry date",
-                        textColor: storageLocation.infoColor)
-                }
+            }
+                        
+            if suggestions.expiryType == .UseBy {
+                Suggestion(
+                    icon: "hourglass.bottomhalf.filled",
+                    iconColor: .red800,
+                    text: "\(itemName) spoils quickly after the expiry date",
+                    textColor: storageLocation.infoColor)
             }
 
             let differenceInExpiryAfterOpening = (suggestions.shelfLifeInDays.unopened[suggestions.recommendedStorageLocation] ?? 0) -
