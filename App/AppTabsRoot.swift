@@ -34,11 +34,11 @@ struct AppTabRootView: View {
                 AppTab.kitchen.label
             }
 
-//            Tab(value: AppTab.debug) {
-//                makeNavigationStack(for: .debug, router: router)
-//            } label: {
-//                AppTab.debug.label
-//            }
+            Tab(value: AppTab.debug) {
+                makeNavigationStack(for: .debug, router: router)
+            } label: {
+                AppTab.debug.label
+            }
         }
         .tint(.blue600)
         .tabBarMinimizeBehavior(.onScrollDown)
