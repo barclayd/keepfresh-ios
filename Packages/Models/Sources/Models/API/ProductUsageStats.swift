@@ -5,7 +5,7 @@ public struct ProductUsageStatsResponse: Codable, Sendable {
     public let category: CategoryStats
 
     public struct ProductStats: Codable, Sendable {
-        public let medianDaysToOutcome: Double
+        public let medianDaysToOutcome: Double?
         public let medianUsage: Double
     }
 

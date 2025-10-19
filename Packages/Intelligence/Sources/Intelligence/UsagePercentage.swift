@@ -195,22 +195,24 @@ public final class UsageGenerator {
 
         var text = "- Product History: \(history.purchaseCount) purchases with usage: \(usageList)"
 
-        if history.averageUsage == 0.0 {
+        if let averageUsage = history.averageUsage, averageUsage == 0.0 {
             text += " (STRONG SIGNAL: This item was completely wasted every time before)"
         }
 
         if let medianUsage = history.medianUsage {
             text += ", median usage: \(String(format: "%.0f", medianUsage))%"
+        } else if let averageUsage = history.averageUsage {
+            text += ", average usage: \(String(format: "%.0f", averageUsage))%"
         } else {
-            text += ", average usage: \(String(format: "%.0f", history.averageUsage))%"
+            text += ", insufficient usage data available"
         }
 
-        if history.averageDaysToConsumeOrDiscarded > 0 {
-            if let medianDays = history.medianDaysToConsumeOrDiscarded {
-                text += ", typically consumed or discarded in \(String(format: "%.0f", medianDays)) days"
-            } else {
-                text += ", average days to consume or discard: \(String(format: "%.0f", history.averageDaysToConsumeOrDiscarded))"
-            }
+        if let medianDays = history.medianDaysToConsumeOrDiscarded {
+            text += ", typically consumed or discarded in \(String(format: "%.0f", medianDays)) days"
+        } else if let averageDays = history.averageDaysToConsumeOrDiscarded, averageDays > 0 {
+            text += ", average days to consume or discard: \(String(format: "%.0f", averageDays))"
+        } else {
+            text += ", insufficient time-to-outcome data available"
         }
 
         return text
@@ -223,22 +225,24 @@ public final class UsageGenerator {
 
         var text = "- Category History (\(categoryName)): "
 
-        if history.averageUsage == 0.0 {
+        if let averageUsage = history.averageUsage, averageUsage == 0.0 {
             text += "0% average usage (STRONG SIGNAL: All items in this category were wasted)"
         } else if let medianUsage = history.medianUsage {
             text += "median usage: \(String(format: "%.0f", medianUsage))%"
+        } else if let averageUsage = history.averageUsage {
+            text += "average usage: \(String(format: "%.0f", averageUsage))%"
         } else {
-            text += "average usage: \(String(format: "%.0f", history.averageUsage))%"
+            text += "insufficient usage data available"
         }
 
         text += ", based on \(history.purchaseCount) items"
 
-        if history.averageDaysToConsumeOrDiscarded > 0 {
-            if let medianDays = history.medianDaysToConsumeOrDiscarded {
-                text += ", typically \(String(format: "%.0f", medianDays)) days to consume or discard"
-            } else {
-                text += ", average \(String(format: "%.0f", history.averageDaysToConsumeOrDiscarded)) days to consume or discard"
-            }
+        if let medianDays = history.medianDaysToConsumeOrDiscarded {
+            text += ", typically \(String(format: "%.0f", medianDays)) days to consume or discard"
+        } else if let averageDays = history.averageDaysToConsumeOrDiscarded, averageDays > 0 {
+            text += ", average \(String(format: "%.0f", averageDays)) days to consume or discard"
+        } else {
+            text += ", insufficient time-to-outcome data available"
         }
 
         return text
@@ -252,18 +256,20 @@ public final class UsageGenerator {
             if medianUsage < 20 {
                 text += " (WARNING: User typically wastes \(String(format: "%.0f", 100 - medianUsage))%+ of food - predict conservatively)"
             }
+        } else if let averageUsage = baseline.averageUsage {
+            text += "average usage across all food: \(String(format: "%.0f", averageUsage))%"
         } else {
-            text += "average usage across all food: \(String(format: "%.0f", baseline.averageUsage))%"
+            text += "insufficient usage data available"
         }
 
         text += ", based on \(baseline.totalItemsCount) total items tracked"
 
-        if baseline.averageDaysToConsumeOrDiscarded > 0 {
-            if let medianDays = baseline.medianDaysToConsumeOrDiscarded {
-                text += ", typical time: \(String(format: "%.0f", medianDays)) days"
-            } else {
-                text += ", average time: \(String(format: "%.0f", baseline.averageDaysToConsumeOrDiscarded)) days"
-            }
+        if let medianDays = baseline.medianDaysToConsumeOrDiscarded {
+            text += ", typical time: \(String(format: "%.0f", medianDays)) days"
+        } else if let averageDays = baseline.averageDaysToConsumeOrDiscarded, averageDays > 0 {
+            text += ", average time: \(String(format: "%.0f", averageDays)) days"
+        } else {
+            text += ", insufficient time-to-outcome data available"
         }
 
         return text
@@ -281,14 +287,18 @@ public final class UsageGenerator {
                                                predictions.productHistory.purchaseCount > 0
         {
             medianDays
-        } else if predictions.productHistory.purchaseCount > 0 {
-            predictions.productHistory.averageDaysToConsumeOrDiscarded
+        } else if predictions.productHistory.purchaseCount > 0,
+                  let averageDays = predictions.productHistory.averageDaysToConsumeOrDiscarded
+        {
+            averageDays
         } else if let medianDays = predictions.categoryHistory.medianDaysToConsumeOrDiscarded,
                   predictions.categoryHistory.purchaseCount >= 3
         {
             medianDays
-        } else if predictions.categoryHistory.purchaseCount >= 3 {
-            predictions.categoryHistory.averageDaysToConsumeOrDiscarded
+        } else if predictions.categoryHistory.purchaseCount >= 3,
+                  let averageDays = predictions.categoryHistory.averageDaysToConsumeOrDiscarded
+        {
+            averageDays
         } else if let medianDays = predictions.userBaseline.medianDaysToConsumeOrDiscarded {
             medianDays
         } else {
@@ -322,19 +332,27 @@ public final class UsageGenerator {
             if let medianUsage = predictions.productHistory.medianUsage {
                 return Int(medianUsage.rounded())
             }
-            return Int(predictions.productHistory.averageUsage.rounded())
+            if let averageUsage = predictions.productHistory.averageUsage {
+                return Int(averageUsage.rounded())
+            }
         }
 
         if predictions.categoryHistory.purchaseCount >= 3 {
             if let medianUsage = predictions.categoryHistory.medianUsage {
                 return Int(medianUsage.rounded())
             }
-            return Int(predictions.categoryHistory.averageUsage.rounded())
+            if let averageUsage = predictions.categoryHistory.averageUsage {
+                return Int(averageUsage.rounded())
+            }
         }
 
         if let medianUsage = predictions.userBaseline.medianUsage {
             return Int(medianUsage.rounded())
         }
-        return Int(predictions.userBaseline.averageUsage.rounded())
+        if let averageUsage = predictions.userBaseline.averageUsage {
+            return Int(averageUsage.rounded())
+        }
+
+        return 50
     }
 }

@@ -387,10 +387,10 @@ public struct InventoryPreviewRequest: Codable, Sendable {
 
 public protocol Prediction {
     var purchaseCount: Int { get }
-    var averageUsage: Double { get }
+    var averageUsage: Double? { get }
     var medianUsage: Double? { get }
-    var standardDeviation: Double { get }
-    var averageDaysToConsumeOrDiscarded: Double { get }
+    var standardDeviation: Double? { get }
+    var averageDaysToConsumeOrDiscarded: Double? { get }
     var medianDaysToConsumeOrDiscarded: Double? { get }
 }
 
@@ -403,27 +403,27 @@ public struct InventoryPredictionsResponse: Codable, Sendable {
         public let purchaseCount: Int
         public let consumedCount: Int
         public let usagePercentages: [Int]
-        public let averageUsage: Double
+        public let averageUsage: Double?
         public let medianUsage: Double?
-        public let standardDeviation: Double
-        public let averageDaysToConsumeOrDiscarded: Double
+        public let standardDeviation: Double?
+        public let averageDaysToConsumeOrDiscarded: Double?
         public let medianDaysToConsumeOrDiscarded: Double?
     }
 
     public struct CategoryHistory: Codable, Sendable, Prediction {
         public let purchaseCount: Int
-        public let averageUsage: Double
+        public let averageUsage: Double?
         public let medianUsage: Double?
-        public let standardDeviation: Double
-        public let averageDaysToConsumeOrDiscarded: Double
+        public let standardDeviation: Double?
+        public let averageDaysToConsumeOrDiscarded: Double?
         public let medianDaysToConsumeOrDiscarded: Double?
     }
 
     public struct UserBaseline: Codable, Sendable {
-        public let averageUsage: Double
+        public let averageUsage: Double?
         public let medianUsage: Double?
         public let totalItemsCount: Int
-        public let averageDaysToConsumeOrDiscarded: Double
+        public let averageDaysToConsumeOrDiscarded: Double?
         public let medianDaysToConsumeOrDiscarded: Double?
     }
 }
