@@ -235,8 +235,7 @@ public struct SuggestionsView: View {
                         sentiment: getSentimentForUsage(usage: productUsage),
                         itemName: itemName,
                         storageLocation: storageLocation,
-                        suggestedStorageLocation: storageLocationToExtendExpiry)
-                )
+                        suggestedStorageLocation: storageLocationToExtendExpiry))
             }
 
             if let categoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage {
@@ -246,15 +245,13 @@ public struct SuggestionsView: View {
                         sentiment: getSentimentForUsage(usage: categoryUsage),
                         categoryName: categoryName,
                         storageLocation: storageLocation,
-                        suggestedStorageLocation: storageLocationToExtendExpiry)
-                )
+                        suggestedStorageLocation: storageLocationToExtendExpiry))
             } else if let userUsage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage {
                 usageHistoryView(
                     suggestion: .user(
                         usage: userUsage,
                         sentiment: getSentimentForUsage(usage: userUsage),
-                        storageLocation: storageLocation)
-                )
+                        storageLocation: storageLocation))
             }
 
             if suggestions.expiryType == .UseBy {
