@@ -184,11 +184,12 @@ public struct SuggestionsView: View {
 
     public var body: some View {
         Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-            if predictions.productHistory.consumedCount > 0 {
+            if predictions.productHistory.consumedCount > 0,
+            let medianNumberOfDays = predictions.productHistory.medianDaysToConsumeOrDiscarded {
                 Suggestion(
                     icon: "calendar.badge",
                     iconColor: .green600,
-                    text: "\(itemName) will likely last you \(getRelativeDateInFuture(medianNumberOfDays: predictions.productHistory.medianDaysToConsumeOrDiscarded ?? predictions.productHistory.averageDaysToConsumeOrDiscarded))",
+                    text: "\(itemName) will likely last you \(getRelativeDateInFuture(medianNumberOfDays: medianNumberOfDays))",
                     textColor: storageLocation.infoColor)
             }
 
@@ -219,45 +220,47 @@ public struct SuggestionsView: View {
                     textColor: storageLocation.infoColor)
             }
 
-            if predictions.productHistory.consumedCount > 0 {
+            if let productUsage = predictions.productHistory.medianUsage ?? predictions.productHistory
+                .averageUsage,
+               let medianProductUsage = predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage,
+               let medianCategoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage,
+               let medianTotalUsage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage {
                 historyView(
                     type: .product,
                     sentiment: getSentimentForUsage(
-                        usage: predictions.productHistory.medianUsage ?? predictions.productHistory
-                            .averageUsage),
+                        usage: productUsage),
                     storageLocation: storageLocation,
                     suggestedStorageLocation: storageLocationToExtendExpiry,
                     itemName: itemName,
                     categoryName: categoryName,
-                    medianProductUsage: predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage,
-                    medianCategoryUsage: predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage,
-                    medianTotalUsage: predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage)
+                    medianProductUsage: medianProductUsage,
+                    medianCategoryUsage: medianCategoryUsage,
+                    medianTotalUsage: medianTotalUsage)
             }
 
-            if predictions.categoryHistory.purchaseCount > 0 {
+            if let categoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage, let medianProductUsage = predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage, let medianCategoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage, let medianTotalUsage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage {
                 historyView(
                     type: .category,
                     sentiment: getSentimentForUsage(
-                        usage: predictions.categoryHistory.medianUsage ?? predictions.categoryHistory
-                            .averageUsage),
+                        usage: categoryUsage),
                     storageLocation: storageLocation,
                     suggestedStorageLocation: storageLocationToExtendExpiry,
                     itemName: itemName,
                     categoryName: categoryName,
-                    medianProductUsage: predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage,
-                    medianCategoryUsage: predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage,
-                    medianTotalUsage: predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage)
-            } else {
+                    medianProductUsage: medianProductUsage,
+                    medianCategoryUsage: medianCategoryUsage,
+                    medianTotalUsage: medianTotalUsage)
+            } else if let usage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage, let medianProductUsage = predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage, let medianCategoryUsage = predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage, let medianTotalUsage = predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage  {
                 historyView(
                     type: .user,
-                    sentiment: getSentimentForUsage(usage: predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage),
+                    sentiment: getSentimentForUsage(usage: usage),
                     storageLocation: storageLocation,
                     suggestedStorageLocation: storageLocationToExtendExpiry,
                     itemName: itemName,
                     categoryName: categoryName,
-                    medianProductUsage: predictions.productHistory.medianUsage ?? predictions.productHistory.averageUsage,
-                    medianCategoryUsage: predictions.categoryHistory.medianUsage ?? predictions.categoryHistory.averageUsage,
-                    medianTotalUsage: predictions.userBaseline.medianUsage ?? predictions.userBaseline.averageUsage)
+                    medianProductUsage: medianProductUsage,
+                    medianCategoryUsage: medianCategoryUsage,
+                    medianTotalUsage: medianTotalUsage)
             }
 
         }.padding(.vertical, 5).padding(.bottom, 10).padding(.horizontal, 20)
