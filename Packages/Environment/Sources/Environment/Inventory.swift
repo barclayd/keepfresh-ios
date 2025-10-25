@@ -117,18 +117,29 @@ public final class Inventory {
         productId: Int,
         icon: String)
     {
-        let item = InventoryItem(from: request, category: category, id: inventoryItemId, productId: productId, icon: icon)
+        let newItems = Array(
+            repeating: InventoryItem(from: request, category: category, id: inventoryItemId, productId: productId, icon: icon),
+            count: request.quantity)
 
-        items.append(item)
+        items.append(contentsOf: newItems)
 
         Task.detached { [weak self] in
             do {
-                let response = try await self?.api.createInventoryItem(request)
+                let response = try await self?.api.addInventoryItem(request)
 
                 if let inventoryItemId = response?.inventoryItemId {
                     await MainActor.run { [weak self] in
                         guard let self, !self.items.isEmpty else { return }
                         items[items.count - 1].id = inventoryItemId
+                    }
+                }
+
+                if let inventoryItemIds = response?.inventoryItemIds {
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        for quantity in 1...inventoryItemIds.count {
+                            items[items.count - quantity].id = inventoryItemIds[quantity - 1]
+                        }
                     }
                 }
 

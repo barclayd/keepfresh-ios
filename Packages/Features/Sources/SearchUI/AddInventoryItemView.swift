@@ -102,7 +102,7 @@ public struct AddInventoryItemView: View {
                     sourceId: productSearchItem
                         .source.id,
                     sourceRef: productSearchItem
-                        .source.ref))
+                        .source.ref), quantity: formState.quantity)
 
         let temporaryInventoryItemId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
 

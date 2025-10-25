@@ -44,10 +44,12 @@ public struct UpdateInventoryItemRequest: Codable, Sendable {
 public struct AddInventoryItemRequest: Codable, Sendable {
     public let item: InventoryItem
     public let product: ProductData
+    public let quantity: Int
 
-    public init(item: InventoryItem, product: ProductData) {
+    public init(item: InventoryItem, product: ProductData, quantity: Int) {
         self.item = item
         self.product = product
+        self.quantity = quantity
     }
 
     public struct InventoryItem: Codable, Sendable {
@@ -114,7 +116,8 @@ public struct AddInventoryItemRequest: Codable, Sendable {
 }
 
 public struct AddInventoryItemResponse: Codable, Sendable {
-    public let inventoryItemId: Int
+    public let inventoryItemId: Int?
+    public let inventoryItemIds: [Int]?
 }
 
 public struct TileColor {
