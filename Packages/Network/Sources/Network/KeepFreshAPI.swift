@@ -43,7 +43,7 @@ public struct KeepFreshAPI: Sendable {
 
     // MARK: - Inventory
 
-    public func createInventoryItem(_ request: AddInventoryItemRequest) async throws -> AddInventoryItemResponse {
+    public func addInventoryItem(_ request: AddInventoryItemRequest) async throws -> AddInventoryItemResponse {
         try await client.post(
             AddInventoryItemResponse.self,
             path: "v1/inventory/items",
