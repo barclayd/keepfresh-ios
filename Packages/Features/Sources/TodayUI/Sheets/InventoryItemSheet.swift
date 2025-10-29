@@ -439,6 +439,11 @@ struct InventoryItemSheetView: View {
                             .foregroundStyle(.gray600)
                     }
                     Spacer()
+                    Button(action: {}) {
+                        Image(systemName: "ellipsis.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundStyle(.gray600)
+                    }
                 }.padding(.top, 10)
 
                 GenmojiView(

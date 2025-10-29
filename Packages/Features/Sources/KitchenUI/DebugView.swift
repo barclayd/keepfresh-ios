@@ -1,7 +1,86 @@
 import Models
+import SwiftData
 import Network
 import SwiftUI
 import UniformTypeIdentifiers
+import Models
+import Network
+import SwiftUI
+import UniformTypeIdentifiers
+
+struct GenmojiView: View {
+    @Environment(\.modelContext) private var modelContext
+
+    private let name: String
+    private let fontSize: CGFloat
+    private let tint: Color
+
+    @State private var genmojiImage: UIImage?
+    @State private var isLoading: Bool = false
+    @State private var error: String?
+
+    public init(name: String, fontSize: CGFloat, tint: Color) {
+        self.name = name
+        self.fontSize = fontSize
+        self.tint = tint
+    }
+
+    public var body: some View {
+        Group {
+            if let genmojiImage {
+                Image(uiImage: genmojiImage)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                ProgressView()
+                    .tint(tint)
+            }
+        }
+        .frame(width: fontSize, height: fontSize)
+        .task {
+            await fetchGenmoji()
+        }
+    }
+
+    private func fetchGenmoji() async {
+        error = nil
+
+        do {
+
+            await MainActor.run {
+                isLoading = true
+            }
+
+            let api = KeepFreshAPI()
+            let response = try await api.getGenmoji(name: name)
+
+            guard let imageData = response.imageContentData else {
+                throw NSError(
+                    domain: "GenmojiView",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Failed to decode base64 image content"])
+            }
+
+            guard let uiImage = UIImage(data: imageData) else {
+                throw NSError(
+                    domain: "GenmojiView",
+                    code: -2,
+                    userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from genmoji"])
+            }
+
+            await MainActor.run {
+                genmojiImage = uiImage
+                isLoading = false
+            }
+        } catch {
+            await MainActor.run {
+                self.error = error.localizedDescription
+                isLoading = false
+            }
+        }
+    }
+}
+
 
 public struct DebugView: View {
     @State private var inputText: NSAttributedString? = NSAttributedString(string: "")
@@ -23,6 +102,8 @@ public struct DebugView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Fetched Genmoji")
                         .font(.headline)
+                    
+                    GenmojiView(name: "sauce", fontSize: 40, tint: .brown)
 
                     if isFetchingGenmoji {
                         HStack {
