@@ -145,6 +145,7 @@ public struct InventoryItemView: View {
         .onTapGesture {
             showInventoryItemSheet.toggle()
         }
+        .sensoryFeedback(.selection, trigger: showInventoryItemSheet)
         .sheet(isPresented: $showInventoryItemSheet) {
             InventoryItemSheetView(inventoryItem: inventoryItem)
                 .presentationDetents(

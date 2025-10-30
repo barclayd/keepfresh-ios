@@ -25,6 +25,7 @@ public struct AddInventoryItemView: View {
     @State private var preview = InventoryItemPreview()
     @State private var formState = InventoryFormState()
     @State private var usageGenerator = UsageGenerator()
+    @State private var addItemSuccess = false
 
     public let productSearchItem: ProductSearchResultItemResponse
 
@@ -67,12 +68,6 @@ public struct AddInventoryItemView: View {
             "quantity: \(formState.quantity)",
             "status: \(formState.status.rawValue)")
 
-        guard let recommendedExpiryType = preview.suggestions?.expiryType,
-              let recommendedStorageLocation = preview.suggestions?.recommendedStorageLocation
-        else {
-            return
-        }
-
         let request = AddInventoryItemRequest(
             item: AddInventoryItemRequest
                 .InventoryItem(
@@ -96,6 +91,7 @@ public struct AddInventoryItemView: View {
             inventoryItemId: temporaryInventoryItemId,
             icon: productSearchItem.icon)
 
+        addItemSuccess.toggle()
         router.popToRoot()
     }
 
@@ -281,6 +277,7 @@ public struct AddInventoryItemView: View {
                 }
             }
         }
+        .sensoryFeedback(.success, trigger: addItemSuccess)
         .task {
             usageGenerator.prewarmModel()
         }
