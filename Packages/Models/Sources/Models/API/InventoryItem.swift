@@ -43,12 +43,12 @@ public struct UpdateInventoryItemRequest: Codable, Sendable {
 
 public struct AddInventoryItemRequest: Codable, Sendable {
     public let item: InventoryItem
-    public let product: ProductData
+    public let productId: Int
     public let quantity: Int
 
-    public init(item: InventoryItem, product: ProductData, quantity: Int) {
+    public init(item: InventoryItem, productId: Int, quantity: Int) {
         self.item = item
-        self.product = product
+        self.productId = productId
         self.quantity = quantity
     }
 
@@ -183,6 +183,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
 public extension InventoryItem {
     init(
         from request: AddInventoryItemRequest,
+        productSearchResult: ProductSearchResultItemResponse,
         category: ProductSearchItemCategory,
         id: Int,
         icon: String,
@@ -197,11 +198,11 @@ public extension InventoryItem {
         expiryDate = request.item.expiryDate
         expiryType = request.item.expiryType
         product = Product(
-            id: request.product.id,
-            name: request.product.name,
-            unit: request.product.unit,
-            brand: Brand(from: request.product.brand),
-            amount: request.product.amount,
+            id: productSearchResult.id,
+            name: productSearchResult.name,
+            unit: productSearchResult.unit,
+            brand: productSearchResult.brand,
+            amount: productSearchResult.amount,
             category: CategoryDetails(icon: icon, id: category.id, name: category.name, pathDisplay: category.path))
         consumptionPrediction = 100
         consumptionPredictionChangedAt = Date()

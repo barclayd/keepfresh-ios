@@ -4,7 +4,7 @@ import Models
 public struct KeepFreshAPI: Sendable {
     private let client: APIClient
 
-    public init(baseURL: String = "https://feat-faster-search-keepfresh-api.barclaysd.workers.dev") {
+    public init(baseURL: String = "https://api.keepfre.sh") {
         client = APIClient(baseURL: baseURL)
     }
 
@@ -29,7 +29,7 @@ public struct KeepFreshAPI: Sendable {
     public func getProduct(barcode: String) async throws -> ProductSearchResultItemResponse {
         try await client.fetch(
             ProductSearchResultItemResponse.self,
-            path: "v1/products/barcode/\(barcode)")
+            path: "v2/products/barcode/\(barcode)")
     }
 
     public func getProductUsageStats(productId: Int) async throws -> ProductUsageStatsResponse {
@@ -49,7 +49,7 @@ public struct KeepFreshAPI: Sendable {
     public func addInventoryItem(_ request: AddInventoryItemRequest) async throws -> AddInventoryItemResponse {
         try await client.post(
             AddInventoryItemResponse.self,
-            path: "v1/inventory/items",
+            path: "v2/inventory/items",
             body: request)
     }
 

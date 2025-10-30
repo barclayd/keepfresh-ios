@@ -84,26 +84,13 @@ public struct AddInventoryItemView: View {
                         .expiryType,
                     consumptionPrediction: usageGenerator.percentagePrediction,
                     consumptionPredictionChangedAt: usageGenerator.percentagePrediction != nil ? Date() : nil),
-            product: AddInventoryItemRequest
-                .ProductData(
-                    id: productSearchItem.id,
-                    name: productSearchItem.name,
-                    brand: productSearchItem
-                        .brand.name,
-                    expiryType: recommendedExpiryType,
-                    storageLocation: recommendedStorageLocation,
-                    barcode: nil,
-                    unit: productSearchItem
-                        .unit?.lowercased(),
-                    amount: productSearchItem
-                        .amount,
-                    categoryId: productSearchItem
-                        .category.id), quantity: formState.quantity)
+            productId: productSearchItem.id, quantity: formState.quantity)
 
         let temporaryInventoryItemId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
 
         inventory.addItem(
             request: request,
+            product: productSearchItem,
             category: productSearchItem.category,
             categorySuggestions: preview.suggestions,
             inventoryItemId: temporaryInventoryItemId,
