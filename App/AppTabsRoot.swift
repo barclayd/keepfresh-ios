@@ -77,8 +77,6 @@ private extension AppTab {
             SearchView()
         case .kitchen:
             KitchenView()
-        case .debug:
-            DebugView()
         }
     }
 }
@@ -130,9 +128,6 @@ public extension AppTab {
                 }
                 .buttonStyle(.plain).tint(.white200)
             }
-
-        case .debug:
-            ToolbarItemGroup {}
         }
     }
 }
