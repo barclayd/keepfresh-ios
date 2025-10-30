@@ -15,6 +15,8 @@ class Search {
             }
 
             state = .loading
+            currentPage = 1
+            hasMorePages = false
 
             Task {
                 await debounceSearch()
@@ -23,9 +25,12 @@ class Search {
     }
 
     var debouncedSearchText: String = ""
-    var searchResults: [ProductSearchItemResponse] = []
+    var searchResults: [ProductSearchResultItemResponse] = []
     var state: FetchState = .empty
     var lastSearchedTerm = ""
+    var currentPage = 1
+    var hasMorePages = false
+    var isLoadingMore = false
 
     private var searchTask: Task<Void, Never>?
 
@@ -49,7 +54,7 @@ class Search {
                     print("Debounced value: '\(debouncedSearchText)'")
 
                     if !searchText.isEmpty {
-                        searchResults = ProductSearchItemResponse.mocks(count: 5)
+                        searchResults = ProductSearchResultItemResponse.mocks(count: 5)
                         await sendSearchRequest(searchTerm: debouncedSearchText)
                     }
                 } else {
@@ -65,8 +70,9 @@ class Search {
         let api = KeepFreshAPI()
 
         do {
-            let searchResponse = try await api.searchProducts(query: searchTerm)
-            searchResults = searchResponse.products
+            let searchResponse = try await api.searchProducts(query: searchTerm, page: currentPage)
+            searchResults = searchResponse.results
+            hasMorePages = searchResponse.pagination.hasNext
 
             state = .loaded
             lastSearchedTerm = searchTerm
@@ -95,6 +101,28 @@ class Search {
             state = .error
             lastSearchedTerm = ""
         }
+    }
+
+    func loadMoreResults() async {
+        guard hasMorePages, !isLoadingMore, state == .loaded else { return }
+
+        isLoadingMore = true
+        currentPage += 1
+
+        let api = KeepFreshAPI()
+
+        do {
+            let searchResponse = try await api.searchProducts(query: lastSearchedTerm, page: currentPage)
+            searchResults.append(contentsOf: searchResponse.results)
+            hasMorePages = searchResponse.pagination.hasNext
+
+            print("Loaded more results: Now have \(searchResults.count) total products")
+        } catch {
+            print("Failed to load more results: \(error)")
+            currentPage -= 1
+        }
+
+        isLoadingMore = false
     }
 }
 
@@ -148,7 +176,16 @@ public struct SearchView: View {
     public var body: some View {
         VStack(spacing: 0) {
             if isSearching, let search {
-                SearchResultView(products: search.searchResults, isLoading: search.state != .loaded)
+                SearchResultView(
+                    searchProducts: search.searchResults,
+                    isLoading: search.state != .loaded,
+                    hasMorePages: search.hasMorePages,
+                    isLoadingMore: search.isLoadingMore,
+                    onLoadMore: {
+                        Task {
+                            await search.loadMoreResults()
+                        }
+                    })
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 RecentSearchView(searchText: searchTextBinding)

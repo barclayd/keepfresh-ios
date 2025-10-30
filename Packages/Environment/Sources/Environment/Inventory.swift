@@ -105,20 +105,21 @@ public final class Inventory {
             items = try await api.getInventoryItems()
             state = .loaded
         } catch {
+            print("loading error")
             state = .error
         }
     }
 
     public func addItem(
         request: AddInventoryItemRequest,
+        product: ProductSearchResultItemResponse,
         category: ProductSearchItemCategory,
         categorySuggestions: InventorySuggestionsResponse?,
         inventoryItemId: Int,
-        productId: Int,
         icon: String)
     {
         let newItems = Array(
-            repeating: InventoryItem(from: request, category: category, id: inventoryItemId, productId: productId, icon: icon),
+            repeating: InventoryItem(from: request, productSearchResult: product, category: category, id: inventoryItemId, icon: icon),
             count: request.quantity)
 
         items.append(contentsOf: newItems)

@@ -7,7 +7,7 @@ public enum RouterDestination: Hashable {
     case search
     case barcodeScan
     case kitchen
-    case addProduct(product: ProductSearchItemResponse)
+    case addProduct(product: ProductSearchResultItemResponse)
     case storageLocationView(storageLocation: StorageLocation)
 
     public var tint: Color? {

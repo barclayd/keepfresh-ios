@@ -22,45 +22,40 @@ public struct ProductSearchItemCategory: Identifiable, Codable, Equatable, Hasha
     public let recommendedStorageLocation: StorageLocation
 }
 
-public struct ProductSearchItemSource: Codable, Hashable, Sendable {
-    public init(id: Int, ref: String) {
-        self.id = id
-        self.ref = ref
-    }
-
-    public let id: Int
-    public let ref: String
-}
-
-public struct ProductSearchItemResponse: Identifiable, Hashable, Codable, Sendable {
+public struct ProductSearchResultItemResponse: Identifiable, Hashable, Codable, Sendable {
     public init(
+        id: Int,
         name: String,
         brand: Brand,
         category: ProductSearchItemCategory,
         amount: Double?,
         unit: String?,
-        icon: String,
-        source: ProductSearchItemSource)
+        icon: String)
     {
+        self.id = id
         self.name = name
         self.brand = brand
         self.category = category
         self.amount = amount
         self.unit = unit
         self.icon = icon
-        self.source = source
     }
 
+    public let id: Int
     public let name: String
     public let brand: Brand
     public let category: ProductSearchItemCategory
     public let amount: Double?
     public let unit: String?
     public let icon: String
-    public let source: ProductSearchItemSource
+    
+    public var amountUnitFormatted: String? {
+        guard let unit else { return nil }
+        guard let amount else { return unit }
 
-    public var id: String {
-        "\(source.ref)-\(brand)"
+        let formattedUnit = unit == "l" ? "L" : unit
+
+        return "\(String(format: "%.0f", amount))\(formattedUnit)"
     }
 }
 
@@ -72,19 +67,25 @@ public enum ExpiryType: String, Codable, Identifiable, CaseIterable, Sendable {
     case LongLife = "Long Life"
 }
 
+public struct ProductSearchPagination: Codable, Sendable {
+    public let hasNext: Bool
+}
+
 public struct ProductSearchResponse: Codable, Sendable {
-    public let products: [ProductSearchItemResponse]
+    public let pagination: ProductSearchPagination
+    public let results: [ProductSearchResultItemResponse]
 }
 
 // MARK: - Mock Data
 
-public extension ProductSearchItemResponse {
-    static var mock: ProductSearchItemResponse {
+public extension ProductSearchResultItemResponse {
+    static var mock: ProductSearchResultItemResponse {
         mock(id: 1)
     }
 
-    static func mock(id: Int) -> ProductSearchItemResponse {
-        ProductSearchItemResponse(
+    static func mock(id: Int) -> ProductSearchResultItemResponse {
+        ProductSearchResultItemResponse(
+            id: id,
             name: "Sample Product",
             brand: .tesco,
             category: ProductSearchItemCategory(
@@ -94,11 +95,10 @@ public extension ProductSearchItemResponse {
                 recommendedStorageLocation: .fridge),
             amount: 500,
             unit: "g",
-            icon: "carrot.fill",
-            source: ProductSearchItemSource(id: id, ref: "sample-\(id)"))
+            icon: "carrot.fill")
     }
 
-    static func mocks(count: Int) -> [ProductSearchItemResponse] {
+    static func mocks(count: Int) -> [ProductSearchResultItemResponse] {
         (1...count).map { mock(id: $0) }
     }
 }
