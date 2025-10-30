@@ -115,11 +115,10 @@ public final class Inventory {
         category: ProductSearchItemCategory,
         categorySuggestions: InventorySuggestionsResponse?,
         inventoryItemId: Int,
-        productId: Int,
         icon: String)
     {
         let newItems = Array(
-            repeating: InventoryItem(from: request, category: category, id: inventoryItemId, productId: productId, icon: icon),
+            repeating: InventoryItem(from: request, category: category, id: inventoryItemId, icon: icon),
             count: request.quantity)
 
         items.append(contentsOf: newItems)

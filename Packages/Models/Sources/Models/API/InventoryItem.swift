@@ -78,6 +78,7 @@ public struct AddInventoryItemRequest: Codable, Sendable {
     }
 
     public struct ProductData: Codable, Sendable {
+        public let id: Int
         public let name: String
         public let brand: String
         public let expiryType: ExpiryType
@@ -86,10 +87,9 @@ public struct AddInventoryItemRequest: Codable, Sendable {
         public let unit: String?
         public let amount: Double?
         public let categoryId: Int
-        public let sourceId: Int
-        public let sourceRef: String
 
         public init(
+            id: Int,
             name: String,
             brand: String,
             expiryType: ExpiryType,
@@ -97,10 +97,9 @@ public struct AddInventoryItemRequest: Codable, Sendable {
             barcode: String?,
             unit: String?,
             amount: Double?,
-            categoryId: Int,
-            sourceId: Int,
-            sourceRef: String)
+            categoryId: Int)
         {
+            self.id = id
             self.name = name
             self.brand = brand
             self.expiryType = expiryType
@@ -109,8 +108,6 @@ public struct AddInventoryItemRequest: Codable, Sendable {
             self.unit = unit
             self.amount = amount
             self.categoryId = categoryId
-            self.sourceId = sourceId
-            self.sourceRef = sourceRef
         }
     }
 }
@@ -188,7 +185,6 @@ public extension InventoryItem {
         from request: AddInventoryItemRequest,
         category: ProductSearchItemCategory,
         id: Int,
-        productId: Int,
         icon: String,
         createdAt: Date = Date())
     {
@@ -201,7 +197,7 @@ public extension InventoryItem {
         expiryDate = request.item.expiryDate
         expiryType = request.item.expiryType
         product = Product(
-            id: productId,
+            id: request.product.id,
             name: request.product.name,
             unit: request.product.unit,
             brand: Brand(from: request.product.brand),
@@ -347,47 +343,6 @@ public extension Brand {
     }
 }
 
-// MARK: - Inventory Preview
-
-public struct InventoryPreviewRequest: Codable, Sendable {
-    public let product: PreviewProduct
-
-    public init(product: PreviewProduct) {
-        self.product = product
-    }
-
-    public struct PreviewProduct: Codable, Sendable {
-        public let name: String
-        public let brand: Brand
-        public let barcode: String?
-        public let unit: String?
-        public let amount: Double?
-        public let categoryId: Int
-        public let sourceId: Int
-        public let sourceRef: String
-
-        public init(
-            name: String,
-            brand: Brand,
-            barcode: String? = nil,
-            unit: String? = nil,
-            amount: Double? = nil,
-            categoryId: Int,
-            sourceId: Int,
-            sourceRef: String)
-        {
-            self.name = name
-            self.brand = brand
-            self.barcode = barcode
-            self.unit = unit?.lowercased()
-            self.amount = amount
-            self.categoryId = categoryId
-            self.sourceId = sourceId
-            self.sourceRef = sourceRef
-        }
-    }
-}
-
 public protocol Prediction {
     var purchaseCount: Int { get }
     var averageUsage: Double? { get }
@@ -432,7 +387,6 @@ public struct InventoryPredictionsResponse: Codable, Sendable {
 }
 
 public struct InventoryPreviewAndSuggestionsResponse: Codable, Sendable {
-    public let productId: Int
     public let predictions: InventoryPredictionsResponse
     public let suggestions: InventorySuggestionsResponse
 }

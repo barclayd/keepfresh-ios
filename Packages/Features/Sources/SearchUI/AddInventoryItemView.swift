@@ -26,9 +26,9 @@ public struct AddInventoryItemView: View {
     @State private var formState = InventoryFormState()
     @State private var usageGenerator = UsageGenerator()
 
-    public let productSearchItem: ProductSearchItemResponse
+    public let productSearchItem: ProductSearchResultItemResponse
 
-    public init(productSearchItem: ProductSearchItemResponse) {
+    public init(productSearchItem: ProductSearchResultItemResponse) {
         self.productSearchItem = productSearchItem
     }
 
@@ -86,36 +86,28 @@ public struct AddInventoryItemView: View {
                     consumptionPredictionChangedAt: usageGenerator.percentagePrediction != nil ? Date() : nil),
             product: AddInventoryItemRequest
                 .ProductData(
+                    id: productSearchItem.id,
                     name: productSearchItem.name,
                     brand: productSearchItem
                         .brand.name,
                     expiryType: recommendedExpiryType,
                     storageLocation: recommendedStorageLocation,
-                    barcode: productSearchItem
-                        .source.ref,
+                    barcode: nil,
                     unit: productSearchItem
                         .unit?.lowercased(),
                     amount: productSearchItem
                         .amount,
                     categoryId: productSearchItem
-                        .category.id,
-                    sourceId: productSearchItem
-                        .source.id,
-                    sourceRef: productSearchItem
-                        .source.ref), quantity: formState.quantity)
+                        .category.id), quantity: formState.quantity)
 
         let temporaryInventoryItemId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
-
-        guard let productId = preview.productId else {
-            return
-        }
 
         inventory.addItem(
             request: request,
             category: productSearchItem.category,
             categorySuggestions: preview.suggestions,
             inventoryItemId: temporaryInventoryItemId,
-            productId: productId, icon: productSearchItem.icon)
+            icon: productSearchItem.icon)
 
         router.popToRoot()
     }
@@ -191,30 +183,29 @@ public struct AddInventoryItemView: View {
                                 Spacer()
                             }
 
-                            if let productId = preview.productId {
-                                GridRow {
-                                    Spacer()
-                                    VStack(spacing: 0) {
-                                        Text("\(inventory.productsByLocation[productId]?[.fridge]?.count ?? 0)").fontWeight(.bold)
-                                            .font(.headline).foregroundStyle(.blue700)
-                                            .foregroundStyle(.blue700)
-                                        Text("In Fridge").fontWeight(.light).font(.subheadline)
-                                            .foregroundStyle(.blue700)
-                                    }
-                                    Spacer()
-                                    Image(systemName: "house")
-                                        .font(.system(size: 32)).fontWeight(.bold)
+                            GridRow {
+                                Spacer()
+                                VStack(spacing: 0) {
+                                    Text("\(inventory.productsByLocation[productSearchItem.id]?[.fridge]?.count ?? 0)").fontWeight(.bold)
+                                        .font(.headline).foregroundStyle(.blue700)
                                         .foregroundStyle(.blue700)
-                                    Spacer()
-                                    VStack(spacing: 0) {
-                                        Text("\(inventory.productsByLocation[productId]?[.freezer]?.count ?? 0)").fontWeight(.bold)
-                                            .font(.headline).foregroundStyle(.blue700)
-                                        Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                            .blue700)
-                                    }
-                                    Spacer()
+                                    Text("In Fridge").fontWeight(.light).font(.subheadline)
+                                        .foregroundStyle(.blue700)
                                 }
+                                Spacer()
+                                Image(systemName: "house")
+                                    .font(.system(size: 32)).fontWeight(.bold)
+                                    .foregroundStyle(.blue700)
+                                Spacer()
+                                VStack(spacing: 0) {
+                                    Text("\(inventory.productsByLocation[productSearchItem.id]?[.freezer]?.count ?? 0)").fontWeight(.bold)
+                                        .font(.headline).foregroundStyle(.blue700)
+                                    Text("In Freezer").fontWeight(.light).font(.subheadline).foregroundStyle(
+                                        .blue700)
+                                }
+                                Spacer()
                             }
+
                         }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                             maxWidth: .infinity,
                             alignment: .center)
@@ -308,16 +299,7 @@ public struct AddInventoryItemView: View {
         }
         .onAppear {
             Task {
-                let previewProduct = InventoryPreviewRequest.PreviewProduct(
-                    name: productSearchItem.name,
-                    brand: productSearchItem.brand,
-                    barcode: productSearchItem.source.ref,
-                    unit: productSearchItem.unit,
-                    amount: productSearchItem.amount,
-                    categoryId: productSearchItem.category.id,
-                    sourceId: productSearchItem.source.id,
-                    sourceRef: productSearchItem.source.ref)
-                await preview.fetchInventorySuggestions(product: previewProduct)
+                await preview.fetchInventorySuggestions(categoryId: productSearchItem.category.id, productId: productSearchItem.id)
             }
         }
         .onChange(of: preview.suggestions) { _, newSuggestions in

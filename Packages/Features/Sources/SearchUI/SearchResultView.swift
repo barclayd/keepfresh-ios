@@ -6,19 +6,33 @@ import SharedUI
 import SwiftUI
 
 public struct SearchResultView: View {
-    var products: [ProductSearchItemResponse]
+    var searchProducts: [ProductSearchResultItemResponse]
     var isLoading: Bool = false
+    var hasMorePages: Bool = false
+    var isLoadingMore: Bool = false
+    var onLoadMore: (() -> Void)?
 
     public var body: some View {
         ScrollView {
             LazyVStack(spacing: 20) {
-                ForEach(products) { product in
+                ForEach(searchProducts) { product in
                     NavigationLink(value: RouterDestination.addProduct(product: product)) {
-                        SearchResultCard(product: product)
+                        SearchResultCard(searchProduct: product)
                             .toolbarVisibility(.hidden, for: .tabBar)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .onAppear {
+                        if product.id == searchProducts.last?.id, hasMorePages, !isLoadingMore {
+                            print("searching more")
+                            onLoadMore?()
+                        }
+                    }
+                }
+
+                if isLoadingMore {
+                    ProgressView()
+                        .padding()
                 }
             }
             .padding(.top, 15)
@@ -30,17 +44,17 @@ public struct SearchResultView: View {
 }
 
 public struct SearchResultCard: View {
-    var product: ProductSearchItemResponse
+    var searchProduct: ProductSearchResultItemResponse
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
-                GenmojiView(name: product.icon, fontSize: 28, tint: .white200)
+                GenmojiView(name: searchProduct.icon, fontSize: 28, tint: .white200)
 
-                Text(product.name)
+                Text(searchProduct.name)
                     .font(.headline)
                     .fontWeight(.bold)
-                    .foregroundStyle(product.category.recommendedStorageLocation == .freezer ? .white200 : .blue700)
+                    .foregroundStyle(searchProduct.category.recommendedStorageLocation == .freezer ? .white200 : .blue700)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
                 Spacer()
@@ -53,26 +67,26 @@ public struct SearchResultCard: View {
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 10)
-            .background(product.category.recommendedStorageLocation.tileColor)
+            .background(searchProduct.category.recommendedStorageLocation.tileColor)
             .cornerRadius(20)
 
             VStack {
                 HStack {
-                    Text(product.category.path)
+                    Text(searchProduct.category.path)
                         .font(.subheadline).foregroundStyle(.gray500)
                     Spacer()
                 }
                 HStack {
-                    Text(product.brand.name)
+                    Text(searchProduct.brand.name)
                         .font(.subheadline)
-                        .foregroundStyle(product.brand.color)
+                        .foregroundStyle(searchProduct.brand.color)
 
-                    if let amount = product.amount, let unit = product.unit {
+                    if let amountFormatted = searchProduct.amountUnitFormatted {
                         Circle()
                             .frame(width: 4, height: 4)
                             .foregroundStyle(.blue700)
 
-                        Text("\(String(format: "%.0f", amount))\(unit)")
+                        Text(amountFormatted)
                             .foregroundStyle(.gray500)
                             .font(.subheadline)
                     }
@@ -87,7 +101,7 @@ public struct SearchResultCard: View {
                     topTrailingRadius: 0,
                     style: .continuous).fill(.white100))
         }
-        .background(product.category.recommendedStorageLocation.tileColor)
+        .background(searchProduct.category.recommendedStorageLocation.tileColor)
         .cornerRadius(20)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
     }
