@@ -48,7 +48,7 @@ public struct ProductSearchResultItemResponse: Identifiable, Hashable, Codable, 
     public let amount: Double?
     public let unit: String?
     public let icon: String
-    
+
     public var amountUnitFormatted: String? {
         guard let unit else { return nil }
         guard let amount else { return unit }

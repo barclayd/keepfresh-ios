@@ -57,11 +57,11 @@ extension InventoryItem {
 
 struct InventoryItemSheetStatsGridRows: View {
     @Environment(Inventory.self) var inventory
-    
+
     let pageIndex: Int
-    
+
     var inventoryItem: InventoryItem
-    
+
     var body: some View {
         Group {
             if pageIndex == 0 {
@@ -85,7 +85,7 @@ struct InventoryItemSheetStatsGridRows: View {
                         Text("Predicted use").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
-                
+
                 GridRow(alignment: .center) {
                     Text(inventoryItem.storageLocation.rawValue).fontWeight(.bold).font(.headline)
                     Image(systemName: inventoryItem.storageLocation.icon)
@@ -113,7 +113,7 @@ struct InventoryItemSheetStatsGridRows: View {
                                 .formattedElapsedTime).fontWeight(.bold).font(.headline)
                     }.foregroundStyle(.blue700)
                 }
-                
+
                 GridRow {
                     VStack(spacing: 0) {
                         Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.fridge]?.count ?? 0)")
@@ -137,7 +137,7 @@ struct InventoryItemSheetStatsGridRows: View {
 struct InventoryItemSheetStatsGrid: View {
     let pageIndex: Int
     let inventoryItem: InventoryItem
-    
+
     var body: some View {
         ViewThatFits(in: .horizontal) {
             Grid(alignment: .center, horizontalSpacing: 30, verticalSpacing: 10) {
@@ -168,19 +168,19 @@ enum SuggestionType {
 
 func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
     let date = Calendar.current.date(byAdding: .day, value: Int(medianNumberOfDays), to: Date())!
-    
+
     if date.timeUntil.totalDays == 0 {
         return "today"
     }
-    
+
     if date.timeUntil.totalDays == 1 {
         return "by tomorrow"
     }
-    
+
     if date.timeUntil.totalDays < 8 {
         return "on \(date.formatted(.dateTime.weekday(.wide)))"
     }
-    
+
     return "in \(date.timeUntil.formatted)"
 }
 
@@ -290,12 +290,12 @@ func suggestionView(suggestion: SuggestionType) -> some View {
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
-    
+
     @Environment(\.dismiss) private var dismiss
-    
+
     @State private var currentPage = 0
     @State private var showRemoveSheet: Bool = false
-    
+
     @State private var usageStats: ProductUsageStatsResponse? = nil
     @State private var isLoadingStats = true
 
@@ -303,32 +303,32 @@ struct InventoryItemSheetView: View {
     @State private var markAsDonePressed = false
 
     var inventoryItem: InventoryItem
-    
+
     init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
-        
+
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
     }
-    
+
     func updateInventoryItem(
         status: InventoryItemStatus? = nil,
         storageLocation: StorageLocation? = nil,
         percentageRemaining: Double? = nil)
     {
         let previousStatus = inventoryItem.status
-        
+
         if let status {
             inventory.updateItemStatus(id: inventoryItem.id, status: status)
         }
-        
+
         if let storageLocation {
             inventory.updateItemStorageLocation(id: inventoryItem.id, storageLocation: storageLocation)
         }
-        
+
         Task {
             let api = KeepFreshAPI()
-            
+
             do {
                 try await api.updateInventoryItem(
                     for: inventoryItem.id,
@@ -337,58 +337,57 @@ struct InventoryItemSheetView: View {
                         storageLocation: storageLocation,
                         percentageRemaining: percentageRemaining))
                 print("Updated inventoryItem with id: \(inventoryItem.id)")
-                
-                let feedbackType: SensoryFeedback
-                if let status {
+
+                let feedbackType: SensoryFeedback = if let status {
                     switch status {
                     case .opened:
-                        feedbackType = .selection
+                        .selection
                     case .discarded:
-                        feedbackType = .warning
+                        .warning
                     case .consumed:
-                        feedbackType = .success
+                        .success
                     case .unopened:
-                        feedbackType = .success
+                        .success
                     }
                 } else {
-                    feedbackType = .success
+                    .success
                 }
-                
+
                 actionCompleted = (!actionCompleted.triggered, feedbackType)
-                
+
                 dismiss()
-                
+
             } catch {
                 print("Failed to update inventory item: \(error)")
-                
+
                 await MainActor.run {
                     inventory.updateItemStatus(id: inventoryItem.id, status: previousStatus)
                 }
             }
         }
     }
-    
+
     func onOpen() {
         updateInventoryItem(status: .opened)
     }
-    
+
     func onMarkAsDone(wastePercentage: Double) {
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
-    
+
     func onMove(storageLocation: StorageLocation) {
         updateInventoryItem(storageLocation: storageLocation)
     }
-    
+
     var storageLocationToExtendExpiry: StorageLocation? {
         guard let suggestions = SuggestionsCache.shared.getSuggestions(for: inventoryItem.product.category.id) else {
             return nil
         }
-        
+
         let pantryShelfLife = suggestions.shelfLifeInDays.unopened.pantry
         let fridgeShelfLife = suggestions.shelfLifeInDays.unopened.fridge
         let freezerShelfLife = suggestions.shelfLifeInDays.unopened.freezer
-        
+
         if inventoryItem.storageLocation == .pantry,
            let pantryShelfLife,
            let fridgeShelfLife,
@@ -396,7 +395,7 @@ struct InventoryItemSheetView: View {
         {
             return .fridge
         }
-        
+
         if inventoryItem.storageLocation == .pantry,
            let pantryShelfLife,
            let freezerShelfLife,
@@ -404,7 +403,7 @@ struct InventoryItemSheetView: View {
         {
             return .freezer
         }
-        
+
         if inventoryItem.storageLocation == .fridge,
            let fridgeShelfLife,
            let freezerShelfLife,
@@ -412,46 +411,46 @@ struct InventoryItemSheetView: View {
         {
             return .freezer
         }
-        
+
         return nil
     }
-    
+
     var buyingRecommendation: BuyingRecommendation? {
         guard let productMedianUsage = usageStats?.product.medianUsage, let categoryMedianUsage = usageStats?.category.medianUsage else {
             return nil
         }
-        
+
         if inventoryItem.consumptionPrediction >= 75, inventoryItem.consumptionPrediction >= Int(categoryMedianUsage) {
             return .buyProduct
         }
-        
+
         if productMedianUsage >= 75, productMedianUsage >= categoryMedianUsage {
             return .buyProduct
         }
-        
+
         if productMedianUsage < categoryMedianUsage, categoryMedianUsage >= 75 {
             return .buyCategory
         }
-        
+
         return .buyAlternative
     }
-    
+
     var hasEarlierExpiringDuplicate: Bool {
         let inventoryItemsForStorageLocation = inventory.productsByLocation[inventoryItem.product.id]?[inventoryItem.storageLocation] ?? []
-        
+
         guard !inventoryItemsForStorageLocation.isEmpty else { return false }
-        
+
         let duplicateProducts = inventoryItemsForStorageLocation.filter { $0.product.id == inventoryItem.product.id }
-        
+
         guard duplicateProducts.count > 1 else { return false }
-        
+
         let itemWithShorterExpiryDate = duplicateProducts.first { $0.expiryDate.timeUntil.totalDays <
             inventoryItem.expiryDate.timeUntil.totalDays
         }
-        
+
         return itemWithShorterExpiryDate != nil
     }
-    
+
     var body: some View {
         Group {
             VStack(spacing: 10) {
@@ -466,8 +465,8 @@ struct InventoryItemSheetView: View {
                     Spacer()
                     Menu {
                         Button {
-                            dismiss()
                             inventory.deleteItem(id: inventoryItem.id)
+                            dismiss()
                         } label: {
                             Label("Remove", systemImage: "arrow.uturn.backward")
                         }
@@ -476,7 +475,18 @@ struct InventoryItemSheetView: View {
                         }
                         Button {
                             dismiss()
-                            router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(id: inventoryItem.product.id, name: inventoryItem.product.name, brand: inventoryItem.product.brand, category: ProductSearchItemCategory(id: inventoryItem.product.category.id, name: inventoryItem.product.category.name, path: inventoryItem.product.category.pathDisplay, recommendedStorageLocation: inventoryItem.storageLocation), amount: inventoryItem.product.amount, unit: inventoryItem.product.unit, icon: inventoryItem.product.category.icon)))
+                            router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(
+                                id: inventoryItem.product.id,
+                                name: inventoryItem.product.name,
+                                brand: inventoryItem.product.brand,
+                                category: ProductSearchItemCategory(
+                                    id: inventoryItem.product.category.id,
+                                    name: inventoryItem.product.category.name,
+                                    path: inventoryItem.product.category.pathDisplay,
+                                    recommendedStorageLocation: inventoryItem.storageLocation),
+                                amount: inventoryItem.product.amount,
+                                unit: inventoryItem.product.unit,
+                                icon: inventoryItem.product.category.icon)))
                         } label: {
                             Label("Add another", systemImage: "plus.square.fill.on.square.fill")
                         }
@@ -485,18 +495,18 @@ struct InventoryItemSheetView: View {
                             .font(.system(size: 24))
                             .foregroundStyle(.gray600)
                     }.tint(.green500)
-                    
+
                 }.padding(.top, 10)
-                
+
                 GenmojiView(
                     name: inventoryItem.product.category.icon,
                     fontSize: 80,
                     tint: inventoryItem.consumptionUrgency.tileColor.background)
                     .padding(.bottom, -8)
-                
+
                 Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700).lineLimit(2)
                     .lineSpacing(0).padding(.bottom, -8).multilineTextAlignment(.center)
-                
+
                 HStack {
                     Text(inventoryItem.product.category.name)
                         .font(.callout)
@@ -523,10 +533,10 @@ struct InventoryItemSheetView: View {
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                 .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
                 .offset(x: 0, y: -8)
-                
+
                 Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                     suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
-                    
+
                     if hasEarlierExpiringDuplicate {
                         suggestionView(suggestion: .multipleInInventory)
                     } else if let medianDaysToOutcome = usageStats?.product.medianDaysToOutcome,
@@ -544,12 +554,12 @@ struct InventoryItemSheetView: View {
                 .padding(.bottom, 8)
                 .task {
                     let api = KeepFreshAPI()
-                    
+
                     usageStats = try? await api.getProductUsageStats(productId: inventoryItem.product.id)
                     isLoadingStats = false
                 }
                 .redactedShimmer(when: isLoadingStats)
-                
+
                 Button(action: {
                     markAsDonePressed.toggle()
                     showRemoveSheet = true
@@ -571,7 +581,7 @@ struct InventoryItemSheetView: View {
                             .fill(.green300))
                 }
                 .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
-                
+
                 if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                     Button(action: nextBestAction.action) {
                         HStack(spacing: 10) {
@@ -586,7 +596,7 @@ struct InventoryItemSheetView: View {
                                     .font(.system(size: 18))
                                     .frame(width: 20, alignment: .center)
                             }
-                            
+
                             Text(nextBestAction.label)
                                 .font(.headline)
                                 .frame(width: 175, alignment: .center)

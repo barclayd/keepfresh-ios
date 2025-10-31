@@ -17,7 +17,7 @@ public struct KeepFreshAPI: Sendable {
             queryParameters: [
                 "search": query,
                 "country": country,
-                "page": String(page)
+                "page": String(page),
             ])
     }
 
@@ -64,11 +64,11 @@ public struct KeepFreshAPI: Sendable {
             path: "v2/inventory/items/preview",
             queryParameters: [
                 "categoryId": String(categoryId),
-                "productId": String(productId)
+                "productId": String(productId),
             ])
     }
-    
-    public func deleteInventoryItem(for itemId: Int) async throws -> Void {
+
+    public func deleteInventoryItem(for itemId: Int) async throws {
         try await client.delete(path: "v2/inventory/items/\(itemId)")
     }
 
