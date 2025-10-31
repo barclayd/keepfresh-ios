@@ -177,6 +177,22 @@ public final class Inventory {
         }
     }
 
+    public func deleteItem(id: Int) {
+        Task.detached { [weak self] in
+            do {
+                try await self?.api.deleteInventoryItem(for: id)
+                
+                await MainActor.run { [weak self] in
+                    guard let index = self?.items.firstIndex(where: { $0.id == id }) else { return }
+
+                    self?.items.remove(at: index)
+                }
+            } catch {
+                return
+            }
+        }
+    }
+
     public func updateItemStorageLocation(id: Int, storageLocation: StorageLocation) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 

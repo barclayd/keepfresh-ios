@@ -10,12 +10,13 @@ public struct KeepFreshAPI: Sendable {
 
     // MARK: - Products
 
-    public func searchProducts(query: String, page: Int = 1) async throws -> ProductSearchResponse {
+    public func searchProducts(query: String, page: Int = 1, country: String = "GB") async throws -> ProductSearchResponse {
         try await client.fetch(
             ProductSearchResponse.self,
             path: "v2/products",
             queryParameters: [
                 "search": query,
+                "country": country,
                 "page": String(page)
             ])
     }
@@ -65,6 +66,10 @@ public struct KeepFreshAPI: Sendable {
                 "categoryId": String(categoryId),
                 "productId": String(productId)
             ])
+    }
+    
+    public func deleteInventoryItem(for itemId: Int) async throws -> Void {
+        try await client.delete(path: "v2/inventory/items/\(itemId)")
     }
 
     // MARK: - Genmoji

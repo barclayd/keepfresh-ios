@@ -274,14 +274,14 @@ public struct Product: Codable, Sendable {
 }
 
 public struct CategoryDetails: Codable, Sendable {
-    public init(icon: String? = nil, id: Int, name: String, pathDisplay: String) {
+    public init(icon: String, id: Int, name: String, pathDisplay: String) {
         self.id = id
         self.icon = icon
         self.name = name
         self.pathDisplay = pathDisplay
     }
 
-    public let icon: String?
+    public let icon: String
     public let id: Int
     public let name: String
     public let pathDisplay: String

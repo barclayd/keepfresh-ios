@@ -33,9 +33,9 @@ class Search {
     
     private var searchTask: Task<Void, Never>?
     
-    private let onSaveSearch: (String, StorageLocation, String?) -> Void
+    private let onSaveSearch: (String, StorageLocation, String) -> Void
     
-    init(onSaveSearch: @escaping (String, StorageLocation, String?) -> Void) {
+    init(onSaveSearch: @escaping (String, StorageLocation, String) -> Void) {
         self.onSaveSearch = onSaveSearch
     }
     
@@ -69,7 +69,7 @@ class Search {
         let api = KeepFreshAPI()
         
         do {
-            let searchResponse = try await api.searchProducts(query: searchTerm, page: currentPage)
+            let searchResponse = try await api.searchProducts(query: searchTerm, page: currentPage, country: Locale.current.region?.identifier ?? "GB")
             searchResults = searchResponse.results
             hasMorePages = searchResponse.pagination.hasNext
             
@@ -77,6 +77,10 @@ class Search {
             lastSearchedTerm = searchTerm
             
             print("Search successful: Found \(searchResults.count) products")
+            
+            if searchResults.isEmpty {
+                return
+            }
             
             let (locationCounts, iconCounts) = searchResults.prefix(10).reduce(into: (
                 [StorageLocation: Int](),
@@ -88,7 +92,7 @@ class Search {
             }
             
             let mostCommonStorageLocation = locationCounts.max(by: { $0.value < $1.value })?.key
-            let mostCommonIcon = iconCounts.max(by: { $0.value < $1.value })?.key
+            let mostCommonIcon = iconCounts.max(by: { $0.value < $1.value })?.key ?? iconCounts.keys.first!
             
             if let storageLocation = mostCommonStorageLocation {
                 onSaveSearch(searchTerm, storageLocation, mostCommonIcon)
@@ -137,7 +141,7 @@ public struct SearchView: View {
         UIScrollView.appearance().bounces = false
     }
     
-    private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, icon: String?) {
+    private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, icon: String) {
         let existingSearch = recentSearches.first(where: { $0.text.lowercased() == text.lowercased() })
         
         guard existingSearch == nil else {

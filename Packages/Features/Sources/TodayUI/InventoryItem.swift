@@ -85,7 +85,7 @@ public struct InventoryItemView: View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
                 GenmojiView(
-                    name: inventoryItem.product.category.icon ?? "chicken",
+                    name: inventoryItem.product.category.icon,
                     fontSize: 35,
                     tint: inventoryItem.consumptionUrgency.tileColor.background)
 

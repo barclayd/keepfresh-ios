@@ -3,6 +3,7 @@ import Environment
 import Extensions
 import Models
 import Network
+import Router
 import SharedUI
 import SwiftUI
 
@@ -288,6 +289,8 @@ func suggestionView(suggestion: SuggestionType) -> some View {
 
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
+    @Environment(Router.self) var router
+    
     @Environment(\.dismiss) private var dismiss
     
     @State private var currentPage = 0
@@ -461,15 +464,32 @@ struct InventoryItemSheetView: View {
                             .foregroundStyle(.gray600)
                     }
                     Spacer()
-                    Button(action: {}) {
+                    Menu {
+                        Button {
+                            dismiss()
+                            inventory.deleteItem(id: inventoryItem.id)
+                        } label: {
+                            Label("Remove", systemImage: "arrow.uturn.backward")
+                        }
+                        Button {} label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        Button {
+                            dismiss()
+                            router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(id: inventoryItem.product.id, name: inventoryItem.product.name, brand: inventoryItem.product.brand, category: ProductSearchItemCategory(id: inventoryItem.product.category.id, name: inventoryItem.product.category.name, path: inventoryItem.product.category.pathDisplay, recommendedStorageLocation: inventoryItem.storageLocation), amount: inventoryItem.product.amount, unit: inventoryItem.product.unit, icon: inventoryItem.product.category.icon)))
+                        } label: {
+                            Label("Add another", systemImage: "plus.square.fill.on.square.fill")
+                        }
+                    } label: {
                         Image(systemName: "ellipsis.circle.fill")
                             .font(.system(size: 24))
                             .foregroundStyle(.gray600)
-                    }
+                    }.tint(.green500)
+                    
                 }.padding(.top, 10)
                 
                 GenmojiView(
-                    name: inventoryItem.product.category.icon ?? "chicken",
+                    name: inventoryItem.product.category.icon,
                     fontSize: 80,
                     tint: inventoryItem.consumptionUrgency.tileColor.background)
                     .padding(.bottom, -8)

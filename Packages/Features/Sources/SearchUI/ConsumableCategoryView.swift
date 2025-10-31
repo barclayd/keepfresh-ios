@@ -4,7 +4,7 @@ import SwiftUI
 
 struct CheckToggleStyle: ToggleStyle {
     @Environment(\.isEnabled) var isEnabled
-
+    
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
@@ -37,7 +37,7 @@ private extension InventoryItemFormType {
             false
         }
     }
-
+    
     var icon: String {
         switch self {
         case .Expiry:
@@ -55,42 +55,35 @@ private extension InventoryItemFormType {
 private extension Date {
     var formattedWithOrdinal: String {
         let calendar = Calendar.current
-        let day = calendar.component(.day, from: self)
-        let suffix = switch day {
-        case 1, 21, 31: "st"
-        case 2, 22: "nd"
-        case 3, 23: "rd"
-        default: "th"
-        }
-
-        let currentYear = calendar.component(.year, from: Date())
-        let dateYear = calendar.component(.year, from: self)
-
-        let formatter = DateFormatter()
-        if dateYear != currentYear {
-            formatter.dateFormat = "d'\(suffix)' MMMM yy"
-        } else {
-            formatter.dateFormat = "d'\(suffix)' MMMM"
-        }
-
-        return formatter.string(from: self)
+        let dayNum = calendar.component(.day, from: self)
+        let showYear = !calendar.isDate(self, equalTo: .now, toGranularity: .year)
+            
+        let ordinal = NumberFormatter.localizedString(
+            from: NSNumber(value: dayNum),
+            number: .ordinal)
+            
+        let month = formatted(.dateTime.month(.wide))
+        let year = showYear ? " \(formatted(.dateTime.year(.twoDigits)))" : ""
+            
+        return "\(ordinal) \(month)\(year)"
     }
-
+    
     var formattedAbbreviation: String {
         let calendar = Calendar.current
-        let currentYear = calendar.component(.year, from: Date())
-        let dateYear = calendar.component(.year, from: self)
-
-        let formatter = DateFormatter()
-        if dateYear != currentYear {
-            formatter.dateFormat = "d MMM yy"
-        } else {
-            formatter.dateFormat = "d MMM"
-        }
-
-        return formatter.string(from: self)
+        let dayNum = calendar.component(.day, from: self)
+        let showYear = !calendar.isDate(self, equalTo: .now, toGranularity: .year)
+        
+        let ordinal = NumberFormatter.localizedString(
+            from: NSNumber(value: dayNum),
+            number: .ordinal
+        )
+        
+        let month = formatted(.dateTime.month(.abbreviated))
+        let year = showYear ? " \(formatted(.dateTime.year(.twoDigits)))" : ""
+        
+        return "\(ordinal) \(month)\(year)"
     }
-
+    
     var expiryDescription: String {
         let days = daysFromNow
         switch days {
@@ -106,13 +99,13 @@ private extension Date {
             return "Expires in \(days) days"
         }
     }
-
+    
     private var daysFromNow: Int {
         let calendar = Calendar.current
-
+        
         let startOfToday = calendar.startOfDay(for: Date.now)
         let startOfTarget = calendar.startOfDay(for: self)
-
+        
         let components = calendar.dateComponents([.day], from: startOfToday, to: startOfTarget)
         return components.day ?? 0
     }
@@ -152,13 +145,13 @@ private extension InventoryItemFormType {
                     .fontWeight(.thin)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
+            
         case .Status:
             VStack(alignment: .leading, spacing: 0) {
                 Text(status.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
+            
         case .Storage:
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .lastTextBaseline, spacing: 0) {
@@ -172,7 +165,7 @@ private extension InventoryItemFormType {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
+            
         case .Quantity:
             VStack(alignment: .leading, spacing: 0) {
                 Text("\(quantity.wrappedValue)").foregroundStyle(.gray600)
@@ -180,7 +173,7 @@ private extension InventoryItemFormType {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
-
+    
     @ViewBuilder
     func overviewSwitch(isToggled: Binding<Bool>, quantity: Binding<Int>) -> some View {
         switch self {
@@ -190,10 +183,10 @@ private extension InventoryItemFormType {
                 .labelsHidden()
                 .disabled(true)
         case .Quantity:
-            Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
+            Stepper(value: quantity, in: 1 ... 10, step: 1) {}.tint(.blue700)
         }
     }
-
+    
     @MainActor
     @ViewBuilder
     func expandedContent(
@@ -221,12 +214,12 @@ struct InventoryItemOverview: View {
     @Binding var status: ProductSearchItemStatus
     @Binding var storageLocation: StorageLocation
     @Binding var expiryDate: Date
-
+    
     var isRecommendedExpiryDate: Bool
     var isRecommendedStorageLocation: Bool
-
+    
     let type: InventoryItemFormType
-
+    
     var body: some View {
         Group {
             if type.icon == "tin.open" {
@@ -244,14 +237,14 @@ struct InventoryItemOverview: View {
         .foregroundColor(.blue700)
         .frame(width: 40, height: 40)
         .background(Circle().fill(.blue200))
-
+        
         Text(type.rawValue)
             .fontWeight(.bold)
             .foregroundStyle(.blue700)
             .font(.headline)
             .lineLimit(1)
             .frame(width: 105, alignment: .leading)
-
+        
         type.overviewLabel(
             quantity: $quantity,
             status: $status,
@@ -259,18 +252,18 @@ struct InventoryItemOverview: View {
             storageLocation: $storageLocation,
             isRecommendedExpiryDate: isRecommendedExpiryDate,
             isRecommendedStorageLocation: isRecommendedStorageLocation)
-
+        
         Spacer()
-
+        
         type.overviewSwitch(isToggled: $isMarkedAsReady, quantity: $quantity)
     }
 }
 
 struct IventoryItemStatusContent: View {
     @Binding var status: ProductSearchItemStatus
-
+    
     @State private var showStoragePicker = false
-
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -279,13 +272,13 @@ struct IventoryItemStatusContent: View {
                     .fontWeight(.bold)
                     .foregroundColor(.blue700)
                     .frame(width: 40, height: 40)
-
+                
                 Text("Status")
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
-
+                
                 Picker("Select inventory item status", selection: $status) {
                     ForEach(ProductSearchItemStatus.allCases) { statusType in
                         Text(statusType.rawValue.capitalized).foregroundStyle(.gray600)
@@ -293,10 +286,10 @@ struct IventoryItemStatusContent: View {
                             .lineLimit(1).border(.yellow)
                     }
                 }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 Spacer()
             }
-
+            
         }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
             .background(
                 UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
@@ -310,9 +303,9 @@ struct IventoryItemStatusContent: View {
 
 struct InventoryItemStorageContent: View {
     @Binding var storageLocation: StorageLocation
-
+    
     @State private var showStoragePicker = false
-
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -321,13 +314,13 @@ struct InventoryItemStorageContent: View {
                     .fontWeight(.bold)
                     .foregroundColor(.blue700)
                     .frame(width: 40, height: 40)
-
+                
                 Text("Location")
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
-
+                
                 Picker("Select storage location", selection: $storageLocation) {
                     ForEach(StorageLocation.allCases) { storageLocation in
                         Text(storageLocation.rawValue.capitalized).foregroundStyle(.gray600)
@@ -335,10 +328,10 @@ struct InventoryItemStorageContent: View {
                             .lineLimit(1).border(.yellow)
                     }
                 }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 Spacer()
             }
-
+            
         }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
             .background(
                 UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
@@ -352,11 +345,11 @@ struct InventoryItemStorageContent: View {
 
 struct InventoryItemExpiryDateContent: View {
     @Binding var expiryDate: Date
-
+    
     @State private var showDatePicker = false
-
+    
     @State private var expiryType: ExpiryType = .BestBefore
-
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -365,13 +358,13 @@ struct InventoryItemExpiryDateContent: View {
                     .fontWeight(.bold)
                     .foregroundColor(.blue700)
                     .frame(width: 40, height: 40)
-
+                
                 Text(expiryType.rawValue)
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
-
+                
                 Button(action: { showDatePicker.toggle() }) {
                     Text(expiryDate.formattedWithOrdinal)
                         .foregroundStyle(.gray600)
@@ -379,10 +372,10 @@ struct InventoryItemExpiryDateContent: View {
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-
+                
                 Spacer()
             }
-
+            
             if showDatePicker {
                 DatePicker(
                     "Expiry",
@@ -390,20 +383,20 @@ struct InventoryItemExpiryDateContent: View {
                     displayedComponents: [.date])
                     .datePickerStyle(.graphical).colorInvert().colorMultiply(.blue400)
             }
-
+            
             HStack {
                 Image(systemName: "calendar.badge.exclamationmark")
                     .font(.system(size: 21))
                     .fontWeight(.bold)
                     .foregroundColor(.blue700)
                     .frame(width: 40, height: 40)
-
+                
                 Text("Expiry type")
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
-
+                
                 Picker("Select expiry type", selection: $expiryType) {
                     ForEach(ExpiryType.allCases) { expiryType in
                         Text(expiryType.rawValue).foregroundStyle(.gray600)
@@ -411,10 +404,10 @@ struct InventoryItemExpiryDateContent: View {
                             .lineLimit(1).border(.yellow)
                     }
                 }.labelsHidden().tint(.gray600).padding(.horizontal, -12).frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 Spacer()
             }
-
+            
         }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
             .background(
                 UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
@@ -429,21 +422,21 @@ struct InventoryItemExpiryDateContent: View {
 public struct InventoryCategory: View {
     @State private var isExpandedToggled: Bool = false
     @State private var isMarkedAsReady: Bool = true
-
+    
     @Binding var quantity: Int
     @Binding var status: ProductSearchItemStatus
     @Binding var expiryDate: Date
     @Binding var storageLocation: StorageLocation
-
+    
     var isRecommendedExpiryDate: Bool
     var isRecommendedStorageLocation: Bool
-
+    
     let type: InventoryItemFormType
-
+    
     var isToggable: Bool {
         isExpandedToggled && type.isExapndable
     }
-
+    
     public var body: some View {
         VStack(spacing: 0) {
             HStack {

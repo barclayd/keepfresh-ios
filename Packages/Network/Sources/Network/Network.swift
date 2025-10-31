@@ -137,6 +137,49 @@ public actor APIClient {
             throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
         }
     }
+
+    public func delete(path: String) async throws {
+        let url = baseURL.appendingPathComponent(path)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        await addAuthorizationHeader(to: &request)
+
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        guard (200...299).contains(httpResponse.statusCode) else {
+            let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
+            throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
+        }
+    }
+
+    public func delete<T: Decodable>(
+        _ type: T.Type,
+        path: String) async throws -> T
+    {
+        let url = baseURL.appendingPathComponent(path)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        await addAuthorizationHeader(to: &request)
+
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        guard (200...299).contains(httpResponse.statusCode) else {
+            let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
+            throw APIError.httpError(statusCode: httpResponse.statusCode, responseBody: errorBody)
+        }
+
+        return try decoder.decode(type, from: data)
+    }
 }
 
 public enum APIError: LocalizedError {

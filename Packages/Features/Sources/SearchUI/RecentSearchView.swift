@@ -20,9 +20,7 @@ public struct RecentSearchItem: View {
         Button(action: { onTap(search.text) }) {
             HStack {
                 HStack(spacing: 10) {
-                    if let icon = search.icon {
-                        GenmojiView(name: icon, fontSize: 35, tint: colorConfiguration.background)
-                    }
+                    GenmojiView(name: search.icon, fontSize: 35, tint: colorConfiguration.background)
 
                     Text(search.text)
                         .font(.headline)
