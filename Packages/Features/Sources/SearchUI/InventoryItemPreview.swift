@@ -33,13 +33,6 @@ public class InventoryItemPreview {
         return nil
     }
 
-    public var productId: Int? {
-        if case let .loaded(response) = state {
-            return response.productId
-        }
-        return nil
-    }
-
     public var error: Error? {
         if case let .failed(error) = state { return error }
         return nil
@@ -47,18 +40,17 @@ public class InventoryItemPreview {
 
     public init() {}
 
-    public func fetchInventorySuggestions(product: InventoryPreviewRequest.PreviewProduct) async {
+    public func fetchInventorySuggestions(categoryId: Int, productId: Int) async {
         state = .loading
 
         let api = KeepFreshAPI()
 
         do {
-            let request = InventoryPreviewRequest(product: product)
-            let response = try await api.getInventoryPreview(request)
+            let response = try await api.getInventoryPreview(categoryId: categoryId, productId: productId)
 
             state = .loaded(response)
 
-            print("Fetched inventory preview for category: \(product.categoryId)")
+            print("Fetched inventory preview for category: \(categoryId)")
 
         } catch {
             state = .failed(error)

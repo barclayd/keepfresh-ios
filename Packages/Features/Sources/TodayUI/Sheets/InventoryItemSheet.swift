@@ -3,6 +3,7 @@ import Environment
 import Extensions
 import Models
 import Network
+import Router
 import SharedUI
 import SwiftUI
 
@@ -17,7 +18,7 @@ struct NextBestAction {
 extension InventoryItem {
     func getNextBestAction(
         onOpen: @escaping () -> Void,
-        onMove: @escaping (StorageLocation) -> Void) -> NextBestAction?
+        onMove: @escaping (StorageLocation, Date?) -> Void) -> NextBestAction?
     {
         switch (status, storageLocation) {
         case (.unopened, _):
@@ -33,21 +34,21 @@ extension InventoryItem {
                 icon: "refrigerator.fill",
                 textColor: .white100,
                 backgroundColor: .blue600,
-                action: { onMove(.fridge) })
+                action: { onMove(.fridge, nil) })
         case (.opened, .pantry):
             NextBestAction(
                 label: "Move to Fridge",
                 icon: "refrigerator.fill",
                 textColor: .white100,
                 backgroundColor: .blue600,
-                action: { onMove(.fridge) })
+                action: { onMove(.fridge, nil) })
         case (.opened, .fridge):
             NextBestAction(
                 label: "Move to Freezer",
                 icon: "snowflake",
                 textColor: .white200,
                 backgroundColor: .blue700,
-                action: { onMove(.freezer) })
+                action: { onMove(.freezer, nil) })
         default:
             nil
         }
@@ -286,15 +287,35 @@ func suggestionView(suggestion: SuggestionType) -> some View {
     }
 }
 
+enum Sheet: Identifiable {
+    case move(StorageLocation)
+    case open
+    case remove
+
+    var id: String {
+        switch self {
+        case .move: "move"
+        case .open: "open"
+        case .remove: "remove"
+        }
+    }
+}
+
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
+    @Environment(Router.self) var router
+
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
-    @State private var showRemoveSheet: Bool = false
+
+    @State private var showSheet: Sheet? = nil
 
     @State private var usageStats: ProductUsageStatsResponse? = nil
     @State private var isLoadingStats = true
+
+    @State private var actionCompleted: (triggered: Bool, feedbackType: SensoryFeedback) = (false, .success)
+    @State private var markAsDonePressed = false
 
     var inventoryItem: InventoryItem
 
@@ -331,6 +352,24 @@ struct InventoryItemSheetView: View {
                         storageLocation: storageLocation,
                         percentageRemaining: percentageRemaining))
                 print("Updated inventoryItem with id: \(inventoryItem.id)")
+
+                let feedbackType: SensoryFeedback = if let status {
+                    switch status {
+                    case .opened:
+                        .selection
+                    case .discarded:
+                        .warning
+                    case .consumed:
+                        .success
+                    case .unopened:
+                        .success
+                    }
+                } else {
+                    .success
+                }
+
+                actionCompleted = (!actionCompleted.triggered, feedbackType)
+
                 dismiss()
 
             } catch {
@@ -351,7 +390,7 @@ struct InventoryItemSheetView: View {
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
-    func onMove(storageLocation: StorageLocation) {
+    func onMove(storageLocation: StorageLocation, expiryDate _: Date? = nil) {
         updateInventoryItem(storageLocation: storageLocation)
     }
 
@@ -439,10 +478,64 @@ struct InventoryItemSheetView: View {
                             .foregroundStyle(.gray600)
                     }
                     Spacer()
+                    Menu {
+                        Button {
+                            inventory.deleteItem(id: inventoryItem.id)
+                            dismiss()
+                        } label: {
+                            Label("Remove", systemImage: "arrow.uturn.backward")
+                        }
+                        Button {} label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        Menu {
+                            Button {
+                                showSheet = .move(.pantry)
+                            } label: {
+                                Label("Pantry", systemImage: StorageLocation.pantry.icon)
+                            }.tint(StorageLocation.pantry.tileColor)
+                            Button {
+                                showSheet = .move(.fridge)
+                            } label: {
+                                Label("Fridge", systemImage: StorageLocation.fridge.icon)
+                            }.tint(StorageLocation.fridge.tileColor)
+                            Button {
+                                showSheet = .move(.freezer)
+                            } label: {
+                                Label("Freezer", systemImage: StorageLocation.freezer.icon)
+                            }.tint(StorageLocation.freezer.tileColor)
+                        } label: {
+                            Button {} label: {
+                                Label("Move", systemImage: "house.fill")
+                            }
+                        }
+                        Button {
+                            dismiss()
+                            router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(
+                                id: inventoryItem.product.id,
+                                name: inventoryItem.product.name,
+                                brand: inventoryItem.product.brand,
+                                category: ProductSearchItemCategory(
+                                    id: inventoryItem.product.category.id,
+                                    name: inventoryItem.product.category.name,
+                                    path: inventoryItem.product.category.pathDisplay,
+                                    recommendedStorageLocation: inventoryItem.storageLocation),
+                                amount: inventoryItem.product.amount,
+                                unit: inventoryItem.product.unit,
+                                icon: inventoryItem.product.category.icon)))
+                        } label: {
+                            Label("Add another", systemImage: "plus.square.fill.on.square.fill")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundStyle(.gray600)
+                    }.tint(.green500)
+
                 }.padding(.top, 10)
 
                 GenmojiView(
-                    name: inventoryItem.product.category.icon ?? "chicken",
+                    name: inventoryItem.product.category.icon,
                     fontSize: 80,
                     tint: inventoryItem.consumptionUrgency.tileColor.background)
                     .padding(.bottom, -8)
@@ -504,7 +597,8 @@ struct InventoryItemSheetView: View {
                 .redactedShimmer(when: isLoadingStats)
 
                 Button(action: {
-                    showRemoveSheet = true
+                    markAsDonePressed.toggle()
+                    showSheet = .remove
                 }) {
                     HStack(spacing: 10) {
                         Image(systemName: "takeoutbag.and.cup.and.straw.fill")
@@ -522,6 +616,7 @@ struct InventoryItemSheetView: View {
                         RoundedRectangle(cornerRadius: 20)
                             .fill(.green300))
                 }
+                .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
 
                 if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                     Button(action: nextBestAction.action) {
@@ -554,13 +649,30 @@ struct InventoryItemSheetView: View {
             }
             .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
             .padding(.horizontal, 10)
-            .sheet(isPresented: $showRemoveSheet) {
-                RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
-                    .presentationDetents(
-                        inventoryItem.product.name
-                            .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
-                    .presentationDragIndicator(.visible)
-                    .presentationCornerRadius(25)
+            .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
+            .sheet(item: $showSheet) { sheetType in
+                switch sheetType {
+                case let .move(storageLocation):
+                    MoveInventoryItemSheet(inventoryItem: inventoryItem, storageLocation: storageLocation, onMove: onMove)
+                        .presentationDetents(
+                            [.custom(AdaptiveMediumDetent.self)])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
+                case .open:
+                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                        .presentationDetents(
+                            inventoryItem.product.name
+                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
+                case .remove:
+                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                        .presentationDetents(
+                            inventoryItem.product.name
+                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
+                }
             }
         }
     }

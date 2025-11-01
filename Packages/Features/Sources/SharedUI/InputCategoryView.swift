@@ -5,6 +5,8 @@ import SwiftUI
 struct CheckToggleStyle: ToggleStyle {
     @Environment(\.isEnabled) var isEnabled
 
+    var customColor: Color?
+
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
@@ -13,7 +15,7 @@ struct CheckToggleStyle: ToggleStyle {
                 Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 21))
                     .fontWeight(.bold)
-                    .foregroundStyle(.blue700)
+                    .foregroundStyle(customColor ?? .blue700)
                     .accessibility(label: Text(configuration.isOn ? "Checked" : "Unchecked"))
                     .imageScale(.large)
             }
@@ -21,33 +23,48 @@ struct CheckToggleStyle: ToggleStyle {
     }
 }
 
-enum InventoryItemFormType: String, Codable {
-    case Expiry
-    case Storage
-    case Status
-    case Quantity
+public enum InventoryItemFormType {
+    case expiry(date: Binding<Date>, isRecommended: Bool)
+    case compactExpiry(date: Binding<Date>, isRecommended: Bool, expiryType: ExpiryType)
+    case storage(location: Binding<StorageLocation>, isRecommended: Bool)
+    case readOnlyStorage(location: StorageLocation, isRecommended: Bool)
+    case status(status: Binding<ProductSearchItemStatus>)
+    case quantity(quantity: Binding<Int>)
 }
 
 private extension InventoryItemFormType {
     var isExapndable: Bool {
         switch self {
-        case .Expiry, .Storage, .Status:
+        case .expiry, .storage, .status, .compactExpiry:
             true
-        case .Quantity:
+        case .quantity, .readOnlyStorage:
             false
         }
     }
 
     var icon: String {
         switch self {
-        case .Expiry:
+        case .expiry, .compactExpiry:
             "hourglass"
-        case .Storage:
+        case .storage, .readOnlyStorage:
             "house"
-        case .Status:
+        case .status:
             "tin.open"
-        case .Quantity:
+        case .quantity:
             "list.number"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .expiry, .compactExpiry:
+            "Expiry"
+        case .storage, .readOnlyStorage:
+            "Storage"
+        case .status:
+            "Status"
+        case .quantity:
+            "Quantity"
         }
     }
 }
@@ -55,40 +72,32 @@ private extension InventoryItemFormType {
 private extension Date {
     var formattedWithOrdinal: String {
         let calendar = Calendar.current
-        let day = calendar.component(.day, from: self)
-        let suffix = switch day {
-        case 1, 21, 31: "st"
-        case 2, 22: "nd"
-        case 3, 23: "rd"
-        default: "th"
-        }
+        let dayNum = calendar.component(.day, from: self)
+        let showYear = !calendar.isDate(self, equalTo: .now, toGranularity: .year)
 
-        let currentYear = calendar.component(.year, from: Date())
-        let dateYear = calendar.component(.year, from: self)
+        let ordinal = NumberFormatter.localizedString(
+            from: NSNumber(value: dayNum),
+            number: .ordinal)
 
-        let formatter = DateFormatter()
-        if dateYear != currentYear {
-            formatter.dateFormat = "d'\(suffix)' MMMM yy"
-        } else {
-            formatter.dateFormat = "d'\(suffix)' MMMM"
-        }
+        let month = formatted(.dateTime.month(.wide))
+        let year = showYear ? " \(formatted(.dateTime.year(.twoDigits)))" : ""
 
-        return formatter.string(from: self)
+        return "\(ordinal) \(month)\(year)"
     }
 
     var formattedAbbreviation: String {
         let calendar = Calendar.current
-        let currentYear = calendar.component(.year, from: Date())
-        let dateYear = calendar.component(.year, from: self)
+        let dayNum = calendar.component(.day, from: self)
+        let showYear = !calendar.isDate(self, equalTo: .now, toGranularity: .year)
 
-        let formatter = DateFormatter()
-        if dateYear != currentYear {
-            formatter.dateFormat = "d MMM yy"
-        } else {
-            formatter.dateFormat = "d MMM"
-        }
+        let ordinal = NumberFormatter.localizedString(
+            from: NSNumber(value: dayNum),
+            number: .ordinal)
 
-        return formatter.string(from: self)
+        let month = formatted(.dateTime.month(.abbreviated))
+        let year = showYear ? " \(formatted(.dateTime.year(.twoDigits)))" : ""
+
+        return "\(ordinal) \(month)\(year)"
     }
 
     var expiryDescription: String {
@@ -121,51 +130,44 @@ private extension Date {
 private extension InventoryItemFormType {
     @MainActor
     @ViewBuilder
-    func overviewLabel(
-        quantity: Binding<Int>,
-        status: Binding<ProductSearchItemStatus>,
-        expiryDate: Binding<Date>,
-        storageLocation: Binding<StorageLocation>,
-        isRecommendedExpiryDate: Bool,
-        isRecommendedStorageLocation: Bool) -> some View
-    {
+    func overviewLabel(customColor: Color? = nil) -> some View {
         switch self {
-        case .Expiry:
+        case let .expiry(date, isRecommended), let .compactExpiry(date, isRecommended, _):
             VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: 0) {
-                        Text(expiryDate.wrappedValue.formattedWithOrdinal).foregroundStyle(.gray600)
-                        if isRecommendedExpiryDate {
+                        Text(date.wrappedValue.formattedWithOrdinal).foregroundStyle(customColor ?? .gray600)
+                        if isRecommended {
                             Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                                 .offset(y: -8)
                         }
                     }
                     HStack(spacing: 0) {
-                        Text(expiryDate.wrappedValue.formattedAbbreviation).foregroundStyle(.gray600)
-                        if isRecommendedExpiryDate {
+                        Text(date.wrappedValue.formattedAbbreviation).foregroundStyle(customColor ?? .gray600)
+                        if isRecommended {
                             Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                                 .offset(y: -8)
                         }
                     }
                 }
-                Text(expiryDate.wrappedValue.expiryDescription).foregroundStyle(.black800).font(.footnote)
+                Text(date.wrappedValue.expiryDescription).foregroundStyle(customColor ?? .black800).font(.footnote)
                     .fontWeight(.thin)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case .Status:
+        case let .status(status):
             VStack(alignment: .leading, spacing: 0) {
                 Text(status.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case .Storage:
+        case let .storage(location, isRecommended):
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .lastTextBaseline, spacing: 0) {
-                    Image(systemName: storageLocation.wrappedValue.icon).font(.system(size: 24))
+                    Image(systemName: location.wrappedValue.icon).font(.system(size: 24))
                         .foregroundStyle(.gray600).padding(.trailing, 2)
-                    Text(storageLocation.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
-                    if isRecommendedStorageLocation {
+                    Text(location.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
+                    if isRecommended {
                         Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                             .offset(y: -8)
                     }
@@ -173,7 +175,21 @@ private extension InventoryItemFormType {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case .Quantity:
+        case let .readOnlyStorage(location, isRecommended):
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .lastTextBaseline, spacing: 0) {
+                    Image(systemName: location.icon).font(.system(size: 24))
+                        .foregroundStyle(customColor ?? .gray600).padding(.trailing, 2)
+                    Text(location.rawValue.capitalized).foregroundStyle(customColor ?? .gray600)
+                    if isRecommended {
+                        Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
+                            .offset(y: -8)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+        case let .quantity(quantity):
             VStack(alignment: .leading, spacing: 0) {
                 Text("\(quantity.wrappedValue)").foregroundStyle(.gray600)
             }
@@ -182,33 +198,33 @@ private extension InventoryItemFormType {
     }
 
     @ViewBuilder
-    func overviewSwitch(isToggled: Binding<Bool>, quantity: Binding<Int>) -> some View {
+    func overviewSwitch(isToggled: Binding<Bool>, customColor: Color? = nil) -> some View {
         switch self {
-        case .Expiry, .Status, .Storage:
+        case .expiry, .compactExpiry, .status, .storage, .readOnlyStorage:
             Toggle("Selected Expiry Date", isOn: isToggled)
-                .toggleStyle(CheckToggleStyle())
+                .toggleStyle(CheckToggleStyle(customColor: customColor))
                 .labelsHidden()
                 .disabled(true)
-        case .Quantity:
+        case let .quantity(quantity):
             Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
         }
     }
 
     @MainActor
     @ViewBuilder
-    func expandedContent(
-        status: Binding<ProductSearchItemStatus>,
-        storageLocation: Binding<StorageLocation>,
-        expiryDate: Binding<Date>) -> some View
-    {
+    func expandedContent(forceExpanded _: Bool) -> some View {
         switch self {
-        case .Expiry:
-            InventoryItemExpiryDateContent(expiryDate: expiryDate)
-        case .Status:
+        case let .expiry(date, _):
+            InventoryItemExpiryDateContent(expiryDate: date)
+        case let .compactExpiry(date, _, expiryType):
+            InventoryItemExpiryDateCompactContent(expiryDate: date, expiryType: expiryType)
+        case let .status(status):
             IventoryItemStatusContent(status: status)
-        case .Storage:
-            InventoryItemStorageContent(storageLocation: storageLocation)
-        default:
+        case let .storage(location, _):
+            InventoryItemStorageContent(storageLocation: location)
+        case let .readOnlyStorage(location, _):
+            InventoryItemReadOnlyStorageContent(storageLocation: location)
+        case .quantity:
             EmptyView()
         }
     }
@@ -217,15 +233,9 @@ private extension InventoryItemFormType {
 struct InventoryItemOverview: View {
     @Binding var isExpiryDateToggled: Bool
     @Binding var isMarkedAsReady: Bool
-    @Binding var quantity: Int
-    @Binding var status: ProductSearchItemStatus
-    @Binding var storageLocation: StorageLocation
-    @Binding var expiryDate: Date
-
-    var isRecommendedExpiryDate: Bool
-    var isRecommendedStorageLocation: Bool
 
     let type: InventoryItemFormType
+    let customColor: Color?
 
     var body: some View {
         Group {
@@ -245,24 +255,18 @@ struct InventoryItemOverview: View {
         .frame(width: 40, height: 40)
         .background(Circle().fill(.blue200))
 
-        Text(type.rawValue)
+        Text(type.title)
             .fontWeight(.bold)
-            .foregroundStyle(.blue700)
+            .foregroundStyle(customColor ?? .blue700)
             .font(.headline)
             .lineLimit(1)
             .frame(width: 105, alignment: .leading)
 
-        type.overviewLabel(
-            quantity: $quantity,
-            status: $status,
-            expiryDate: $expiryDate,
-            storageLocation: $storageLocation,
-            isRecommendedExpiryDate: isRecommendedExpiryDate,
-            isRecommendedStorageLocation: isRecommendedStorageLocation)
+        type.overviewLabel(customColor: customColor)
 
         Spacer()
 
-        type.overviewSwitch(isToggled: $isMarkedAsReady, quantity: $quantity)
+        type.overviewSwitch(isToggled: $isMarkedAsReady, customColor: customColor)
     }
 }
 
@@ -350,6 +354,44 @@ struct InventoryItemStorageContent: View {
     }
 }
 
+struct InventoryItemReadOnlyStorageContent: View {
+    let storageLocation: StorageLocation
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "house")
+                    .font(.system(size: 21))
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue700)
+                    .frame(width: 40, height: 40)
+
+                Text("Location")
+                    .foregroundStyle(.blue700)
+                    .font(.callout)
+                    .lineLimit(1)
+                    .frame(width: 105, alignment: .leading)
+
+                HStack {
+                    Text(storageLocation.rawValue.capitalized).foregroundStyle(.gray600)
+                        .font(.callout)
+                        .lineLimit(1).border(.yellow)
+                }.tint(.gray600).padding(.horizontal, -12).frame(maxWidth: .infinity, alignment: .leading)
+
+                Spacer()
+            }
+
+        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
+            .background(
+                UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                    topLeading: 0,
+                    bottomLeading: 20,
+                    bottomTrailing: 20,
+                    topTrailing: 0))
+                    .fill(.white100))
+    }
+}
+
 struct InventoryItemExpiryDateContent: View {
     @Binding var expiryDate: Date
 
@@ -372,7 +414,9 @@ struct InventoryItemExpiryDateContent: View {
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
 
-                Button(action: { showDatePicker.toggle() }) {
+                Button(action: {
+                    showDatePicker.toggle()
+                }) {
                     Text(expiryDate.formattedWithOrdinal)
                         .foregroundStyle(.gray600)
                         .font(.callout)
@@ -426,37 +470,77 @@ struct InventoryItemExpiryDateContent: View {
     }
 }
 
+struct InventoryItemExpiryDateCompactContent: View {
+    @Binding var expiryDate: Date
+
+    let expiryType: ExpiryType
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "calendar.badge.exclamationmark")
+                    .font(.system(size: 21))
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue700)
+                    .frame(width: 40, height: 40)
+
+                Text(expiryType.rawValue)
+                    .foregroundStyle(.blue700)
+                    .font(.callout)
+                    .lineLimit(1)
+                    .frame(width: 105, alignment: .leading)
+
+                DatePicker(
+                    "Expiry",
+                    selection: $expiryDate,
+                    displayedComponents: [.date])
+                    .datePickerStyle(.compact).labelsHidden()
+
+                Spacer()
+            }
+        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
+            .background(
+                UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                    topLeading: 0,
+                    bottomLeading: 20,
+                    bottomTrailing: 20,
+                    topTrailing: 0))
+                    .fill(.white100))
+    }
+}
+
 public struct InventoryCategory: View {
     @State private var isExpandedToggled: Bool = false
     @State private var isMarkedAsReady: Bool = true
 
-    @Binding var quantity: Int
-    @Binding var status: ProductSearchItemStatus
-    @Binding var expiryDate: Date
-    @Binding var storageLocation: StorageLocation
-
-    var isRecommendedExpiryDate: Bool
-    var isRecommendedStorageLocation: Bool
-
     let type: InventoryItemFormType
+    let storageLocation: StorageLocation
+    let forceExpanded: Bool
+    let customColor: (Color, Color)?
+
+    public init(
+        type: InventoryItemFormType,
+        storageLocation: StorageLocation,
+        forceExpanded: Bool = false,
+        customColor: (Color, Color)? = nil)
+    {
+        self.type = type
+        self.storageLocation = storageLocation
+        self.forceExpanded = forceExpanded
+        self.customColor = customColor
+    }
 
     var isToggable: Bool {
-        isExpandedToggled && type.isExapndable
+        forceExpanded || (isExpandedToggled && type.isExapndable)
     }
 
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
                 InventoryItemOverview(
-                    isExpiryDateToggled: $isExpandedToggled,
+                    isExpiryDateToggled: forceExpanded ? .constant(true) : $isExpandedToggled,
                     isMarkedAsReady: $isMarkedAsReady,
-                    quantity: $quantity,
-                    status: $status,
-                    storageLocation: $storageLocation,
-                    expiryDate: $expiryDate,
-                    isRecommendedExpiryDate: isRecommendedExpiryDate,
-                    isRecommendedStorageLocation: isRecommendedStorageLocation,
-                    type: type)
+                    type: type, customColor: customColor?.0)
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 10)
@@ -466,14 +550,14 @@ public struct InventoryCategory: View {
                     topLeading: 20,
                     bottomLeading: isToggable ? 0 : 20,
                     bottomTrailing: isToggable ? 0 : 20,
-                    topTrailing: 20)).fill(storageLocation.statsBackgroundTint))
+                    topTrailing: 20)).fill(customColor?.1 ?? storageLocation.statsBackgroundTint))
             .onTapGesture {
                 withAnimation(.easeInOut) {
                     isExpandedToggled.toggle()
                 }
             }
             if isToggable {
-                type.expandedContent(status: $status, storageLocation: $storageLocation, expiryDate: $expiryDate)
+                type.expandedContent(forceExpanded: forceExpanded)
             }
         }
         .transition(.move(edge: .top))

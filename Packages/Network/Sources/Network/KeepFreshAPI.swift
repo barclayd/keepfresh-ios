@@ -10,23 +10,27 @@ public struct KeepFreshAPI: Sendable {
 
     // MARK: - Products
 
-    public func searchProducts(query: String) async throws -> ProductSearchResponse {
+    public func searchProducts(query: String, page: Int = 1, country: String = "GB") async throws -> ProductSearchResponse {
         try await client.fetch(
             ProductSearchResponse.self,
-            path: "v1/products",
-            queryParameters: ["search": query])
+            path: "v2/products",
+            queryParameters: [
+                "search": query,
+                "country": country,
+                "page": String(page),
+            ])
     }
 
-    public func getRandomProduct() async throws -> ProductSearchItemResponse {
+    public func getRandomProduct() async throws -> ProductSearchResultItemResponse {
         try await client.fetch(
-            ProductSearchItemResponse.self,
+            ProductSearchResultItemResponse.self,
             path: "v1/products/random")
     }
 
-    public func getProduct(barcode: String) async throws -> ProductSearchItemResponse {
+    public func getProduct(barcode: String) async throws -> ProductSearchResultItemResponse {
         try await client.fetch(
-            ProductSearchItemResponse.self,
-            path: "v1/products/barcode/\(barcode)")
+            ProductSearchResultItemResponse.self,
+            path: "v2/products/barcode/\(barcode)")
     }
 
     public func getProductUsageStats(productId: Int) async throws -> ProductUsageStatsResponse {
@@ -46,7 +50,7 @@ public struct KeepFreshAPI: Sendable {
     public func addInventoryItem(_ request: AddInventoryItemRequest) async throws -> AddInventoryItemResponse {
         try await client.post(
             AddInventoryItemResponse.self,
-            path: "v1/inventory/items",
+            path: "v2/inventory/items",
             body: request)
     }
 
@@ -54,11 +58,18 @@ public struct KeepFreshAPI: Sendable {
         try await client.patch(path: "v1/inventory/items/\(itemId)", body: request)
     }
 
-    public func getInventoryPreview(_ request: InventoryPreviewRequest) async throws -> InventoryPreviewAndSuggestionsResponse {
-        try await client.post(
+    public func getInventoryPreview(categoryId: Int, productId: Int) async throws -> InventoryPreviewAndSuggestionsResponse {
+        try await client.fetch(
             InventoryPreviewAndSuggestionsResponse.self,
-            path: "v1/inventory/preview",
-            body: request)
+            path: "v2/inventory/items/preview",
+            queryParameters: [
+                "categoryId": String(categoryId),
+                "productId": String(productId),
+            ])
+    }
+
+    public func deleteInventoryItem(for itemId: Int) async throws {
+        try await client.delete(path: "v2/inventory/items/\(itemId)")
     }
 
     // MARK: - Genmoji
