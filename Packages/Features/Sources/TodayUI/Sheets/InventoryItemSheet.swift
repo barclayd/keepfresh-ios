@@ -291,12 +291,14 @@ enum Sheet: Identifiable {
     case move(StorageLocation)
     case open
     case remove
+    case edit
 
     var id: String {
         switch self {
         case .move: "move"
         case .open: "open"
         case .remove: "remove"
+        case .edit: "edit"
         }
     }
 }
@@ -394,6 +396,10 @@ struct InventoryItemSheetView: View {
 
     func onMarkAsDone(wastePercentage: Double) {
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
+    }
+
+    func onEdit(expiryDate: Date) {
+        updateInventoryItem(expiryDate: expiryDate)
     }
 
     func onMove(storageLocation: StorageLocation?, expiryDate: Date? = nil) {
@@ -509,7 +515,9 @@ struct InventoryItemSheetView: View {
                         } label: {
                             Label("Remove", systemImage: "arrow.uturn.backward")
                         }
-                        Button {} label: {
+                        Button {
+                            showSheet = .edit
+                        } label: {
                             Label("Edit", systemImage: "pencil")
                         }
                         Menu {
@@ -682,8 +690,14 @@ struct InventoryItemSheetView: View {
             .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
             .padding(.horizontal, 10)
             .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
-            .sheet(item: $showSheet) { sheetType in
-                switch sheetType {
+            .sheet(item: $showSheet) { sheet in
+                switch sheet {
+                case .edit:
+                    EditInventoryItemSheet(inventoryItem: inventoryItem, onEdit: onEdit)
+                        .presentationDetents(
+                            [.custom(AdaptiveSmallDetent.self)])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
                 case let .move(storageLocation):
                     MoveInventoryItemSheet(
                         inventoryItem: inventoryItem,

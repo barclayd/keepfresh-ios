@@ -432,7 +432,8 @@ struct InventoryItemExpiryDateContent: View {
                     "Expiry",
                     selection: $expiryDate,
                     displayedComponents: [.date])
-                    .datePickerStyle(.graphical).colorInvert().colorMultiply(.blue400)
+                    .datePickerStyle(.graphical)
+                    .tint(.blue700)
             }
 
             HStack {
@@ -494,7 +495,7 @@ struct InventoryItemExpiryDateCompactContent: View {
                     "Expiry",
                     selection: $expiryDate,
                     displayedComponents: [.date])
-                    .datePickerStyle(.compact).labelsHidden()
+                    .datePickerStyle(.compact).labelsHidden().tint(.blue700)
 
                 Spacer()
             }
