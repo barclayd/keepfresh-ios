@@ -4,7 +4,7 @@ import SwiftUI
 
 struct CheckToggleStyle: ToggleStyle {
     @Environment(\.isEnabled) var isEnabled
-    
+
     var customColor: Color?
 
     func makeBody(configuration: Configuration) -> some View {
@@ -132,7 +132,7 @@ private extension InventoryItemFormType {
     @ViewBuilder
     func overviewLabel(customColor: Color? = nil) -> some View {
         switch self {
-        case .expiry(let date, let isRecommended), .compactExpiry(let date, let isRecommended, _):
+        case let .expiry(date, isRecommended), let .compactExpiry(date, isRecommended, _):
             VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: 0) {
@@ -155,13 +155,13 @@ private extension InventoryItemFormType {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case .status(let status):
+        case let .status(status):
             VStack(alignment: .leading, spacing: 0) {
                 Text(status.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case .storage(let location, let isRecommended):
+        case let .storage(location, isRecommended):
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .lastTextBaseline, spacing: 0) {
                     Image(systemName: location.wrappedValue.icon).font(.system(size: 24))
@@ -175,7 +175,7 @@ private extension InventoryItemFormType {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case .readOnlyStorage(let location, let isRecommended):
+        case let .readOnlyStorage(location, isRecommended):
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .lastTextBaseline, spacing: 0) {
                     Image(systemName: location.icon).font(.system(size: 24))
@@ -189,7 +189,7 @@ private extension InventoryItemFormType {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case .quantity(let quantity):
+        case let .quantity(quantity):
             VStack(alignment: .leading, spacing: 0) {
                 Text("\(quantity.wrappedValue)").foregroundStyle(.gray600)
             }
@@ -205,24 +205,24 @@ private extension InventoryItemFormType {
                 .toggleStyle(CheckToggleStyle(customColor: customColor))
                 .labelsHidden()
                 .disabled(true)
-        case .quantity(let quantity):
-            Stepper(value: quantity, in: 1 ... 10, step: 1) {}.tint(.blue700)
+        case let .quantity(quantity):
+            Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
         }
     }
 
     @MainActor
     @ViewBuilder
-    func expandedContent(forceExpanded: Bool) -> some View {
+    func expandedContent(forceExpanded _: Bool) -> some View {
         switch self {
-        case .expiry(let date, _):
+        case let .expiry(date, _):
             InventoryItemExpiryDateContent(expiryDate: date)
-        case .compactExpiry(let date, _, let expiryType):
+        case let .compactExpiry(date, _, expiryType):
             InventoryItemExpiryDateCompactContent(expiryDate: date, expiryType: expiryType)
-        case .status(let status):
+        case let .status(status):
             IventoryItemStatusContent(status: status)
-        case .storage(let location, _):
+        case let .storage(location, _):
             InventoryItemStorageContent(storageLocation: location)
-        case .readOnlyStorage(let location, _):
+        case let .readOnlyStorage(location, _):
             InventoryItemReadOnlyStorageContent(storageLocation: location)
         case .quantity:
             EmptyView()
@@ -518,7 +518,12 @@ public struct InventoryCategory: View {
     let forceExpanded: Bool
     let customColor: (Color, Color)?
 
-    public init(type: InventoryItemFormType, storageLocation: StorageLocation, forceExpanded: Bool = false, customColor: (Color, Color)? = nil) {
+    public init(
+        type: InventoryItemFormType,
+        storageLocation: StorageLocation,
+        forceExpanded: Bool = false,
+        customColor: (Color, Color)? = nil)
+    {
         self.type = type
         self.storageLocation = storageLocation
         self.forceExpanded = forceExpanded

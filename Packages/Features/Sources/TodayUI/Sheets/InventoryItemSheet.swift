@@ -390,7 +390,7 @@ struct InventoryItemSheetView: View {
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
-    func onMove(storageLocation: StorageLocation, expiryDate: Date? = nil) {
+    func onMove(storageLocation: StorageLocation, expiryDate _: Date? = nil) {
         updateInventoryItem(storageLocation: storageLocation)
     }
 
