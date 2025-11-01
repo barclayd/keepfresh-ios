@@ -17,20 +17,22 @@ public struct OpenInventoryItemSheet: View {
         self.expiryDate = expiryDate
         self.onOpen = onOpen
     }
-    
+
     var isSignificantChangeInExpiry: Bool {
         guard expiryDate.timeUntil.totalDays > 0 else { return false }
-        
-        let percentageDifference = Double(inventoryItem.expiryDate.timeUntil.totalDays - expiryDate.timeUntil.totalDays) / Double(inventoryItem.expiryDate.timeUntil.totalDays)
-        
+
+        let percentageDifference = Double(inventoryItem.expiryDate.timeUntil.totalDays - expiryDate.timeUntil.totalDays) /
+            Double(inventoryItem.expiryDate.timeUntil.totalDays)
+
         return percentageDifference >= 0.25
     }
+
     public var body: some View {
         VStack(spacing: 20) {
             Text(
                 "\(Text("Open").foregroundStyle(.gray600)) \(Text(inventoryItem.product.name.truncated(to: 25)).foregroundStyle(.blue700))")
                 .lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
-            
+
             Spacer()
 
             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
@@ -44,7 +46,8 @@ public struct OpenInventoryItemSheet: View {
                             .font(.callout)
                             .foregroundStyle(.gray600)
                         HStack(spacing: 0) {
-                            Text("\(Text(expiryDate.formattedWithOrdinal).fontWeight(.bold)) (in \(expiryDate.timeUntil.formatted))").font(.callout)
+                            Text("\(Text(expiryDate.formattedWithOrdinal).fontWeight(.bold)) (in \(expiryDate.timeUntil.formatted))")
+                                .font(.callout)
                                 .foregroundStyle(.gray600)
                             Image(systemName: "sparkles").font(.system(size: 12)).foregroundColor(
                                 .yellow500

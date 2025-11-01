@@ -395,7 +395,9 @@ struct InventoryItemSheetView: View {
             updateInventoryItem(status: .opened)
             return
         }
-        guard let shelfLifeInDaysOpened = suggestions.shelfLifeInDays[.opened][inventoryItem.storageLocation], let shelfLifeInDaysUnopened = suggestions.shelfLifeInDays[.unopened][inventoryItem.storageLocation] else {
+        guard let shelfLifeInDaysOpened = suggestions.shelfLifeInDays[.opened][inventoryItem.storageLocation],
+              let shelfLifeInDaysUnopened = suggestions.shelfLifeInDays[.unopened][inventoryItem.storageLocation]
+        else {
             updateInventoryItem(status: .opened)
             return
         }
@@ -414,7 +416,7 @@ struct InventoryItemSheetView: View {
         let daysUntilOpenedExpired = inventoryItem.expiryDate.timeUntil.totalDays - differenceInShelfLifeAfterOpening
 
         let openedExpiryDate = Calendar.current.date(byAdding: .day, value: daysUntilOpenedExpired, to: Date())!
-        
+
         guard openedExpiryDate.timeUntil.totalDays > 0 else {
             updateInventoryItem(status: .opened)
             return
@@ -553,7 +555,7 @@ struct InventoryItemSheetView: View {
                         } label: {
                             Label("Edit", systemImage: "pencil")
                         }
-                        
+
                         if inventoryItem.status != .opened {
                             Button {
                                 onOpen()
@@ -569,7 +571,7 @@ struct InventoryItemSheetView: View {
                                 }
                             }
                         }
-                        
+
                         Menu {
                             if inventoryItem.storageLocation != .pantry {
                                 Button {
