@@ -1,4 +1,5 @@
 import DesignSystem
+import Extensions
 import Models
 import SwiftUI
 
@@ -66,64 +67,6 @@ private extension InventoryItemFormType {
         case .quantity:
             "Quantity"
         }
-    }
-}
-
-private extension Date {
-    var formattedWithOrdinal: String {
-        let calendar = Calendar.current
-        let dayNum = calendar.component(.day, from: self)
-        let showYear = !calendar.isDate(self, equalTo: .now, toGranularity: .year)
-
-        let ordinal = NumberFormatter.localizedString(
-            from: NSNumber(value: dayNum),
-            number: .ordinal)
-
-        let month = formatted(.dateTime.month(.wide))
-        let year = showYear ? " \(formatted(.dateTime.year(.twoDigits)))" : ""
-
-        return "\(ordinal) \(month)\(year)"
-    }
-
-    var formattedAbbreviation: String {
-        let calendar = Calendar.current
-        let dayNum = calendar.component(.day, from: self)
-        let showYear = !calendar.isDate(self, equalTo: .now, toGranularity: .year)
-
-        let ordinal = NumberFormatter.localizedString(
-            from: NSNumber(value: dayNum),
-            number: .ordinal)
-
-        let month = formatted(.dateTime.month(.abbreviated))
-        let year = showYear ? " \(formatted(.dateTime.year(.twoDigits)))" : ""
-
-        return "\(ordinal) \(month)\(year)"
-    }
-
-    var expiryDescription: String {
-        let days = daysFromNow
-        switch days {
-        case ..<(-1):
-            return "Expiry has past"
-        case -1:
-            return "Expired yesterday"
-        case 0:
-            return "Expires today"
-        case 1:
-            return "Expires tomorrow"
-        default:
-            return "Expires in \(days) days"
-        }
-    }
-
-    private var daysFromNow: Int {
-        let calendar = Calendar.current
-
-        let startOfToday = calendar.startOfDay(for: Date.now)
-        let startOfTarget = calendar.startOfDay(for: self)
-
-        let components = calendar.dateComponents([.day], from: startOfToday, to: startOfTarget)
-        return components.day ?? 0
     }
 }
 
