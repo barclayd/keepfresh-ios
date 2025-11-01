@@ -27,17 +27,20 @@ public struct UpdateInventoryItemRequest: Codable, Sendable {
     public let storageLocation: StorageLocation?
     public let percentageRemaining: Int?
     public let consumptionPredictionChangedAt: Date?
+    public let expiryDate: Date?
 
     public init(
         status: InventoryItemStatus? = nil,
         storageLocation: StorageLocation? = nil,
         percentageRemaining: Double?,
-        consumptionPredictionChangedAt: Date? = nil)
+        consumptionPredictionChangedAt: Date? = nil,
+        expiryDate: Date? = nil)
     {
         self.storageLocation = storageLocation
         self.status = status
         self.percentageRemaining = percentageRemaining.map { Int($0) }
         self.consumptionPredictionChangedAt = consumptionPredictionChangedAt
+        self.expiryDate = expiryDate
     }
 }
 
@@ -175,7 +178,7 @@ public struct InventoryItem: Codable, Sendable, Identifiable {
     public var storageLocation: StorageLocation
     public let consumptionPrediction: Int
     public let consumptionPredictionChangedAt: Date?
-    public let expiryDate: Date
+    public var expiryDate: Date
     public let expiryType: ExpiryType
     public let product: Product
 }

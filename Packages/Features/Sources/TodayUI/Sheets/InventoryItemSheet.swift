@@ -329,7 +329,8 @@ struct InventoryItemSheetView: View {
     func updateInventoryItem(
         status: InventoryItemStatus? = nil,
         storageLocation: StorageLocation? = nil,
-        percentageRemaining: Double? = nil)
+        percentageRemaining: Double? = nil,
+        expiryDate: Date? = nil)
     {
         let previousStatus = inventoryItem.status
 
@@ -341,6 +342,10 @@ struct InventoryItemSheetView: View {
             inventory.updateItemStorageLocation(id: inventoryItem.id, storageLocation: storageLocation)
         }
 
+        if let expiryDate {
+            inventory.updateItemExpiryDate(id: inventoryItem.id, expiryDate: expiryDate)
+        }
+
         Task {
             let api = KeepFreshAPI()
 
@@ -350,7 +355,8 @@ struct InventoryItemSheetView: View {
                     UpdateInventoryItemRequest(
                         status: status,
                         storageLocation: storageLocation,
-                        percentageRemaining: percentageRemaining))
+                        percentageRemaining: percentageRemaining,
+                        expiryDate: expiryDate))
                 print("Updated inventoryItem with id: \(inventoryItem.id)")
 
                 let feedbackType: SensoryFeedback = if let status {
@@ -390,8 +396,26 @@ struct InventoryItemSheetView: View {
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
-    func onMove(storageLocation: StorageLocation, expiryDate _: Date? = nil) {
-        updateInventoryItem(storageLocation: storageLocation)
+    func onMove(storageLocation: StorageLocation?, expiryDate: Date? = nil) {
+        updateInventoryItem(storageLocation: storageLocation, expiryDate: expiryDate)
+    }
+
+    func getRecommendedExpiryDateForStorageLocation(storageLocation: StorageLocation) -> Date? {
+        guard let suggestions = SuggestionsCache.shared.getSuggestions(for: inventoryItem.product.category.id) else {
+            return nil
+        }
+
+        let openedStatus: ProductSearchItemStatus = inventoryItem.status == .opened ? .opened : .unopened
+
+        guard let shelfLifeInDays = suggestions.shelfLifeInDays[openedStatus][storageLocation] else { return nil }
+
+        let daysElapsedSinceAdding = inventoryItem.createdAt.timeSince.totalDays
+
+        let shelfLifeInDaysAdjustedForElapsedDays = shelfLifeInDays - daysElapsedSinceAdding
+
+        guard shelfLifeInDaysAdjustedForElapsedDays > 0 else { return nil }
+
+        return Calendar.current.date(byAdding: .day, value: Int(shelfLifeInDaysAdjustedForElapsedDays), to: Date())!
     }
 
     var storageLocationToExtendExpiry: StorageLocation? {
@@ -489,21 +513,29 @@ struct InventoryItemSheetView: View {
                             Label("Edit", systemImage: "pencil")
                         }
                         Menu {
-                            Button {
-                                showSheet = .move(.pantry)
-                            } label: {
-                                Label("Pantry", systemImage: StorageLocation.pantry.icon)
-                            }.tint(StorageLocation.pantry.tileColor)
-                            Button {
-                                showSheet = .move(.fridge)
-                            } label: {
-                                Label("Fridge", systemImage: StorageLocation.fridge.icon)
-                            }.tint(StorageLocation.fridge.tileColor)
-                            Button {
-                                showSheet = .move(.freezer)
-                            } label: {
-                                Label("Freezer", systemImage: StorageLocation.freezer.icon)
-                            }.tint(StorageLocation.freezer.tileColor)
+                            if inventoryItem.storageLocation != .pantry {
+                                Button {
+                                    showSheet = .move(.pantry)
+                                } label: {
+                                    Label("Pantry", systemImage: StorageLocation.pantry.icon)
+                                }.tint(StorageLocation.pantry.backgroundColor)
+                            }
+
+                            if inventoryItem.storageLocation != .fridge {
+                                Button {
+                                    showSheet = .move(.fridge)
+                                } label: {
+                                    Label("Fridge", systemImage: StorageLocation.fridge.icon)
+                                }.tint(StorageLocation.fridge.backgroundColor)
+                            }
+
+                            if inventoryItem.storageLocation != .freezer {
+                                Button {
+                                    showSheet = .move(.freezer)
+                                } label: {
+                                    Label("Freezer", systemImage: StorageLocation.freezer.icon)
+                                }.tint(StorageLocation.freezer.backgroundColor)
+                            }
                         } label: {
                             Button {} label: {
                                 Label("Move", systemImage: "house.fill")
@@ -653,7 +685,11 @@ struct InventoryItemSheetView: View {
             .sheet(item: $showSheet) { sheetType in
                 switch sheetType {
                 case let .move(storageLocation):
-                    MoveInventoryItemSheet(inventoryItem: inventoryItem, storageLocation: storageLocation, onMove: onMove)
+                    MoveInventoryItemSheet(
+                        inventoryItem: inventoryItem,
+                        storageLocation: storageLocation,
+                        recommendedExpiryDate: getRecommendedExpiryDateForStorageLocation(storageLocation: storageLocation),
+                        onMove: onMove)
                         .presentationDetents(
                             [.custom(AdaptiveMediumDetent.self)])
                         .presentationDragIndicator(.visible)

@@ -3,21 +3,26 @@ import SharedUI
 import SwiftUI
 
 public struct MoveInventoryItemSheet: View {
-    @State private var date: Date = .init()
+    @State private var expiryDate: Date
 
     var inventoryItem: InventoryItem
     var storageLocation: StorageLocation
 
-    let onMove: (_ storageLocation: StorageLocation, _ expiryDate: Date) -> Void
+    let recommendedExpiryDate: Date?
+
+    let onMove: (_ storageLocation: StorageLocation?, _ expiryDate: Date) -> Void
 
     public init(
         inventoryItem: InventoryItem,
         storageLocation: StorageLocation,
-        onMove: @escaping (_ storageLocation: StorageLocation, _ expiryDate: Date) -> Void)
+        recommendedExpiryDate: Date? = nil,
+        onMove: @escaping (_ storageLocation: StorageLocation?, _ expiryDate: Date) -> Void)
     {
         self.inventoryItem = inventoryItem
         self.storageLocation = storageLocation
         self.onMove = onMove
+        _expiryDate = State(initialValue: recommendedExpiryDate ?? inventoryItem.expiryDate)
+        self.recommendedExpiryDate = recommendedExpiryDate
     }
 
     var title: AttributedString {
@@ -28,33 +33,42 @@ public struct MoveInventoryItemSheet: View {
         return result
     }
 
+    var isRecommendedExpiryDate: Bool {
+        guard let recommendedExpiryDate else { return false }
+
+        return recommendedExpiryDate.isSameDay(as: expiryDate)
+    }
+
+    var isRecommendedStorageLocation: Bool {
+        recommendedExpiryDate != nil
+    }
+
     public var body: some View {
         VStack(spacing: 20) {
             Text(title)
                 .lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
 
             InventoryCategory(
-                type: .compactExpiry(date: $date, isRecommended: true, expiryType: inventoryItem.expiryType),
+                type: .compactExpiry(date: $expiryDate, isRecommended: isRecommendedExpiryDate, expiryType: inventoryItem.expiryType),
                 storageLocation: storageLocation,
                 forceExpanded: true,
                 customColor: storageLocation == .freezer ? (.white200, .blue800) : nil)
 
             InventoryCategory(
-                type: .readOnlyStorage(location: storageLocation, isRecommended: true),
+                type: .readOnlyStorage(location: storageLocation, isRecommended: isRecommendedStorageLocation),
                 storageLocation: storageLocation,
-                forceExpanded: false,
                 customColor: storageLocation == .freezer ? (.white200, .blue800) : nil)
 
             Spacer()
 
             Button(action: {
-                onMove(storageLocation, Date())
+                onMove(storageLocation, expiryDate)
             }) {
                 HStack(spacing: 10) {
-                    Image(systemName: "house.fill")
+                    Image(systemName: storageLocation.iconFilled)
                         .font(.system(size: 18))
                         .frame(width: 20, alignment: .center)
-                    Text("Move")
+                    Text("Move to \(storageLocation.rawValue.capitalized)")
                         .font(.headline)
                 }
                 .foregroundStyle(.blue600)

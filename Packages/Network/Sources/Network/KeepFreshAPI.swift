@@ -4,7 +4,7 @@ import Models
 public struct KeepFreshAPI: Sendable {
     private let client: APIClient
 
-    public init(baseURL: String = "https://api.keepfre.sh") {
+    public init(baseURL: String = "https://feat-support-changing-expiry-date-keepfresh-api.barclaysd.workers.dev") {
         client = APIClient(baseURL: baseURL)
     }
 
@@ -55,7 +55,7 @@ public struct KeepFreshAPI: Sendable {
     }
 
     public func updateInventoryItem(for itemId: Int, _ request: UpdateInventoryItemRequest) async throws {
-        try await client.patch(path: "v1/inventory/items/\(itemId)", body: request)
+        try await client.patch(path: "v2/inventory/items/\(itemId)", body: request)
     }
 
     public func getInventoryPreview(categoryId: Int, productId: Int) async throws -> InventoryPreviewAndSuggestionsResponse {

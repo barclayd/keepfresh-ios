@@ -7,7 +7,7 @@ func calculatePredictedWastePercentageOffset(predictedWastePercentage: CGFloat, 
 }
 
 public struct RemoveInventoryItemSheet: View {
-    @State private var wastePercentage: Double = 0
+    @State private var wastePercentage: Double
     @State private var sliderWidth: CGFloat = 0
     @State private var increaseHaptic: Int = 0
     @State private var decreaseHaptic: Int = 0

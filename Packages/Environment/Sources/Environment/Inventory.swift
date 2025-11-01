@@ -193,4 +193,11 @@ public final class Inventory {
         items[index].storageLocation = storageLocation
         items[index].updatedAt = Date()
     }
+
+    public func updateItemExpiryDate(id: Int, expiryDate: Date) {
+        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+
+        items[index].expiryDate = expiryDate
+        items[index].updatedAt = Date()
+    }
 }
