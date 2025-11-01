@@ -1,3 +1,4 @@
+import DesignSystem
 import Models
 import SharedUI
 import SwiftUI
@@ -25,14 +26,6 @@ public struct MoveInventoryItemSheet: View {
         self.recommendedExpiryDate = recommendedExpiryDate
     }
 
-    var title: AttributedString {
-        var result = AttributedString("Move ")
-
-        result.append(AttributedString(inventoryItem.product.name.truncated(to: 25)))
-
-        return result
-    }
-
     var isRecommendedExpiryDate: Bool {
         guard let recommendedExpiryDate else { return false }
 
@@ -45,7 +38,8 @@ public struct MoveInventoryItemSheet: View {
 
     public var body: some View {
         VStack(spacing: 20) {
-            Text(title)
+            Text(
+                "\(Text("Move").foregroundStyle(.gray600)) \(Text(inventoryItem.product.name.truncated(to: 25)).foregroundStyle(.blue700))")
                 .lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
 
             InventoryCategory(

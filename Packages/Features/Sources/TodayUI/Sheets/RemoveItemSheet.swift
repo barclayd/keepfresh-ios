@@ -24,18 +24,10 @@ public struct RemoveInventoryItemSheet: View {
         _wastePercentage = State(initialValue: predictedWastePercentage)
     }
 
-    var title: AttributedString {
-        var result = AttributedString("How much ")
-
-        result.append(AttributedString(inventoryItem.product.name.truncated(to: 25)))
-
-        result.append(AttributedString(" is left?"))
-        return result
-    }
-
     public var body: some View {
         VStack(spacing: 20) {
-            Text(title)
+            Text(
+                "\(Text("How much").foregroundStyle(.gray600)) \(Text(inventoryItem.product.name.truncated(to: 25)).foregroundStyle(.blue700)) \(Text("is left?").foregroundStyle(.gray600))")
                 .lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
 
             VStack(spacing: 0) {
