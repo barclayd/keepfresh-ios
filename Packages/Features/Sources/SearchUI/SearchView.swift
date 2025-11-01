@@ -14,7 +14,8 @@ class Search {
                 return
             }
 
-            state = .loading
+            currentPage = 1
+            hasMorePages = false
 
             Task {
                 await debounceSearch()
@@ -23,15 +24,18 @@ class Search {
     }
 
     var debouncedSearchText: String = ""
-    var searchResults: [ProductSearchItemResponse] = []
+    var searchResults: [ProductSearchResultItemResponse] = []
     var state: FetchState = .empty
     var lastSearchedTerm = ""
+    var currentPage = 1
+    var hasMorePages = false
+    var isLoadingMore = false
 
     private var searchTask: Task<Void, Never>?
 
-    private let onSaveSearch: (String, StorageLocation, String?) -> Void
+    private let onSaveSearch: (String, StorageLocation, String) -> Void
 
-    init(onSaveSearch: @escaping (String, StorageLocation, String?) -> Void) {
+    init(onSaveSearch: @escaping (String, StorageLocation, String) -> Void) {
         self.onSaveSearch = onSaveSearch
     }
 
@@ -49,7 +53,7 @@ class Search {
                     print("Debounced value: '\(debouncedSearchText)'")
 
                     if !searchText.isEmpty {
-                        searchResults = ProductSearchItemResponse.mocks(count: 5)
+                        searchResults = ProductSearchResultItemResponse.mocks(count: 5)
                         await sendSearchRequest(searchTerm: debouncedSearchText)
                     }
                 } else {
@@ -65,13 +69,21 @@ class Search {
         let api = KeepFreshAPI()
 
         do {
-            let searchResponse = try await api.searchProducts(query: searchTerm)
-            searchResults = searchResponse.products
+            let searchResponse = try await api.searchProducts(
+                query: searchTerm,
+                page: currentPage,
+                country: Locale.current.region?.identifier ?? "GB")
+            searchResults = searchResponse.results
+            hasMorePages = searchResponse.pagination.hasNext
 
             state = .loaded
             lastSearchedTerm = searchTerm
 
             print("Search successful: Found \(searchResults.count) products")
+
+            if searchResults.isEmpty {
+                return
+            }
 
             let (locationCounts, iconCounts) = searchResults.prefix(10).reduce(into: (
                 [StorageLocation: Int](),
@@ -83,7 +95,7 @@ class Search {
             }
 
             let mostCommonStorageLocation = locationCounts.max(by: { $0.value < $1.value })?.key
-            let mostCommonIcon = iconCounts.max(by: { $0.value < $1.value })?.key
+            let mostCommonIcon = iconCounts.max(by: { $0.value < $1.value })?.key ?? iconCounts.keys.first!
 
             if let storageLocation = mostCommonStorageLocation {
                 onSaveSearch(searchTerm, storageLocation, mostCommonIcon)
@@ -95,6 +107,28 @@ class Search {
             state = .error
             lastSearchedTerm = ""
         }
+    }
+
+    func loadMoreResults() async {
+        guard hasMorePages, !isLoadingMore, state == .loaded else { return }
+
+        isLoadingMore = true
+        currentPage += 1
+
+        let api = KeepFreshAPI()
+
+        do {
+            let searchResponse = try await api.searchProducts(query: lastSearchedTerm, page: currentPage)
+            searchResults.append(contentsOf: searchResponse.results)
+            hasMorePages = searchResponse.pagination.hasNext
+
+            print("Loaded more results: Now have \(searchResults.count) total products")
+        } catch {
+            print("Failed to load more results: \(error)")
+            currentPage -= 1
+        }
+
+        isLoadingMore = false
     }
 }
 
@@ -110,11 +144,17 @@ public struct SearchView: View {
         UIScrollView.appearance().bounces = false
     }
 
-    private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, icon: String?) {
+    private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, icon: String) {
         let existingSearch = recentSearches.first(where: { $0.text.lowercased() == text.lowercased() })
 
         guard existingSearch == nil else {
             existingSearch?.date = Date()
+
+            do {
+                try modelContext.save()
+            } catch {
+                print("Failed to save search: \(error)")
+            }
             return
         }
 
@@ -133,10 +173,10 @@ public struct SearchView: View {
     }
 
     private var isSearching: Bool {
-        guard let searchText = search?.searchText else {
+        guard let search else {
             return false
         }
-        return !searchText.isEmpty
+        return !search.searchText.isEmpty && search.debouncedSearchText == search.searchText
     }
 
     private var searchTextBinding: Binding<String> {
@@ -148,7 +188,16 @@ public struct SearchView: View {
     public var body: some View {
         VStack(spacing: 0) {
             if isSearching, let search {
-                SearchResultView(products: search.searchResults, isLoading: search.state != .loaded)
+                SearchResultView(
+                    searchProducts: search.searchResults,
+                    isLoading: search.state != .loaded,
+                    hasMorePages: search.hasMorePages,
+                    isLoadingMore: search.isLoadingMore,
+                    onLoadMore: {
+                        Task {
+                            await search.loadMoreResults()
+                        }
+                    })
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 RecentSearchView(searchText: searchTextBinding)

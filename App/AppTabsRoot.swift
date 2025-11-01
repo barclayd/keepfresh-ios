@@ -32,13 +32,7 @@ struct AppTabRootView: View {
                 makeNavigationStack(for: .kitchen, router: router)
             } label: {
                 AppTab.kitchen.label
-            }
-
-//            Tab(value: AppTab.debug) {
-//                makeNavigationStack(for: .debug, router: router)
-//            } label: {
-//                AppTab.debug.label
-//            }
+            }.disabled(inventory.state == .loading || inventory.state == .error)
         }
         .tint(.blue600)
         .tabBarMinimizeBehavior(.onScrollDown)
@@ -83,8 +77,6 @@ private extension AppTab {
             SearchView()
         case .kitchen:
             KitchenView()
-        case .debug:
-            DebugView()
         }
     }
 }
@@ -136,9 +128,6 @@ public extension AppTab {
                 }
                 .buttonStyle(.plain).tint(.white200)
             }
-
-        case .debug:
-            ToolbarItemGroup {}
         }
     }
 }

@@ -85,7 +85,7 @@ public struct InventoryItemView: View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
                 GenmojiView(
-                    name: inventoryItem.product.category.icon ?? "chicken",
+                    name: inventoryItem.product.category.icon,
                     fontSize: 35,
                     tint: inventoryItem.consumptionUrgency.tileColor.background)
 
@@ -145,11 +145,12 @@ public struct InventoryItemView: View {
         .onTapGesture {
             showInventoryItemSheet.toggle()
         }
+        .sensoryFeedback(.selection, trigger: showInventoryItemSheet)
         .sheet(isPresented: $showInventoryItemSheet) {
             InventoryItemSheetView(inventoryItem: inventoryItem)
                 .presentationDetents(
                     inventoryItem.product.name
-                        .count > 27 ? [.custom(AdaptiveLargeDetent.self)] : [.custom(AdaptiveMediumDetent.self)])
+                        .count > 27 ? [.custom(AdaptiveExtraLargeDetent.self)] : [.custom(AdaptiveLargeDetent.self)])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }

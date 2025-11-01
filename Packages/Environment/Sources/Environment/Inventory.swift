@@ -111,35 +111,30 @@ public final class Inventory {
 
     public func addItem(
         request: AddInventoryItemRequest,
+        product: ProductSearchResultItemResponse,
         category: ProductSearchItemCategory,
         categorySuggestions: InventorySuggestionsResponse?,
         inventoryItemId: Int,
-        productId: Int,
         icon: String)
     {
         let newItems = Array(
-            repeating: InventoryItem(from: request, category: category, id: inventoryItemId, productId: productId, icon: icon),
+            repeating: InventoryItem(from: request, productSearchResult: product, category: category, id: inventoryItemId, icon: icon),
             count: request.quantity)
 
         items.append(contentsOf: newItems)
 
-        Task.detached { [weak self] in
+        Task {
             do {
-                let response = try await self?.api.addInventoryItem(request)
+                let response = try await api.addInventoryItem(request)
 
-                if let inventoryItemId = response?.inventoryItemId {
-                    await MainActor.run { [weak self] in
-                        guard let self, !self.items.isEmpty else { return }
-                        items[items.count - 1].id = inventoryItemId
-                    }
+                if let inventoryItemId = response.inventoryItemId {
+                    guard !items.isEmpty else { return }
+                    items[items.count - 1].id = inventoryItemId
                 }
 
-                if let inventoryItemIds = response?.inventoryItemIds {
-                    await MainActor.run { [weak self] in
-                        guard let self else { return }
-                        for quantity in 1...inventoryItemIds.count {
-                            items[items.count - quantity].id = inventoryItemIds[quantity - 1]
-                        }
+                if let inventoryItemIds = response.inventoryItemIds {
+                    for quantity in 1...inventoryItemIds.count {
+                        items[items.count - quantity].id = inventoryItemIds[quantity - 1]
                     }
                 }
 
@@ -177,10 +172,32 @@ public final class Inventory {
         }
     }
 
+    public func deleteItem(id: Int) {
+        Task {
+            do {
+                try await api.deleteInventoryItem(for: id)
+
+                guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+
+                items.remove(at: index)
+            } catch {
+                print("error deleting item: \(error)")
+                return
+            }
+        }
+    }
+
     public func updateItemStorageLocation(id: Int, storageLocation: StorageLocation) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 
         items[index].storageLocation = storageLocation
+        items[index].updatedAt = Date()
+    }
+
+    public func updateItemExpiryDate(id: Int, expiryDate: Date) {
+        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+
+        items[index].expiryDate = expiryDate
         items[index].updatedAt = Date()
     }
 }

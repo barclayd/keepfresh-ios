@@ -7,8 +7,10 @@ func calculatePredictedWastePercentageOffset(predictedWastePercentage: CGFloat, 
 }
 
 public struct RemoveInventoryItemSheet: View {
-    @State private var wastePercentage: Double = 0
+    @State private var wastePercentage: Double
     @State private var sliderWidth: CGFloat = 0
+    @State private var increaseHaptic: Int = 0
+    @State private var decreaseHaptic: Int = 0
 
     let predictedWastePercentage: Double = 25
 
@@ -58,9 +60,25 @@ public struct RemoveInventoryItemSheet: View {
                         .offset(y: -12)
 
                     GeometryReader { geometry in
-                        Slider(value: $wastePercentage, in: 0...100).tint(.blue600).onAppear {
-                            sliderWidth = geometry.frame(in: .local).width
-                        }
+                        Slider(value: $wastePercentage, in: 0...100)
+                            .tint(.blue600)
+                            .onChange(of: wastePercentage) { oldValue, newValue in
+                                let newThreshold = Int(newValue / 5)
+                                let oldThreshold = Int(oldValue / 5)
+
+                                if newThreshold != oldThreshold {
+                                    if newValue > oldValue {
+                                        increaseHaptic += 1
+                                    } else {
+                                        decreaseHaptic += 1
+                                    }
+                                }
+                            }
+                            .sensoryFeedback(.increase, trigger: increaseHaptic)
+                            .sensoryFeedback(.decrease, trigger: decreaseHaptic)
+                            .onAppear {
+                                sliderWidth = geometry.frame(in: .local).width
+                            }
                     }
 
                     Image(systemName: "trash.fill")
@@ -92,7 +110,7 @@ public struct RemoveInventoryItemSheet: View {
                         .fill(wastePercentage == 0 ? .green300 : .red200))
             }
         }.frame(maxWidth: .infinity)
-            .padding(.horizontal, 40)
+            .padding(.horizontal, 20)
             .padding(.vertical, 20)
     }
 }
