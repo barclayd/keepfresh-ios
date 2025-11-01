@@ -150,7 +150,7 @@ public struct InventoryItemView: View {
             InventoryItemSheetView(inventoryItem: inventoryItem)
                 .presentationDetents(
                     inventoryItem.product.name
-                        .count > 27 ? [.custom(AdaptiveLargeDetent.self)] : [.custom(AdaptiveMediumDetent.self)])
+                        .count > 27 ? [.custom(AdaptiveExtraLargeDetent.self)] : [.custom(AdaptiveLargeDetent.self)])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }

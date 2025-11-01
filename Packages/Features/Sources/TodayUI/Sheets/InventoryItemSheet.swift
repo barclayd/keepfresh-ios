@@ -18,7 +18,7 @@ struct NextBestAction {
 extension InventoryItem {
     func getNextBestAction(
         onOpen: @escaping () -> Void,
-        onMove: @escaping (StorageLocation) -> Void) -> NextBestAction?
+        onMove: @escaping (StorageLocation, Date?) -> Void) -> NextBestAction?
     {
         switch (status, storageLocation) {
         case (.unopened, _):
@@ -34,21 +34,21 @@ extension InventoryItem {
                 icon: "refrigerator.fill",
                 textColor: .white100,
                 backgroundColor: .blue600,
-                action: { onMove(.fridge) })
+                action: { onMove(.fridge, nil) })
         case (.opened, .pantry):
             NextBestAction(
                 label: "Move to Fridge",
                 icon: "refrigerator.fill",
                 textColor: .white100,
                 backgroundColor: .blue600,
-                action: { onMove(.fridge) })
+                action: { onMove(.fridge, nil) })
         case (.opened, .fridge):
             NextBestAction(
                 label: "Move to Freezer",
                 icon: "snowflake",
                 textColor: .white200,
                 backgroundColor: .blue700,
-                action: { onMove(.freezer) })
+                action: { onMove(.freezer, nil) })
         default:
             nil
         }
@@ -287,6 +287,20 @@ func suggestionView(suggestion: SuggestionType) -> some View {
     }
 }
 
+enum Sheet: Identifiable {
+    case move(StorageLocation)
+    case open
+    case remove
+
+    var id: String {
+        switch self {
+        case .move: "move"
+        case .open: "open"
+        case .remove: "remove"
+        }
+    }
+}
+
 struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
@@ -294,7 +308,8 @@ struct InventoryItemSheetView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPage = 0
-    @State private var showRemoveSheet: Bool = false
+
+    @State private var showSheet: Sheet? = nil
 
     @State private var usageStats: ProductUsageStatsResponse? = nil
     @State private var isLoadingStats = true
@@ -375,7 +390,7 @@ struct InventoryItemSheetView: View {
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
-    func onMove(storageLocation: StorageLocation) {
+    func onMove(storageLocation: StorageLocation, expiryDate: Date? = nil) {
         updateInventoryItem(storageLocation: storageLocation)
     }
 
@@ -473,6 +488,27 @@ struct InventoryItemSheetView: View {
                         Button {} label: {
                             Label("Edit", systemImage: "pencil")
                         }
+                        Menu {
+                            Button {
+                                showSheet = .move(.pantry)
+                            } label: {
+                                Label("Pantry", systemImage: StorageLocation.pantry.icon)
+                            }.tint(StorageLocation.pantry.tileColor)
+                            Button {
+                                showSheet = .move(.fridge)
+                            } label: {
+                                Label("Fridge", systemImage: StorageLocation.fridge.icon)
+                            }.tint(StorageLocation.fridge.tileColor)
+                            Button {
+                                showSheet = .move(.freezer)
+                            } label: {
+                                Label("Freezer", systemImage: StorageLocation.freezer.icon)
+                            }.tint(StorageLocation.freezer.tileColor)
+                        } label: {
+                            Button {} label: {
+                                Label("Move", systemImage: "house.fill")
+                            }
+                        }
                         Button {
                             dismiss()
                             router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(
@@ -562,7 +598,7 @@ struct InventoryItemSheetView: View {
 
                 Button(action: {
                     markAsDonePressed.toggle()
-                    showRemoveSheet = true
+                    showSheet = .remove
                 }) {
                     HStack(spacing: 10) {
                         Image(systemName: "takeoutbag.and.cup.and.straw.fill")
@@ -614,13 +650,29 @@ struct InventoryItemSheetView: View {
             .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
             .padding(.horizontal, 10)
             .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
-            .sheet(isPresented: $showRemoveSheet) {
-                RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
-                    .presentationDetents(
-                        inventoryItem.product.name
-                            .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
-                    .presentationDragIndicator(.visible)
-                    .presentationCornerRadius(25)
+            .sheet(item: $showSheet) { sheetType in
+                switch sheetType {
+                case let .move(storageLocation):
+                    MoveInventoryItemSheet(inventoryItem: inventoryItem, storageLocation: storageLocation, onMove: onMove)
+                        .presentationDetents(
+                            [.custom(AdaptiveMediumDetent.self)])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
+                case .open:
+                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                        .presentationDetents(
+                            inventoryItem.product.name
+                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
+                case .remove:
+                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                        .presentationDetents(
+                            inventoryItem.product.name
+                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
+                }
             }
         }
     }

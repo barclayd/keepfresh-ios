@@ -209,37 +209,17 @@ public struct AddInventoryItemView: View {
 
                         VStack(spacing: 15) {
                             InventoryCategory(
-                                quantity: $formState.quantity,
-                                status: $formState.status,
-                                expiryDate: $formState.expiryDate,
-                                storageLocation: $formState.storageLocation,
-                                isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                type: .Expiry)
+                                type: .expiry(date: $formState.expiryDate, isRecommended: isRecommendedExpiryDate),
+                                storageLocation: formState.storageLocation)
                             InventoryCategory(
-                                quantity: $formState.quantity,
-                                status: $formState.status,
-                                expiryDate: $formState.expiryDate,
-                                storageLocation: $formState.storageLocation,
-                                isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                type: .Storage)
+                                type: .storage(location: $formState.storageLocation, isRecommended: isRecommendedStorageLocation),
+                                storageLocation: formState.storageLocation)
                             InventoryCategory(
-                                quantity: $formState.quantity,
-                                status: $formState.status,
-                                expiryDate: $formState.expiryDate,
-                                storageLocation: $formState.storageLocation,
-                                isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                type: .Status)
+                                type: .status(status: $formState.status),
+                                storageLocation: formState.storageLocation)
                             InventoryCategory(
-                                quantity: $formState.quantity,
-                                status: $formState.status,
-                                expiryDate: $formState.expiryDate,
-                                storageLocation: $formState.storageLocation,
-                                isRecommendedExpiryDate: isRecommendedExpiryDate,
-                                isRecommendedStorageLocation: isRecommendedStorageLocation,
-                                type: .Quantity)
+                                type: .quantity(quantity: $formState.quantity),
+                                storageLocation: formState.storageLocation)
                         }
                     }
                     .padding(.top, geometry.safeAreaInsets.top)
