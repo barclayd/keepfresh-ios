@@ -289,7 +289,7 @@ func suggestionView(suggestion: SuggestionType) -> some View {
 
 enum Sheet: Identifiable {
     case move(StorageLocation)
-    case open
+    case open(Date)
     case remove
     case edit
 
@@ -391,7 +391,40 @@ struct InventoryItemSheetView: View {
     }
 
     func onOpen() {
-        updateInventoryItem(status: .opened)
+        guard let suggestions = SuggestionsCache.shared.getSuggestions(for: inventoryItem.product.category.id) else {
+            updateInventoryItem(status: .opened)
+            return
+        }
+        guard let shelfLifeInDaysOpened = suggestions.shelfLifeInDays[.opened][inventoryItem.storageLocation], let shelfLifeInDaysUnopened = suggestions.shelfLifeInDays[.unopened][inventoryItem.storageLocation] else {
+            updateInventoryItem(status: .opened)
+            return
+        }
+        guard shelfLifeInDaysOpened != shelfLifeInDaysUnopened else {
+            updateInventoryItem(status: .opened)
+            return
+        }
+
+        let differenceInShelfLifeAfterOpening = shelfLifeInDaysUnopened - shelfLifeInDaysOpened
+
+        guard differenceInShelfLifeAfterOpening > 0 else {
+            updateInventoryItem(status: .opened)
+            return
+        }
+
+        let daysUntilOpenedExpired = inventoryItem.expiryDate.timeUntil.totalDays - differenceInShelfLifeAfterOpening
+
+        let openedExpiryDate = Calendar.current.date(byAdding: .day, value: daysUntilOpenedExpired, to: Date())!
+        
+        guard openedExpiryDate.timeUntil.totalDays > 0 else {
+            updateInventoryItem(status: .opened)
+            return
+        }
+
+        showSheet = .open(openedExpiryDate)
+    }
+
+    func onOpenTap(expiryDate: Date?) {
+        updateInventoryItem(status: .opened, expiryDate: expiryDate)
     }
 
     func onMarkAsDone(wastePercentage: Double) {
@@ -520,6 +553,23 @@ struct InventoryItemSheetView: View {
                         } label: {
                             Label("Edit", systemImage: "pencil")
                         }
+                        
+                        if inventoryItem.status != .opened {
+                            Button {
+                                onOpen()
+                            } label: {
+                                Label(title: {
+                                    Text("Open")
+                                }) {
+                                    Image("tin.open")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                }
+                            }
+                        }
+                        
                         Menu {
                             if inventoryItem.storageLocation != .pantry {
                                 Button {
@@ -570,7 +620,7 @@ struct InventoryItemSheetView: View {
                         Image(systemName: "ellipsis.circle.fill")
                             .font(.system(size: 24))
                             .foregroundStyle(.gray600)
-                    }.tint(.green500)
+                    }.tint(inventoryItem.consumptionUrgency.tileColor.foreground)
 
                 }.padding(.top, 10)
 
@@ -708,8 +758,8 @@ struct InventoryItemSheetView: View {
                             [.custom(AdaptiveMediumDetent.self)])
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(25)
-                case .open:
-                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                case let .open(expiryDate):
+                    OpenInventoryItemSheet(inventoryItem: inventoryItem, expiryDate: expiryDate, onOpen: onOpenTap)
                         .presentationDetents(
                             inventoryItem.product.name
                                 .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
