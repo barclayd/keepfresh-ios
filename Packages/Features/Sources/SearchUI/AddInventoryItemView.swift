@@ -218,7 +218,7 @@ public struct AddInventoryItemView: View {
                                 type: .storage(location: $formState.storageLocation, isRecommended: isRecommendedStorageLocation, overriden: $formState.storageOverridden),
                                 storageLocation: formState.storageLocation)
                             InventoryCategory(
-                                type: .status(status: $formState.status, overriden: $formState.stateOverridden),
+                                type: .status(status: $formState.status, overriden: $formState.statusOverridden),
                                 storageLocation: formState.storageLocation)
                             InventoryCategory(
                                 type: .quantity(quantity: $formState.quantity),
@@ -272,7 +272,19 @@ public struct AddInventoryItemView: View {
         .onChange(of: preview.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
-        .onChange(of: formState.status) { _, _ in
+        .onChange(of: formState.status) { _, newStatus in
+            if let calculatedExpiryDate, formState.expiryOverridden != .user {
+                formState.expiryDate = calculatedExpiryDate
+            }
+            guard formState.storageOverridden != .user, let storageOptions = preview.suggestions?.shelfLifeInDays[newStatus] else {
+                return
+            }
+            
+            // iterate through available storageOptions in the order of Pantry, Fridge, Freezer.
+            // find the first one where there is an int (not nil) for the storage option
+            // then set formState.storageLocation = the first storageOption determined in the previous step
+        }
+        .onChange(of: formState.storageLocation) {
             if let calculatedExpiryDate, formState.expiryOverridden != .user {
                 formState.expiryDate = calculatedExpiryDate
             }

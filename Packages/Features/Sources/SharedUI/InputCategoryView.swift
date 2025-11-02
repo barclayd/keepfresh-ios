@@ -30,11 +30,11 @@ struct CheckToggleStyle: ToggleStyle {
 }
 
 public enum InventoryItemFormType {
-    case expiry(date: Binding<Date>, isRecommended: Bool, userOverriden: Binding<Overriden>)
+    case expiry(date: Binding<Date>, isRecommended: Bool, overriden: Binding<Overriden?>)
     case compactExpiry(date: Binding<Date>, isRecommended: Bool, expiryType: ExpiryType)
-    case storage(location: Binding<StorageLocation>, isRecommended: Bool, userOverriden: Binding<Overriden>)
+    case storage(location: Binding<StorageLocation>, isRecommended: Bool, overriden: Binding<Overriden?>)
     case readOnlyStorage(location: StorageLocation, isRecommended: Bool)
-    case status(status: Binding<ProductSearchItemStatus>, userOverriden: Binding<Overriden>)
+    case status(status: Binding<ProductSearchItemStatus>, overriden: Binding<Overriden?>)
     case quantity(quantity: Binding<Int>)
 }
 
@@ -220,7 +220,7 @@ struct InventoryItemOverview: View {
 
 struct IventoryItemStatusContent: View {
     @Binding var status: ProductSearchItemStatus
-    @Binding var overriden: Overriden
+    @Binding var overriden: Overriden?
 
     @State private var showStoragePicker = false
 
@@ -268,7 +268,7 @@ struct IventoryItemStatusContent: View {
 
 struct InventoryItemStorageContent: View {
     @Binding var storageLocation: StorageLocation
-    @Binding var overriden: Overriden
+    @Binding var overriden: Overriden?
 
     @State private var showStoragePicker = false
 
@@ -354,7 +354,7 @@ struct InventoryItemReadOnlyStorageContent: View {
 
 struct InventoryItemExpiryDateContent: View {
     @Binding var expiryDate: Date
-    @Binding var overriden: Overriden
+    @Binding var overriden: Overriden?
 
     @State private var showDatePicker = false
 
