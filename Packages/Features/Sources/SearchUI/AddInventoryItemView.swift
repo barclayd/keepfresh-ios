@@ -9,11 +9,6 @@ import Router
 import SharedUI
 import SwiftUI
 
-enum Overriden {
-    case user
-    case suggested
-}
-
 @Observable
 public class InventoryFormState {
     var expiryDate = Date()
@@ -21,25 +16,26 @@ public class InventoryFormState {
     var storageLocation: StorageLocation = .fridge
     var quantity = 1
     var status: ProductSearchItemStatus = .unopened
-    var expiryUserOverridden: Overriden? = nil
-    var storageUserOverridden: Overriden? = nil
+    var expiryOverridden: Overriden?
+    var storageOverridden: Overriden?
+    var statusOverridden: Overriden?
 }
 
 public struct AddInventoryItemView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
-
+    
     @State private var preview = InventoryItemPreview()
     @State private var formState = InventoryFormState()
     @State private var usageGenerator = UsageGenerator()
     @State private var addItemSuccess = false
-
+    
     public let productSearchItem: ProductSearchResultItemResponse
-
+    
     public init(productSearchItem: ProductSearchResultItemResponse) {
         self.productSearchItem = productSearchItem
     }
-
+    
     var isRecommendedExpiryDate: Bool {
         guard
             let recommendedNumberOfDays = preview.suggestions?.shelfLifeInDays[formState.status][
@@ -50,11 +46,11 @@ public struct AddInventoryItemView: View {
         }
         return formState.expiryDate.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
     }
-
+    
     var isRecommendedStorageLocation: Bool {
         formState.storageLocation == preview.suggestions?.recommendedStorageLocation
     }
-
+    
     var calculatedExpiryDate: Date? {
         guard
             let shelfLife = preview.suggestions?.shelfLifeInDays,
@@ -68,25 +64,13 @@ public struct AddInventoryItemView: View {
         return expiry
     }
     
-    func getIsRecommendedExpiryDate(date: Date, status: ProductSearchItemStatus) -> Bool {
-        guard
-            let recommendedNumberOfDays = preview.suggestions?.shelfLifeInDays[status][
-                formState.storageLocation
-            ]
-        else {
-            return false
-        }
-        return date.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
-    }
-        
-
     func addToInventory() async throws {
         print(
             "Expiry date: \(formState.expiryDate)",
             "Storage location: \(formState.storageLocation.rawValue)",
             "quantity: \(formState.quantity)",
             "status: \(formState.status.rawValue)")
-
+        
         let request = AddInventoryItemRequest(
             item: AddInventoryItemRequest
                 .InventoryItem(
@@ -99,9 +83,9 @@ public struct AddInventoryItemView: View {
                     consumptionPrediction: usageGenerator.percentagePrediction,
                     consumptionPredictionChangedAt: usageGenerator.percentagePrediction != nil ? Date() : nil),
             productId: productSearchItem.id, quantity: formState.quantity)
-
+        
         let temporaryInventoryItemId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
-
+        
         inventory.addItem(
             request: request,
             product: productSearchItem,
@@ -109,38 +93,38 @@ public struct AddInventoryItemView: View {
             categorySuggestions: preview.suggestions,
             inventoryItemId: temporaryInventoryItemId,
             icon: productSearchItem.icon)
-
+        
         addItemSuccess.toggle()
         router.popToRoot()
     }
-
+    
     public var body: some View {
         GeometryReader { geometry in
             ScrollView(showsIndicators: false) {
                 ZStack(alignment: .bottom) {
                     VStack(spacing: 5) {
                         GenmojiView(name: productSearchItem.icon, fontSize: 98, tint: formState.storageLocation.foregroundColor)
-
+                        
                         Text("\(productSearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
                             formState.storageLocation.foregroundColor
                         ).fontWeight(.bold).multilineTextAlignment(.center)
-
+                        
                         HStack {
                             Text(productSearchItem.category.name)
                                 .font(.callout)
                             if let amountFormatted = productSearchItem.amountUnitFormatted {
                                 Circle()
                                     .frame(width: 4, height: 4)
-
+                                
                                 Text(amountFormatted)
                                     .font(.callout)
                             }
                         }.foregroundStyle(formState.storageLocation.infoColor)
-
+                        
                         Text(productSearchItem.brand.name)
                             .font(.headline).fontWeight(.bold)
                             .foregroundStyle(formState.storageLocation == .freezer ? .blue400 : productSearchItem.brand.color)
-
+                        
                         if usageGenerator.isAvailable {
                             VStack {
                                 if let percentagePrediction = usageGenerator.percentagePrediction, usageGenerator.state != .loading {
@@ -150,7 +134,7 @@ public struct AddInventoryItemView: View {
                                 } else {
                                     ProgressView().controlSize(.regular).tint(.yellow500)
                                 }
-
+                                
                                 HStack(spacing: 0) {
                                     Text("Predicted usage").font(.subheadline).foregroundStyle(formState.storageLocation.foregroundColor)
                                         .fontWeight(.light)
@@ -161,7 +145,7 @@ public struct AddInventoryItemView: View {
                                 }.offset(y: -5)
                             }.padding(.top, 10)
                         }
-
+                        
                         Grid {
                             GridRow {
                                 Spacer()
@@ -184,7 +168,7 @@ public struct AddInventoryItemView: View {
                                 }
                                 Spacer()
                             }
-
+                            
                             GridRow {
                                 Spacer()
                                 VStack(spacing: 0) {
@@ -207,7 +191,7 @@ public struct AddInventoryItemView: View {
                                 }
                                 Spacer()
                             }
-
+                            
                         }.padding(.horizontal, 15).padding(.vertical, 5).frame(
                             maxWidth: .infinity,
                             alignment: .center)
@@ -216,7 +200,7 @@ public struct AddInventoryItemView: View {
                             .padding(
                                 .bottom,
                                 10)
-
+                        
                         if let predictions = preview.predictions, let suggestions = preview.suggestions {
                             SuggestionsView(
                                 storageLocation: formState.storageLocation,
@@ -225,16 +209,16 @@ public struct AddInventoryItemView: View {
                                 itemName: productSearchItem.name.truncated(to: 20),
                                 categoryName: productSearchItem.category.name.truncated(to: 18))
                         }
-
+                        
                         VStack(spacing: 15) {
                             InventoryCategory(
-                                type: .expiry(date: $formState.expiryDate, isRecommended: isRecommendedExpiryDate),
+                                type: .expiry(date: $formState.expiryDate, isRecommended: isRecommendedExpiryDate, overriden: $formState.expiryOverridden),
                                 storageLocation: formState.storageLocation)
                             InventoryCategory(
-                                type: .storage(location: $formState.storageLocation, isRecommended: isRecommendedStorageLocation),
+                                type: .storage(location: $formState.storageLocation, isRecommended: isRecommendedStorageLocation, overriden: $formState.storageOverridden),
                                 storageLocation: formState.storageLocation)
                             InventoryCategory(
-                                type: .status(status: $formState.status),
+                                type: .status(status: $formState.status, overriden: $formState.stateOverridden),
                                 storageLocation: formState.storageLocation)
                             InventoryCategory(
                                 type: .quantity(quantity: $formState.quantity),
@@ -288,12 +272,8 @@ public struct AddInventoryItemView: View {
         .onChange(of: preview.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
-        .onChange(of: formState.status) { oldStatus, newStatus in
-            // this method is quite hacky - let's just pass down didTouch state
-            // let's do this for Expiry, Storage and Status
-            // if user did touch expiry date -> don't change it onChange of storage or status
-            // if they didn't -> update it with calculatedExpiryDate
-            if let calculatedExpiryDate, getIsRecommendedExpiryDate(date: formState.expiryDate, status: oldStatus) {
+        .onChange(of: formState.status) { _, _ in
+            if let calculatedExpiryDate, formState.expiryOverridden != .user {
                 formState.expiryDate = calculatedExpiryDate
             }
         }
@@ -303,14 +283,14 @@ public struct AddInventoryItemView: View {
                 print("no predictions found for \(productSearchItem.name)")
                 return
             }
-
+            
             let quantityString: String? = {
                 if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
                     return "\(amount)\(unit)"
                 }
                 return nil
             }()
-
+            
             Task {
                 await usageGenerator.generateUsagePrediction(
                     predictions: predictions,
@@ -323,16 +303,15 @@ public struct AddInventoryItemView: View {
             }
         }
     }
-
+    
     private func updateDefaultsFromSuggestions(_ suggestions: InventorySuggestionsResponse?) {
         guard let suggestions else { return }
-
+        
         formState.storageLocation = suggestions.recommendedStorageLocation
         formState.expiryType = suggestions.expiryType
         
         if let calculatedExpiryDate {
             formState.expiryDate = calculatedExpiryDate
-            print("set from userDefault")
         }
     }
 }

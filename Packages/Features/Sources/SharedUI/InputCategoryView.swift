@@ -3,6 +3,11 @@ import Extensions
 import Models
 import SwiftUI
 
+public enum Overriden {
+    case user
+    case suggested
+}
+
 struct CheckToggleStyle: ToggleStyle {
     @Environment(\.isEnabled) var isEnabled
 
@@ -25,11 +30,11 @@ struct CheckToggleStyle: ToggleStyle {
 }
 
 public enum InventoryItemFormType {
-    case expiry(date: Binding<Date>, isRecommended: Bool)
+    case expiry(date: Binding<Date>, isRecommended: Bool, userOverriden: Binding<Overriden>)
     case compactExpiry(date: Binding<Date>, isRecommended: Bool, expiryType: ExpiryType)
-    case storage(location: Binding<StorageLocation>, isRecommended: Bool)
+    case storage(location: Binding<StorageLocation>, isRecommended: Bool, userOverriden: Binding<Overriden>)
     case readOnlyStorage(location: StorageLocation, isRecommended: Bool)
-    case status(status: Binding<ProductSearchItemStatus>)
+    case status(status: Binding<ProductSearchItemStatus>, userOverriden: Binding<Overriden>)
     case quantity(quantity: Binding<Int>)
 }
 
@@ -75,7 +80,7 @@ private extension InventoryItemFormType {
     @ViewBuilder
     func overviewLabel(customColor: Color? = nil) -> some View {
         switch self {
-        case let .expiry(date, isRecommended), let .compactExpiry(date, isRecommended, _):
+        case let .expiry(date, isRecommended, _), let .compactExpiry(date, isRecommended, _):
             VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: 0) {
@@ -98,13 +103,13 @@ private extension InventoryItemFormType {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case let .status(status):
+        case let .status(status, _):
             VStack(alignment: .leading, spacing: 0) {
                 Text(status.wrappedValue.rawValue.capitalized).foregroundStyle(.gray600)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-        case let .storage(location, isRecommended):
+        case let .storage(location, isRecommended, _):
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .lastTextBaseline, spacing: 0) {
                     Image(systemName: location.wrappedValue.icon).font(.system(size: 24))
@@ -157,14 +162,14 @@ private extension InventoryItemFormType {
     @ViewBuilder
     func expandedContent(forceExpanded _: Bool) -> some View {
         switch self {
-        case let .expiry(date, _):
-            InventoryItemExpiryDateContent(expiryDate: date)
+        case let .expiry(date, _, overriden):
+            InventoryItemExpiryDateContent(expiryDate: date, overriden: overriden)
         case let .compactExpiry(date, _, expiryType):
             InventoryItemExpiryDateCompactContent(expiryDate: date, expiryType: expiryType)
-        case let .status(status):
-            IventoryItemStatusContent(status: status)
-        case let .storage(location, _):
-            InventoryItemStorageContent(storageLocation: location)
+        case let .status(status, overriden):
+            IventoryItemStatusContent(status: status, overriden: overriden)
+        case let .storage(location, _, overriden):
+            InventoryItemStorageContent(storageLocation: location, overriden: overriden)
         case let .readOnlyStorage(location, _):
             InventoryItemReadOnlyStorageContent(storageLocation: location)
         case .quantity:
@@ -215,6 +220,7 @@ struct InventoryItemOverview: View {
 
 struct IventoryItemStatusContent: View {
     @Binding var status: ProductSearchItemStatus
+    @Binding var overriden: Overriden
 
     @State private var showStoragePicker = false
 
@@ -233,7 +239,12 @@ struct IventoryItemStatusContent: View {
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
 
-                Picker("Select inventory item status", selection: $status) {
+                Picker("Select inventory item status", selection: Binding(get: {
+                    status
+                }, set: { newValue in
+                    status = newValue
+                    overriden = .user
+                })) {
                     ForEach(ProductSearchItemStatus.allCases) { statusType in
                         Text(statusType.rawValue.capitalized).foregroundStyle(.gray600)
                             .font(.callout)
@@ -257,6 +268,7 @@ struct IventoryItemStatusContent: View {
 
 struct InventoryItemStorageContent: View {
     @Binding var storageLocation: StorageLocation
+    @Binding var overriden: Overriden
 
     @State private var showStoragePicker = false
 
@@ -275,7 +287,12 @@ struct InventoryItemStorageContent: View {
                     .lineLimit(1)
                     .frame(width: 105, alignment: .leading)
 
-                Picker("Select storage location", selection: $storageLocation) {
+                Picker("Select storage location", selection: Binding(get: {
+                    storageLocation
+                }, set: { newValue in
+                    storageLocation = newValue
+                    overriden = .user
+                })) {
                     ForEach(StorageLocation.allCases) { storageLocation in
                         Text(storageLocation.rawValue.capitalized).foregroundStyle(.gray600)
                             .font(.callout)
@@ -337,6 +354,7 @@ struct InventoryItemReadOnlyStorageContent: View {
 
 struct InventoryItemExpiryDateContent: View {
     @Binding var expiryDate: Date
+    @Binding var overriden: Overriden
 
     @State private var showDatePicker = false
 
@@ -373,7 +391,12 @@ struct InventoryItemExpiryDateContent: View {
             if showDatePicker {
                 DatePicker(
                     "Expiry",
-                    selection: $expiryDate,
+                    selection: Binding (get: {
+                        expiryDate
+                    }, set: { newValue in
+                        expiryDate = newValue
+                        overriden = .user
+                    }),
                     displayedComponents: [.date])
                     .datePickerStyle(.graphical)
                     .tint(.blue700)
