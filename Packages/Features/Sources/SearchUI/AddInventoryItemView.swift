@@ -64,6 +64,19 @@ public struct AddInventoryItemView: View {
         return expiry
     }
     
+    func calculateExpiryDate(storageLocation: StorageLocation) -> Date? {
+        guard
+            let shelfLife = preview.suggestions?.shelfLifeInDays,
+            let expiry = getExpiryDateForSelection(
+                storage: storageLocation,
+                status: formState.status,
+                shelfLife: shelfLife)
+        else {
+            return nil
+        }
+        return expiry
+    }
+    
     func addToInventory() async throws {
         print(
             "Expiry date: \(formState.expiryDate)",
@@ -280,12 +293,13 @@ public struct AddInventoryItemView: View {
                 return
             }
             
-            // iterate through available storageOptions in the order of Pantry, Fridge, Freezer.
-            // find the first one where there is an int (not nil) for the storage option
-            // then set formState.storageLocation = the first storageOption determined in the previous step
+            let preferredOrder: [StorageLocation] = [.pantry, .fridge, .freezer]
+            if let firstAvailableLocation = preferredOrder.first(where: { storageOptions[$0] != nil }) {
+                formState.storageLocation = firstAvailableLocation
+            }
         }
-        .onChange(of: formState.storageLocation) {
-            if let calculatedExpiryDate, formState.expiryOverridden != .user {
+        .onChange(of: formState.storageLocation) { _, newStorageLocation in
+            if formState.expiryOverridden != .user, let newExpiryDate = calculateExpiryDate(storageLocation: newStorageLocation) {
                 formState.expiryDate = calculatedExpiryDate
             }
         }
