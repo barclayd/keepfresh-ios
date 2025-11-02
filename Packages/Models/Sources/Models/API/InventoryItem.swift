@@ -268,8 +268,11 @@ public struct Product: Codable, Sendable {
 
     public var amountUnitFormatted: String? {
         guard let unit else { return nil }
-        guard let amount else { return unit }
+        
+        guard unit != "unit" else { return nil }
 
+        guard let amount else { return unit }
+        
         let formattedUnit = unit == "l" ? "L" : unit
 
         return "\(String(format: "%.0f", amount))\(formattedUnit)"

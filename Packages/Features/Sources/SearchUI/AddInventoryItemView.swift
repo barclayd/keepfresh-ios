@@ -9,6 +9,11 @@ import Router
 import SharedUI
 import SwiftUI
 
+enum Overriden {
+    case user
+    case suggested
+}
+
 @Observable
 public class InventoryFormState {
     var expiryDate = Date()
@@ -16,6 +21,8 @@ public class InventoryFormState {
     var storageLocation: StorageLocation = .fridge
     var quantity = 1
     var status: ProductSearchItemStatus = .unopened
+    var expiryUserOverridden: Overriden? = nil
+    var storageUserOverridden: Overriden? = nil
 }
 
 public struct AddInventoryItemView: View {
@@ -48,7 +55,7 @@ public struct AddInventoryItemView: View {
         formState.storageLocation == preview.suggestions?.recommendedStorageLocation
     }
 
-    var calculatedExpiryDate: Date {
+    var calculatedExpiryDate: Date? {
         guard
             let shelfLife = preview.suggestions?.shelfLifeInDays,
             let expiry = getExpiryDateForSelection(
@@ -56,10 +63,22 @@ public struct AddInventoryItemView: View {
                 status: formState.status,
                 shelfLife: shelfLife)
         else {
-            return Date()
+            return nil
         }
         return expiry
     }
+    
+    func getIsRecommendedExpiryDate(date: Date, status: ProductSearchItemStatus) -> Bool {
+        guard
+            let recommendedNumberOfDays = preview.suggestions?.shelfLifeInDays[status][
+                formState.storageLocation
+            ]
+        else {
+            return false
+        }
+        return date.isSameDay(as: addDaysToNow(recommendedNumberOfDays))
+    }
+        
 
     func addToInventory() async throws {
         print(
@@ -109,11 +128,11 @@ public struct AddInventoryItemView: View {
                         HStack {
                             Text(productSearchItem.category.name)
                                 .font(.callout)
-                            if let amount = productSearchItem.amount, let unit = productSearchItem.unit {
+                            if let amountFormatted = productSearchItem.amountUnitFormatted {
                                 Circle()
                                     .frame(width: 4, height: 4)
 
-                                Text("\(String(format: "%.0f", amount))\(unit)")
+                                Text(amountFormatted)
                                     .font(.callout)
                             }
                         }.foregroundStyle(formState.storageLocation.infoColor)
@@ -269,6 +288,15 @@ public struct AddInventoryItemView: View {
         .onChange(of: preview.suggestions) { _, newSuggestions in
             updateDefaultsFromSuggestions(newSuggestions)
         }
+        .onChange(of: formState.status) { oldStatus, newStatus in
+            // this method is quite hacky - let's just pass down didTouch state
+            // let's do this for Expiry, Storage and Status
+            // if user did touch expiry date -> don't change it onChange of storage or status
+            // if they didn't -> update it with calculatedExpiryDate
+            if let calculatedExpiryDate, getIsRecommendedExpiryDate(date: formState.expiryDate, status: oldStatus) {
+                formState.expiryDate = calculatedExpiryDate
+            }
+        }
         .onChange(of: formState.expiryDate) { oldDate, newDate in
             guard !newDate.isSameDay(as: oldDate) else { return }
             guard let predictions = preview.predictions else {
@@ -301,7 +329,10 @@ public struct AddInventoryItemView: View {
 
         formState.storageLocation = suggestions.recommendedStorageLocation
         formState.expiryType = suggestions.expiryType
-
-        formState.expiryDate = calculatedExpiryDate
+        
+        if let calculatedExpiryDate {
+            formState.expiryDate = calculatedExpiryDate
+            print("set from userDefault")
+        }
     }
 }
