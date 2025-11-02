@@ -24,7 +24,6 @@ public struct SearchResultView: View {
                     .buttonStyle(PlainButtonStyle())
                     .onAppear {
                         if product.id == searchProducts.last?.id, hasMorePages, !isLoadingMore {
-                            print("searching more")
                             onLoadMore?()
                         }
                     }

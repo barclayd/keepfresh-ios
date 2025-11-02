@@ -54,7 +54,6 @@ public struct BarcodeView: View {
                         case let .success(result):
                             Task {
                                 let api = KeepFreshAPI()
-                                print("barcode: \(result)")
                                 do {
                                     let product = try await api.getProduct(barcode: result.string)
                                     router.navigateTo(.addProduct(product: product))

@@ -51,9 +51,9 @@ public struct ProductSearchResultItemResponse: Identifiable, Hashable, Codable, 
 
     public var amountUnitFormatted: String? {
         guard let unit else { return nil }
-        
+
         guard unit != "unit" else { return nil }
-        
+
         guard let amount else { return unit }
 
         let formattedUnit = unit == "l" ? "L" : unit

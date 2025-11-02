@@ -391,7 +391,7 @@ struct InventoryItemExpiryDateContent: View {
             if showDatePicker {
                 DatePicker(
                     "Expiry",
-                    selection: Binding (get: {
+                    selection: Binding(get: {
                         expiryDate
                     }, set: { newValue in
                         expiryDate = newValue
