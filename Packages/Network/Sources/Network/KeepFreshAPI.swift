@@ -24,7 +24,7 @@ public struct KeepFreshAPI: Sendable {
     public func getRandomProduct() async throws -> ProductSearchResultItemResponse {
         try await client.fetch(
             ProductSearchResultItemResponse.self,
-            path: "v1/products/random")
+            path: "v2/products/random")
     }
 
     public func getProduct(barcode: String) async throws -> ProductSearchResultItemResponse {

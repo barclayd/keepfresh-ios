@@ -50,7 +50,7 @@ public struct TodayView: View {
                         Image(systemName: "dice.fill")
                             .font(.system(size: 18))
                             .frame(width: 20, alignment: .center)
-                        Text("Random item")
+                        Text("Random grocery")
                             .font(.headline)
                             .frame(width: 175, alignment: .center)
                     }

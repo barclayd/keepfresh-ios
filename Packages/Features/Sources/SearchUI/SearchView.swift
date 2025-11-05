@@ -53,7 +53,7 @@ class Search {
                     print("Debounced value: '\(debouncedSearchText)'")
 
                     if !searchText.isEmpty {
-                        searchResults = ProductSearchResultItemResponse.mocks(count: 5)
+                        searchResults = ProductSearchResultItemResponse.mocks(count: 10)
                         await sendSearchRequest(searchTerm: debouncedSearchText)
                     }
                 } else {
@@ -211,6 +211,7 @@ public struct SearchView: View {
             }
         }
         .searchable(text: searchTextBinding)
+        .scrollDismissesKeyboard(.immediately)
         .onSubmit(of: .search) {
             Task {
                 guard search?.state != .loading else { return }

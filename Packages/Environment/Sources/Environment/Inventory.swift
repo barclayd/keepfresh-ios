@@ -48,7 +48,7 @@ public final class Inventory {
     public private(set) var productsByLocation: [Int: [StorageLocation: [InventoryItem]]] = [:]
     public private(set) var detailsByStorageLocation: [StorageLocation: InventoryLocationDetails] = [:]
 
-    public init(initialState: [InventoryItem] = InventoryItem.mocks(count: 5)) {
+    public init(initialState: [InventoryItem] = InventoryItem.mocks(count: 10)) {
         items = initialState
     }
 
