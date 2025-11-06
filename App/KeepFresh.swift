@@ -14,6 +14,7 @@ struct KeepFreshApp: App {
 
     @State var router: Router = .init()
     @State var inventory: Inventory = .init()
+    @State var pushNotifications = PushNotifications.shared
 
     init() {
         FontRegistration.registerFonts()
@@ -35,6 +36,20 @@ struct KeepFreshApp: App {
                     }
                 }
                 .preferredColorScheme(.light)
+                .onChange(of: pushNotifications.handledInventoryItemId) { _, inventoryItemId in
+                    print("📲 onChange fired, value: \(String(describing: inventoryItemId))")
+                    guard let inventoryItemId else { return }
+
+                    print("🧹 Clearing property")
+                    pushNotifications.handledInventoryItemId = nil
+
+                    print("⏱️ Scheduling navigation")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        router.selectedTab = .today
+                        router.popToRoot(for: .today)
+                        router.selectedInventoryItemForDeepLink = inventoryItemId
+                    }
+                }
         }
     }
 }
@@ -62,7 +77,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
     {
-        // Handle silent notifications
         print("Notification received")
         print("userInfo: \(userInfo)")
         completionHandler(.newData)

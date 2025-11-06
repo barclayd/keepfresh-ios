@@ -14,6 +14,8 @@ public final class Router {
 
     public var presentedSheet: SheetDestination?
 
+    public var selectedInventoryItemForDeepLink: Int?
+
     public init() {}
 
     public var selectedTabPath: [RouterDestination] {

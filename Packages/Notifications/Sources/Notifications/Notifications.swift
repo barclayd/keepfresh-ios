@@ -4,13 +4,19 @@ import Network
 import SwiftUI
 import UserNotifications
 
+extension UNNotification: @unchecked Sendable {}
+extension UNNotificationResponse: @unchecked Sendable {}
+extension UNUserNotificationCenter: @unchecked Sendable {}
+
 @MainActor
 @Observable
 public class PushNotifications: NSObject {
-    public static let shared = PushNotifications()
+    public static var shared = PushNotifications()
 
     public var pushToken: Data?
     public var authorizationStatus: UNAuthorizationStatus = .notDetermined
+
+    public var handledInventoryItemId: Int?
 
     override private init() {
         super.init()
@@ -32,22 +38,17 @@ public class PushNotifications: NSObject {
 
             if granted {
                 await registerForRemoteNotifications()
-            } else {
-                print("⚠️ Push notification permission denied")
             }
         } catch {
-            print("❌ Error requesting authorization: \(error)")
         }
     }
 
     public func updateSubscription() async {
         guard let pushToken else {
-            print("⚠️ No push token available")
             return
         }
 
         let tokenString = pushToken.map { String(format: "%02.2hhx", $0) }.joined()
-        print("📱 Updating subscription with token: \(tokenString)")
 
         await sendTokenToBackend(token: tokenString)
     }
@@ -80,26 +81,27 @@ public class PushNotifications: NSObject {
 // MARK: - UNUserNotificationCenterDelegate
 
 extension PushNotifications: UNUserNotificationCenterDelegate {
-    public nonisolated func userNotificationCenter(
+    public func userNotificationCenter(
         _: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse) async
-    {
+        didReceive response: UNNotificationResponse
+    ) async {
         let userInfo = response.notification.request.content.userInfo
-        print("📬 Notification tapped: \(userInfo)")
 
-        await MainActor.run {
-            // Put your handling code here
-            // For example:
-            // self.someProperty = something
-            // or call a method that updates state
+        guard let inventoryItemId = userInfo["inventoryItemId"] as? Int else {
+            return
         }
+
+        guard let event = userInfo["type"] as? String, event == "expiringFood" else {
+            return
+        }
+
+        handledInventoryItemId = inventoryItemId
     }
 
-    public nonisolated func userNotificationCenter(
+    public func userNotificationCenter(
         _: UNUserNotificationCenter,
-        willPresent _: UNNotification) async -> UNNotificationPresentationOptions
-    {
-        // Show notification even when app is in foreground
-        [.banner, .sound]
+        willPresent _: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        return [.banner, .sound]
     }
 }

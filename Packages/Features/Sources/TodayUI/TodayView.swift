@@ -7,14 +7,15 @@ import Router
 import SwiftUI
 
 public struct TodayView: View {
-    public init() {}
-
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
+    
+    public init() {}
 
     public var body: some View {
-        if inventory.items.isEmpty {
-            VStack(spacing: 8) {
+        Group {
+            if inventory.items.isEmpty {
+                VStack(spacing: 8) {
                 HStack {
                     Spacer()
                     Image("arrow.curved.right")
@@ -79,6 +80,23 @@ public struct TodayView: View {
                 .redactedShimmer(when: inventory.state != .loaded)
             }
             .background(.white200)
+            }
+        }
+        .sheet(item: Binding<InventoryItem?>(
+            get: {
+                guard let itemId = router.selectedInventoryItemForDeepLink else { return nil }
+                return inventory.items.first(where: { $0.id == itemId })
+            },
+            set: { newValue, _ in
+                router.selectedInventoryItemForDeepLink = newValue?.id
+            }
+        )) { (inventoryItem: InventoryItem) in
+            InventoryItemSheetView(inventoryItem: inventoryItem)
+                .presentationDetents(
+                    inventoryItem.product.name
+                        .count > 27 ? [.custom(AdaptiveExtraLargeDetent.self)] : [.custom(AdaptiveLargeDetent.self)])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(25)
         }
     }
 }
