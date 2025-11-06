@@ -1,6 +1,8 @@
 import Foundation
-import UserNotifications
+import Models
+import Network
 import SwiftUI
+import UserNotifications
 
 @MainActor
 @Observable
@@ -10,7 +12,7 @@ public class PushNotifications: NSObject {
     public var pushToken: Data?
     public var authorizationStatus: UNAuthorizationStatus = .notDetermined
     
-    private override init() {
+    override private init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
         
@@ -64,52 +66,38 @@ public class PushNotifications: NSObject {
     }
     
     private func sendTokenToBackend(token: String) async {
-        guard let url = URL(string: "https://your-worker.workers.dev/register-device") else {
-            print("❌ Invalid URL")
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let body: [String: String] = [
-            "deviceToken": token,
-            "userId": "user-id-here" // TODO: Get from your auth system
-        ]
-        
-        request.httpBody = try? JSONEncoder().encode(body)
-        
-        do {
-            let (_, response) = try await URLSession.shared.data(for: request)
-            if let httpResponse = response as? HTTPURLResponse {
-                print("✅ Token registered: \(httpResponse.statusCode)")
-            }
-        } catch {
-            print("❌ Failed to register token: \(error)")
-        }
+        let notificationsAPI = KeepFreshNotificationsAPI()
+
+        let appVersion = Bundle.main.appVersion
+        try? await notificationsAPI.registerDevice(
+            RegisterDeviceRequest(
+                deviceToken: token,
+                platform: "ios",
+                appVersion: appVersion
+            )
+        )
     }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
+
 extension PushNotifications: UNUserNotificationCenterDelegate {
-    nonisolated public func userNotificationCenter(
+    public nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
         let userInfo = response.notification.request.content.userInfo
         print("📬 Notification tapped: \(userInfo)")
         
-        // TODO: Handle deep linking to specific food item
-        if let foodId = userInfo["foodId"] as? String {
-            await MainActor.run {
-                print("Navigate to food: \(foodId)")
-                // You'll implement navigation here later
-            }
-        }
+        await MainActor.run {
+                    // Put your handling code here
+                    // For example:
+                    // self.someProperty = something
+                    // or call a method that updates state
+                }
     }
     
-    nonisolated public func userNotificationCenter(
+    public nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {

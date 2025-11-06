@@ -14,7 +14,6 @@ struct KeepFreshApp: App {
 
     @State var router: Router = .init()
     @State var inventory: Inventory = .init()
-    @State var notifications: PushNotifications = PushNotifications.shared
 
     init() {
         FontRegistration.registerFonts()
@@ -43,11 +42,11 @@ struct KeepFreshApp: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         return true
     }
-    
+
     func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -57,7 +56,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             await PushNotifications.shared.updateSubscription()
         }
     }
-    
+
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+    {
+        // Handle silent notifications
+        print("Notification received")
+        completionHandler(.newData)
+    }
+
     func application(
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
