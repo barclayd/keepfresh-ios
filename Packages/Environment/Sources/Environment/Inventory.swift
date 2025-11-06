@@ -142,7 +142,7 @@ public final class Inventory {
                 if let categorySuggestions {
                     await SuggestionsCache.shared.saveSuggestions(categoryId: category.id, categorySuggestions: categorySuggestions)
                 }
-                
+
                 await PushNotifications.shared.requestPushNotifications()
             } catch {
                 print("Adding inventory item failed with error: \(error)")

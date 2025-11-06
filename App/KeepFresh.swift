@@ -41,35 +41,37 @@ struct KeepFreshApp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-    ) -> Bool {
-        return true
+        _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool
+    {
+        true
     }
 
     func application(
-        _ application: UIApplication,
-        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
-    ) {
+        _: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
+    {
         Task { @MainActor in
             PushNotifications.shared.pushToken = deviceToken
             await PushNotifications.shared.updateSubscription()
         }
     }
 
-    func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+    func application(
+        _: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
     {
         // Handle silent notifications
         print("Notification received")
+        print("userInfo: \(userInfo)")
         completionHandler(.newData)
     }
 
     func application(
-        _ application: UIApplication,
-        didFailToRegisterForRemoteNotificationsWithError error: Error
-    ) {
+        _: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error)
+    {
         print("❌ Failed to register: \(error)")
     }
 }

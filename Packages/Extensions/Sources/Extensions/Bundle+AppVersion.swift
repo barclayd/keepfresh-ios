@@ -7,7 +7,7 @@ public extension Bundle {
         }
         return version
     }
-    
+
     var appBuildNumber: String {
         guard let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String else {
             return "1"
