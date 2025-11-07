@@ -4,7 +4,7 @@ import StoreKit
 enum AppEnvironment {
     static func detect() async -> String {
         #if targetEnvironment(simulator)
-        return "development"
+            return "development"
         #endif
 
         do {

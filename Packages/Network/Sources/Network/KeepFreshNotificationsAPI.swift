@@ -8,8 +8,6 @@ public struct KeepFreshNotificationsAPI: Sendable {
         client = APIClient(baseURL: baseURL)
     }
 
-    // MARK: - Devices
-
     public func registerDevice(_ request: RegisterDeviceRequest) async throws {
         try await client.post(
             path: "v1/devices",

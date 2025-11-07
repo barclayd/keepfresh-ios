@@ -27,8 +27,6 @@ public class PushNotifications: NSObject {
         }
     }
 
-    // MARK: - Public Methods
-
     public func requestPushNotifications() async {
         do {
             let granted = try await UNUserNotificationCenter.current()
@@ -51,8 +49,6 @@ public class PushNotifications: NSObject {
 
         await sendTokenToBackend(token: tokenString)
     }
-
-    // MARK: - Private Methods
 
     private func updateAuthorizationStatus() async {
         let settings = await UNUserNotificationCenter.current().notificationSettings()

@@ -42,7 +42,7 @@ struct KeepFreshApp: App {
                     pushNotifications.handledInventoryItemId = nil
 
                     guard let item = inventory.items.first(where: { $0.id == inventoryItemId }) else {
-                        print("⚠️ Inventory item not found: \(inventoryItemId)")
+                        print("Inventory item not found: \(inventoryItemId)")
                         return
                     }
 
