@@ -1,5 +1,6 @@
 import Intelligence
 import Models
+import Router
 import SharedUI
 import SwiftUI
 
@@ -73,7 +74,7 @@ struct IconsView: View {
 }
 
 public struct InventoryItemView: View {
-    @State var showInventoryItemSheet: Bool = false
+    @Environment(Router.self) var router
 
     var inventoryItem: InventoryItem
 
@@ -143,16 +144,8 @@ public struct InventoryItemView: View {
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .onTapGesture {
-            showInventoryItemSheet.toggle()
+            router.presentedSheet = .inventoryItem(inventoryItem)
         }
-        .sensoryFeedback(.selection, trigger: showInventoryItemSheet)
-        .sheet(isPresented: $showInventoryItemSheet) {
-            InventoryItemSheetView(inventoryItem: inventoryItem)
-                .presentationDetents(
-                    inventoryItem.product.name
-                        .count > 27 ? [.custom(AdaptiveExtraLargeDetent.self)] : [.custom(AdaptiveLargeDetent.self)])
-                .presentationDragIndicator(.visible)
-                .presentationCornerRadius(25)
-        }
+        .sensoryFeedback(.selection, trigger: router.presentedSheet)
     }
 }

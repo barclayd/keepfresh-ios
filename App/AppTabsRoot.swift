@@ -40,6 +40,13 @@ struct AppTabRootView: View {
             switch presentedSheet {
             case .barcodeScan:
                 BarcodeView()
+            case let .inventoryItem(item):
+                InventoryItemSheetView(inventoryItem: item)
+                    .presentationDetents(
+                        item.product.name.count > 27
+                            ? [.custom(AdaptiveExtraLargeDetent.self)]
+                            : [.custom(AdaptiveLargeDetent.self)])
+                    .presentationDragIndicator(.visible)
             }
         }
     }

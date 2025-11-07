@@ -20,26 +20,73 @@
 		4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF1853A2D14E70900961F35 /* SearchUI */; };
 		4EF223CF2E874ECA00A93567 /* Environment in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF223CE2E874ECA00A93567 /* Environment */; };
 		4EF223D22E883E4A00A93567 /* Extensions in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF223D12E883E4A00A93567 /* Extensions */; };
+		4EF5AD0E2EBC0C1600F8E400 /* Notifications in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD0D2EBC0C1600F8E400 /* Notifications */; };
+		4EF5AD1A2EBD1C8E00F8E400 /* NotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4EF5AD132EBD1C8E00F8E400 /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4EF5AD212EBD1CE900F8E400 /* Network in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD202EBD1CE900F8E400 /* Network */; };
+		4EF5AD232EBD208500F8E400 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD222EBD208500F8E400 /* Models */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4EF5AD182EBD1C8E00F8E400 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9F21421B2CE9DAA1004167D7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4EF5AD122EBD1C8E00F8E400;
+			remoteInfo = NotificationServiceExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4EF5AD1F2EBD1C8E00F8E400 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4EF5AD1A2EBD1C8E00F8E400 /* NotificationServiceExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4E747FB62D19F28D00DDCE17 /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = Packages/DesignSystem; sourceTree = "<group>"; };
 		4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		4E8952CE2E9878F8003F3366 /* Authentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Authentication; path = Packages/Authentication; sourceTree = "<group>"; };
 		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4E9517A02D7BB56700FAFC86 /* KeepFresh-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KeepFresh-Info.plist"; sourceTree = "<group>"; };
 		4EAF44BC2E8B3902000B5A6B /* Intelligence */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Intelligence; path = Packages/Intelligence; sourceTree = "<group>"; };
 		4ED27E822E849BA600296595 /* Environment */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Environment; path = Packages/Environment; sourceTree = "<group>"; };
 		4EEEBA722E8063B70049511B /* Network */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Network; path = Packages/Network; sourceTree = "<group>"; };
 		4EEEBA732E8063DA0049511B /* Router */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Router; path = Packages/Router; sourceTree = "<group>"; };
 		4EEEBA742E80679B0049511B /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Models; path = Packages/Models; sourceTree = "<group>"; };
 		4EF223D02E883D3800A93567 /* Extensions */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Extensions; path = Packages/Extensions; sourceTree = "<group>"; };
+		4EF5AD0C2EBC066D00F8E400 /* Notifications */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Notifications; path = Packages/Notifications; sourceTree = "<group>"; };
+		4EF5AD132EBD1C8E00F8E400 /* NotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F2142232CE9DAA1004167D7 /* KeepFresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepFresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FAEE3A72CF0994400F86CDC /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Features; path = Packages/Features; sourceTree = "<group>"; };
 		9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PackageTests.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4EF5AD1B2EBD1C8E00F8E400 /* Exceptions for "NotificationServiceExtension" folder in "NotificationServiceExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4EF5AD122EBD1C8E00F8E400 /* NotificationServiceExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		4EF5AD142EBD1C8E00F8E400 /* NotificationServiceExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4EF5AD1B2EBD1C8E00F8E400 /* Exceptions for "NotificationServiceExtension" folder in "NotificationServiceExtension" target */,
+			);
+			path = NotificationServiceExtension;
+			sourceTree = "<group>";
+		};
 		9F2142252CE9DAA1004167D7 /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = App;
@@ -48,6 +95,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4EF5AD102EBD1C8E00F8E400 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4EF5AD232EBD208500F8E400 /* Models in Frameworks */,
+				4EF5AD212EBD1CE900F8E400 /* Network in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F2142202CE9DAA1004167D7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -58,6 +114,7 @@
 				4EEEBA7B2E806E010049511B /* Network in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
 				4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */,
+				4EF5AD0E2EBC0C1600F8E400 /* Notifications in Frameworks */,
 				4EF223CF2E874ECA00A93567 /* Environment in Frameworks */,
 				4EAF44BE2E8B3CFE000B5A6B /* Intelligence in Frameworks */,
 				4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */,
@@ -74,10 +131,10 @@
 			isa = PBXGroup;
 			children = (
 				4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */,
-				4E9517A02D7BB56700FAFC86 /* KeepFresh-Info.plist */,
 				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
+				4EF5AD0C2EBC066D00F8E400 /* Notifications */,
 				4E8952CE2E9878F8003F3366 /* Authentication */,
 				4EAF44BC2E8B3902000B5A6B /* Intelligence */,
 				4EF223D02E883D3800A93567 /* Extensions */,
@@ -87,6 +144,7 @@
 				4EEEBA722E8063B70049511B /* Network */,
 				4E747FB62D19F28D00DDCE17 /* DesignSystem */,
 				9FAEE3A72CF0994400F86CDC /* Features */,
+				4EF5AD142EBD1C8E00F8E400 /* NotificationServiceExtension */,
 				9FAEE3B82CF09BB400F86CDC /* Frameworks */,
 				9F2142242CE9DAA1004167D7 /* Products */,
 			);
@@ -96,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				9F2142232CE9DAA1004167D7 /* KeepFresh.app */,
+				4EF5AD132EBD1C8E00F8E400 /* NotificationServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -110,6 +169,30 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4EF5AD122EBD1C8E00F8E400 /* NotificationServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4EF5AD1C2EBD1C8E00F8E400 /* Build configuration list for PBXNativeTarget "NotificationServiceExtension" */;
+			buildPhases = (
+				4EF5AD0F2EBD1C8E00F8E400 /* Sources */,
+				4EF5AD102EBD1C8E00F8E400 /* Frameworks */,
+				4EF5AD112EBD1C8E00F8E400 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4EF5AD142EBD1C8E00F8E400 /* NotificationServiceExtension */,
+			);
+			name = NotificationServiceExtension;
+			packageProductDependencies = (
+				4EF5AD202EBD1CE900F8E400 /* Network */,
+				4EF5AD222EBD208500F8E400 /* Models */,
+			);
+			productName = NotificationServiceExtension;
+			productReference = 4EF5AD132EBD1C8E00F8E400 /* NotificationServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		9F2142222CE9DAA1004167D7 /* KeepFresh */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9F2142482CE9DAA3004167D7 /* Build configuration list for PBXNativeTarget "KeepFresh" */;
@@ -117,10 +200,12 @@
 				9F21421F2CE9DAA1004167D7 /* Sources */,
 				9F2142202CE9DAA1004167D7 /* Frameworks */,
 				9F2142212CE9DAA1004167D7 /* Resources */,
+				4EF5AD1F2EBD1C8E00F8E400 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4EF5AD192EBD1C8E00F8E400 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				9F2142252CE9DAA1004167D7 /* App */,
@@ -139,6 +224,7 @@
 				4EF223D12E883E4A00A93567 /* Extensions */,
 				4EAF44BD2E8B3CFE000B5A6B /* Intelligence */,
 				4E8952CF2E987903003F3366 /* Authentication */,
+				4EF5AD0D2EBC0C1600F8E400 /* Notifications */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -151,9 +237,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1610;
+				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					4EF5AD122EBD1C8E00F8E400 = {
+						CreatedOnToolsVersion = 26.1;
+					};
 					9F2142222CE9DAA1004167D7 = {
 						CreatedOnToolsVersion = 16.1;
 					};
@@ -178,11 +267,19 @@
 			projectRoot = "";
 			targets = (
 				9F2142222CE9DAA1004167D7 /* KeepFresh */,
+				4EF5AD122EBD1C8E00F8E400 /* NotificationServiceExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4EF5AD112EBD1C8E00F8E400 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F2142212CE9DAA1004167D7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -194,6 +291,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4EF5AD0F2EBD1C8E00F8E400 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F21421F2CE9DAA1004167D7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -203,7 +307,76 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4EF5AD192EBD1C8E00F8E400 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4EF5AD122EBD1C8E00F8E400 /* NotificationServiceExtension */;
+			targetProxy = 4EF5AD182EBD1C8E00F8E400 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		4EF5AD1D2EBD1C8E00F8E400 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationServiceExtension/NotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh.NotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4EF5AD1E2EBD1C8E00F8E400 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationServiceExtension/NotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh.NotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		9F2142462CE9DAA3004167D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -339,7 +512,7 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "KeepFresh-Info.plist";
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = KeepFresh;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "KeepFresh uses the camera to scan barcodes";
@@ -358,7 +531,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -386,7 +559,7 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "KeepFresh-Info.plist";
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = KeepFresh;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "KeepFresh uses the camera to scan barcodes";
@@ -405,7 +578,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -421,6 +594,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4EF5AD1C2EBD1C8E00F8E400 /* Build configuration list for PBXNativeTarget "NotificationServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4EF5AD1D2EBD1C8E00F8E400 /* Debug */,
+				4EF5AD1E2EBD1C8E00F8E400 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9F21421E2CE9DAA1004167D7 /* Build configuration list for PBXProject "KeepFresh" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -500,6 +682,18 @@
 		4EF223D12E883E4A00A93567 /* Extensions */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Extensions;
+		};
+		4EF5AD0D2EBC0C1600F8E400 /* Notifications */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Notifications;
+		};
+		4EF5AD202EBD1CE900F8E400 /* Network */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Network;
+		};
+		4EF5AD222EBD208500F8E400 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

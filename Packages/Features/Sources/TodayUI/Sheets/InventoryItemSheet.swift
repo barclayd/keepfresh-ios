@@ -303,7 +303,7 @@ enum Sheet: Identifiable {
     }
 }
 
-struct InventoryItemSheetView: View {
+public struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
 
@@ -321,7 +321,7 @@ struct InventoryItemSheetView: View {
 
     var inventoryItem: InventoryItem
 
-    init(inventoryItem: InventoryItem) {
+    public init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
 
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
@@ -531,250 +531,248 @@ struct InventoryItemSheetView: View {
         return itemWithShorterExpiryDate != nil
     }
 
-    var body: some View {
-        Group {
-            VStack(spacing: 10) {
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.gray600)
-                    }
-                    Spacer()
-                    Menu {
-                        Button {
-                            inventory.deleteItem(id: inventoryItem.id)
-                            dismiss()
-                        } label: {
-                            Label("Remove", systemImage: "arrow.uturn.backward")
-                        }
-                        Button {
-                            showSheet = .edit
-                        } label: {
-                            Label("Edit", systemImage: "pencil")
-                        }
-
-                        if inventoryItem.status != .opened {
-                            Button {
-                                onOpen()
-                            } label: {
-                                Label(title: {
-                                    Text("Open")
-                                }) {
-                                    Image("tin.open")
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 22, height: 22)
-                                }
-                            }
-                        }
-
-                        Menu {
-                            if inventoryItem.storageLocation != .pantry {
-                                Button {
-                                    showSheet = .move(.pantry)
-                                } label: {
-                                    Label("Pantry", systemImage: StorageLocation.pantry.icon)
-                                }.tint(StorageLocation.pantry.backgroundColor)
-                            }
-
-                            if inventoryItem.storageLocation != .fridge {
-                                Button {
-                                    showSheet = .move(.fridge)
-                                } label: {
-                                    Label("Fridge", systemImage: StorageLocation.fridge.icon)
-                                }.tint(StorageLocation.fridge.backgroundColor)
-                            }
-
-                            if inventoryItem.storageLocation != .freezer {
-                                Button {
-                                    showSheet = .move(.freezer)
-                                } label: {
-                                    Label("Freezer", systemImage: StorageLocation.freezer.icon)
-                                }.tint(StorageLocation.freezer.backgroundColor)
-                            }
-                        } label: {
-                            Button {} label: {
-                                Label("Move", systemImage: "house.fill")
-                            }
-                        }
-                        Button {
-                            dismiss()
-                            router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(
-                                id: inventoryItem.product.id,
-                                name: inventoryItem.product.name,
-                                brand: inventoryItem.product.brand,
-                                category: ProductSearchItemCategory(
-                                    id: inventoryItem.product.category.id,
-                                    name: inventoryItem.product.category.name,
-                                    path: inventoryItem.product.category.pathDisplay,
-                                    recommendedStorageLocation: inventoryItem.storageLocation),
-                                amount: inventoryItem.product.amount,
-                                unit: inventoryItem.product.unit,
-                                icon: inventoryItem.product.category.icon)))
-                        } label: {
-                            Label("Add another", systemImage: "plus.square.fill.on.square.fill")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.gray600)
-                    }.tint(inventoryItem.consumptionUrgency.tileColor.foreground)
-
-                }.padding(.top, 10)
-
-                GenmojiView(
-                    name: inventoryItem.product.category.icon,
-                    fontSize: 80,
-                    tint: inventoryItem.consumptionUrgency.tileColor.background)
-                    .padding(.bottom, -8)
-
-                Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700).lineLimit(2)
-                    .lineSpacing(0).padding(.bottom, -8).multilineTextAlignment(.center)
-
-                HStack {
-                    Text(inventoryItem.product.category.name)
-                        .font(.callout)
-                        .foregroundStyle(.gray600)
-                    if let amountUnit = inventoryItem.product.amountUnitFormatted {
-                        Circle()
-                            .frame(width: 6, height: 6)
-                            .foregroundStyle(.gray600)
-                            .padding(.horizontal, 4)
-                        Text(amountUnit)
-                            .font(.callout)
-                            .foregroundStyle(.gray600)
-                    }
-                }
-                TabView(selection: $currentPage) {
-                    ForEach(0 ..< 2, id: \.self) { page in
-                        InventoryItemSheetStatsGrid(pageIndex: page, inventoryItem: inventoryItem)
-                            .tag(page)
-                            .padding(.horizontal, 16)
-                    }
-                }
-                .padding(.vertical, -24)
-                .padding(.horizontal, -16)
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
-                .offset(x: 0, y: -8)
-
-                Grid(horizontalSpacing: 16, verticalSpacing: 20) {
-                    suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
-
-                    if hasEarlierExpiringDuplicate {
-                        suggestionView(suggestion: .multipleInInventory)
-                    } else if let medianDaysToOutcome = usageStats?.product.medianDaysToOutcome,
-                              medianDaysToOutcome >= Double(inventoryItem.createdAt.timeSince.totalDays)
-                    {
-                        suggestionView(suggestion: .relativeDate(medianDaysToOutcome - Double(inventoryItem.createdAt.timeSince.totalDays)))
-                    } else if let suggestedStorageLocation = storageLocationToExtendExpiry {
-                        suggestionView(suggestion: .move(suggestedStorageLocation))
-                    } else if let buyingRecommendation {
-                        suggestionView(suggestion: .buying(inventoryItem.product.category.name, buyingRecommendation))
-                    } else {
-                        suggestionView(suggestion: .useBy(inventoryItem.expiryType))
-                    }
-                }
-                .padding(.bottom, 8)
-                .task {
-                    let api = KeepFreshAPI()
-
-                    usageStats = try? await api.getProductUsageStats(productId: inventoryItem.product.id)
-                    isLoadingStats = false
-                }
-                .redactedShimmer(when: isLoadingStats)
-
+    public var body: some View {
+        VStack(spacing: 10) {
+            HStack {
                 Button(action: {
-                    markAsDonePressed.toggle()
-                    showSheet = .remove
+                    dismiss()
                 }) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "takeoutbag.and.cup.and.straw.fill")
-                            .font(.system(size: 18))
-                            .frame(width: 20, alignment: .center)
-                        Text("Mark as done")
-                            .font(.headline)
-                            .frame(width: 175, alignment: .center)
-                    }
-                    .foregroundStyle(.blue600)
-                    .fontWeight(.bold)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(.green300))
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 24))
+                        .foregroundStyle(.gray600)
                 }
-                .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
+                Spacer()
+                Menu {
+                    Button {
+                        inventory.deleteItem(id: inventoryItem.id)
+                        dismiss()
+                    } label: {
+                        Label("Remove", systemImage: "arrow.uturn.backward")
+                    }
+                    Button {
+                        showSheet = .edit
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
 
-                if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
-                    Button(action: nextBestAction.action) {
-                        HStack(spacing: 10) {
-                            if nextBestAction.icon == "tin.open" {
+                    if inventoryItem.status != .opened {
+                        Button {
+                            onOpen()
+                        } label: {
+                            Label(title: {
+                                Text("Open")
+                            }) {
                                 Image("tin.open")
                                     .renderingMode(.template)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 22, height: 22)
-                            } else {
-                                Image(systemName: nextBestAction.icon)
-                                    .font(.system(size: 18))
-                                    .frame(width: 20, alignment: .center)
                             }
-
-                            Text(nextBestAction.label)
-                                .font(.headline)
-                                .frame(width: 175, alignment: .center)
                         }
-                        .foregroundStyle(nextBestAction.textColor)
-                        .fontWeight(.bold)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(nextBestAction.backgroundColor))
                     }
+
+                    Menu {
+                        if inventoryItem.storageLocation != .pantry {
+                            Button {
+                                showSheet = .move(.pantry)
+                            } label: {
+                                Label("Pantry", systemImage: StorageLocation.pantry.icon)
+                            }.tint(StorageLocation.pantry.backgroundColor)
+                        }
+
+                        if inventoryItem.storageLocation != .fridge {
+                            Button {
+                                showSheet = .move(.fridge)
+                            } label: {
+                                Label("Fridge", systemImage: StorageLocation.fridge.icon)
+                            }.tint(StorageLocation.fridge.backgroundColor)
+                        }
+
+                        if inventoryItem.storageLocation != .freezer {
+                            Button {
+                                showSheet = .move(.freezer)
+                            } label: {
+                                Label("Freezer", systemImage: StorageLocation.freezer.icon)
+                            }.tint(StorageLocation.freezer.backgroundColor)
+                        }
+                    } label: {
+                        Button {} label: {
+                            Label("Move", systemImage: "house.fill")
+                        }
+                    }
+                    Button {
+                        dismiss()
+                        router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(
+                            id: inventoryItem.product.id,
+                            name: inventoryItem.product.name,
+                            brand: inventoryItem.product.brand,
+                            category: ProductSearchItemCategory(
+                                id: inventoryItem.product.category.id,
+                                name: inventoryItem.product.category.name,
+                                path: inventoryItem.product.category.pathDisplay,
+                                recommendedStorageLocation: inventoryItem.storageLocation),
+                            amount: inventoryItem.product.amount,
+                            unit: inventoryItem.product.unit,
+                            icon: inventoryItem.product.category.icon)))
+                    } label: {
+                        Label("Add another", systemImage: "plus.square.fill.on.square.fill")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundStyle(.gray600)
+                }.tint(inventoryItem.consumptionUrgency.tileColor.foreground)
+
+            }.padding(.top, 10)
+
+            GenmojiView(
+                name: inventoryItem.product.category.icon,
+                fontSize: 80,
+                tint: inventoryItem.consumptionUrgency.tileColor.background)
+                .padding(.bottom, -8)
+
+            Text(inventoryItem.product.name).font(.title).fontWeight(.bold).foregroundStyle(.blue700).lineLimit(2)
+                .lineSpacing(0).padding(.bottom, -8).multilineTextAlignment(.center)
+
+            HStack {
+                Text(inventoryItem.product.category.name)
+                    .font(.callout)
+                    .foregroundStyle(.gray600)
+                if let amountUnit = inventoryItem.product.amountUnitFormatted {
+                    Circle()
+                        .frame(width: 6, height: 6)
+                        .foregroundStyle(.gray600)
+                        .padding(.horizontal, 4)
+                    Text(amountUnit)
+                        .font(.callout)
+                        .foregroundStyle(.gray600)
                 }
             }
-            .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
-            .padding(.horizontal, 10)
-            .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
-            .sheet(item: $showSheet) { sheet in
-                switch sheet {
-                case .edit:
-                    EditInventoryItemSheet(inventoryItem: inventoryItem, onEdit: onEdit)
-                        .presentationDetents(
-                            [.custom(AdaptiveSmallDetent.self)])
-                        .presentationDragIndicator(.visible)
-                        .presentationCornerRadius(25)
-                case let .move(storageLocation):
-                    MoveInventoryItemSheet(
-                        inventoryItem: inventoryItem,
-                        storageLocation: storageLocation,
-                        recommendedExpiryDate: getRecommendedExpiryDateForStorageLocation(storageLocation: storageLocation),
-                        onMove: onMove)
-                        .presentationDetents(
-                            [.custom(AdaptiveMediumDetent.self)])
-                        .presentationDragIndicator(.visible)
-                        .presentationCornerRadius(25)
-                case let .open(expiryDate):
-                    OpenInventoryItemSheet(inventoryItem: inventoryItem, expiryDate: expiryDate, onOpen: onOpenTap)
-                        .presentationDetents(
-                            inventoryItem.product.name
-                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
-                        .presentationDragIndicator(.visible)
-                        .presentationCornerRadius(25)
-                case .remove:
-                    RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
-                        .presentationDetents(
-                            inventoryItem.product.name
-                                .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
-                        .presentationDragIndicator(.visible)
-                        .presentationCornerRadius(25)
+            TabView(selection: $currentPage) {
+                ForEach(0 ..< 2, id: \.self) { page in
+                    InventoryItemSheetStatsGrid(pageIndex: page, inventoryItem: inventoryItem)
+                        .tag(page)
+                        .padding(.horizontal, 16)
                 }
+            }
+            .padding(.vertical, -24)
+            .padding(.horizontal, -16)
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+            .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
+            .offset(x: 0, y: -8)
+
+            Grid(horizontalSpacing: 16, verticalSpacing: 20) {
+                suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
+
+                if hasEarlierExpiringDuplicate {
+                    suggestionView(suggestion: .multipleInInventory)
+                } else if let medianDaysToOutcome = usageStats?.product.medianDaysToOutcome,
+                          medianDaysToOutcome >= Double(inventoryItem.createdAt.timeSince.totalDays)
+                {
+                    suggestionView(suggestion: .relativeDate(medianDaysToOutcome - Double(inventoryItem.createdAt.timeSince.totalDays)))
+                } else if let suggestedStorageLocation = storageLocationToExtendExpiry {
+                    suggestionView(suggestion: .move(suggestedStorageLocation))
+                } else if let buyingRecommendation {
+                    suggestionView(suggestion: .buying(inventoryItem.product.category.name, buyingRecommendation))
+                } else {
+                    suggestionView(suggestion: .useBy(inventoryItem.expiryType))
+                }
+            }
+            .padding(.bottom, 8)
+            .task {
+                let api = KeepFreshAPI()
+
+                usageStats = try? await api.getProductUsageStats(productId: inventoryItem.product.id)
+                isLoadingStats = false
+            }
+            .redactedShimmer(when: isLoadingStats)
+
+            Button(action: {
+                markAsDonePressed.toggle()
+                showSheet = .remove
+            }) {
+                HStack(spacing: 10) {
+                    Image(systemName: "takeoutbag.and.cup.and.straw.fill")
+                        .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
+                    Text("Mark as done")
+                        .font(.headline)
+                        .frame(width: 175, alignment: .center)
+                }
+                .foregroundStyle(.blue600)
+                .fontWeight(.bold)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(.green300))
+            }
+            .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
+
+            if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
+                Button(action: nextBestAction.action) {
+                    HStack(spacing: 10) {
+                        if nextBestAction.icon == "tin.open" {
+                            Image("tin.open")
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                        } else {
+                            Image(systemName: nextBestAction.icon)
+                                .font(.system(size: 18))
+                                .frame(width: 20, alignment: .center)
+                        }
+
+                        Text(nextBestAction.label)
+                            .font(.headline)
+                            .frame(width: 175, alignment: .center)
+                    }
+                    .foregroundStyle(nextBestAction.textColor)
+                    .fontWeight(.bold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(nextBestAction.backgroundColor))
+                }
+            }
+        }
+        .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
+        .padding(.horizontal, 10)
+        .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
+        .sheet(item: $showSheet) { sheet in
+            switch sheet {
+            case .edit:
+                EditInventoryItemSheet(inventoryItem: inventoryItem, onEdit: onEdit)
+                    .presentationDetents(
+                        [.custom(AdaptiveSmallDetent.self)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+            case let .move(storageLocation):
+                MoveInventoryItemSheet(
+                    inventoryItem: inventoryItem,
+                    storageLocation: storageLocation,
+                    recommendedExpiryDate: getRecommendedExpiryDateForStorageLocation(storageLocation: storageLocation),
+                    onMove: onMove)
+                    .presentationDetents(
+                        [.custom(AdaptiveMediumDetent.self)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+            case let .open(expiryDate):
+                OpenInventoryItemSheet(inventoryItem: inventoryItem, expiryDate: expiryDate, onOpen: onOpenTap)
+                    .presentationDetents(
+                        inventoryItem.product.name
+                            .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+            case .remove:
+                RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
+                    .presentationDetents(
+                        inventoryItem.product.name
+                            .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
             }
         }
     }
