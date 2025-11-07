@@ -4,9 +4,9 @@ import Network
 import SwiftUI
 import UserNotifications
 
-extension UNNotification: @unchecked Sendable {}
-extension UNNotificationResponse: @unchecked Sendable {}
-extension UNUserNotificationCenter: @unchecked Sendable {}
+extension UNNotification: @retroactive @unchecked Sendable {}
+extension UNNotificationResponse: @retroactive @unchecked Sendable {}
+extension UNUserNotificationCenter: @retroactive @unchecked Sendable {}
 
 @MainActor
 @Observable
