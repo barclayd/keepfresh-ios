@@ -69,11 +69,13 @@ public class PushNotifications: NSObject {
         let notificationsAPI = KeepFreshNotificationsAPI()
 
         let appVersion = Bundle.main.appVersion
+        let environment = await AppEnvironment.detect()
         try? await notificationsAPI.registerDevice(
             RegisterDeviceRequest(
                 deviceToken: token,
                 platform: "ios",
-                appVersion: appVersion))
+                appVersion: appVersion,
+                environment: environment))
     }
 }
 
