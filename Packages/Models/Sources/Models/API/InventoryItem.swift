@@ -143,7 +143,7 @@ public enum ConsumptionUrgency: String, CaseIterable {
     }
 }
 
-public struct InventoryItem: Codable, Sendable, Identifiable {
+public struct InventoryItem: Codable, Sendable, Identifiable, Hashable {
     public init(
         id: Int,
         createdAt: Date,
@@ -242,7 +242,7 @@ public extension InventoryItem {
     }
 }
 
-public struct Product: Codable, Sendable {
+public struct Product: Codable, Sendable, Hashable {
     public init(
         id: Int,
         name: String,
@@ -279,7 +279,7 @@ public struct Product: Codable, Sendable {
     }
 }
 
-public struct CategoryDetails: Codable, Sendable {
+public struct CategoryDetails: Codable, Sendable, Hashable {
     public init(icon: String, id: Int, name: String, pathDisplay: String) {
         self.id = id
         self.icon = icon

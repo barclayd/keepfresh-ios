@@ -303,7 +303,7 @@ enum Sheet: Identifiable {
     }
 }
 
-struct InventoryItemSheetView: View {
+public struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
 
@@ -321,7 +321,7 @@ struct InventoryItemSheetView: View {
 
     var inventoryItem: InventoryItem
 
-    init(inventoryItem: InventoryItem) {
+    public init(inventoryItem: InventoryItem) {
         self.inventoryItem = inventoryItem
 
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
@@ -531,7 +531,7 @@ struct InventoryItemSheetView: View {
         return itemWithShorterExpiryDate != nil
     }
 
-    var body: some View {
+    public var body: some View {
         Group {
             VStack(spacing: 10) {
                 HStack {

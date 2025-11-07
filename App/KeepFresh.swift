@@ -43,11 +43,17 @@ struct KeepFreshApp: App {
                     print("🧹 Clearing property")
                     pushNotifications.handledInventoryItemId = nil
 
+                    // Find the inventory item
+                    guard let item = inventory.items.first(where: { $0.id == inventoryItemId }) else {
+                        print("⚠️ Inventory item not found: \(inventoryItemId)")
+                        return
+                    }
+
                     print("⏱️ Scheduling navigation")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         router.selectedTab = .today
                         router.popToRoot(for: .today)
-                        router.selectedInventoryItemForDeepLink = inventoryItemId
+                        router.presentedSheet = .inventoryItem(item)
                     }
                 }
         }

@@ -39,8 +39,7 @@ public class PushNotifications: NSObject {
             if granted {
                 await registerForRemoteNotifications()
             }
-        } catch {
-        }
+        } catch {}
     }
 
     public func updateSubscription() async {
@@ -83,8 +82,8 @@ public class PushNotifications: NSObject {
 extension PushNotifications: UNUserNotificationCenterDelegate {
     public func userNotificationCenter(
         _: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse
-    ) async {
+        didReceive response: UNNotificationResponse) async
+    {
         let userInfo = response.notification.request.content.userInfo
 
         guard let inventoryItemId = userInfo["inventoryItemId"] as? Int else {
@@ -100,8 +99,8 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
 
     public func userNotificationCenter(
         _: UNUserNotificationCenter,
-        willPresent _: UNNotification
-    ) async -> UNNotificationPresentationOptions {
-        return [.banner, .sound]
+        willPresent _: UNNotification) async -> UNNotificationPresentationOptions
+    {
+        [.banner, .sound]
     }
 }
