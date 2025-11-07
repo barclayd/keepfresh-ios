@@ -47,7 +47,7 @@ struct AppTabRootView: View {
                             ? [.custom(AdaptiveExtraLargeDetent.self)]
                             : [.custom(AdaptiveLargeDetent.self)])
                     .presentationDragIndicator(.visible)
-                    .presentationCornerRadius(25)
+//                    .presentationCornerRadius(25)
             }
         }
     }

@@ -37,19 +37,15 @@ struct KeepFreshApp: App {
                 }
                 .preferredColorScheme(.light)
                 .onChange(of: pushNotifications.handledInventoryItemId) { _, inventoryItemId in
-                    print("📲 onChange fired, value: \(String(describing: inventoryItemId))")
                     guard let inventoryItemId else { return }
 
-                    print("🧹 Clearing property")
                     pushNotifications.handledInventoryItemId = nil
 
-                    // Find the inventory item
                     guard let item = inventory.items.first(where: { $0.id == inventoryItemId }) else {
                         print("⚠️ Inventory item not found: \(inventoryItemId)")
                         return
                     }
 
-                    print("⏱️ Scheduling navigation")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         router.selectedTab = .today
                         router.popToRoot(for: .today)
@@ -92,6 +88,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error)
     {
-        print("❌ Failed to register: \(error)")
+        print("Failed to register: \(error)")
     }
 }
