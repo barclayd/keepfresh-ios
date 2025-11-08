@@ -17,7 +17,7 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
     }
 
     public var iconFilled: String {
-        return self == .freezer ? self.icon : "\(icon).fill"
+        self == .freezer ? icon : "\(icon).fill"
     }
 
     public var previewGradientStops: (start: Color, end: Color) {

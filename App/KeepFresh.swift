@@ -62,11 +62,11 @@ struct KeepFreshApp: App {
 
                         if let action = notification.action {
                             switch action {
-                            case .open(let date):
+                            case let .open(date):
                                 router.presentedSheet = .openInventoryItemDirect(item, date)
                             case .remove:
                                 router.presentedSheet = .removeInventoryItemDirect(item)
-                            case .move(let location):
+                            case let .move(location):
                                 router.presentedSheet = .moveInventoryItemDirect(item, location)
                             case .edit:
                                 router.presentedSheet = .inventoryItem(item, .edit)
@@ -95,11 +95,11 @@ struct KeepFreshApp: App {
 
                         if let action = notification.action {
                             switch action {
-                            case .open(let date):
+                            case let .open(date):
                                 router.presentedSheet = .openInventoryItemDirect(item, date)
                             case .remove:
                                 router.presentedSheet = .removeInventoryItemDirect(item)
-                            case .move(let location):
+                            case let .move(location):
                                 router.presentedSheet = .moveInventoryItemDirect(item, location)
                             case .edit:
                                 router.presentedSheet = .inventoryItem(item, .edit)

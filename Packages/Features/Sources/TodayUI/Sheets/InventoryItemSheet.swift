@@ -326,8 +326,8 @@ public struct InventoryItemSheetView: View {
 
         if let action {
             let initialSheet: Sheet? = switch action {
-            case .move(let storageLocation): .move(storageLocation)
-            case .open(let date): .open(date)
+            case let .move(storageLocation): .move(storageLocation)
+            case let .open(date): .open(date)
             case .edit: .edit
             case .remove: .remove
             }
