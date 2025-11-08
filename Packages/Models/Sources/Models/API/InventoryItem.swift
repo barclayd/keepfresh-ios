@@ -136,7 +136,7 @@ public enum ConsumptionUrgency: String, CaseIterable {
         case .critical:
             TileColor(foreground: .red800, background: .red200, ai: .yellow700)
         case .attention:
-            TileColor(foreground: .yellow600, background: .yellow100, ai: .yellow600)
+            TileColor(foreground: .yellow700, background: .yellow100, ai: .yellow600)
         case .good:
             TileColor(foreground: .green600, background: .green300, ai: .yellow500)
         }

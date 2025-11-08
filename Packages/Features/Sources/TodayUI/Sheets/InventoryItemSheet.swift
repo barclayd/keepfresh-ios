@@ -627,7 +627,7 @@ public struct InventoryItemSheetView: View {
 
             GenmojiView(
                 name: inventoryItem.product.category.icon,
-                fontSize: 80,
+                fontSize: 96,
                 tint: inventoryItem.consumptionUrgency.tileColor.background)
                 .padding(.bottom, -8)
 
@@ -687,28 +687,6 @@ public struct InventoryItemSheetView: View {
             }
             .redactedShimmer(when: isLoadingStats)
 
-            Button(action: {
-                markAsDonePressed.toggle()
-                showSheet = .remove
-            }) {
-                HStack(spacing: 10) {
-                    Image(systemName: "takeoutbag.and.cup.and.straw.fill")
-                        .font(.system(size: 18))
-                        .frame(width: 20, alignment: .center)
-                    Text("Mark as done")
-                        .font(.headline)
-                        .frame(width: 175, alignment: .center)
-                }
-                .foregroundStyle(.blue600)
-                .fontWeight(.bold)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(.green300))
-            }
-            .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
-
             if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                 Button(action: nextBestAction.action) {
                     HStack(spacing: 10) {
@@ -737,6 +715,28 @@ public struct InventoryItemSheetView: View {
                             .fill(nextBestAction.backgroundColor))
                 }
             }
+
+            Button(action: {
+                markAsDonePressed.toggle()
+                showSheet = .remove
+            }) {
+                HStack(spacing: 10) {
+                    Image(systemName: "takeoutbag.and.cup.and.straw.fill")
+                        .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
+                    Text("Mark as done")
+                        .font(.headline)
+                        .frame(width: 175, alignment: .center)
+                }
+                .foregroundStyle(.blue600)
+                .fontWeight(.bold)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(.green300))
+            }
+            .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
         }
         .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
         .padding(.horizontal, 10)
@@ -748,7 +748,6 @@ public struct InventoryItemSheetView: View {
                     .presentationDetents(
                         [.custom(AdaptiveSmallDetent.self)])
                     .presentationDragIndicator(.visible)
-                    .presentationCornerRadius(25)
             case let .move(storageLocation):
                 MoveInventoryItemSheet(
                     inventoryItem: inventoryItem,
@@ -758,21 +757,18 @@ public struct InventoryItemSheetView: View {
                     .presentationDetents(
                         [.custom(AdaptiveMediumDetent.self)])
                     .presentationDragIndicator(.visible)
-                    .presentationCornerRadius(25)
             case let .open(expiryDate):
                 OpenInventoryItemSheet(inventoryItem: inventoryItem, expiryDate: expiryDate, onOpen: onOpenTap)
                     .presentationDetents(
                         inventoryItem.product.name
                             .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
                     .presentationDragIndicator(.visible)
-                    .presentationCornerRadius(25)
             case .remove:
                 RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
                     .presentationDetents(
                         inventoryItem.product.name
                             .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
                     .presentationDragIndicator(.visible)
-                    .presentationCornerRadius(25)
             }
         }
     }

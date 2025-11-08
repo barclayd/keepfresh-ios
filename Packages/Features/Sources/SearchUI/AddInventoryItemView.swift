@@ -116,7 +116,7 @@ public struct AddInventoryItemView: View {
             ScrollView(showsIndicators: false) {
                 ZStack(alignment: .bottom) {
                     VStack(spacing: 5) {
-                        GenmojiView(name: productSearchItem.icon, fontSize: 98, tint: formState.storageLocation.foregroundColor)
+                        GenmojiView(name: productSearchItem.icon, fontSize: 106, tint: formState.storageLocation.foregroundColor)
 
                         Text("\(productSearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
                             formState.storageLocation.foregroundColor

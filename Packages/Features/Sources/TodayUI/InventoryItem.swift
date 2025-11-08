@@ -58,11 +58,12 @@ struct IconsView: View {
                     .foregroundStyle(inventoryItem.consumptionUrgency.tileColor.foreground)
                     .alignmentGuide(.firstTextBaseline) { d in
                         d[.bottom]
-                    }.padding(.trailing, 20)
+                    }.padding(.trailing, 17.5)
             }
         }
         .padding(.vertical, 6)
-        .padding(.horizontal, 10)
+        .padding(.leading, 10)
+        .padding(.trailing, 5)
         .background(UnevenRoundedRectangle(
             topLeadingRadius: 0,
             bottomLeadingRadius: 20,
@@ -131,7 +132,7 @@ public struct InventoryItemView: View {
                 }
             }
             .padding(.vertical, 10)
-            .padding(.horizontal, 10)
+            .padding(.horizontal, 5)
             .background(.white100)
             .cornerRadius(20)
 
