@@ -44,11 +44,9 @@ class NotificationService: UNNotificationServiceExtension {
         let userInfo = request.content.userInfo
         
         if let suggestions = userInfo["suggestions"] as? [String],
-           let currentLocation = userInfo["currentLocation"] as? String,
            !suggestions.isEmpty
         {
             let category = NotificationActions.createCategory(
-                currentLocation: currentLocation,
                 suggestions: suggestions
             )
             

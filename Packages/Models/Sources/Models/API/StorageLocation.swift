@@ -12,11 +12,13 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         switch self {
         case .pantry: "cabinet"
         case .fridge: "refrigerator"
-        case .freezer: "snowflake.circle"
+        case .freezer: "snowflake"
         }
     }
 
-    public var iconFilled: String { "\(icon).fill" }
+    public var iconFilled: String {
+        return self == .freezer ? self.icon : "\(icon).fill"
+    }
 
     public var previewGradientStops: (start: Color, end: Color) {
         switch self {

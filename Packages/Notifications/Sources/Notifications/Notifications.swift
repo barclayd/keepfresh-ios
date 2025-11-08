@@ -9,8 +9,8 @@ extension UNNotificationResponse: @retroactive @unchecked Sendable {}
 extension UNUserNotificationCenter: @retroactive @unchecked Sendable {}
 
 public enum NotificationActions {
-    static let markOpen = "MARK_OPEN"
-    static let markDone = "MARK_DONE"
+    static let markOpen = "MARK_AS_OPEN"
+    static let markDone = "MARK_AS_DONE"
     static let moveToPantry = "MOVE_TO_PANTRY"
     static let moveToFridge = "MOVE_TO_FRIDGE"
     static let moveToFreezer = "MOVE_TO_FREEZER"
@@ -55,7 +55,6 @@ public enum NotificationActions {
     }
     
     public static func createCategory(
-        currentLocation _: String,
         suggestions: [String]
     ) -> UNNotificationCategory {
         var actions: [UNNotificationAction] = []
@@ -76,7 +75,7 @@ public enum NotificationActions {
         
         actions.append(markOpenAction)
         actions.append(markDoneAction)
-        
+                
         for suggestion in suggestions.prefix(2) {
             let moveAction = createMoveAction(for: suggestion)
             actions.append(moveAction)
@@ -161,7 +160,6 @@ public class PushNotifications: NSObject {
     }
     
     private func handleMarkOpen(inventoryItemId: Int) async {
-        // TODO: Call your API to mark the item as opened
         print("Mark Open: \(inventoryItemId)")
         
         // Set this so your app can navigate to the item if needed
@@ -201,6 +199,8 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
         }
         
         let actionIdentifier = response.actionIdentifier
+        
+        print("actionIdentifier: \(actionIdentifier)")
         
         switch actionIdentifier {
         case NotificationActions.markOpen:
