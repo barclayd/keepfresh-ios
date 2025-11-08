@@ -40,8 +40,8 @@ struct AppTabRootView: View {
             switch presentedSheet {
             case .barcodeScan:
                 BarcodeView()
-            case let .inventoryItem(item):
-                InventoryItemSheetView(inventoryItem: item)
+            case let .inventoryItem(item, action):
+                InventoryItemSheetView(inventoryItem: item, action: action)
                     .presentationDetents(
                         item.product.name.count >= 25
                             ? [.custom(AdaptiveExtraLargeDetent.self)]

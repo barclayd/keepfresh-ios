@@ -11,9 +11,10 @@ let package = Package(
         .package(path: "../Models"),
         .package(path: "../Network"),
         .package(path: "../Extensions"),
+        .package(path: "../Router"),
     ],
     targets: [
         .target(
             name: "Notifications",
-            dependencies: ["Models", "Network", "Extensions"]),
+            dependencies: ["Models", "Network", "Extensions", "Router"]),
     ])

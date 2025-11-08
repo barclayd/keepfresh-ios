@@ -145,7 +145,7 @@ public struct InventoryItemView: View {
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .onTapGesture {
-            router.presentedSheet = .inventoryItem(inventoryItem)
+            router.presentedSheet = .inventoryItem(inventoryItem, nil)
         }
         .sensoryFeedback(.selection, trigger: router.presentedSheet)
     }

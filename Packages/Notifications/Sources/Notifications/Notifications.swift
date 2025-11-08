@@ -1,6 +1,7 @@
 import Foundation
 import Models
 import Network
+import Router
 import SwiftUI
 import UserNotifications
 
@@ -49,7 +50,7 @@ public enum NotificationActions {
         return UNNotificationAction(
             identifier: identifier,
             title: title,
-            options: [],
+            options: [.foreground],
             icon: icon
         )
     }
@@ -62,14 +63,16 @@ public enum NotificationActions {
         let markOpenAction = UNNotificationAction(
             identifier: NotificationActions.markOpen,
             title: "Mark as Open",
-            options: [],
+            // change if opening item doesn't change expiry -> send this logic via Push Notification
+            // would need to update state of the application
+            options: [.foreground],
             icon: UNNotificationActionIcon(templateImageName: "tin.open")
         )
         
         let markDoneAction = UNNotificationAction(
             identifier: NotificationActions.markDone,
             title: "Mark as Done",
-            options: [],
+            options: [.foreground],
             icon: UNNotificationActionIcon(systemImageName: "trash.fill")
         )
         
@@ -99,8 +102,8 @@ public class PushNotifications: NSObject {
     
     public var pushToken: Data?
     public var authorizationStatus: UNAuthorizationStatus = .notDetermined
-    
-    public var handledInventoryItemId: Int?
+
+    public var pendingNotification: PendingNotification?
     
     override private init() {
         super.init()
@@ -159,25 +162,9 @@ public class PushNotifications: NSObject {
             ))
     }
     
-    private func handleMarkOpen(inventoryItemId: Int) async {
-        print("Mark Open: \(inventoryItemId)")
-        
-        // Set this so your app can navigate to the item if needed
-        handledInventoryItemId = inventoryItemId
-    }
-
-    private func handleMarkDone(inventoryItemId: Int) async {
-        // TODO: Call your API to mark the item as done/consumed
-        print("Mark Done: \(inventoryItemId)")
-        
-        handledInventoryItemId = inventoryItemId
-    }
-
-    private func handleMoveItem(inventoryItemId: Int, to location: String) async {
-        // TODO: Call your API to move the item to the new location
-        print("Move item \(inventoryItemId) to \(location)")
-        
-        handledInventoryItemId = inventoryItemId
+    private func parseDateFromPayload(_ value: Any?) -> Date? {
+        guard let dateString = value as? String else { return nil }
+        return ISO8601DateFormatter().date(from: dateString)
     }
 }
 
@@ -189,38 +176,44 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse
     ) async {
         let userInfo = response.notification.request.content.userInfo
-        
+
         guard let inventoryItemId = userInfo["inventoryItemId"] as? Int else {
             return
         }
-        
+
         guard let event = userInfo["type"] as? String, event == "expiringFood" else {
             return
         }
-        
+
         let actionIdentifier = response.actionIdentifier
-        
-        print("actionIdentifier: \(actionIdentifier)")
-        
+        let action: InventoryItemAction?
+
         switch actionIdentifier {
         case NotificationActions.markOpen:
-            await handleMarkOpen(inventoryItemId: inventoryItemId)
-            
+            let expiryDate = parseDateFromPayload(userInfo["openedExpiryDate"])
+            action = .open(expiryDate ?? Date())
+
         case NotificationActions.markDone:
-            await handleMarkDone(inventoryItemId: inventoryItemId)
-            
+            action = .remove
+
         case NotificationActions.moveToPantry:
-            await handleMoveItem(inventoryItemId: inventoryItemId, to: "pantry")
-            
+            action = .move(.pantry)
+
         case NotificationActions.moveToFridge:
-            await handleMoveItem(inventoryItemId: inventoryItemId, to: "fridge")
-            
+            action = .move(.fridge)
+
         case NotificationActions.moveToFreezer:
-            await handleMoveItem(inventoryItemId: inventoryItemId, to: "freezer")
-            
+            action = .move(.freezer)
+
         default:
-            handledInventoryItemId = inventoryItemId
+            // User tapped notification body (not an action button)
+            action = nil
         }
+
+        pendingNotification = PendingNotification(
+            inventoryItemId: inventoryItemId,
+            action: action
+        )
     }
     
     public func userNotificationCenter(

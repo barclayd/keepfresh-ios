@@ -321,8 +321,18 @@ public struct InventoryItemSheetView: View {
 
     var inventoryItem: InventoryItem
 
-    public init(inventoryItem: InventoryItem) {
+    public init(inventoryItem: InventoryItem, action: InventoryItemAction? = nil) {
         self.inventoryItem = inventoryItem
+
+        if let action {
+            let initialSheet: Sheet? = switch action {
+            case .move(let storageLocation): .move(storageLocation)
+            case .open(let date): .open(date)
+            case .edit: .edit
+            case .remove: .remove
+            }
+            _showSheet = State(initialValue: initialSheet)
+        }
 
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
