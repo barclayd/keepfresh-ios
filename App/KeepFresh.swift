@@ -59,7 +59,21 @@ struct KeepFreshApp: App {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         router.selectedTab = .today
                         router.popToRoot(for: .today)
-                        router.presentedSheet = .inventoryItem(item, notification.action)
+
+                        if let action = notification.action {
+                            switch action {
+                            case .open(let date):
+                                router.presentedSheet = .openInventoryItemDirect(item, date)
+                            case .remove:
+                                router.presentedSheet = .removeInventoryItemDirect(item)
+                            case .move(let location):
+                                router.presentedSheet = .moveInventoryItemDirect(item, location)
+                            case .edit:
+                                router.presentedSheet = .inventoryItem(item, .edit)
+                            }
+                        } else {
+                            router.presentedSheet = .inventoryItem(item, nil)
+                        }
                     }
                 }
                 .onChange(of: router.pendingNotification) { _, notification in
@@ -78,7 +92,21 @@ struct KeepFreshApp: App {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         router.selectedTab = .today
                         router.popToRoot(for: .today)
-                        router.presentedSheet = .inventoryItem(item, notification.action)
+
+                        if let action = notification.action {
+                            switch action {
+                            case .open(let date):
+                                router.presentedSheet = .openInventoryItemDirect(item, date)
+                            case .remove:
+                                router.presentedSheet = .removeInventoryItemDirect(item)
+                            case .move(let location):
+                                router.presentedSheet = .moveInventoryItemDirect(item, location)
+                            case .edit:
+                                router.presentedSheet = .inventoryItem(item, .edit)
+                            }
+                        } else {
+                            router.presentedSheet = .inventoryItem(item, nil)
+                        }
                     }
                 }
         }

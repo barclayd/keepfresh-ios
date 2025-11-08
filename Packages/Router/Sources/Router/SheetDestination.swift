@@ -22,4 +22,9 @@ public enum SheetDestination: Hashable, Identifiable {
 
     case barcodeScan
     case inventoryItem(InventoryItem, InventoryItemAction?)
+
+    // Direct child sheet presentations (for notifications)
+    case moveInventoryItemDirect(InventoryItem, StorageLocation)
+    case openInventoryItemDirect(InventoryItem, Date)
+    case removeInventoryItemDirect(InventoryItem)
 }
