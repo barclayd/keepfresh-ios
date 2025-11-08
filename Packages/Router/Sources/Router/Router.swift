@@ -16,6 +16,8 @@ public final class Router {
 
     public var selectedInventoryItemForDeepLink: Int?
 
+    public var pendingNotificationItemId: Int?
+
     public init() {}
 
     public var selectedTabPath: [RouterDestination] {

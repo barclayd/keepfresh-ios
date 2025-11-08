@@ -41,8 +41,37 @@ struct KeepFreshApp: App {
 
                     pushNotifications.handledInventoryItemId = nil
 
-                    guard let item = inventory.items.first(where: { $0.id == inventoryItemId }) else {
-                        print("Inventory item not found: \(inventoryItemId)")
+                    router.pendingNotificationItemId = inventoryItemId
+                }
+                .onChange(of: inventory.state) { _, newState in
+                    guard newState == .loaded,
+                          let pendingItemId = router.pendingNotificationItemId
+                    else {
+                        return
+                    }
+
+                    router.pendingNotificationItemId = nil
+
+                    guard let item = inventory.items.first(where: { $0.id == pendingItemId }) else {
+                        return
+                    }
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        router.selectedTab = .today
+                        router.popToRoot(for: .today)
+                        router.presentedSheet = .inventoryItem(item)
+                    }
+                }
+                .onChange(of: router.pendingNotificationItemId) { _, pendingItemId in
+                    guard let pendingItemId,
+                          inventory.state == .loaded
+                    else {
+                        return
+                    }
+
+                    router.pendingNotificationItemId = nil
+
+                    guard let item = inventory.items.first(where: { $0.id == pendingItemId }) else {
                         return
                     }
 
