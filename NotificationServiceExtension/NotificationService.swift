@@ -44,9 +44,13 @@ class NotificationService: UNNotificationServiceExtension {
         let userInfo = request.content.userInfo
 
         if let suggestions = userInfo["suggestions"] as? [String],
+           let statusString = userInfo["status"] as? String,
+           let status = InventoryItemStatus(rawValue: statusString),
            !suggestions.isEmpty
         {
             let category = NotificationActions.createCategory(
+                status: status,
+                hasOpenedExpiryDate: userInfo["openedExpiryDate"] as? String != nil,
                 suggestions: suggestions)
 
             UNUserNotificationCenter.current().setNotificationCategories([category])

@@ -36,6 +36,18 @@ struct KeepFreshApp: App {
                     }
                 }
                 .preferredColorScheme(.light)
+                .onChange(of: pushNotifications.shouldRefreshInventory) { _, shouldRefresh in
+                    guard shouldRefresh, inventory.state != .loading || inventory.state != .loaded else {
+                        pushNotifications.shouldRefreshInventory = false
+                        return
+                    }
+
+                    pushNotifications.shouldRefreshInventory = false
+
+                    Task {
+                        await inventory.fetchItems()
+                    }
+                }
                 .onChange(of: pushNotifications.pendingNotification) { _, notification in
                     guard let notification else { return }
 

@@ -74,7 +74,7 @@ public struct TodayView: View {
                             InventoryItemView(inventoryItem: inventoryItem)
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 15)
                     .padding(.top, 20)
                     .padding(.bottom, 10)
                     .redactedShimmer(when: inventory.state != .loaded)

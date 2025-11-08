@@ -55,6 +55,8 @@ public enum NotificationActions {
     }
 
     public static func createCategory(
+        status: InventoryItemStatus,
+        hasOpenedExpiryDate: Bool,
         suggestions: [String]) -> UNNotificationCategory
     {
         var actions: [UNNotificationAction] = []
@@ -62,9 +64,7 @@ public enum NotificationActions {
         let markOpenAction = UNNotificationAction(
             identifier: NotificationActions.markOpen,
             title: "Mark as Open",
-            // change if opening item doesn't change expiry -> send this logic via Push Notification
-            // would need to update state of the application
-            options: [.foreground],
+            options: hasOpenedExpiryDate ? [.foreground] : [],
             icon: UNNotificationActionIcon(templateImageName: "tin.open"))
 
         let markDoneAction = UNNotificationAction(
@@ -73,7 +73,10 @@ public enum NotificationActions {
             options: [.foreground],
             icon: UNNotificationActionIcon(systemImageName: "trash.fill"))
 
-        actions.append(markOpenAction)
+        if status == .unopened {
+            actions.append(markOpenAction)
+        }
+
         actions.append(markDoneAction)
 
         for suggestion in suggestions.prefix(2) {
@@ -100,6 +103,7 @@ public class PushNotifications: NSObject {
     public var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
     public var pendingNotification: PendingNotification?
+    public var shouldRefreshInventory: Bool = false
 
     override private init() {
         super.init()
@@ -185,8 +189,30 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
 
         switch actionIdentifier {
         case NotificationActions.markOpen:
-            let expiryDate = parseDateFromPayload(userInfo["openedExpiryDate"])
-            action = .open(expiryDate ?? Date())
+            if let expiryDate = parseDateFromPayload(userInfo["openedExpiryDate"]) {
+                action = .open(expiryDate)
+            } else {
+                // Runs in background
+                Task {
+                    let api = KeepFreshAPI()
+                    do {
+                        try await api.updateInventoryItem(
+                            for: inventoryItemId,
+                            UpdateInventoryItemRequest(
+                                status: .opened,
+                                storageLocation: nil,
+                                percentageRemaining: nil,
+                                expiryDate: nil))
+
+                        await MainActor.run {
+                            self.shouldRefreshInventory = true
+                        }
+                    } catch {
+                        // Silent failure
+                    }
+                }
+                action = nil
+            }
 
         case NotificationActions.markDone:
             action = .remove
