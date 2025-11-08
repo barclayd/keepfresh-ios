@@ -43,7 +43,7 @@ struct AppTabRootView: View {
             case let .inventoryItem(item):
                 InventoryItemSheetView(inventoryItem: item)
                     .presentationDetents(
-                        item.product.name.count > 27
+                        item.product.name.count >= 25
                             ? [.custom(AdaptiveExtraLargeDetent.self)]
                             : [.custom(AdaptiveLargeDetent.self)])
                     .presentationDragIndicator(.visible)
