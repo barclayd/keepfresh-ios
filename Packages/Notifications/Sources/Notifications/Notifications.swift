@@ -18,6 +18,8 @@ public enum NotificationActions {
 
     static let categoryPrefix = "FOOD_EXPIRING_"
 
+    static let inventoryItemExpiring = "INVENTORY_ITEM_EXPIRING"
+
     private static func createMoveAction(for location: String) -> UNNotificationAction {
         let identifier: String
         let title: String
@@ -90,7 +92,7 @@ public enum NotificationActions {
         return UNNotificationCategory(
             identifier: categoryId,
             actions: actions,
-            intentIdentifiers: [])
+            intentIdentifiers: [], hiddenPreviewsBodyPlaceholder: nil, categorySummaryFormat: "%u items expiring")
     }
 }
 
@@ -175,12 +177,13 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse) async
     {
         let userInfo = response.notification.request.content.userInfo
+        let categoryId = response.notification.request.content.categoryIdentifier
 
         guard let inventoryItemId = userInfo["inventoryItemId"] as? Int else {
             return
         }
 
-        guard let event = userInfo["type"] as? String, event == "expiringFood" else {
+        guard categoryId == NotificationActions.inventoryItemExpiring else {
             return
         }
 
