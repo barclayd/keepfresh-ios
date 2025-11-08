@@ -36,49 +36,89 @@ struct KeepFreshApp: App {
                     }
                 }
                 .preferredColorScheme(.light)
-                .onChange(of: pushNotifications.handledInventoryItemId) { _, inventoryItemId in
-                    guard let inventoryItemId else { return }
+                .onChange(of: pushNotifications.shouldRefreshInventory) { _, shouldRefresh in
+                    guard shouldRefresh, inventory.state != .loading || inventory.state != .loaded else {
+                        pushNotifications.shouldRefreshInventory = false
+                        return
+                    }
 
-                    pushNotifications.handledInventoryItemId = nil
+                    pushNotifications.shouldRefreshInventory = false
 
-                    router.pendingNotificationItemId = inventoryItemId
+                    Task {
+                        await inventory.fetchItems()
+                    }
+                }
+                .onChange(of: pushNotifications.pendingNotification) { _, notification in
+                    guard let notification else { return }
+
+                    pushNotifications.pendingNotification = nil
+
+                    router.pendingNotification = notification
                 }
                 .onChange(of: inventory.state) { _, newState in
                     guard newState == .loaded,
-                          let pendingItemId = router.pendingNotificationItemId
+                          let notification = router.pendingNotification
                     else {
                         return
                     }
 
-                    router.pendingNotificationItemId = nil
+                    router.pendingNotification = nil
 
-                    guard let item = inventory.items.first(where: { $0.id == pendingItemId }) else {
+                    guard let item = inventory.items.first(where: { $0.id == notification.inventoryItemId }) else {
                         return
                     }
 
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         router.selectedTab = .today
                         router.popToRoot(for: .today)
-                        router.presentedSheet = .inventoryItem(item)
+
+                        if let action = notification.action {
+                            switch action {
+                            case let .open(date):
+                                router.presentedSheet = .openInventoryItemDirect(item, date)
+                            case .remove:
+                                router.presentedSheet = .removeInventoryItemDirect(item)
+                            case let .move(location):
+                                router.presentedSheet = .moveInventoryItemDirect(item, location)
+                            case .edit:
+                                router.presentedSheet = .inventoryItem(item, .edit)
+                            }
+                        } else {
+                            router.presentedSheet = .inventoryItem(item, nil)
+                        }
                     }
                 }
-                .onChange(of: router.pendingNotificationItemId) { _, pendingItemId in
-                    guard let pendingItemId,
+                .onChange(of: router.pendingNotification) { _, notification in
+                    guard let notification,
                           inventory.state == .loaded
                     else {
                         return
                     }
 
-                    router.pendingNotificationItemId = nil
+                    router.pendingNotification = nil
 
-                    guard let item = inventory.items.first(where: { $0.id == pendingItemId }) else {
+                    guard let item = inventory.items.first(where: { $0.id == notification.inventoryItemId }) else {
                         return
                     }
 
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         router.selectedTab = .today
                         router.popToRoot(for: .today)
-                        router.presentedSheet = .inventoryItem(item)
+
+                        if let action = notification.action {
+                            switch action {
+                            case let .open(date):
+                                router.presentedSheet = .openInventoryItemDirect(item, date)
+                            case .remove:
+                                router.presentedSheet = .removeInventoryItemDirect(item)
+                            case let .move(location):
+                                router.presentedSheet = .moveInventoryItemDirect(item, location)
+                            case .edit:
+                                router.presentedSheet = .inventoryItem(item, .edit)
+                            }
+                        } else {
+                            router.presentedSheet = .inventoryItem(item, nil)
+                        }
                     }
                 }
         }

@@ -36,19 +36,7 @@ struct AppTabRootView: View {
         }
         .tint(.blue600)
         .tabBarMinimizeBehavior(.onScrollDown)
-        .sheet(item: $router.presentedSheet) { presentedSheet in
-            switch presentedSheet {
-            case .barcodeScan:
-                BarcodeView()
-            case let .inventoryItem(item):
-                InventoryItemSheetView(inventoryItem: item)
-                    .presentationDetents(
-                        item.product.name.count >= 25
-                            ? [.custom(AdaptiveExtraLargeDetent.self)]
-                            : [.custom(AdaptiveLargeDetent.self)])
-                    .presentationDragIndicator(.visible)
-            }
-        }
+        .handleAppSheets(router: router, inventory: inventory)
     }
 
     @ViewBuilder

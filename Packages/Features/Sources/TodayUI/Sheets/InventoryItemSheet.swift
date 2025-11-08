@@ -321,8 +321,18 @@ public struct InventoryItemSheetView: View {
 
     var inventoryItem: InventoryItem
 
-    public init(inventoryItem: InventoryItem) {
+    public init(inventoryItem: InventoryItem, action: InventoryItemAction? = nil) {
         self.inventoryItem = inventoryItem
+
+        if let action {
+            let initialSheet: Sheet? = switch action {
+            case let .move(storageLocation): .move(storageLocation)
+            case let .open(date): .open(date)
+            case .edit: .edit
+            case .remove: .remove
+            }
+            _showSheet = State(initialValue: initialSheet)
+        }
 
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.blue600)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(.gray150)
@@ -721,7 +731,7 @@ public struct InventoryItemSheetView: View {
                 showSheet = .remove
             }) {
                 HStack(spacing: 10) {
-                    Image(systemName: "takeoutbag.and.cup.and.straw.fill")
+                    Image(systemName: "trash.fill")
                         .font(.system(size: 18))
                         .frame(width: 20, alignment: .center)
                     Text("Mark as done")

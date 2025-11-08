@@ -1,5 +1,6 @@
 import Models
 import Network
+import Notifications
 import UIKit
 import UserNotifications
 
@@ -41,6 +42,20 @@ class NotificationService: UNNotificationServiceExtension {
         contentHandler: @escaping (UNNotificationContent) -> Void) async
     {
         let userInfo = request.content.userInfo
+
+        if let suggestions = userInfo["suggestions"] as? [String],
+           let statusString = userInfo["status"] as? String,
+           let status = InventoryItemStatus(rawValue: statusString),
+           !suggestions.isEmpty
+        {
+            let category = NotificationActions.createCategory(
+                status: status,
+                hasOpenedExpiryDate: userInfo["openedExpiryDate"] as? String != nil,
+                suggestions: suggestions)
+
+            UNUserNotificationCenter.current().setNotificationCategories([category])
+            bestAttemptContent.categoryIdentifier = category.identifier
+        }
 
         guard let genmojiId = userInfo["genmojiId"] as? String else {
             contentHandler(bestAttemptContent)
