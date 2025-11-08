@@ -721,7 +721,7 @@ public struct InventoryItemSheetView: View {
                 showSheet = .remove
             }) {
                 HStack(spacing: 10) {
-                    Image(systemName: "takeoutbag.and.cup.and.straw.fill")
+                    Image(systemName: "trash.fill")
                         .font(.system(size: 18))
                         .frame(width: 20, alignment: .center)
                     Text("Mark as done")

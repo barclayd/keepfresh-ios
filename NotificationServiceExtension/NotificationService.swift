@@ -1,4 +1,5 @@
 import Models
+import Notifications
 import Network
 import UIKit
 import UserNotifications
@@ -41,6 +42,19 @@ class NotificationService: UNNotificationServiceExtension {
         contentHandler: @escaping (UNNotificationContent) -> Void) async
     {
         let userInfo = request.content.userInfo
+        
+        if let suggestions = userInfo["suggestions"] as? [String],
+           let currentLocation = userInfo["currentLocation"] as? String,
+           !suggestions.isEmpty
+        {
+            let category = NotificationActions.createCategory(
+                currentLocation: currentLocation,
+                suggestions: suggestions
+            )
+            
+            UNUserNotificationCenter.current().setNotificationCategories([category])
+            bestAttemptContent.categoryIdentifier = category.identifier
+        }
 
         guard let genmojiId = userInfo["genmojiId"] as? String else {
             contentHandler(bestAttemptContent)

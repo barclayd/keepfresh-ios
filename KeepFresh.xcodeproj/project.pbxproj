@@ -24,6 +24,7 @@
 		4EF5AD1A2EBD1C8E00F8E400 /* NotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4EF5AD132EBD1C8E00F8E400 /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4EF5AD212EBD1CE900F8E400 /* Network in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD202EBD1CE900F8E400 /* Network */; };
 		4EF5AD232EBD208500F8E400 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD222EBD208500F8E400 /* Models */; };
+		4EF5AD372EBF786E00F8E400 /* Notifications in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD362EBF786E00F8E400 /* Notifications */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +101,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4EF5AD232EBD208500F8E400 /* Models in Frameworks */,
+				4EF5AD372EBF786E00F8E400 /* Notifications in Frameworks */,
 				4EF5AD212EBD1CE900F8E400 /* Network in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,15 +136,15 @@
 				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
-				4EF5AD0C2EBC066D00F8E400 /* Notifications */,
 				4E8952CE2E9878F8003F3366 /* Authentication */,
-				4EAF44BC2E8B3902000B5A6B /* Intelligence */,
+				4E747FB62D19F28D00DDCE17 /* DesignSystem */,
 				4EF223D02E883D3800A93567 /* Extensions */,
 				4ED27E822E849BA600296595 /* Environment */,
+				4EAF44BC2E8B3902000B5A6B /* Intelligence */,
 				4EEEBA742E80679B0049511B /* Models */,
 				4EEEBA732E8063DA0049511B /* Router */,
 				4EEEBA722E8063B70049511B /* Network */,
-				4E747FB62D19F28D00DDCE17 /* DesignSystem */,
+				4EF5AD0C2EBC066D00F8E400 /* Notifications */,
 				9FAEE3A72CF0994400F86CDC /* Features */,
 				4EF5AD142EBD1C8E00F8E400 /* NotificationServiceExtension */,
 				9FAEE3B82CF09BB400F86CDC /* Frameworks */,
@@ -188,6 +190,7 @@
 			packageProductDependencies = (
 				4EF5AD202EBD1CE900F8E400 /* Network */,
 				4EF5AD222EBD208500F8E400 /* Models */,
+				4EF5AD362EBF786E00F8E400 /* Notifications */,
 			);
 			productName = NotificationServiceExtension;
 			productReference = 4EF5AD132EBD1C8E00F8E400 /* NotificationServiceExtension.appex */;
@@ -694,6 +697,10 @@
 		4EF5AD222EBD208500F8E400 /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Models;
+		};
+		4EF5AD362EBF786E00F8E400 /* Notifications */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Notifications;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
