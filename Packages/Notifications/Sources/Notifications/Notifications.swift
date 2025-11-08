@@ -185,12 +185,13 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
         }
 
         let actionIdentifier = response.actionIdentifier
-        let action: InventoryItemAction?
 
         switch actionIdentifier {
         case NotificationActions.markOpen:
             if let expiryDate = parseDateFromPayload(userInfo["openedExpiryDate"]) {
-                action = .open(expiryDate)
+                pendingNotification = PendingNotification(
+                    inventoryItemId: inventoryItemId,
+                    action: .open(expiryDate))
             } else {
                 // Runs in background
                 Task {
@@ -211,28 +212,33 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
                         // Silent failure
                     }
                 }
-                action = nil
             }
 
         case NotificationActions.markDone:
-            action = .remove
+            pendingNotification = PendingNotification(
+                inventoryItemId: inventoryItemId,
+                action: .remove)
 
         case NotificationActions.moveToPantry:
-            action = .move(.pantry)
+            pendingNotification = PendingNotification(
+                inventoryItemId: inventoryItemId,
+                action: .move(.pantry))
 
         case NotificationActions.moveToFridge:
-            action = .move(.fridge)
+            pendingNotification = PendingNotification(
+                inventoryItemId: inventoryItemId,
+                action: .move(.fridge))
 
         case NotificationActions.moveToFreezer:
-            action = .move(.freezer)
+            pendingNotification = PendingNotification(
+                inventoryItemId: inventoryItemId,
+                action: .move(.freezer))
 
         default:
-            action = nil
+            pendingNotification = PendingNotification(
+                inventoryItemId: inventoryItemId,
+                action: nil)
         }
-
-        pendingNotification = PendingNotification(
-            inventoryItemId: inventoryItemId,
-            action: action)
     }
 
     public func userNotificationCenter(
