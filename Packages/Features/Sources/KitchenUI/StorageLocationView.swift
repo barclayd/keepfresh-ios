@@ -161,7 +161,7 @@ public struct StorageLocationView: View {
                         Text("Let's fill your \(storageLocation.rawValue.lowercased())").font(.headline).foregroundStyle(
                             storageLocation == .freezer ? .white200 : .blue700
                         ).fontWeight(.bold)
-                        Text("Tap above to search for or scan a grocery item from your favourite supermarkets")
+                        Text("Tap above to search or scan a grocery item from your favourite supermarkets")
                             .font(.subheadline).foregroundStyle(
                                 storageLocation == .freezer ? .white200 : .blue700).multilineTextAlignment(.center).padding(
                                 .horizontal,

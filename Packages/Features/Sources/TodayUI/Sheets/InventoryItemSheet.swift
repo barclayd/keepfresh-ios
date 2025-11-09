@@ -23,7 +23,7 @@ extension InventoryItem {
         switch (status, storageLocation) {
         case (.unopened, _):
             NextBestAction(
-                label: "Mark as opened",
+                label: "Mark as Open",
                 icon: "tin.open",
                 textColor: .blue600,
                 backgroundColor: .gray200,
@@ -734,7 +734,7 @@ public struct InventoryItemSheetView: View {
                     Image(systemName: "trash.fill")
                         .font(.system(size: 18))
                         .frame(width: 20, alignment: .center)
-                    Text("Mark as done")
+                    Text("Mark as Done")
                         .font(.headline)
                         .frame(width: 175, alignment: .center)
                 }
