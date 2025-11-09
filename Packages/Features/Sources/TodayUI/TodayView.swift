@@ -29,7 +29,7 @@ public struct TodayView: View {
                     Text("Bring your fridge to your pocket").font(.headline).foregroundStyle(
                         .blue600
                     ).fontWeight(.bold)
-                    Text("Tap above to search for or scan a grocery item from the UK’s favourite supermarkets").font(.subheadline)
+                    Text("Tap above to search or scan a grocery item from the UK’s favourite supermarkets").font(.subheadline)
                         .foregroundStyle(
                             .blue800).multilineTextAlignment(.center).padding(.horizontal, 20)
 
@@ -74,7 +74,7 @@ public struct TodayView: View {
                             InventoryItemView(inventoryItem: inventoryItem)
                         }
                     }
-                    .padding(.horizontal, 15)
+                    .padding(.horizontal, 12.5)
                     .padding(.top, 20)
                     .padding(.bottom, 10)
                     .redactedShimmer(when: inventory.state != .loaded)

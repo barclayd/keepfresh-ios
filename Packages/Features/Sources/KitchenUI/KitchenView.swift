@@ -95,9 +95,9 @@ private struct StorageLocationTileView: View {
         VStack(alignment: .center, spacing: 0) {
             HStack {
                 Image(systemName: storageLocation.icon)
-                    .font(.system(size: 36)).foregroundStyle(.blue800)
+                    .font(.system(size: 36)).foregroundStyle(storageLocation.titleColor)
 
-                Text(storageLocation.rawValue).foregroundStyle(.blue800).font(.title).fontWeight(.bold)
+                Text(storageLocation.rawValue).foregroundStyle(storageLocation.titleColor).font(.title).fontWeight(.bold)
 
                 Spacer()
 
@@ -141,7 +141,7 @@ public struct KitchenView: View {
                     .buttonStyle(PlainButtonStyle())
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 12.5)
             .padding(.top, 20)
         }
         .containerBackground(.white200, for: .navigation)

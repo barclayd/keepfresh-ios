@@ -78,7 +78,7 @@ public struct RemoveInventoryItemSheet: View {
                         .font(.system(size: 32))
                         .offset(y: -12)
                 }
-                Text("% waste").font(.callout).fontWeight(.light).foregroundStyle(.gray700).offset(y: -4)
+                Text("% waste").font(.callout).fontWeight(.light).foregroundStyle(.gray700).offset(y: -25)
             }
 
             Spacer()
