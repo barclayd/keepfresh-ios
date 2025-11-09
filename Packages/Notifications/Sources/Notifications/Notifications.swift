@@ -72,7 +72,7 @@ public enum NotificationActions {
         let markDoneAction = UNNotificationAction(
             identifier: NotificationActions.markDone,
             title: "Mark as Done",
-            options: [.foreground],
+            options: [.destructive, .foreground],
             icon: UNNotificationActionIcon(systemImageName: "trash.fill"))
 
         if status == .unopened {
@@ -86,7 +86,7 @@ public enum NotificationActions {
             actions.append(moveAction)
         }
 
-        let categorySuffix = suggestions.joined(separator: "_")
+        let categorySuffix = "\(status.rawValue)_\(suggestions.joined(separator: "_"))"
         let categoryId = "\(NotificationActions.categoryPrefix)\(categorySuffix)"
 
         return UNNotificationCategory(
@@ -177,13 +177,8 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse) async
     {
         let userInfo = response.notification.request.content.userInfo
-        let categoryId = response.notification.request.content.categoryIdentifier
 
         guard let inventoryItemId = userInfo["inventoryItemId"] as? Int else {
-            return
-        }
-
-        guard categoryId == NotificationActions.inventoryItemExpiring else {
             return
         }
 

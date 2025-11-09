@@ -4,10 +4,21 @@ import Notifications
 import UIKit
 import UserNotifications
 
+actor CategoryRegistry {
+    private var registeredCategories: Set<UNNotificationCategory> = []
+
+    func register(_ category: UNNotificationCategory) -> Set<UNNotificationCategory> {
+        registeredCategories.insert(category)
+        return registeredCategories
+    }
+}
+
 class NotificationService: UNNotificationServiceExtension {
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
-    
+
+    private static let categoryRegistry = CategoryRegistry()
+
     let api = KeepFreshAPI()
     
     override func didReceive(
@@ -51,8 +62,10 @@ class NotificationService: UNNotificationServiceExtension {
                 status: status,
                 hasOpenedExpiryDate: userInfo["openedExpiryDate"] as? String != nil,
                 suggestions: userInfo["suggestions"] as? [String] ?? [])
-            
-            UNUserNotificationCenter.current().setNotificationCategories([category])
+
+            let allCategories = await NotificationService.categoryRegistry.register(category)
+
+            UNUserNotificationCenter.current().setNotificationCategories(allCategories)
             bestAttemptContent.categoryIdentifier = category.identifier
         }
         
