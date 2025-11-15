@@ -10,10 +10,22 @@ public struct RecentSearchItem: View {
     let onDelete: () -> Void
     let colorConfiguration: ColorConfiguration
 
-    struct ColorConfiguration {
+    public struct ColorConfiguration {
         let text: Color
         let background: Color
         let closeIcon: Color
+    }
+
+    public init(
+        search: RecentSearch,
+        onTap: @escaping (String) -> Void,
+        onDelete: @escaping () -> Void,
+        colorConfiguration: RecentSearchItem.ColorConfiguration)
+    {
+        self.search = search
+        self.onTap = onTap
+        self.onDelete = onDelete
+        self.colorConfiguration = colorConfiguration
     }
 
     public var body: some View {
@@ -55,6 +67,10 @@ public struct RecentSearchView: View {
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
 
     @Binding var searchText: String
+
+    public init(searchText: Binding<String>) {
+        _searchText = searchText
+    }
 
     private func deleteRecentSearch(at offsets: IndexSet) {
         for offset in offsets {

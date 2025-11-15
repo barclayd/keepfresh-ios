@@ -20,7 +20,7 @@ extension View {
                 BarcodeView()
 
             case .shopppingSearch:
-                AddShoppingListItemSheet()
+                AddShoppingSheet()
                     .presentationDragIndicator(.visible)
 
             case let .inventoryItem(item, action):

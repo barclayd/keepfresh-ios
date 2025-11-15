@@ -3,15 +3,16 @@ import Models
 import SwiftUI
 
 @Observable
-public final class ShoppingViewModel {
-    public var items: [ShoppingListItem]
+@MainActor
+public final class Shopping {
+    public var items: [ShoppingItem]
 
-    public init(items: [ShoppingListItem] = []) {
+    public init(items: [ShoppingItem] = []) {
         self.items = items
     }
 
     // Filter items by storage location
-    public func items(for storageLocation: StorageLocation) -> [ShoppingListItem] {
+    public func items(for storageLocation: StorageLocation) -> [ShoppingItem] {
         items.filter { $0.storageLocation == storageLocation }
     }
 
@@ -45,7 +46,7 @@ public final class ShoppingViewModel {
         let item = items[sourceIndex]
 
         // Create updated item with new storage location
-        let updatedItem = ShoppingListItem(
+        let updatedItem = ShoppingItem(
             id: item.id,
             title: nil,
             createdAt: item.createdAt,

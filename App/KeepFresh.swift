@@ -14,6 +14,7 @@ struct KeepFreshApp: App {
 
     @State var router: Router = .init()
     @State var inventory: Inventory = .init()
+    @State var shopping: Shopping = .init(items: KeepFreshApp.mockShoppingItems)
     @State var pushNotifications = PushNotifications.shared
 
     init() {
@@ -25,6 +26,7 @@ struct KeepFreshApp: App {
             AppTabRootView()
                 .environment(router)
                 .environment(inventory)
+                .environment(shopping)
                 .modelContainer(for: [RecentSearch.self, GenmojiCache.self])
                 .task {
                     try? await Authentication.shared.signInAnonymously()
@@ -122,6 +124,69 @@ struct KeepFreshApp: App {
                     }
                 }
         }
+    }
+
+    // Mock data for testing
+    static var mockShoppingItems: [ShoppingItem] {
+        [
+            ShoppingItem(
+                id: 1,
+                title: nil,
+                createdAt: Date(),
+                updatedAt: Date(),
+                source: .userAdded,
+                status: .added,
+                storageLocation: .fridge,
+                product: Product(
+                    id: 1,
+                    name: "Semi Skimmed Milk",
+                    unit: "pts",
+                    brand: .tesco,
+                    amount: 4,
+                    category: CategoryDetails(
+                        icon: "milk",
+                        id: 1,
+                        name: "Milk",
+                        pathDisplay: "Fresh Food > Dairy > Milk"))),
+            ShoppingItem(
+                id: 2,
+                title: nil,
+                createdAt: Date(),
+                updatedAt: Date(),
+                source: .userAdded,
+                status: .added,
+                storageLocation: .fridge,
+                product: Product(
+                    id: 2,
+                    name: "Whole Milk",
+                    unit: "pts",
+                    brand: .tesco,
+                    amount: 4,
+                    category: CategoryDetails(
+                        icon: "milk",
+                        id: 1,
+                        name: "Milk",
+                        pathDisplay: "Fresh Food > Dairy > Milk"))),
+            ShoppingItem(
+                id: 3,
+                title: nil,
+                createdAt: Date(),
+                updatedAt: Date(),
+                source: .userAdded,
+                status: .added,
+                storageLocation: .freezer,
+                product: Product(
+                    id: 3,
+                    name: "Ice Cream",
+                    unit: "tubs",
+                    brand: .tesco,
+                    amount: 2,
+                    category: CategoryDetails(
+                        icon: "icecream",
+                        id: 2,
+                        name: "Desserts",
+                        pathDisplay: "Frozen > Desserts"))),
+        ]
     }
 }
 

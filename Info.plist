@@ -10,11 +10,11 @@
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>KeepFresh Shopping List Item</string>
+			<string>KeepFresh Shopping Item</string>
 			<key>UTTypeIcons</key>
 			<dict/>
 			<key>UTTypeIdentifier</key>
-			<string>dev.danbarclay.keepfresh.shoppinglistitem</string>
+			<string>dev.danbarclay.keepfresh.shopping-item</string>
 			<key>UTTypeTagSpecification</key>
 			<dict/>
 		</dict>

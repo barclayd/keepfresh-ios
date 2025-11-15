@@ -27,7 +27,7 @@ struct AppTabRootView: View {
                 makeNavigationStack(for: .search, router: router)
             } label: {
                 AppTab.search.label
-            }.hidden(router.selectedTab == .shoppingList)
+            }.hidden(router.selectedTab == .shopping)
 
             Tab(value: AppTab.kitchen) {
                 makeNavigationStack(for: .kitchen, router: router)
@@ -35,10 +35,10 @@ struct AppTabRootView: View {
                 AppTab.kitchen.label
             }.disabled(inventory.state == .loading || inventory.state == .error)
 
-            Tab(value: AppTab.shoppingList) {
-                makeNavigationStack(for: .shoppingList, router: router)
+            Tab(value: AppTab.shopping) {
+                makeNavigationStack(for: .shopping, router: router)
             } label: {
-                AppTab.shoppingList.label
+                AppTab.shopping.label
             }
         }
         .tint(.blue600)
@@ -79,7 +79,7 @@ private extension AppTab {
             SearchView()
         case .kitchen:
             KitchenView()
-        case .shoppingList:
+        case .shopping:
             ShoppingView()
         }
     }
@@ -154,9 +154,9 @@ public extension AppTab {
                 .buttonStyle(.plain).tint(.white200)
             }
 
-        case .shoppingList:
+        case .shopping:
             ToolbarItem(placement: .title) {
-                Text("Shopping")
+                Text("Shopping List")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
             }
 

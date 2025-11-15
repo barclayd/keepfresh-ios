@@ -2,28 +2,27 @@ import CoreTransferable
 import Foundation
 import UniformTypeIdentifiers
 
-public enum ShoppingListItemStatus: String, Codable, Identifiable, CaseIterable, Sendable {
+public enum ShoppingItemStatus: String, Codable, Identifiable, CaseIterable, Sendable {
     public var id: Self { self }
 
     case added
-    case discarded
-    case consumed
-    case unopened
+    case pendingDeletion
+    case completed
 }
 
-public enum ShoppingListItemSource: Codable, Sendable {
+public enum ShoppingItemSource: Codable, Sendable {
     case userAdded
     case aiSuggested
 }
 
-public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable, Transferable {
+public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transferable {
     public init(
         id: Int,
         title: String?,
         createdAt: Date,
         updatedAt: Date,
-        source: ShoppingListItemSource,
-        status: ShoppingListItemStatus,
+        source: ShoppingItemSource,
+        status: ShoppingItemStatus,
         storageLocation: StorageLocation,
         product: Product)
     {
@@ -41,19 +40,18 @@ public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable, Trans
     public let title: String?
     public let createdAt: Date
     public let updatedAt: Date
-    public let source: ShoppingListItemSource
-    public let status: ShoppingListItemStatus
+    public let source: ShoppingItemSource
+    public let status: ShoppingItemStatus
     public let storageLocation: StorageLocation
     public let product: Product
 
-    // Transferable conformance for drag and drop
     public static var transferRepresentation: some TransferRepresentation {
-        CodableRepresentation(contentType: .shoppingListItem)
+        CodableRepresentation(contentType: .shoppingItem)
     }
 }
 
 extension UTType {
-    static var shoppingListItem: UTType {
-        UTType(exportedAs: "dev.danbarclay.keepfresh.shoppinglistitem")
+    static var shoppingItem: UTType {
+        UTType(exportedAs: "dev.danbarclay.keepfresh.shopping-item")
     }
 }

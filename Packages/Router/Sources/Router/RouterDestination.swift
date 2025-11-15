@@ -7,7 +7,7 @@ public enum RouterDestination: Hashable {
     case search
     case barcodeScan
     case kitchen
-    case shoppingList
+    case shopping
     case addProduct(product: ProductSearchResultItemResponse)
     case storageLocationView(storageLocation: StorageLocation)
 
@@ -15,7 +15,7 @@ public enum RouterDestination: Hashable {
         switch self {
         case .addProduct, .storageLocationView:
             .white200
-        case .today, .kitchen, .search, .barcodeScan, .shoppingList:
+        case .today, .kitchen, .search, .barcodeScan, .shopping:
             nil
         }
     }

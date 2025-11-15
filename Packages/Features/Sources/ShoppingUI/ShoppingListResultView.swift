@@ -5,7 +5,7 @@ import Router
 import SharedUI
 import SwiftUI
 
-public struct SearchShoppingListResultView: View {
+public struct SearchShoppingResultView: View {
     var searchProducts: [ProductSearchResultItemResponse]
     var isLoading: Bool = false
     var hasMorePages: Bool = false
@@ -16,7 +16,7 @@ public struct SearchShoppingListResultView: View {
         ScrollView {
             LazyVStack(spacing: 20) {
                 ForEach(searchProducts) { product in
-                    SearchShoppingListResultCard(searchProduct: product)
+                    SearchShoppingResultCard(searchProduct: product)
                         .toolbarVisibility(.hidden, for: .tabBar)
                         .frame(maxWidth: .infinity)
                         .onAppear {
@@ -39,7 +39,7 @@ public struct SearchShoppingListResultView: View {
     }
 }
 
-public struct SearchShoppingListResultCard: View {
+public struct SearchShoppingResultCard: View {
     @State private var isAddedToList: Bool = false
 
     var searchProduct: ProductSearchResultItemResponse

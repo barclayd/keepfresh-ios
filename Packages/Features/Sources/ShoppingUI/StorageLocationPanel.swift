@@ -1,27 +1,27 @@
 import DesignSystem
+import Environment
 import Models
 import SharedUI
 import SwiftUI
 
 public struct StorageLocationPanel: View {
+    @Environment(Shopping.self) var shopping
     @State private var isToggled: Bool = false
 
-    let viewModel: ShoppingViewModel
     let storageLocation: StorageLocation
 
-    public init(storageLocation: StorageLocation, viewModel: ShoppingViewModel) {
+    public init(storageLocation: StorageLocation) {
         self.storageLocation = storageLocation
-        self.viewModel = viewModel
     }
 
     private var onMoveHandler: (IndexSet, Int) -> Void {
-        return { sourceIndices, destinationIndex in
+        { sourceIndices, destinationIndex in
             guard let sourceIndex = sourceIndices.first else { return }
-            let items = viewModel.items(for: storageLocation)
+            let items = shopping.items(for: storageLocation)
             guard sourceIndex < items.count else { return }
 
             let itemId = items[sourceIndex].id
-            viewModel.moveItem(itemId: itemId, toIndex: destinationIndex, in: storageLocation)
+            shopping.moveItem(itemId: itemId, toIndex: destinationIndex, in: storageLocation)
         }
     }
 
@@ -49,10 +49,10 @@ public struct StorageLocationPanel: View {
                 Spacer()
 
                 HStack {
-                    Image(systemName: "\(viewModel.items(for: storageLocation).count).square.fill")
+                    Image(systemName: "\(shopping.items(for: storageLocation).count).square.fill")
                         .frame(width: 18).foregroundColor(textColor)
 
-                    if viewModel.items(for: storageLocation).isEmpty {
+                    if shopping.items(for: storageLocation).isEmpty {
                         Rectangle().fill(Color.clear).frame(width: 18)
                     } else {
                         Image(systemName: "chevron.down")
@@ -76,7 +76,7 @@ public struct StorageLocationPanel: View {
                     endPoint: .trailing)))
             .onTapGesture {
                 //                withAnimation(.easeInOut) {
-                if !viewModel.items(for: storageLocation).isEmpty {
+                if !shopping.items(for: storageLocation).isEmpty {
                     isToggled.toggle()
                 }
                 //                }
@@ -88,9 +88,9 @@ public struct StorageLocationPanel: View {
                         .offset(y: -10)
 
                     List {
-                        ForEach(viewModel.items(for: storageLocation), id: \.self) { shoppingListItem in
-                            ShoppingListItemView(shoppingListItem: shoppingListItem)
-                                .draggable(shoppingListItem)
+                        ForEach(shopping.items(for: storageLocation), id: \.self) { shoppingItem in
+                            ShoppingItemView(shoppingItem: shoppingItem)
+                                .draggable(shoppingItem)
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
 //                                        store.delete(message)
@@ -110,24 +110,24 @@ public struct StorageLocationPanel: View {
                         .listRowBackground(Color.clear)
 
                         // Spacer row for drop target when list has items
-                        if !viewModel.items(for: storageLocation).isEmpty {
+                        if !shopping.items(for: storageLocation).isEmpty {
                             Color.clear
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .listRowInsets(EdgeInsets())
                                 .listRowSeparator(.hidden)
                                 .listRowBackground(Color.clear)
-                                .dropDestination(for: ShoppingListItem.self) { droppedItems, _ in
+                                .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
                                     // Handle drop on bottom empty space (append to end)
                                     guard let droppedItem = droppedItems.first else { return false }
 
-                                    let targetIndex = viewModel.items(for: storageLocation).count
+                                    let targetIndex = shopping.items(for: storageLocation).count
 
                                     if droppedItem.storageLocation == storageLocation {
                                         // Within-list: move to end
-                                        viewModel.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
+                                        shopping.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
                                     } else {
                                         // Cross-list: move to this location and append to end
-                                        viewModel.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
+                                        shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
                                     }
 
                                     return true
@@ -135,7 +135,7 @@ public struct StorageLocationPanel: View {
                         }
                     }
 
-                    .frame(height: CGFloat(viewModel.items(for: storageLocation).count) * 75)
+                    .frame(height: CGFloat(shopping.items(for: storageLocation).count) * 75)
                     .listStyle(.plain)
                     .scrollDisabled(true)
                     .listRowSpacing(10)
@@ -152,7 +152,7 @@ public struct StorageLocationPanel: View {
                                 stops: storageLocation.viewGradientStopsReversed,
                                 startPoint: .leading,
                                 endPoint: .trailing))
-                            .dropDestination(for: ShoppingListItem.self) { droppedItems, _ in
+                            .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
                                 // Handle drop on empty space in list (append to end)
                                 guard let droppedItem = droppedItems.first else { return false }
 
@@ -161,14 +161,14 @@ public struct StorageLocationPanel: View {
                                     return false
                                 } else {
                                     // Cross-list: move to this location and append to end
-                                    let targetIndex = viewModel.items(for: storageLocation).count
-                                    viewModel.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
+                                    let targetIndex = shopping.items(for: storageLocation).count
+                                    shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
                                     return true
                                 }
                             })
             }
         }
-        .onChange(of: viewModel.items(for: storageLocation).count) { oldValue, newValue in
+        .onChange(of: shopping.items(for: storageLocation).count) { oldValue, newValue in
             if newValue == 0, oldValue != 0 {
                 isToggled = false
             }
@@ -177,7 +177,7 @@ public struct StorageLocationPanel: View {
                 isToggled = true
             }
         }
-        .dropDestination(for: ShoppingListItem.self) { droppedItems, _ in
+        .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
             // Panel-wide drop handler (catches drops not handled by inner zones)
             guard let droppedItem = droppedItems.first else { return false }
 
@@ -188,14 +188,14 @@ public struct StorageLocationPanel: View {
             }
 
             // Otherwise, add to end of list
-            let targetIndex = viewModel.items(for: storageLocation).count
+            let targetIndex = shopping.items(for: storageLocation).count
 
             if droppedItem.storageLocation == storageLocation {
                 // Within-list move (when collapsed or dropping on non-list area)
-                viewModel.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
+                shopping.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
             } else {
                 // Cross-list move (always add to end)
-                viewModel.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
+                shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
             }
 
             return true

@@ -21,7 +21,7 @@ public final class Router {
     }
 
     // reset
-    public var selectedTab: AppTab = .shoppingList
+    public var selectedTab: AppTab = .shopping
 
     public var presentedSheet: SheetDestination?
 

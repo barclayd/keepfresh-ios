@@ -1,5 +1,6 @@
 import Models
 import Network
+import SearchUI
 import SwiftData
 import SwiftUI
 
@@ -130,7 +131,7 @@ class ShoppingSearch {
     }
 }
 
-public struct AddShoppingListItemSheet: View {
+public struct AddShoppingSheet: View {
     @Environment(\.modelContext) var modelContext
 
     @Environment(\.dismiss) private var dismiss
@@ -186,7 +187,7 @@ public struct AddShoppingListItemSheet: View {
         NavigationStack {
             VStack(spacing: 0) {
                 if isSearching, let search {
-                    SearchShoppingListResultView(
+                    SearchShoppingResultView(
                         searchProducts: search.searchResults,
                         isLoading: search.state != .loaded,
                         hasMorePages: search.hasMorePages,

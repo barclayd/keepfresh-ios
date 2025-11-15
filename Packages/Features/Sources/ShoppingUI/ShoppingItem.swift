@@ -4,39 +4,39 @@ import Router
 import SharedUI
 import SwiftUI
 
-public struct ShoppingListItemView: View {
+public struct ShoppingItemView: View {
     @Environment(Router.self) var router
 
     @State private var isComplete = false
 
-    var shoppingListItem: ShoppingListItem
+    var shoppingItem: ShoppingItem
 
-    public init(shoppingListItem: ShoppingListItem) {
-        self.shoppingListItem = shoppingListItem
+    public init(shoppingItem: ShoppingItem) {
+        self.shoppingItem = shoppingItem
     }
 
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
                 GenmojiView(
-                    name: shoppingListItem.product.category.icon,
+                    name: shoppingItem.product.category.icon,
                     fontSize: 35,
-                    tint: shoppingListItem.storageLocation.backgroundColor)
+                    tint: shoppingItem.storageLocation.backgroundColor)
 
                 VStack {
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {
-                            Text(shoppingListItem.product.name)
+                            Text(shoppingItem.product.name)
                                 .font(.headline)
                                 .foregroundStyle(.blue800)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .lineLimit(1)
 
                             HStack(spacing: 4) {
-                                Text(shoppingListItem.product.brand.name)
-                                    .foregroundStyle(shoppingListItem.product.brand.color).font(.caption)
+                                Text(shoppingItem.product.brand.name)
+                                    .foregroundStyle(shoppingItem.product.brand.color).font(.caption)
 
-                                if let amountUnit = shoppingListItem.product.amountUnitFormatted {
+                                if let amountUnit = shoppingItem.product.amountUnitFormatted {
                                     Circle()
                                         .frame(width: 3, height: 3)
                                         .foregroundStyle(.gray600)
@@ -50,7 +50,7 @@ public struct ShoppingListItemView: View {
                         Spacer()
 
                         Toggle("Selected Expiry Date", isOn: $isComplete)
-                            .toggleStyle(CheckToggleStyle(customColor: shoppingListItem.storageLocation.backgroundColor))
+                            .toggleStyle(CheckToggleStyle(customColor: shoppingItem.storageLocation.backgroundColor))
                             .labelsHidden()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
