@@ -8,27 +8,6 @@ public enum Overriden {
     case suggested
 }
 
-struct CheckToggleStyle: ToggleStyle {
-    @Environment(\.isEnabled) var isEnabled
-
-    var customColor: Color?
-
-    func makeBody(configuration: Configuration) -> some View {
-        Button {
-            configuration.isOn.toggle()
-        } label: {
-            Label {} icon: {
-                Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 21))
-                    .fontWeight(.bold)
-                    .foregroundStyle(customColor ?? .blue700)
-                    .accessibility(label: Text(configuration.isOn ? "Checked" : "Unchecked"))
-                    .imageScale(.large)
-            }
-        }
-    }
-}
-
 public enum InventoryItemFormType {
     case expiry(date: Binding<Date>, isRecommended: Bool, overriden: Binding<Overriden?>)
     case compactExpiry(date: Binding<Date>, isRecommended: Bool, expiryType: ExpiryType)
@@ -145,6 +124,7 @@ private extension InventoryItemFormType {
         }
     }
 
+    @MainActor
     @ViewBuilder
     func overviewSwitch(isToggled: Binding<Bool>, customColor: Color? = nil) -> some View {
         switch self {

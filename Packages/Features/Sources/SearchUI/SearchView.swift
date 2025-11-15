@@ -5,6 +5,30 @@ import Router
 import SwiftData
 import SwiftUI
 
+public struct TestButton: View {
+    
+    public init() {
+        
+    }
+    
+    public var body: some View {
+        Button(action: {}) {
+            HStack(spacing: 10) {
+                Text("Shorten Expiry")
+                    .font(.headline)
+            }
+            .foregroundStyle(.blue600)
+            .fontWeight(.bold)
+            .padding()
+            .padding(.vertical, 5)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.green300))
+        }
+    }
+}
+
 @MainActor
 @Observable
 class Search {
@@ -210,7 +234,7 @@ public struct SearchView: View {
                 search = Search(onSaveSearch: saveRecentSearch)
             }
         }
-        .searchable(text: searchTextBinding)
+        .searchable(text: searchTextBinding, placement: .toolbar)
         .scrollDismissesKeyboard(.immediately)
         .onSubmit(of: .search) {
             Task {

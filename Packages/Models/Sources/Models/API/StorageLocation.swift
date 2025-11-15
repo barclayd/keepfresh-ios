@@ -51,6 +51,26 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         }
     }
 
+    public var viewGradientStopsReversed: [Gradient.Stop] {
+        switch self {
+        case .pantry:
+            [
+                Gradient.Stop(color: .brown100, location: 0),
+                Gradient.Stop(color: .brown300, location: 1),
+            ]
+        case .fridge:
+            [
+                Gradient.Stop(color: .blue50, location: 0),
+                Gradient.Stop(color: .blue600, location: 1),
+            ]
+        case .freezer:
+            [
+                Gradient.Stop(color: .blue600, location: 0),
+                Gradient.Stop(color: .blue800, location: 1),
+            ]
+        }
+    }
+
     public var foregroundColor: Color {
         switch self {
         case .pantry: .brown900

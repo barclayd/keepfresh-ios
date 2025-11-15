@@ -35,7 +35,7 @@ public struct TodayView: View {
 
                     Spacer()
 
-                    Text("Need some inspiraton?").font(.subheadline).foregroundStyle(
+                    Text("Need some inspiration?").font(.subheadline).foregroundStyle(
                         .blue600
                     ).fontWeight(.bold)
 

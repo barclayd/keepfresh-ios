@@ -2,6 +2,7 @@ import BarcodeUI
 import KitchenUI
 import Router
 import SearchUI
+import ShoppingUI
 import SwiftUI
 import TodayUI
 
@@ -16,6 +17,8 @@ public struct AppRouter: ViewModifier {
                     SearchView()
                 case .today:
                     TodayView()
+                case .shoppingList:
+                    ShoppingView()
                 case let .addProduct(productSearchItem):
                     AddInventoryItemView(productSearchItem: productSearchItem)
                 case let .storageLocationView(storageLocation):
