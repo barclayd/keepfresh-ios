@@ -7,9 +7,9 @@ public extension EnvironmentValues {
 
 public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
     case today, kitchen, search, shoppingList
-    
+
     public var id: String { rawValue }
-    
+
     public var icon: String {
         switch self {
         case .today: "text.rectangle.page"
@@ -18,7 +18,7 @@ public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .shoppingList: "cart"
         }
     }
-    
+
     public var symbolVariants: SymbolVariants {
         switch self {
         case .today: .none
@@ -27,7 +27,7 @@ public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .shoppingList: .fill
         }
     }
-    
+
     public var title: String {
         switch self {
         case .today: "Today"
@@ -36,13 +36,13 @@ public enum AppTab: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .shoppingList: "Shopping"
         }
     }
-    
+
     public var toolbarBackground: Color {
         switch self {
         case .today, .kitchen, .shoppingList:
-                .clear
+            .clear
         case .search:
-                .blue600
+            .blue600
         }
     }
 }

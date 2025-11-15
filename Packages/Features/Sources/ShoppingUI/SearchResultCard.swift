@@ -1,6 +1,6 @@
-import SwiftUI
-import SharedUI
 import Models
+import SharedUI
+import SwiftUI
 
 public struct SearchResultCard: View {
     var searchProduct: ProductSearchResultItemResponse

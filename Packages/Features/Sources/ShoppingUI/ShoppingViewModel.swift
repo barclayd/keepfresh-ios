@@ -52,8 +52,7 @@ public final class ShoppingViewModel {
             source: item.source,
             status: item.status,
             storageLocation: newLocation,
-            product: item.product
-        )
+            product: item.product)
 
         // Remove from original location
         items.remove(at: sourceIndex)

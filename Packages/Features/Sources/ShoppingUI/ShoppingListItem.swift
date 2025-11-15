@@ -6,7 +6,7 @@ import SwiftUI
 
 public struct ShoppingListItemView: View {
     @Environment(Router.self) var router
-    
+
     @State private var isComplete = false
 
     var shoppingListItem: ShoppingListItem
@@ -48,7 +48,7 @@ public struct ShoppingListItemView: View {
                         }.frame(maxWidth: .infinity, alignment: .leading)
 
                         Spacer()
-                        
+
                         Toggle("Selected Expiry Date", isOn: $isComplete)
                             .toggleStyle(CheckToggleStyle(customColor: shoppingListItem.storageLocation.backgroundColor))
                             .labelsHidden()

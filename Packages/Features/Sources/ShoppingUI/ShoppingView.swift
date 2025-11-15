@@ -5,7 +5,7 @@ import SwiftUI
 
 public struct ShoppingView: View {
     @Environment(Router.self) var router
-    
+
     @State private var currentPage: Int = 3
     @State private var viewModel = ShoppingViewModel(items: ShoppingView.mockItems)
 
@@ -23,8 +23,7 @@ public struct ShoppingView: View {
                         ForEach(StorageLocation.allCases) { storageLocation in
                             StorageLocationPanel(
                                 storageLocation: storageLocation,
-                                viewModel: viewModel
-                            )
+                                viewModel: viewModel)
                         }
                     }
                     .padding(.horizontal, 12.5)
@@ -72,10 +71,7 @@ public struct ShoppingView: View {
                         icon: "milk",
                         id: 1,
                         name: "Milk",
-                        pathDisplay: "Fresh Food > Dairy > Milk"
-                    )
-                )
-            ),
+                        pathDisplay: "Fresh Food > Dairy > Milk"))),
             ShoppingListItem(
                 id: 2,
                 createdAt: Date(),
@@ -93,10 +89,7 @@ public struct ShoppingView: View {
                         icon: "milk",
                         id: 1,
                         name: "Milk",
-                        pathDisplay: "Fresh Food > Dairy > Milk"
-                    )
-                )
-            ),
+                        pathDisplay: "Fresh Food > Dairy > Milk"))),
             ShoppingListItem(
                 id: 3,
                 createdAt: Date(),
@@ -114,10 +107,7 @@ public struct ShoppingView: View {
                         icon: "icecream",
                         id: 2,
                         name: "Desserts",
-                        pathDisplay: "Frozen > Desserts"
-                    )
-                )
-            ),
+                        pathDisplay: "Frozen > Desserts"))),
         ]
     }
 }

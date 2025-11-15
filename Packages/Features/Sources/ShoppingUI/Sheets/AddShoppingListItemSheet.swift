@@ -133,13 +133,13 @@ class ShoppingSearch {
 public struct AddShoppingListItemSheet: View {
     @Environment(\.modelContext) var modelContext
 
+    @Environment(\.dismiss) private var dismiss
+
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
 
     @State private var search: ShoppingSearch?
 
-    public init() {
-        UIScrollView.appearance().bounces = false
-    }
+    public init() {}
 
     private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, icon: String) {
         let existingSearch = recentSearches.first(where: { $0.text.lowercased() == text.lowercased() })
@@ -196,7 +196,6 @@ public struct AddShoppingListItemSheet: View {
                                 await search.loadMoreResults()
                             }
                         })
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     RecentConsumedView(searchText: searchTextBinding)
                 }
@@ -208,8 +207,17 @@ public struct AddShoppingListItemSheet: View {
                 }
             }
             .searchable(text: searchTextBinding, placement: .toolbar, prompt: "Add to shopping list")
-            .navigationTitle("Recently Consumed")
-            .toolbar(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "xmark").resizable()
+                            .frame(width: 18, height: 18).foregroundColor(.blue600).fontWeight(.bold)
+                    }
+                }
+            }
+            .listRowSeparator(.hidden)
             .scrollDismissesKeyboard(.immediately)
             .onSubmit(of: .search) {
                 Task {

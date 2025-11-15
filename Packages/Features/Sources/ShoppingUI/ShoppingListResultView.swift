@@ -16,17 +16,14 @@ public struct SearchShoppingListResultView: View {
         ScrollView {
             LazyVStack(spacing: 20) {
                 ForEach(searchProducts) { product in
-                    NavigationLink(value: RouterDestination.addProduct(product: product)) {
-                        SearchResultCard(searchProduct: product)
-                            .toolbarVisibility(.hidden, for: .tabBar)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .onAppear {
-                        if product.id == searchProducts.last?.id, hasMorePages, !isLoadingMore {
-                            onLoadMore?()
+                    SearchShoppingListResultCard(searchProduct: product)
+                        .toolbarVisibility(.hidden, for: .tabBar)
+                        .frame(maxWidth: .infinity)
+                        .onAppear {
+                            if product.id == searchProducts.last?.id, hasMorePages, !isLoadingMore {
+                                onLoadMore?()
+                            }
                         }
-                    }
                 }
 
                 if isLoadingMore {
@@ -43,6 +40,8 @@ public struct SearchShoppingListResultView: View {
 }
 
 public struct SearchShoppingListResultCard: View {
+    @State private var isAddedToList: Bool = false
+
     var searchProduct: ProductSearchResultItemResponse
 
     public var body: some View {
@@ -57,7 +56,7 @@ public struct SearchShoppingListResultCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
                 Spacer()
-                Image(systemName: "plus")
+                Image(systemName: isAddedToList ? "checkmark" : "plus")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
                     .foregroundColor(.white200)
@@ -100,8 +99,12 @@ public struct SearchShoppingListResultCard: View {
                     topTrailingRadius: 0,
                     style: .continuous).fill(.white100))
         }
+        .onTapGesture {
+            isAddedToList = true
+        }
         .background(searchProduct.category.recommendedStorageLocation.tileColor)
         .cornerRadius(20)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
+        .sensoryFeedback(.selection, trigger: isAddedToList)
     }
 }

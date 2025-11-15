@@ -12,29 +12,29 @@ import TodayUI
 struct AppTabRootView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
-    
+
     var body: some View {
         @Bindable var router = router
-        
+
         TabView(selection: $router.selectedTab) {
             Tab(value: AppTab.today) {
                 makeNavigationStack(for: .today, router: router)
             } label: {
                 AppTab.today.label
             }
-                
+
             Tab(value: AppTab.search, role: .search) {
                 makeNavigationStack(for: .search, router: router)
             } label: {
                 AppTab.search.label
             }.hidden(router.selectedTab == .shoppingList)
-            
+
             Tab(value: AppTab.kitchen) {
                 makeNavigationStack(for: .kitchen, router: router)
             } label: {
                 AppTab.kitchen.label
             }.disabled(inventory.state == .loading || inventory.state == .error)
-            
+
             Tab(value: AppTab.shoppingList) {
                 makeNavigationStack(for: .shoppingList, router: router)
             } label: {
@@ -45,11 +45,11 @@ struct AppTabRootView: View {
         .tabBarMinimizeBehavior(.onScrollDown)
         .handleAppSheets(router: router, inventory: inventory)
     }
-    
+
     @ViewBuilder
     private func makeNavigationStack(for tab: AppTab, router: Router) -> some View {
         @Bindable var router = router
-        
+
         NavigationStack(path: $router[tab]) {
             tab.rootView()
                 .withAppRouter()
@@ -63,7 +63,6 @@ struct AppTabRootView: View {
                 .toolbarBackground(tab.toolbarBackground, for: .navigationBar)
                 .toolbarBackgroundVisibility(.visible, for: .navigationBar)
                 .navigationBarTitleDisplayMode(.inline)
-
         }
         .tint(router.customTintColor ?? router.defaultTintColor)
     }
@@ -92,7 +91,7 @@ public extension AppTab {
         Label(title, systemImage: icon)
             .environment(\.symbolVariants, symbolVariants)
     }
-    
+
     @MainActor
     @ToolbarContentBuilder
     func toolbarContent(router: Router) -> some ToolbarContent {
@@ -102,7 +101,7 @@ public extension AppTab {
                 Text("KeepFresh")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
             }
-            
+
             ToolbarItemGroup {
                 Button(action: {
                     router.selectedTab = .search
@@ -117,12 +116,13 @@ public extension AppTab {
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
             }
+
         case .kitchen:
             ToolbarItem(placement: .title) {
                 Text("Kitchen")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
             }
-            
+
             ToolbarItemGroup {
                 Button(action: {
                     router.selectedTab = .search
@@ -137,13 +137,13 @@ public extension AppTab {
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
             }
-            
+
         case .search:
             ToolbarItem(placement: .title) {
                 Text("Search")
                     .foregroundColor(.white200).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
             }
-            
+
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                     router.presentedSheet = .barcodeScan
@@ -153,13 +153,13 @@ public extension AppTab {
                 }
                 .buttonStyle(.plain).tint(.white200)
             }
-            
+
         case .shoppingList:
             ToolbarItem(placement: .title) {
                 Text("Shopping")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
             }
-            
+
             ToolbarItemGroup {
                 Button(action: {
                     router.selectedTab = .search

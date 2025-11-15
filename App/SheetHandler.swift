@@ -18,11 +18,11 @@ extension View {
             switch presentedSheet {
             case .barcodeScan:
                 BarcodeView()
-                
+
             case .shopppingSearch:
                 AddShoppingListItemSheet()
                     .presentationDragIndicator(.visible)
-                
+
             case let .inventoryItem(item, action):
                 InventoryItemSheetView(inventoryItem: item, action: action)
                     .presentationDetents(
@@ -30,7 +30,7 @@ extension View {
                             ? [.custom(AdaptiveExtraLargeDetent.self)]
                             : [.custom(AdaptiveLargeDetent.self)])
                     .presentationDragIndicator(.visible)
-                
+
             case let .moveInventoryItemDirect(item, storageLocation):
                 MoveInventoryItemSheet(
                     inventoryItem: item,
@@ -55,7 +55,7 @@ extension View {
                     })
                     .presentationDetents([.custom(AdaptiveMediumDetent.self)])
                     .presentationDragIndicator(.visible)
-                
+
             case let .openInventoryItemDirect(item, expiryDate):
                 OpenInventoryItemSheet(
                     inventoryItem: item,
@@ -79,7 +79,7 @@ extension View {
                     })
                     .presentationDetents([.custom(AdaptiveExtraSmallDetent.self)])
                     .presentationDragIndicator(.visible)
-                
+
             case let .removeInventoryItemDirect(item):
                 RemoveInventoryItemSheet(
                     inventoryItem: item,

@@ -1,5 +1,5 @@
-import Foundation
 import CoreTransferable
+import Foundation
 import UniformTypeIdentifiers
 
 public enum ShoppingListItemStatus: String, Codable, Identifiable, CaseIterable, Sendable {
@@ -11,11 +11,10 @@ public enum ShoppingListItemStatus: String, Codable, Identifiable, CaseIterable,
     case unopened
 }
 
-public enum ShoppingListItemSource : Codable, Sendable {
+public enum ShoppingListItemSource: Codable, Sendable {
     case userAdded
     case aiSuggested
 }
-
 
 public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable, Transferable {
     public init(

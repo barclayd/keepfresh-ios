@@ -670,7 +670,7 @@ public struct InventoryItemSheetView: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
             .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
             .offset(x: 0, y: -8)
-            
+
 //            Spacer()
 
             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
@@ -698,7 +698,7 @@ public struct InventoryItemSheetView: View {
                 isLoadingStats = false
             }
             .redactedShimmer(when: isLoadingStats)
-            
+
 //            Spacer()
 
             if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
@@ -729,7 +729,7 @@ public struct InventoryItemSheetView: View {
                             .fill(nextBestAction.backgroundColor))
                 }
             }
-            
+
             Button(action: {
                 markAsDonePressed.toggle()
                 showSheet = .remove

@@ -59,7 +59,10 @@ public struct StorageLocationPanel: View {
                     topLeading: 10,
                     bottomLeading: isToggled ? 0 : 10,
                     bottomTrailing: isToggled ? 0 : 10,
-                    topTrailing: 10)).fill(LinearGradient(stops: storageLocation.viewGradientStopsReversed, startPoint: .leading, endPoint: .trailing)))
+                    topTrailing: 10)).fill(LinearGradient(
+                    stops: storageLocation.viewGradientStopsReversed,
+                    startPoint: .leading,
+                    endPoint: .trailing)))
             .onTapGesture {
                 //                withAnimation(.easeInOut) {
                 if !viewModel.items(for: storageLocation).isEmpty {
@@ -70,7 +73,8 @@ public struct StorageLocationPanel: View {
             //            .transition(.move(edge: .top))
             if isToggled {
                 VStack {
-                    RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1).offset(y: -10)
+                    RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1)
+                        .offset(y: -10)
 
                     List {
                         ForEach(viewModel.items(for: storageLocation), id: \.self) { shoppingListItem in
@@ -92,6 +96,7 @@ public struct StorageLocationPanel: View {
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
+//                        .onMove(perform: viewModel.moveItem)
 
                         // Spacer row for drop target when list has items
                         if !viewModel.items(for: storageLocation).isEmpty {
@@ -132,7 +137,10 @@ public struct StorageLocationPanel: View {
                             bottomLeading: 10,
                             bottomTrailing: 10,
                             topTrailing: 0))
-                            .fill(LinearGradient(stops: storageLocation.viewGradientStopsReversed, startPoint: .leading, endPoint: .trailing))
+                            .fill(LinearGradient(
+                                stops: storageLocation.viewGradientStopsReversed,
+                                startPoint: .leading,
+                                endPoint: .trailing))
                             .dropDestination(for: ShoppingListItem.self) { droppedItems, _ in
                                 // Handle drop on empty space in list (append to end)
                                 guard let droppedItem = droppedItems.first else { return false }
@@ -150,11 +158,11 @@ public struct StorageLocationPanel: View {
             }
         }
         .onChange(of: viewModel.items(for: storageLocation).count) { oldValue, newValue in
-            if newValue == 0 && oldValue != 0 {
+            if newValue == 0, oldValue != 0 {
                 isToggled = false
             }
-            
-            if newValue > 0 && oldValue == 0 {
+
+            if newValue > 0, oldValue == 0 {
                 isToggled = true
             }
         }
@@ -164,7 +172,7 @@ public struct StorageLocationPanel: View {
 
             // If dropping within same location and panel is expanded,
             // let the more specific handlers deal with it
-            if droppedItem.storageLocation == storageLocation && isToggled {
+            if droppedItem.storageLocation == storageLocation, isToggled {
                 return false // Let List/Item handlers process this
             }
 
