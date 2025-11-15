@@ -43,8 +43,6 @@ public struct ShoppingView: View {
                 }
                 .glassEffect(.regular.tint(.green500))
                 .scenePadding(.trailing)
-//                .padding(.trailing, 20)
-//                .offset(y: 57.5)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -56,6 +54,7 @@ public struct ShoppingView: View {
         [
             ShoppingListItem(
                 id: 1,
+                title: nil,
                 createdAt: Date(),
                 updatedAt: Date(),
                 source: .userAdded,
@@ -74,6 +73,7 @@ public struct ShoppingView: View {
                         pathDisplay: "Fresh Food > Dairy > Milk"))),
             ShoppingListItem(
                 id: 2,
+                title: nil,
                 createdAt: Date(),
                 updatedAt: Date(),
                 source: .userAdded,
@@ -92,6 +92,7 @@ public struct ShoppingView: View {
                         pathDisplay: "Fresh Food > Dairy > Milk"))),
             ShoppingListItem(
                 id: 3,
+                title: nil,
                 createdAt: Date(),
                 updatedAt: Date(),
                 source: .userAdded,

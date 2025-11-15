@@ -47,6 +47,7 @@ public final class ShoppingViewModel {
         // Create updated item with new storage location
         let updatedItem = ShoppingListItem(
             id: item.id,
+            title: nil,
             createdAt: item.createdAt,
             updatedAt: Date(),
             source: item.source,

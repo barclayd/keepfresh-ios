@@ -14,6 +14,17 @@ public struct StorageLocationPanel: View {
         self.viewModel = viewModel
     }
 
+    private var onMoveHandler: (IndexSet, Int) -> Void {
+        return { sourceIndices, destinationIndex in
+            guard let sourceIndex = sourceIndices.first else { return }
+            let items = viewModel.items(for: storageLocation)
+            guard sourceIndex < items.count else { return }
+
+            let itemId = items[sourceIndex].id
+            viewModel.moveItem(itemId: itemId, toIndex: destinationIndex, in: storageLocation)
+        }
+    }
+
     var textColor: Color {
         storageLocation == .freezer ? .white200 : .blue800
     }
@@ -93,10 +104,10 @@ public struct StorageLocationPanel: View {
                                     }
                                 }
                         }
+                        .onMove(perform: onMoveHandler)
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
-//                        .onMove(perform: viewModel.moveItem)
 
                         // Spacer row for drop target when list has items
                         if !viewModel.items(for: storageLocation).isEmpty {

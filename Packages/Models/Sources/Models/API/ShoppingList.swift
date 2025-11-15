@@ -19,6 +19,7 @@ public enum ShoppingListItemSource: Codable, Sendable {
 public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable, Transferable {
     public init(
         id: Int,
+        title: String?,
         createdAt: Date,
         updatedAt: Date,
         source: ShoppingListItemSource,
@@ -27,6 +28,7 @@ public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable, Trans
         product: Product)
     {
         self.id = id
+        self.title = title
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.source = source
@@ -36,6 +38,7 @@ public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable, Trans
     }
 
     public let id: Int
+    public let title: String?
     public let createdAt: Date
     public let updatedAt: Date
     public let source: ShoppingListItemSource
