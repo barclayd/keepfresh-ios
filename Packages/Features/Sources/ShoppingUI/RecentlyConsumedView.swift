@@ -4,7 +4,7 @@ import SharedUI
 import SwiftData
 import SwiftUI
 
-public struct RecentSearchItem: View {
+public struct RecentConsumedItem: View {
     let search: RecentSearch
     let onTap: (String) -> Void
     let onDelete: () -> Void
@@ -49,7 +49,7 @@ public struct RecentSearchItem: View {
     }
 }
 
-public struct RecentSearchView: View {
+public struct RecentConsumedView: View {
     @Environment(\.modelContext) var modelContext
 
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
@@ -70,7 +70,7 @@ public struct RecentSearchView: View {
     public var body: some View {
         List {
             HStack {
-                Text("Recent Searches")
+                Text("Recently Consumed")
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundStyle(.blue800)
@@ -78,13 +78,13 @@ public struct RecentSearchView: View {
             }.padding(.top, 10)
 
             ForEach(recentSearches) { recentSearch in
-                RecentSearchItem(
+                RecentConsumedItem(
                     search: recentSearch,
                     onTap: { previousSearchText in
                         searchText = previousSearchText
                     },
                     onDelete: { deleteRecentSearch(recentSearch) },
-                    colorConfiguration: RecentSearchItem.ColorConfiguration(
+                    colorConfiguration: RecentConsumedItem.ColorConfiguration(
                         text: recentSearch.recommendedStorageLocation.textColor,
                         background: recentSearch.recommendedStorageLocation.tileColor,
                         closeIcon: recentSearch.recommendedStorageLocation.textColor))

@@ -1,8 +1,11 @@
 import DesignSystem
 import Models
+import Router
 import SwiftUI
 
 public struct ShoppingView: View {
+    @Environment(Router.self) var router
+    
     @State private var currentPage: Int = 3
     @State private var viewModel = ShoppingViewModel(items: ShoppingView.mockItems)
 
@@ -29,7 +32,9 @@ public struct ShoppingView: View {
                     .padding(.bottom, 10)
                 }
 
-                Button(action: {}) {
+                Button(action: {
+                    router.presentedSheet = .shopppingSearch
+                }) {
                     Label("Add Exercise", systemImage: "plus")
                         .font(.title3)
                         .bold()
@@ -38,8 +43,9 @@ public struct ShoppingView: View {
                         .tint(Color.white)
                 }
                 .glassEffect(.regular.tint(.green500))
-                .padding(.trailing, 20)
-                .offset(y: 57.5)
+                .scenePadding(.trailing)
+//                .padding(.trailing, 20)
+//                .offset(y: 57.5)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

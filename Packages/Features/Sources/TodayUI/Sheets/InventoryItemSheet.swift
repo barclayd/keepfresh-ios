@@ -670,6 +670,8 @@ public struct InventoryItemSheetView: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
             .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
             .offset(x: 0, y: -8)
+            
+//            Spacer()
 
             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                 suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
@@ -696,6 +698,8 @@ public struct InventoryItemSheetView: View {
                 isLoadingStats = false
             }
             .redactedShimmer(when: isLoadingStats)
+            
+//            Spacer()
 
             if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                 Button(action: nextBestAction.action) {
@@ -725,7 +729,7 @@ public struct InventoryItemSheetView: View {
                             .fill(nextBestAction.backgroundColor))
                 }
             }
-
+            
             Button(action: {
                 markAsDonePressed.toggle()
                 showSheet = .remove
@@ -748,7 +752,7 @@ public struct InventoryItemSheetView: View {
             }
             .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
         }
-        .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
+        .padding(10).frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 10)
         .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
         .sheet(item: $showSheet) { sheet in

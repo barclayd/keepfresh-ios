@@ -1,13 +1,11 @@
-import DesignSystem
 import Models
 import Network
-import Router
 import SwiftData
 import SwiftUI
 
 @MainActor
 @Observable
-class Search {
+class ShoppingSearch {
     var searchText: String = "" {
         didSet {
             guard searchText != debouncedSearchText, searchText != lastSearchedTerm else {
@@ -132,13 +130,12 @@ class Search {
     }
 }
 
-@MainActor
-public struct SearchView: View {
+public struct AddShoppingListItemSheet: View {
     @Environment(\.modelContext) var modelContext
 
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
 
-    @State private var search: Search?
+    @State private var search: ShoppingSearch?
 
     public init() {
         UIScrollView.appearance().bounces = false
@@ -186,37 +183,41 @@ public struct SearchView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            if isSearching, let search {
-                SearchResultView(
-                    searchProducts: search.searchResults,
-                    isLoading: search.state != .loaded,
-                    hasMorePages: search.hasMorePages,
-                    isLoadingMore: search.isLoadingMore,
-                    onLoadMore: {
-                        Task {
-                            await search.loadMoreResults()
-                        }
-                    })
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                RecentSearchView(searchText: searchTextBinding)
+        NavigationStack {
+            VStack(spacing: 0) {
+                if isSearching, let search {
+                    SearchShoppingListResultView(
+                        searchProducts: search.searchResults,
+                        isLoading: search.state != .loaded,
+                        hasMorePages: search.hasMorePages,
+                        isLoadingMore: search.isLoadingMore,
+                        onLoadMore: {
+                            Task {
+                                await search.loadMoreResults()
+                            }
+                        })
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    RecentConsumedView(searchText: searchTextBinding)
+                }
             }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.white100)
-        .task {
-            if search == nil {
-                search = Search(onSaveSearch: saveRecentSearch)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .task {
+                if search == nil {
+                    search = ShoppingSearch(onSaveSearch: saveRecentSearch)
+                }
             }
-        }
-        .searchable(text: searchTextBinding, placement: .toolbar)
-        .scrollDismissesKeyboard(.immediately)
-        .onSubmit(of: .search) {
-            Task {
-                guard search?.state != .loading else { return }
-                await search?.debounceSearch(shouldWait: false)
+            .searchable(text: searchTextBinding, placement: .toolbar, prompt: "Add to shopping list")
+            .navigationTitle("Recently Consumed")
+            .toolbar(.hidden, for: .navigationBar)
+            .scrollDismissesKeyboard(.immediately)
+            .onSubmit(of: .search) {
+                Task {
+                    guard search?.state != .loading else { return }
+                    await search?.debounceSearch(shouldWait: false)
+                }
             }
+            .scrollContentBackground(.hidden)
         }
     }
 }
