@@ -50,7 +50,7 @@ public struct ShoppingListItemView: View {
                         Spacer()
                         
                         Toggle("Selected Expiry Date", isOn: $isComplete)
-                            .toggleStyle(CheckToggleStyle(customColor: nil))
+                            .toggleStyle(CheckToggleStyle(customColor: shoppingListItem.storageLocation.backgroundColor))
                             .labelsHidden()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
@@ -59,12 +59,12 @@ public struct ShoppingListItemView: View {
             .padding(.vertical, 10)
             .padding(.horizontal, 5)
             .background(.white100)
-            .cornerRadius(20)
+            .cornerRadius(22)
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
         .background(.white100)
-        .cornerRadius(20)
+        .cornerRadius(22)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
     }

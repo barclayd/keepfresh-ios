@@ -53,29 +53,26 @@ public struct StorageLocationPanel: View {
                     bottomTrailing: isToggled ? 0 : 10,
                     topTrailing: 10)).fill(LinearGradient(stops: storageLocation.viewGradientStopsReversed, startPoint: .leading, endPoint: .trailing)))
             .onTapGesture {
-//                withAnimation(.easeInOut) {
-                    isToggled.toggle()
-//                }
+                //                withAnimation(.easeInOut) {
+                isToggled.toggle()
+                //                }
             }
-//            .transition(.move(edge: .top))
+            //            .transition(.move(edge: .top))
             if isToggled {
                 VStack(spacing: 0) {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1).offset(y: -10)
                     
-                    HStack {
-                        Image(systemName: "house")
-                            .font(.system(size: 21))
-                            .fontWeight(.bold)
-                            .foregroundColor(.blue700)
-                            .frame(width: 40, height: 40)
-                        
-                        Text("Location")
-                            .foregroundStyle(.blue700)
-                            .font(.callout)
-                            .lineLimit(1)
-                        
-                        Spacer()
+                    ShoppingListItemView(shoppingListItem: ShoppingListItem(id: 1, createdAt: Date(), updatedAt: Date(), source: .userAdded, status: .added, storageLocation: .fridge, product: Product(id: 1, name: "Semi Skimmed Milk", unit: "pts", brand: .tesco, amount: 4, category: CategoryDetails(icon: "milk", id: 1, name: "Milk", pathDisplay: "Fresh Food > Dairy > Milk"))))
+                    
+                    List {
+                        ForEach(0 ..< 3, id: \.self) { _ in
+                            ShoppingListItemView(shoppingListItem: ShoppingListItem(id: 1, createdAt: Date(), updatedAt: Date(), source: .userAdded, status: .added, storageLocation: .fridge, product: Product(id: 1, name: "Semi Skimmed Milk", unit: "pts", brand: .tesco, amount: 4, category: CategoryDetails(icon: "milk", id: 1, name: "Milk", pathDisplay: "Fresh Food > Dairy > Milk"))))
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .listStyle(.plain)
                     
                 }.padding(.vertical, 10).padding(.horizontal, 15).frame(maxWidth: .infinity)
                     .background(
@@ -84,7 +81,7 @@ public struct StorageLocationPanel: View {
                             bottomLeading: 10,
                             bottomTrailing: 10,
                             topTrailing: 0))
-                        .fill(LinearGradient(stops: storageLocation.viewGradientStopsReversed, startPoint: .leading, endPoint: .trailing)))
+                            .fill(LinearGradient(stops: storageLocation.viewGradientStopsReversed, startPoint: .leading, endPoint: .trailing)))
             }
         }
     }
