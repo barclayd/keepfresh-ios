@@ -182,7 +182,7 @@ struct KeepFreshApp: App {
                     brand: .tesco,
                     amount: 2,
                     category: CategoryDetails(
-                        icon: "icecream",
+                        icon: "pasties",
                         id: 2,
                         name: "Desserts",
                         pathDisplay: "Frozen > Desserts"))),

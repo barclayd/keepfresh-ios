@@ -6,23 +6,27 @@ import SwiftUI
 
 public struct StorageLocationPanel: View {
     @Environment(Shopping.self) var shopping
-    @State private var isToggled: Bool = false
+    @State private var isExpanded: Bool = true
 
     let storageLocation: StorageLocation
+
+    private var items: [ShoppingItem] {
+        shopping.itemsByStorageLocation[storageLocation] ?? []
+    }
 
     public init(storageLocation: StorageLocation) {
         self.storageLocation = storageLocation
     }
 
-    private var onMoveHandler: (IndexSet, Int) -> Void {
-        { sourceIndices, destinationIndex in
-            guard let sourceIndex = sourceIndices.first else { return }
-            let items = shopping.items(for: storageLocation)
-            guard sourceIndex < items.count else { return }
+    private func handleItemMove(sourceIndices: IndexSet, destinationIndex: Int) {
+        guard let sourceIndex = sourceIndices.first else { return }
+        guard sourceIndex < items.count else { return }
+        let itemId = items[sourceIndex].id
+        shopping.moveItem(itemId: itemId, toIndex: destinationIndex, in: storageLocation)
+    }
 
-            let itemId = items[sourceIndex].id
-            shopping.moveItem(itemId: itemId, toIndex: destinationIndex, in: storageLocation)
-        }
+    private var onMoveHandler: (IndexSet, Int) -> Void {
+        handleItemMove
     }
 
     var textColor: Color {
@@ -49,14 +53,14 @@ public struct StorageLocationPanel: View {
                 Spacer()
 
                 HStack {
-                    Image(systemName: "\(shopping.items(for: storageLocation).count).square.fill")
+                    Image(systemName: "\(items.count).square.fill")
                         .frame(width: 18).foregroundColor(textColor)
 
-                    if shopping.items(for: storageLocation).isEmpty {
+                    if items.isEmpty {
                         Rectangle().fill(Color.clear).frame(width: 18)
                     } else {
                         Image(systemName: "chevron.down")
-                            .rotationEffect(.degrees(isToggled ? -180 : 0))
+                            .rotationEffect(.degrees(isExpanded ? -180 : 0))
                             .frame(width: 18).foregroundColor(textColor)
                     }
 
@@ -68,38 +72,34 @@ public struct StorageLocationPanel: View {
             .background(
                 UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
                     topLeading: 10,
-                    bottomLeading: isToggled ? 0 : 10,
-                    bottomTrailing: isToggled ? 0 : 10,
+                    bottomLeading: isExpanded ? 0 : 10,
+                    bottomTrailing: isExpanded ? 0 : 10,
                     topTrailing: 10)).fill(LinearGradient(
                     stops: storageLocation.viewGradientStopsReversed,
                     startPoint: .leading,
                     endPoint: .trailing)))
             .onTapGesture {
-                //                withAnimation(.easeInOut) {
-                if !shopping.items(for: storageLocation).isEmpty {
-                    isToggled.toggle()
+                withAnimation(.easeInOut) {
+                    if !items.isEmpty {
+                        isExpanded.toggle()
+                    }
                 }
-                //                }
             }
             //            .transition(.move(edge: .top))
-            if isToggled {
+            if isExpanded {
                 VStack {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1)
                         .offset(y: -10)
 
                     List {
-                        ForEach(shopping.items(for: storageLocation), id: \.self) { shoppingItem in
+                        ForEach(items, id: \.self) { shoppingItem in
                             ShoppingItemView(shoppingItem: shoppingItem)
                                 .draggable(shoppingItem)
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-//                                        store.delete(message)
-                                    } label: {
+                                    Button(role: .destructive) {} label: {
                                         Label("Delete", systemImage: "trash")
                                     }
-                                    Button {
-//                                        store.flag(message)
-                                    } label: {
+                                    Button {} label: {
                                         Label("Flag", systemImage: "flag")
                                     }
                                 }
@@ -109,24 +109,20 @@ public struct StorageLocationPanel: View {
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
 
-                        // Spacer row for drop target when list has items
-                        if !shopping.items(for: storageLocation).isEmpty {
+                        if !items.isEmpty {
                             Color.clear
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .listRowInsets(EdgeInsets())
                                 .listRowSeparator(.hidden)
                                 .listRowBackground(Color.clear)
                                 .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-                                    // Handle drop on bottom empty space (append to end)
                                     guard let droppedItem = droppedItems.first else { return false }
 
-                                    let targetIndex = shopping.items(for: storageLocation).count
+                                    let targetIndex = items.count
 
                                     if droppedItem.storageLocation == storageLocation {
-                                        // Within-list: move to end
                                         shopping.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
                                     } else {
-                                        // Cross-list: move to this location and append to end
                                         shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
                                     }
 
@@ -135,7 +131,7 @@ public struct StorageLocationPanel: View {
                         }
                     }
 
-                    .frame(height: CGFloat(shopping.items(for: storageLocation).count) * 75)
+                    .frame(height: CGFloat(items.count) * 75)
                     .listStyle(.plain)
                     .scrollDisabled(true)
                     .listRowSpacing(10)
@@ -161,20 +157,25 @@ public struct StorageLocationPanel: View {
                                     return false
                                 } else {
                                     // Cross-list: move to this location and append to end
-                                    let targetIndex = shopping.items(for: storageLocation).count
+                                    let targetIndex = items.count
                                     shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
                                     return true
                                 }
                             })
             }
         }
-        .onChange(of: shopping.items(for: storageLocation).count) { oldValue, newValue in
+        .onAppear {
+            if items.isEmpty {
+                isExpanded = false
+            }
+        }
+        .onChange(of: items.count) { oldValue, newValue in
             if newValue == 0, oldValue != 0 {
-                isToggled = false
+                isExpanded = false
             }
 
             if newValue > 0, oldValue == 0 {
-                isToggled = true
+                isExpanded = true
             }
         }
         .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
@@ -183,12 +184,12 @@ public struct StorageLocationPanel: View {
 
             // If dropping within same location and panel is expanded,
             // let the more specific handlers deal with it
-            if droppedItem.storageLocation == storageLocation, isToggled {
+            if droppedItem.storageLocation == storageLocation, isExpanded {
                 return false // Let List/Item handlers process this
             }
 
             // Otherwise, add to end of list
-            let targetIndex = shopping.items(for: storageLocation).count
+            let targetIndex = items.count
 
             if droppedItem.storageLocation == storageLocation {
                 // Within-list move (when collapsed or dropping on non-list area)

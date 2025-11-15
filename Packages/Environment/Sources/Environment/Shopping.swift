@@ -5,21 +5,27 @@ import SwiftUI
 @Observable
 @MainActor
 public final class Shopping {
-    public var items: [ShoppingItem]
+    public var items: [ShoppingItem] = [] {
+        didSet {
+            updateCaches()
+        }
+    }
+
+    public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
 
     public init(items: [ShoppingItem] = []) {
         self.items = items
+        updateCaches()
     }
 
-    // Filter items by storage location
-    public func items(for storageLocation: StorageLocation) -> [ShoppingItem] {
-        items.filter { $0.storageLocation == storageLocation }
+    private func updateCaches() {
+        itemsByStorageLocation = Dictionary(grouping: items, by: \.storageLocation)
     }
 
     // Move item within same storage location (for within-list reordering)
     public func moveItem(itemId: Int, toIndex targetIndex: Int, in storageLocation: StorageLocation) {
         // Get the current filtered list
-        var filteredItems = items(for: storageLocation)
+        var filteredItems = itemsByStorageLocation[storageLocation] ?? []
 
         // Find the source index in the filtered list
         guard let sourceIndex = filteredItems.firstIndex(where: { $0.id == itemId }) else { return }
