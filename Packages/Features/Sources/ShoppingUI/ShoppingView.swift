@@ -37,12 +37,9 @@ public struct ShoppingView: View {
                 ForEach(0 ..< shoppingListTabs.count, id: \.self) { index in
                     ScrollView {
                         LazyVStack {
-                            VStack {
-                                ForEach(StorageLocation.allCases) { storageLocation in
-                                    StorageLocationPanel(storageLocation: storageLocation)
-                                }
-                            }
-                            .tag(index)
+                            ForEach(StorageLocation.allCases) { storageLocation in
+                                StorageLocationPanel(storageLocation: storageLocation)
+                            }.tag(index)
                         }.padding(.horizontal, 12.5)
                             .padding(.top, 20)
                             .padding(.bottom, 10)

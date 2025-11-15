@@ -16,6 +16,26 @@ public struct StorageLocationPanel: View {
         storageLocation == .freezer ? .white200 : .blue800
     }
     
+//    public var body: some View {
+//        List {
+//            ForEach(0 ..< 3, id: \.self) { _ in
+//                ShoppingListItemView(shoppingListItem: ShoppingListItem(id: 1, createdAt: Date(), updatedAt: Date(), source: .userAdded, status: .added, storageLocation: .fridge, product: Product(id: 1, name: "Semi Skimmed Milk", unit: "pts", brand: .tesco, amount: 4, category: CategoryDetails(icon: "milk", id: 1, name: "Milk", pathDisplay: "Fresh Food > Dairy > Milk"))))
+//            }
+//            .listRowSeparator(.hidden)
+//            .listRowBackground(Color.clear)
+//        }
+//        .listStyle(.plain)
+//        .frame(height: 650)
+//        .padding(.vertical, 10).padding(.horizontal, 15).frame(maxWidth: .infinity)
+//            .background(
+//                UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+//                    topLeading: 0,
+//                    bottomLeading: 10,
+//                    bottomTrailing: 10,
+//                    topTrailing: 0))
+//                    .fill(LinearGradient(stops: storageLocation.viewGradientStopsReversed, startPoint: .leading, endPoint: .trailing)))
+//    }
+    
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -59,21 +79,34 @@ public struct StorageLocationPanel: View {
             }
             //            .transition(.move(edge: .top))
             if isToggled {
-                VStack(spacing: 0) {
+                VStack {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1).offset(y: -10)
-                    
-                    ShoppingListItemView(shoppingListItem: ShoppingListItem(id: 1, createdAt: Date(), updatedAt: Date(), source: .userAdded, status: .added, storageLocation: .fridge, product: Product(id: 1, name: "Semi Skimmed Milk", unit: "pts", brand: .tesco, amount: 4, category: CategoryDetails(icon: "milk", id: 1, name: "Milk", pathDisplay: "Fresh Food > Dairy > Milk"))))
-                    
+
                     List {
                         ForEach(0 ..< 3, id: \.self) { _ in
                             ShoppingListItemView(shoppingListItem: ShoppingListItem(id: 1, createdAt: Date(), updatedAt: Date(), source: .userAdded, status: .added, storageLocation: .fridge, product: Product(id: 1, name: "Semi Skimmed Milk", unit: "pts", brand: .tesco, amount: 4, category: CategoryDetails(icon: "milk", id: 1, name: "Milk", pathDisplay: "Fresh Food > Dairy > Milk"))))
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+//                                        store.delete(message)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                    Button {
+//                                        store.flag(message)
+                                    } label: {
+                                        Label("Flag", systemImage: "flag")
+                                    }
+                                }
                         }
+                        .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(height: 250)
                     .listStyle(.plain)
-                    
+                    .listRowSpacing(20)
+                    .scrollContentBackground(.hidden)
+
                 }.padding(.vertical, 10).padding(.horizontal, 15).frame(maxWidth: .infinity)
                     .background(
                         UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
