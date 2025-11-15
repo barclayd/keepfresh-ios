@@ -67,5 +67,6 @@ public struct ShoppingListItemView: View {
         .cornerRadius(22)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
+        .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 22))
     }
 }

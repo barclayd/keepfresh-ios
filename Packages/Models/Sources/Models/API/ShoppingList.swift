@@ -1,4 +1,6 @@
 import Foundation
+import CoreTransferable
+import UniformTypeIdentifiers
 
 public enum ShoppingListItemStatus: String, Codable, Identifiable, CaseIterable, Sendable {
     public var id: Self { self }
@@ -15,7 +17,7 @@ public enum ShoppingListItemSource : Codable, Sendable {
 }
 
 
-public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable {
+public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable, Transferable {
     public init(
         id: Int,
         createdAt: Date,
@@ -41,4 +43,15 @@ public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable {
     public let status: ShoppingListItemStatus
     public let storageLocation: StorageLocation
     public let product: Product
+
+    // Transferable conformance for drag and drop
+    public static var transferRepresentation: some TransferRepresentation {
+        CodableRepresentation(contentType: .shoppingListItem)
+    }
+}
+
+extension UTType {
+    static var shoppingListItem: UTType {
+        UTType(exportedAs: "com.keepfresh.shoppinglistitem")
+    }
 }

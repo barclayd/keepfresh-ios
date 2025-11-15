@@ -4,6 +4,7 @@ import SwiftUI
 
 public struct ShoppingView: View {
     @State private var currentPage: Int = 3
+    @State private var viewModel = ShoppingViewModel(items: ShoppingView.mockItems)
 
     public init() {}
 
@@ -16,7 +17,10 @@ public struct ShoppingView: View {
             ScrollView {
                 LazyVStack {
                     ForEach(StorageLocation.allCases) { storageLocation in
-                        StorageLocationPanel(storageLocation: storageLocation)
+                        StorageLocationPanel(
+                            storageLocation: storageLocation,
+                            viewModel: viewModel
+                        )
                     }
                 }
                 .padding(.horizontal, 12.5)
@@ -26,5 +30,74 @@ public struct ShoppingView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white200)
+    }
+
+    // Mock data for testing cross-list dragging
+    static var mockItems: [ShoppingListItem] {
+        [
+            ShoppingListItem(
+                id: 1,
+                createdAt: Date(),
+                updatedAt: Date(),
+                source: .userAdded,
+                status: .added,
+                storageLocation: .fridge,
+                product: Product(
+                    id: 1,
+                    name: "Semi Skimmed Milk",
+                    unit: "pts",
+                    brand: .tesco,
+                    amount: 4,
+                    category: CategoryDetails(
+                        icon: "milk",
+                        id: 1,
+                        name: "Milk",
+                        pathDisplay: "Fresh Food > Dairy > Milk"
+                    )
+                )
+            ),
+            ShoppingListItem(
+                id: 2,
+                createdAt: Date(),
+                updatedAt: Date(),
+                source: .userAdded,
+                status: .added,
+                storageLocation: .fridge,
+                product: Product(
+                    id: 2,
+                    name: "Whole Milk",
+                    unit: "pts",
+                    brand: .tesco,
+                    amount: 4,
+                    category: CategoryDetails(
+                        icon: "milk",
+                        id: 1,
+                        name: "Milk",
+                        pathDisplay: "Fresh Food > Dairy > Milk"
+                    )
+                )
+            ),
+            ShoppingListItem(
+                id: 3,
+                createdAt: Date(),
+                updatedAt: Date(),
+                source: .userAdded,
+                status: .added,
+                storageLocation: .freezer,
+                product: Product(
+                    id: 3,
+                    name: "Ice Cream",
+                    unit: "tubs",
+                    brand: .tesco,
+                    amount: 2,
+                    category: CategoryDetails(
+                        icon: "icecream",
+                        id: 2,
+                        name: "Desserts",
+                        pathDisplay: "Frozen > Desserts"
+                    )
+                )
+            ),
+        ]
     }
 }

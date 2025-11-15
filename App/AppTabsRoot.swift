@@ -22,11 +22,11 @@ struct AppTabRootView: View {
             } label: {
                 AppTab.today.label
             }
-            
+                
             Tab(value: AppTab.search, role: .search) {
                 makeNavigationStack(for: .search, router: router)
             } label: {
-                AppTab.search.label
+                router.selectedTab == .shoppingList ? AppTab.shoppingListSearch.label : AppTab.search.label
             }
             
             Tab(value: AppTab.kitchen) {
@@ -80,6 +80,8 @@ private extension AppTab {
         case .kitchen:
             KitchenView()
         case .shoppingList:
+            ShoppingView()
+        case .shoppingListSearch:
             ShoppingView()
         }
     }
@@ -138,6 +140,22 @@ public extension AppTab {
             }
             
         case .search:
+            ToolbarItem(placement: .title) {
+                Text("Search")
+                    .foregroundColor(.white200).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    router.presentedSheet = .barcodeScan
+                }) {
+                    Image(systemName: "barcode.viewfinder").resizable()
+                        .frame(width: 24, height: 24)
+                }
+                .buttonStyle(.plain).tint(.white200)
+            }
+            
+        case .shoppingListSearch:
             ToolbarItem(placement: .title) {
                 Text("Search")
                     .foregroundColor(.white200).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
