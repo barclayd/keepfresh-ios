@@ -13,6 +13,8 @@
 		4E8952D02E987903003F3366 /* Authentication in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8952CF2E987903003F3366 /* Authentication */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
 		4E95179F2D7BAD5700FAFC86 /* BarcodeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E95179E2D7BAD5700FAFC86 /* BarcodeUI */; };
+		4E9A8B7D2D9A8B7C0012CDF0 /* ShoppingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */; };
+		4E9A8B7F2D9A8B8C0012CDF1 /* SharedUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */; };
 		4EAF44BE2E8B3CFE000B5A6B /* Intelligence in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF44BD2E8B3CFE000B5A6B /* Intelligence */; };
 		4EEEBA792E806DFC0049511B /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA782E806DFC0049511B /* Models */; };
 		4EEEBA7B2E806E010049511B /* Network in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA7A2E806E010049511B /* Network */; };
@@ -21,8 +23,6 @@
 		4EF223CF2E874ECA00A93567 /* Environment in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF223CE2E874ECA00A93567 /* Environment */; };
 		4EF223D22E883E4A00A93567 /* Extensions in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF223D12E883E4A00A93567 /* Extensions */; };
 		4EF5AD0E2EBC0C1600F8E400 /* Notifications in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD0D2EBC0C1600F8E400 /* Notifications */; };
-		4E9A8B7D2D9A8B7C0012CDF0 /* ShoppingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */; };
-		4E9A8B7F2D9A8B8C0012CDF1 /* SharedUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */; };
 		4EF5AD1A2EBD1C8E00F8E400 /* NotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4EF5AD132EBD1C8E00F8E400 /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4EF5AD212EBD1CE900F8E400 /* Network in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD202EBD1CE900F8E400 /* Network */; };
 		4EF5AD232EBD208500F8E400 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4EF5AD222EBD208500F8E400 /* Models */; };
@@ -664,6 +664,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = BarcodeUI;
 		};
+		4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ShoppingUI;
+		};
+		4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SharedUI;
+		};
 		4EAF44BD2E8B3CFE000B5A6B /* Intelligence */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Intelligence;
@@ -707,14 +715,6 @@
 		4EF5AD362EBF786E00F8E400 /* Notifications */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Notifications;
-		};
-		4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ShoppingUI;
-		};
-		4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SharedUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

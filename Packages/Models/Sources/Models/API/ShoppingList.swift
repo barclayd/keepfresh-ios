@@ -52,6 +52,6 @@ public struct ShoppingListItem: Codable, Sendable, Identifiable, Hashable, Trans
 
 extension UTType {
     static var shoppingListItem: UTType {
-        UTType(exportedAs: "com.keepfresh.shoppinglistitem")
+        UTType(exportedAs: "dev.danbarclay.keepfresh.shoppinglistitem")
     }
 }

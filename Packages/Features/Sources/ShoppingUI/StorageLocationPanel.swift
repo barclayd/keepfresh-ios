@@ -40,9 +40,15 @@ public struct StorageLocationPanel: View {
                 HStack {
                     Image(systemName: "\(viewModel.items(for: storageLocation).count).square.fill")
                         .frame(width: 18).foregroundColor(textColor)
-                    Image(systemName: "chevron.down")
-                        .rotationEffect(.degrees(isToggled ? -180 : 0))
-                        .frame(width: 18).foregroundColor(textColor)
+
+                    if viewModel.items(for: storageLocation).isEmpty {
+                        Rectangle().fill(Color.clear).frame(width: 18)
+                    } else {
+                        Image(systemName: "chevron.down")
+                            .rotationEffect(.degrees(isToggled ? -180 : 0))
+                            .frame(width: 18).foregroundColor(textColor)
+                    }
+
                 }.fontWeight(.bold)
             }
             .padding(.vertical, 14)
@@ -141,6 +147,15 @@ public struct StorageLocationPanel: View {
                                     return true
                                 }
                             })
+            }
+        }
+        .onChange(of: viewModel.items(for: storageLocation).count) { oldValue, newValue in
+            if newValue == 0 && oldValue != 0 {
+                isToggled = false
+            }
+            
+            if newValue > 0 && oldValue == 0 {
+                isToggled = true
             }
         }
         .dropDestination(for: ShoppingListItem.self) { droppedItems, _ in

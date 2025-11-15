@@ -26,8 +26,8 @@ struct AppTabRootView: View {
             Tab(value: AppTab.search, role: .search) {
                 makeNavigationStack(for: .search, router: router)
             } label: {
-                router.selectedTab == .shoppingList ? AppTab.shoppingListSearch.label : AppTab.search.label
-            }
+                AppTab.search.label
+            }.hidden(router.selectedTab == .shoppingList)
             
             Tab(value: AppTab.kitchen) {
                 makeNavigationStack(for: .kitchen, router: router)
@@ -63,6 +63,7 @@ struct AppTabRootView: View {
                 .toolbarBackground(tab.toolbarBackground, for: .navigationBar)
                 .toolbarBackgroundVisibility(.visible, for: .navigationBar)
                 .navigationBarTitleDisplayMode(.inline)
+
         }
         .tint(router.customTintColor ?? router.defaultTintColor)
     }
@@ -80,8 +81,6 @@ private extension AppTab {
         case .kitchen:
             KitchenView()
         case .shoppingList:
-            ShoppingView()
-        case .shoppingListSearch:
             ShoppingView()
         }
     }
@@ -140,22 +139,6 @@ public extension AppTab {
             }
             
         case .search:
-            ToolbarItem(placement: .title) {
-                Text("Search")
-                    .foregroundColor(.white200).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
-            }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    router.presentedSheet = .barcodeScan
-                }) {
-                    Image(systemName: "barcode.viewfinder").resizable()
-                        .frame(width: 24, height: 24)
-                }
-                .buttonStyle(.plain).tint(.white200)
-            }
-            
-        case .shoppingListSearch:
             ToolbarItem(placement: .title) {
                 Text("Search")
                     .foregroundColor(.white200).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))

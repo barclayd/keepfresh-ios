@@ -14,18 +14,32 @@ public struct ShoppingView: View {
 
     public var body: some View {
         VStack {
-            ScrollView {
-                LazyVStack {
-                    ForEach(StorageLocation.allCases) { storageLocation in
-                        StorageLocationPanel(
-                            storageLocation: storageLocation,
-                            viewModel: viewModel
-                        )
+            ZStack(alignment: .bottomTrailing) {
+                ScrollView {
+                    LazyVStack {
+                        ForEach(StorageLocation.allCases) { storageLocation in
+                            StorageLocationPanel(
+                                storageLocation: storageLocation,
+                                viewModel: viewModel
+                            )
+                        }
                     }
+                    .padding(.horizontal, 12.5)
+                    .padding(.top, 20)
+                    .padding(.bottom, 10)
                 }
-                .padding(.horizontal, 12.5)
-                .padding(.top, 20)
-                .padding(.bottom, 10)
+
+                Button(action: {}) {
+                    Label("Add Exercise", systemImage: "plus")
+                        .font(.title3)
+                        .bold()
+                        .labelStyle(.iconOnly)
+                        .padding()
+                        .tint(Color.white)
+                }
+                .glassEffect(.regular.tint(.green500))
+                .padding(.trailing, 20)
+                .offset(y: 57.5)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
