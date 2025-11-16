@@ -25,7 +25,11 @@ public struct EditInventoryItemSheet: View {
                 .lineLimit(2).multilineTextAlignment(.center).fontWeight(.bold).padding(.horizontal, 20).font(.title2).padding(.top, 10)
 
             InventoryCategory(
-                type: .compactExpiry(date: $expiryDate, isRecommended: false, expiryType: inventoryItem.expiryType),
+                type: .compactExpiry(
+                    date: $expiryDate,
+                    isRecommended: false,
+                    expiryType: inventoryItem.expiryType,
+                    storageLocation: inventoryItem.storageLocation),
                 storageLocation: inventoryItem.storageLocation,
                 forceExpanded: true,
                 customColor: inventoryItem.storageLocation == .freezer ? (.white200, .blue800) : nil)

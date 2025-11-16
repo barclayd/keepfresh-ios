@@ -622,9 +622,9 @@ public struct InventoryItemSheetView: View {
                                 source: .user,
                                 storageLocation: inventoryItem.storageLocation,
                                 productId: inventoryItem.product.id,
-                                quantity: 1))
+                                quantity: 1), categoryId: inventoryItem.product.category.id)
                         } label: {
-                            Label("Add to Shopping List", systemImage: "cart.fill.badge.plus")
+                            Label("Add to shopping list", systemImage: "cart.fill.badge.plus")
                         }
                     }
 

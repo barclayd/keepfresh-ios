@@ -71,6 +71,21 @@ public struct ShoppingItemView: View {
         .cornerRadius(22)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
+        .onChange(of: isComplete) { previousState, newState in
+            if newState, !previousState {
+                // set state of shoppingItem to be .pending
+                // small delay
+                // show presented sheet
+                router.presentedSheet = .addInventoryItemFromShopping(shoppingItem)
+            }
+        }
+        .onChange(of: router.presentedSheet) { _, newSheet in
+            if case .addInventoryItemFromShopping = newSheet {
+                return
+            }
+
+            isComplete = false
+        }
         .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 22))
     }
 }

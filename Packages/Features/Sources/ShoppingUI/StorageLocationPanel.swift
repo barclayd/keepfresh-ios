@@ -49,12 +49,12 @@ public struct StorageLocationPanel: View {
             HStack {
                 HStack(alignment: .firstTextBaseline) {
                     Image(systemName: storageLocation.iconFilled)
-                        .frame(width: 18).foregroundColor(textColor).fontWeight(.bold)
+                        .frame(width: 22).foregroundColor(textColor).fontWeight(.bold)
 
                     Text(storageLocation.rawValue.capitalized)
                         .fontWeight(.bold)
                         .foregroundStyle(textColor)
-                        .font(.headline)
+                        .font(.title3)
                         .lineLimit(1)
                         .alignmentGuide(.firstTextBaseline) { d in
                             d[.bottom] * 0.75
@@ -66,11 +66,11 @@ public struct StorageLocationPanel: View {
                 if !items.isEmpty {
                     HStack {
                         Image(systemName: "\(items.count).square.fill")
-                            .frame(width: 18).foregroundColor(textColor)
+                            .frame(width: 20).foregroundColor(textColor)
 
                         Image(systemName: "chevron.down")
                             .rotationEffect(.degrees(isExpanded ? -180 : 0))
-                            .frame(width: 18).foregroundColor(textColor)
+                            .frame(width: 20).foregroundColor(textColor)
 
                     }.fontWeight(.bold)
                 }
@@ -124,9 +124,18 @@ public struct StorageLocationPanel: View {
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }.tint(Color.red500)
-                                    Button {} label: {
+                                    Button {
+                                        shopping.addItem(
+                                            request: AddShoppingItemRequest(
+                                                title: shoppingItem.title,
+                                                source: .user,
+                                                storageLocation: shoppingItem.storageLocation,
+                                                productId: shoppingItem.product?.id,
+                                                quantity: 1),
+                                            categoryId: shoppingItem.product?.category.id)
+                                    } label: {
                                         Label("Add another", systemImage: "plus.rectangle.fill.on.rectangle.fill")
-                                    }.tint(Color.gray500)
+                                    }.tint(Color.green500)
                                 }
                         }
                         .onMove(perform: onMoveHandler)

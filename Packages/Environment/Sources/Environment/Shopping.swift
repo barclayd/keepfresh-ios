@@ -85,7 +85,7 @@ public final class Shopping {
         }
     }
 
-    public func addItem(request: AddShoppingItemRequest) {
+    public func addItem(request: AddShoppingItemRequest, categoryId: Int?) {
         Task {
             do {
                 let newItems = try await api.addShoppingItem(request)
@@ -96,6 +96,17 @@ public final class Shopping {
                     locationItems.append(item)
                     itemsByStorageLocation[location] = locationItems
                 }
+
+                guard let categoryId, let productId = request.productId else { return }
+
+                guard SuggestionsCache.shared.getSuggestions(for: categoryId) == nil else {
+                    return
+                }
+
+                let response = try await api.getInventoryPreview(categoryId: categoryId, productId: productId)
+
+                await SuggestionsCache.shared.saveSuggestions(categoryId: categoryId, categorySuggestions: response.suggestions)
+
             } catch {
                 print("Adding shopping item failed with error: \(error)")
 

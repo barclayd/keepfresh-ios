@@ -206,7 +206,12 @@ public extension InventoryItem {
             unit: productSearchResult.unit,
             brand: productSearchResult.brand,
             amount: productSearchResult.amount,
-            category: CategoryDetails(icon: icon, id: category.id, name: category.name, pathDisplay: category.path))
+            category: CategoryDetails(
+                icon: icon,
+                id: category.id,
+                name: category.name,
+                pathDisplay: category.path,
+                expiryType: request.item.expiryType))
         consumptionPrediction = 100
         consumptionPredictionChangedAt = Date()
     }
@@ -280,17 +285,19 @@ public struct Product: Codable, Sendable, Hashable {
 }
 
 public struct CategoryDetails: Codable, Sendable, Hashable {
-    public init(icon: String, id: Int, name: String, pathDisplay: String) {
+    public init(icon: String, id: Int, name: String, pathDisplay: String, expiryType: ExpiryType) {
         self.id = id
         self.icon = icon
         self.name = name
         self.pathDisplay = pathDisplay
+        self.expiryType = expiryType
     }
 
     public let icon: String
     public let id: Int
     public let name: String
     public let pathDisplay: String
+    public let expiryType: ExpiryType
 }
 
 public enum Brand: Codable, Equatable, Hashable, Sendable {
@@ -427,7 +434,7 @@ public extension InventoryItem {
                     icon: "chicken",
                     id: 1,
                     name: "Vegetables",
-                    pathDisplay: "Food > Vegetables")))
+                    pathDisplay: "Food > Vegetables", expiryType: .BestBefore)))
     }
 
     static func mocks(count: Int) -> [InventoryItem] {

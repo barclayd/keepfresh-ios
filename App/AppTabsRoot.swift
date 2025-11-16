@@ -12,6 +12,7 @@ import TodayUI
 struct AppTabRootView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
+    @Environment(Shopping.self) var shopping
 
     var body: some View {
         @Bindable var router = router
@@ -43,7 +44,7 @@ struct AppTabRootView: View {
         }
         .tint(.blue600)
         .tabBarMinimizeBehavior(.onScrollDown)
-        .handleAppSheets(router: router, inventory: inventory)
+        .handleSheets(router: router, inventory: inventory, shopping: shopping)
     }
 
     @ViewBuilder

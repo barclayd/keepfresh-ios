@@ -5,6 +5,11 @@ public extension Date {
         let calendar = Calendar.current
         return calendar.isDate(self, equalTo: other, toGranularity: .day)
     }
+
+    mutating func addDays(_ days: Int) {
+        let calendar: Calendar = .current
+        self = calendar.date(byAdding: .day, value: days, to: self)!
+    }
 }
 
 public extension Date {

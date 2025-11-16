@@ -10,7 +10,7 @@ public enum Overriden {
 
 public enum InventoryItemFormType {
     case expiry(date: Binding<Date>, isRecommended: Bool, overriden: Binding<Overriden?>)
-    case compactExpiry(date: Binding<Date>, isRecommended: Bool, expiryType: ExpiryType)
+    case compactExpiry(date: Binding<Date>, isRecommended: Bool, expiryType: ExpiryType, storageLocation: StorageLocation)
     case storage(location: Binding<StorageLocation>, isRecommended: Bool, overriden: Binding<Overriden?>)
     case readOnlyStorage(location: StorageLocation, isRecommended: Bool)
     case status(status: Binding<ProductSearchItemStatus>, overriden: Binding<Overriden?>)
@@ -59,7 +59,7 @@ private extension InventoryItemFormType {
     @ViewBuilder
     func overviewLabel(customColor: Color? = nil) -> some View {
         switch self {
-        case let .expiry(date, isRecommended, _), let .compactExpiry(date, isRecommended, _):
+        case let .expiry(date, isRecommended, _), let .compactExpiry(date, isRecommended, _, _):
             VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: 0) {
@@ -144,8 +144,8 @@ private extension InventoryItemFormType {
         switch self {
         case let .expiry(date, _, overriden):
             InventoryItemExpiryDateContent(expiryDate: date, overriden: overriden)
-        case let .compactExpiry(date, _, expiryType):
-            InventoryItemExpiryDateCompactContent(expiryDate: date, expiryType: expiryType)
+        case let .compactExpiry(date, _, expiryType, storageLocation):
+            InventoryItemExpiryDateCompactContent(expiryDate: date, expiryType: expiryType, storageLocation: storageLocation)
         case let .status(status, overriden):
             IventoryItemStatusContent(status: status, overriden: overriden)
         case let .storage(location, _, overriden):
@@ -164,6 +164,14 @@ struct InventoryItemOverview: View {
 
     let type: InventoryItemFormType
     let customColor: Color?
+
+    var frameWidth: CGFloat {
+        if case .compactExpiry = type {
+            return 90
+        }
+
+        return 105
+    }
 
     var body: some View {
         Group {
@@ -188,7 +196,7 @@ struct InventoryItemOverview: View {
             .foregroundStyle(customColor ?? .blue700)
             .font(.headline)
             .lineLimit(1)
-            .frame(width: 105, alignment: .leading)
+            .frame(width: frameWidth, alignment: .leading)
 
         type.overviewLabel(customColor: customColor)
 
@@ -420,7 +428,11 @@ struct InventoryItemExpiryDateContent: View {
 struct InventoryItemExpiryDateCompactContent: View {
     @Binding var expiryDate: Date
 
+    @State private var plusTrigger = 0
+    @State private var minusTrigger = 0
+
     let expiryType: ExpiryType
+    let storageLocation: StorageLocation
 
     var body: some View {
         VStack(spacing: 0) {
@@ -435,7 +447,7 @@ struct InventoryItemExpiryDateCompactContent: View {
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
-                    .frame(width: 105, alignment: .leading)
+                    .frame(width: 90, alignment: .leading)
 
                 DatePicker(
                     "Expiry",
@@ -444,15 +456,38 @@ struct InventoryItemExpiryDateCompactContent: View {
                     .datePickerStyle(.compact).labelsHidden().tint(.blue700)
 
                 Spacer()
+
+                VStack(spacing: 2) {
+                    Button(action: {
+                        plusTrigger += 1
+                        expiryDate.addDays(1)
+                    }) {
+                        Image(systemName: "plus.square.fill")
+                            .font(.system(size: 28))
+                            .fontWeight(.bold)
+                            .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
+                    }.sensoryFeedback(.increase, trigger: plusTrigger)
+
+                    Button(action: {
+                        minusTrigger += 1
+                        expiryDate.addDays(-1)
+                    }) {
+                        Image(systemName: "minus.square.fill")
+                            .font(.system(size: 28))
+                            .fontWeight(.bold)
+                            .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
+                    }.sensoryFeedback(.decrease, trigger: minusTrigger)
+                }
             }
-        }.padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
-            .background(
-                UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
-                    topLeading: 0,
-                    bottomLeading: 20,
-                    bottomTrailing: 20,
-                    topTrailing: 0))
-                    .fill(.white100))
+        }
+        .padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
+        .background(
+            UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
+                topLeading: 0,
+                bottomLeading: 20,
+                bottomTrailing: 20,
+                topTrailing: 0))
+                .fill(.white100))
     }
 }
 

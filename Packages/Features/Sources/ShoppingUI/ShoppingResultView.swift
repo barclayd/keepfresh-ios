@@ -111,7 +111,7 @@ public struct SearchShoppingResultCard: View {
                     source: .user,
                     storageLocation: searchProduct.category.recommendedStorageLocation,
                     productId: searchProduct.id,
-                    quantity: 1))
+                    quantity: 1), categoryId: searchProduct.category.id)
             }
         }
         .background(searchProduct.category.recommendedStorageLocation.tileColor)

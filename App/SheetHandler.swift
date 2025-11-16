@@ -10,7 +10,7 @@ import SwiftUI
 import TodayUI
 
 extension View {
-    func handleAppSheets(router: Router, inventory: Inventory) -> some View {
+    func handleSheets(router: Router, inventory: Inventory, shopping: Shopping) -> some View {
         sheet(item: Binding(
             get: { router.presentedSheet },
             set: { router.presentedSheet = $0 }))
@@ -22,6 +22,19 @@ extension View {
             case .shopppingSearch:
                 AddShoppingSheet()
                     .presentationDragIndicator(.visible)
+
+            case let .addInventoryItemFromShopping(shoppingItem):
+                // process category data to get suggested expiryDate
+                AddInventoryItemFromShoppingSheet(shoppingItem: shoppingItem, onAdd: { expiryDate in
+                    Task {
+                        inventory.addItem(shoppingItem: shoppingItem, expiryDate: expiryDate)
+                        shopping.updateItem(id: shoppingItem.id, request: UpdateShoppingItemRequest(status: .completed))
+                    }
+                    router.presentedSheet = nil
+                })
+                .presentationDetents(
+                    [.custom(AdaptiveSmallDetent.self)])
+                .presentationDragIndicator(.visible)
 
             case let .inventoryItem(item, action):
                 InventoryItemSheetView(inventoryItem: item, action: action)

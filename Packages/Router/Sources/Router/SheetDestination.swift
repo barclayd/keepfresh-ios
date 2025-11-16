@@ -27,4 +27,6 @@ public enum SheetDestination: Hashable, Identifiable {
     case moveInventoryItemDirect(InventoryItem, StorageLocation)
     case openInventoryItemDirect(InventoryItem, Date)
     case removeInventoryItemDirect(InventoryItem)
+
+    case addInventoryItemFromShopping(ShoppingItem)
 }
