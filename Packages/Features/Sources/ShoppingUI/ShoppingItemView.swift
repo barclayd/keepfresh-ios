@@ -7,12 +7,27 @@ import SwiftUI
 public struct ShoppingItemView: View {
     @Environment(Router.self) var router
 
-    @State private var isComplete = false
+    @State private var status: ShoppingItemStatus = .created
 
     var shoppingItem: ShoppingItem
 
     public init(shoppingItem: ShoppingItem) {
         self.shoppingItem = shoppingItem
+    }
+
+    private var isSetToComplete: Binding<Bool> {
+        Binding(
+            get: {
+                status == .pendingCompletion || status == .completed
+            },
+            set: { newValue in
+                if newValue {
+                    status = .pendingCompletion
+                    router.presentedSheet = .addInventoryItemFromShopping(shoppingItem)
+                } else {
+                    status = .created
+                }
+            })
     }
 
     public var body: some View {
@@ -53,7 +68,7 @@ public struct ShoppingItemView: View {
 
                         Spacer()
 
-                        Toggle("Selected Expiry Date", isOn: $isComplete)
+                        Toggle("Selected Expiry Date", isOn: isSetToComplete)
                             .toggleStyle(CheckToggleStyle(customColor: shoppingItem.storageLocation?.backgroundColor ?? .gray600))
                             .labelsHidden()
                     }
@@ -64,6 +79,7 @@ public struct ShoppingItemView: View {
             .padding(.horizontal, 5)
             .background(.white100)
             .cornerRadius(22)
+            .opacity(status == .created ? 1 : 0.25)
         }
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
@@ -71,20 +87,12 @@ public struct ShoppingItemView: View {
         .cornerRadius(22)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
-        .onChange(of: isComplete) { previousState, newState in
-            if newState, !previousState {
-                // set state of shoppingItem to be .pending
-                // small delay
-                // show presented sheet
-                router.presentedSheet = .addInventoryItemFromShopping(shoppingItem)
-            }
-        }
         .onChange(of: router.presentedSheet) { _, newSheet in
             if case .addInventoryItemFromShopping = newSheet {
                 return
             }
 
-            isComplete = false
+            status = .created
         }
         .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 22))
     }

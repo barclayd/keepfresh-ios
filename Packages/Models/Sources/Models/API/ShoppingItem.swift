@@ -6,7 +6,7 @@ public enum ShoppingItemStatus: String, Codable, Identifiable, CaseIterable, Sen
     public var id: Self { self }
 
     case created
-    case pendingDeletion
+    case pendingCompletion
     case completed
 }
 
