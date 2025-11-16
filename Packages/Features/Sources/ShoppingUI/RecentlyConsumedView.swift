@@ -70,7 +70,7 @@ public struct RecentConsumedView: View {
     public var body: some View {
         List {
             HStack {
-                Text("Recently Consumed")
+                Text("Recent searches")
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundStyle(.blue800)

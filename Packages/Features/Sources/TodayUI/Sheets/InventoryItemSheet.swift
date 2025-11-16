@@ -306,6 +306,7 @@ enum Sheet: Identifiable {
 public struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
+    @Environment(Shopping.self) var shopping
 
     @Environment(\.dismiss) private var dismiss
 
@@ -553,63 +554,80 @@ public struct InventoryItemSheetView: View {
                 }
                 Spacer()
                 Menu {
-                    Button {
-                        inventory.deleteItem(id: inventoryItem.id)
-                        dismiss()
-                    } label: {
-                        Label("Remove", systemImage: "arrow.uturn.backward")
-                    }
-                    Button {
-                        showSheet = .edit
-                    } label: {
-                        Label("Edit", systemImage: "pencil")
-                    }
-
-                    if inventoryItem.status != .opened {
+                    ControlGroup {
                         Button {
-                            onOpen()
+                            inventory.deleteItem(id: inventoryItem.id)
+                            dismiss()
                         } label: {
-                            Label(title: {
-                                Text("Open")
-                            }) {
-                                Image("tin.open")
-                                    .renderingMode(.template)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 22, height: 22)
+                            Label("Remove", systemImage: "arrow.uturn.backward")
+                        }
+                        Button {
+                            showSheet = .edit
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+
+                        if inventoryItem.status != .opened {
+                            Button {
+                                onOpen()
+                            } label: {
+                                Label(title: {
+                                    Text("Open")
+                                }) {
+                                    Image("tin.open")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                }
+                            }
+                        }
+
+                        Menu {
+                            if inventoryItem.storageLocation != .pantry {
+                                Button {
+                                    showSheet = .move(.pantry)
+                                } label: {
+                                    Label("Pantry", systemImage: StorageLocation.pantry.icon)
+                                }.tint(StorageLocation.pantry.backgroundColor)
+                            }
+
+                            if inventoryItem.storageLocation != .fridge {
+                                Button {
+                                    showSheet = .move(.fridge)
+                                } label: {
+                                    Label("Fridge", systemImage: StorageLocation.fridge.icon)
+                                }.tint(StorageLocation.fridge.backgroundColor)
+                            }
+
+                            if inventoryItem.storageLocation != .freezer {
+                                Button {
+                                    showSheet = .move(.freezer)
+                                } label: {
+                                    Label("Freezer", systemImage: StorageLocation.freezer.icon)
+                                }.tint(StorageLocation.freezer.backgroundColor)
+                            }
+                        } label: {
+                            Button {} label: {
+                                Label("Move", systemImage: "house.fill")
                             }
                         }
                     }
 
-                    Menu {
-                        if inventoryItem.storageLocation != .pantry {
-                            Button {
-                                showSheet = .move(.pantry)
-                            } label: {
-                                Label("Pantry", systemImage: StorageLocation.pantry.icon)
-                            }.tint(StorageLocation.pantry.backgroundColor)
-                        }
-
-                        if inventoryItem.storageLocation != .fridge {
-                            Button {
-                                showSheet = .move(.fridge)
-                            } label: {
-                                Label("Fridge", systemImage: StorageLocation.fridge.icon)
-                            }.tint(StorageLocation.fridge.backgroundColor)
-                        }
-
-                        if inventoryItem.storageLocation != .freezer {
-                            Button {
-                                showSheet = .move(.freezer)
-                            } label: {
-                                Label("Freezer", systemImage: StorageLocation.freezer.icon)
-                            }.tint(StorageLocation.freezer.backgroundColor)
-                        }
-                    } label: {
-                        Button {} label: {
-                            Label("Move", systemImage: "house.fill")
+                    Section {
+                        Button {
+                            dismiss()
+                            shopping.addItem(request: AddShoppingItemRequest(
+                                title: nil,
+                                source: .user,
+                                storageLocation: inventoryItem.storageLocation,
+                                productId: inventoryItem.product.id,
+                                quantity: 1))
+                        } label: {
+                            Label("Add to Shopping List", systemImage: "cart.fill.badge.plus")
                         }
                     }
+
                     Button {
                         dismiss()
                         router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(
@@ -671,7 +689,7 @@ public struct InventoryItemSheetView: View {
             .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
             .offset(x: 0, y: -8)
 
-//            Spacer()
+            Spacer(minLength: 0)
 
             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                 suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
@@ -699,7 +717,7 @@ public struct InventoryItemSheetView: View {
             }
             .redactedShimmer(when: isLoadingStats)
 
-//            Spacer()
+            Spacer(minLength: 0)
 
             if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                 Button(action: nextBestAction.action) {

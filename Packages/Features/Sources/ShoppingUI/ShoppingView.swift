@@ -41,5 +41,6 @@ public struct ShoppingView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white200)
+        .sensoryFeedback(.selection, trigger: router.presentedSheet == .shopppingSearch)
     }
 }

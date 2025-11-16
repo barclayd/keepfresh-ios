@@ -6,6 +6,7 @@ import SwiftUI
 
 public struct StorageLocationPanel: View {
     @Environment(Shopping.self) var shopping
+
     @State private var isExpanded: Bool = true
 
     let storageLocation: StorageLocation
@@ -24,8 +25,6 @@ public struct StorageLocationPanel: View {
 
         let itemId = items[sourceIndex].id
 
-        // SwiftUI's .onMove provides destinationIndex that assumes the item is already removed
-        // We need to adjust: if moving forward, subtract 1; if moving backward, use as-is
         let adjustedDestination = sourceIndex < destinationIndex
             ? destinationIndex - 1
             : destinationIndex
@@ -64,19 +63,17 @@ public struct StorageLocationPanel: View {
 
                 Spacer()
 
-                HStack {
-                    Image(systemName: "\(items.count).square.fill")
-                        .frame(width: 18).foregroundColor(textColor)
+                if !items.isEmpty {
+                    HStack {
+                        Image(systemName: "\(items.count).square.fill")
+                            .frame(width: 18).foregroundColor(textColor)
 
-                    if items.isEmpty {
-                        Rectangle().fill(Color.clear).frame(width: 18)
-                    } else {
                         Image(systemName: "chevron.down")
                             .rotationEffect(.degrees(isExpanded ? -180 : 0))
                             .frame(width: 18).foregroundColor(textColor)
-                    }
 
-                }.fontWeight(.bold)
+                    }.fontWeight(.bold)
+                }
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 15)
@@ -106,6 +103,10 @@ public struct StorageLocationPanel: View {
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
                             ShoppingItemView(shoppingItem: shoppingItem)
+                                .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
+                                    length * 0.95
+                                }
+                                .frame(maxWidth: .infinity, alignment: .center)
                                 .draggable(shoppingItem)
                                 .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
                                     guard let droppedItem = droppedItems.first else { return false }
@@ -116,12 +117,16 @@ public struct StorageLocationPanel: View {
                                     return true
                                 }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {} label: {
+                                    Button(role: .destructive) {
+                                        withAnimation {
+                                            shopping.deleteItem(id: shoppingItem.id)
+                                        }
+                                    } label: {
                                         Label("Delete", systemImage: "trash")
-                                    }
+                                    }.tint(Color.red500)
                                     Button {} label: {
-                                        Label("Flag", systemImage: "flag")
-                                    }
+                                        Label("Add another", systemImage: "plus.rectangle.fill.on.rectangle.fill")
+                                    }.tint(Color.gray500)
                                 }
                         }
                         .onMove(perform: onMoveHandler)
@@ -145,7 +150,7 @@ public struct StorageLocationPanel: View {
                                 }
                         }
                     }
-
+                    .padding(.horizontal, -15)
                     .frame(height: CGFloat(items.count) * 75)
                     .listStyle(.plain)
                     .scrollDisabled(true)

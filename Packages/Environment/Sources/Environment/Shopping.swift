@@ -168,4 +168,22 @@ public final class Shopping {
 
         updateItem(id: id, request: .init(status: status))
     }
+
+    public func deleteItem(id: Int) {
+        Task {
+            do {
+                try await api.deleteGroceryItem(for: id)
+
+                guard let (sourceLocation, sourceIndex) = findItem(id: id) else { return }
+
+                var sourceItems = itemsByStorageLocation[sourceLocation] ?? []
+                sourceItems.remove(at: sourceIndex)
+
+                itemsByStorageLocation[sourceLocation] = sourceItems.isEmpty ? nil : sourceItems
+            } catch {
+                print("error deleting item: \(error)")
+                return
+            }
+        }
+    }
 }
