@@ -85,7 +85,7 @@ public struct StorageLocationPanel: View {
                     }
                 }
             }
-            //            .transition(.move(edge: .top))
+
             if isExpanded {
                 VStack {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1)
@@ -95,6 +95,19 @@ public struct StorageLocationPanel: View {
                         ForEach(items, id: \.self) { shoppingItem in
                             ShoppingItemView(shoppingItem: shoppingItem)
                                 .draggable(shoppingItem)
+                                .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
+                                    guard let droppedItem = droppedItems.first else { return false }
+
+                                    let targetIndex = items.count
+
+                                    if droppedItem.storageLocation == storageLocation {
+                                        shopping.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
+                                    } else {
+                                        shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
+                                    }
+
+                                    return true
+                                }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {} label: {
                                         Label("Delete", systemImage: "trash")
@@ -149,14 +162,11 @@ public struct StorageLocationPanel: View {
                                 startPoint: .leading,
                                 endPoint: .trailing))
                             .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-                                // Handle drop on empty space in list (append to end)
                                 guard let droppedItem = droppedItems.first else { return false }
 
                                 if droppedItem.storageLocation == storageLocation {
-                                    // Within-list: already at the end, no action needed
                                     return false
                                 } else {
-                                    // Cross-list: move to this location and append to end
                                     let targetIndex = items.count
                                     shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
                                     return true
@@ -179,23 +189,17 @@ public struct StorageLocationPanel: View {
             }
         }
         .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-            // Panel-wide drop handler (catches drops not handled by inner zones)
             guard let droppedItem = droppedItems.first else { return false }
 
-            // If dropping within same location and panel is expanded,
-            // let the more specific handlers deal with it
-            if droppedItem.storageLocation == storageLocation, isExpanded {
-                return false // Let List/Item handlers process this
+            if droppedItem.storageLocation == storageLocation {
+                return false
             }
 
-            // Otherwise, add to end of list
             let targetIndex = items.count
 
             if droppedItem.storageLocation == storageLocation {
-                // Within-list move (when collapsed or dropping on non-list area)
                 shopping.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
             } else {
-                // Cross-list move (always add to end)
                 shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
             }
 

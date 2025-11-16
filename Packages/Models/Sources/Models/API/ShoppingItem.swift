@@ -5,14 +5,14 @@ import UniformTypeIdentifiers
 public enum ShoppingItemStatus: String, Codable, Identifiable, CaseIterable, Sendable {
     public var id: Self { self }
 
-    case added
+    case created
     case pendingDeletion
     case completed
 }
 
 public enum ShoppingItemSource: Codable, Sendable {
-    case userAdded
-    case aiSuggested
+    case user
+    case ai
 }
 
 public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transferable {

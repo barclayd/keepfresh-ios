@@ -4,7 +4,8 @@ import Models
 public struct KeepFreshAPI: Sendable {
     private let client: APIClient
 
-    public init(baseURL: String = "https://api.keepfre.sh/") {
+    // reset before merge
+    public init(baseURL: String = "https://feat-shopping-support-keepfresh-api.barclaysd.workers.dev/") {
         client = APIClient(baseURL: baseURL)
     }
 

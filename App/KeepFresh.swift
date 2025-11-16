@@ -134,8 +134,8 @@ struct KeepFreshApp: App {
                 title: nil,
                 createdAt: Date(),
                 updatedAt: Date(),
-                source: .userAdded,
-                status: .added,
+                source: .user,
+                status: .created,
                 storageLocation: .fridge,
                 product: Product(
                     id: 1,
@@ -153,8 +153,8 @@ struct KeepFreshApp: App {
                 title: nil,
                 createdAt: Date(),
                 updatedAt: Date(),
-                source: .userAdded,
-                status: .added,
+                source: .user,
+                status: .created,
                 storageLocation: .fridge,
                 product: Product(
                     id: 2,
@@ -172,8 +172,8 @@ struct KeepFreshApp: App {
                 title: nil,
                 createdAt: Date(),
                 updatedAt: Date(),
-                source: .userAdded,
-                status: .added,
+                source: .user,
+                status: .created,
                 storageLocation: .freezer,
                 product: Product(
                     id: 3,

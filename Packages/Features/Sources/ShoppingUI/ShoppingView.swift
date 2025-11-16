@@ -35,7 +35,7 @@ public struct ShoppingView: View {
                         .padding()
                         .tint(Color.white)
                 }
-                .glassEffect(.regular.tint(.green500))
+                .glassEffect(.regular.tint(.blue600))
                 .scenePadding(.trailing)
             }
         }

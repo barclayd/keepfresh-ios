@@ -156,21 +156,22 @@ public extension AppTab {
 
         case .shopping:
             ToolbarItem(placement: .title) {
-                Text("Shopping List")
+                Text("Shopping")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
             }
 
             ToolbarItemGroup {
                 Button(action: {
-                    router.selectedTab = .search
-                }) {
-                    Image(systemName: "plus.app").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
-                }
-                Button(action: {
                     router.presentedSheet = .barcodeScan
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
+                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
+                }
+                
+                Button(action: {
+                    // implement settings screen
+                }) {
+                    Image(systemName: "gear").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
             }

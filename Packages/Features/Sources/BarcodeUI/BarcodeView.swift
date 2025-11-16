@@ -49,7 +49,7 @@ public struct BarcodeView: View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
-                    CodeScannerView(codeTypes: [.ean8, .ean13], simulatedData: "5059697710001") { response in
+                    CodeScannerView(codeTypes: [.ean8, .ean13, .upce], scanMode: .continuous, simulatedData: "5059697710001") { response in
                         switch response {
                         case let .success(result):
                             Task {
