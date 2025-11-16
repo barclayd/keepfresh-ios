@@ -1,6 +1,6 @@
 import Foundation
-import Network
 import Models
+import Network
 import SwiftUI
 
 @Observable
@@ -11,7 +11,7 @@ public final class Shopping {
             updateCaches()
         }
     }
-    
+
     public var state: FetchState = .empty
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
@@ -20,7 +20,7 @@ public final class Shopping {
         self.items = items
         updateCaches()
     }
-    
+
     let api = KeepFreshAPI()
 
     private func updateCaches() {
@@ -67,7 +67,7 @@ public final class Shopping {
         items.removeAll { $0.storageLocation == newLocation }
         items.append(contentsOf: targetItems)
     }
-    
+
     public func fetchItems() async {
         state = .loading
 
@@ -78,11 +78,10 @@ public final class Shopping {
             state = .error
         }
     }
-    
+
     public func addItem(
         request: AddShoppingItemRequest)
     {
-
         Task {
             do {
                 let shoppingItems = try await api.addShoppingItem(request)
@@ -103,24 +102,48 @@ public final class Shopping {
             }
         }
     }
-    
+
+    public func updateItem(id: Int, request: UpdateShoppingItemRequest) {
+        Task {
+            do {
+                try await api.updateShoppingItem(for: id, request)
+            } catch {
+                print("Upadating inventory item failed with error: \(error)")
+
+                if let urlError = error as? URLError {
+                    print("URL Error details: \(urlError.localizedDescription)")
+                }
+
+                if let httpError = error as? DecodingError {
+                    print("Decoding error: \(httpError)")
+                }
+
+                print("Full error details: \(String(describing: error))")
+            }
+        }
+    }
+
     // see if this can be used to simplify the drag and drop logic
     public func updateItemStorageLocation(id: Int, storageLocation: StorageLocation) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 
         items[index].storageLocation = storageLocation
         items[index].updatedAt = Date()
+
+        updateItem(id: id, request: .init(storageLocation: storageLocation))
     }
-    
+
     public func updateItemTitle(id: Int, title: String) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 
         items[index].title = title
+        updateItem(id: id, request: .init(title: title))
     }
-    
+
     public func updateItemStatus(id: Int, status: ShoppingItemStatus) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 
         items[index].status = status
+        updateItem(id: id, request: .init(status: status))
     }
 }

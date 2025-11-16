@@ -6,15 +6,15 @@ import SwiftUI
 
 public struct ShoppingItemView: View {
     @Environment(Router.self) var router
-    
+
     @State private var isComplete = false
-    
+
     var shoppingItem: ShoppingItem
-    
+
     public init(shoppingItem: ShoppingItem) {
         self.shoppingItem = shoppingItem
     }
-    
+
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
@@ -24,7 +24,7 @@ public struct ShoppingItemView: View {
                         fontSize: 35,
                         tint: shoppingItem.storageLocation?.backgroundColor ?? .gray600)
                 }
-                
+
                 VStack {
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {
@@ -33,12 +33,12 @@ public struct ShoppingItemView: View {
                                 .foregroundStyle(.blue800)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .lineLimit(1)
-                            
+
                             if let product = shoppingItem.product {
                                 HStack(spacing: 4) {
                                     Text(product.brand.name)
                                         .foregroundStyle(product.brand.color).font(.caption)
-                                    
+
                                     if let amountUnit = product.amountUnitFormatted {
                                         Circle()
                                             .frame(width: 3, height: 3)
@@ -48,11 +48,11 @@ public struct ShoppingItemView: View {
                                     }
                                 }
                             }
-                            
+
                         }.frame(maxWidth: .infinity, alignment: .leading)
-                        
+
                         Spacer()
-                        
+
                         Toggle("Selected Expiry Date", isOn: $isComplete)
                             .toggleStyle(CheckToggleStyle(customColor: shoppingItem.storageLocation?.backgroundColor ?? .gray600))
                             .labelsHidden()

@@ -106,7 +106,12 @@ public struct SearchShoppingResultCard: View {
             isAddedToList = true
 
             Task {
-                shopping.addItem(request: AddShoppingItemRequest(title: nil, source: .user, storageLocation: searchProduct.category.recommendedStorageLocation, productId: searchProduct.id, quantity: 1))
+                shopping.addItem(request: AddShoppingItemRequest(
+                    title: nil,
+                    source: .user,
+                    storageLocation: searchProduct.category.recommendedStorageLocation,
+                    productId: searchProduct.id,
+                    quantity: 1))
             }
         }
         .background(searchProduct.category.recommendedStorageLocation.tileColor)
