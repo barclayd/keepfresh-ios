@@ -10,7 +10,7 @@ public enum ShoppingItemStatus: String, Codable, Identifiable, CaseIterable, Sen
     case completed
 }
 
-public enum ShoppingItemSource: Codable, Sendable {
+public enum ShoppingItemSource: String, Codable, Sendable {
     case user
     case ai
 }
@@ -23,8 +23,8 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
         updatedAt: Date,
         source: ShoppingItemSource,
         status: ShoppingItemStatus,
-        storageLocation: StorageLocation,
-        product: Product)
+        storageLocation: StorageLocation?,
+        product: Product?)
     {
         self.id = id
         self.title = title
@@ -37,13 +37,13 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
     }
 
     public let id: Int
-    public let title: String?
+    public var title: String?
     public let createdAt: Date
-    public let updatedAt: Date
+    public var updatedAt: Date
     public let source: ShoppingItemSource
-    public let status: ShoppingItemStatus
-    public let storageLocation: StorageLocation
-    public let product: Product
+    public var status: ShoppingItemStatus
+    public var storageLocation: StorageLocation?
+    public let product: Product?
 
     public static var transferRepresentation: some TransferRepresentation {
         CodableRepresentation(contentType: .shoppingItem)
@@ -53,5 +53,43 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
 extension UTType {
     static var shoppingItem: UTType {
         UTType(exportedAs: "dev.danbarclay.keepfresh.shopping-item")
+    }
+}
+
+public struct AddShoppingItemRequest: Codable, Sendable {
+    public let title: String?
+    public let source: ShoppingItemSource
+    public let storageLocation: StorageLocation?
+    public let productId: Int?
+    public let quantity: Int?
+
+    public init(
+        title: String?,
+        source: ShoppingItemSource,
+        storageLocation: StorageLocation?,
+        productId: Int?,
+        quantity: Int?)
+    {
+        self.title = title
+        self.source = source
+        self.storageLocation = storageLocation
+        self.productId = productId
+        self.quantity = quantity
+    }
+}
+
+public struct UpdateShoppingItemRequest: Codable, Sendable {
+    public let title: String?
+    public let status: ShoppingItemStatus?
+    public let storageLocation: StorageLocation?
+
+    public init(
+        title: String? = nil,
+        status: ShoppingItemStatus? = nil,
+        storageLocation: StorageLocation? = nil)
+    {
+        self.title = title
+        self.status = status
+        self.storageLocation = storageLocation
     }
 }

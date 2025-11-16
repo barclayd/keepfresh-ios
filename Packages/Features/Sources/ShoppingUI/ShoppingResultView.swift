@@ -1,4 +1,5 @@
 import DesignSystem
+import Environment
 import Extensions
 import Models
 import Router
@@ -40,6 +41,8 @@ public struct SearchShoppingResultView: View {
 }
 
 public struct SearchShoppingResultCard: View {
+    @Environment(Shopping.self) var shopping
+
     @State private var isAddedToList: Bool = false
 
     var searchProduct: ProductSearchResultItemResponse
@@ -101,6 +104,10 @@ public struct SearchShoppingResultCard: View {
         }
         .onTapGesture {
             isAddedToList = true
+
+            Task {
+                shopping.addItem(request: AddShoppingItemRequest(title: nil, source: .user, storageLocation: searchProduct.category.recommendedStorageLocation, productId: searchProduct.id, quantity: 1))
+            }
         }
         .background(searchProduct.category.recommendedStorageLocation.tileColor)
         .cornerRadius(20)
