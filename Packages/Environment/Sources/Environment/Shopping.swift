@@ -6,89 +6,98 @@ import SwiftUI
 @Observable
 @MainActor
 public final class Shopping {
-    public var items: [ShoppingItem] = [] {
-        didSet {
-            updateCaches()
-        }
-    }
+    public var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
 
     public var state: FetchState = .empty
 
-    public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
-
     public init(items: [ShoppingItem] = []) {
-        self.items = items
-        updateCaches()
+        itemsByStorageLocation = Dictionary(
+            grouping: items.filter { $0.storageLocation != nil },
+            by: \.storageLocation!)
     }
 
     let api = KeepFreshAPI()
 
-    private func updateCaches() {
-        itemsByStorageLocation = Dictionary(grouping: items.filter { $0.storageLocation != nil }, by: \.storageLocation!)
+    private func findItem(id: Int) -> (StorageLocation, Int)? {
+        for (location, items) in itemsByStorageLocation {
+            if let index = items.firstIndex(where: { $0.id == id }) {
+                return (location, index)
+            }
+        }
+        return nil
     }
 
-    public func moveItem(itemId: Int, toIndex targetIndex: Int, in storageLocation: StorageLocation) {
-        var filteredItems = itemsByStorageLocation[storageLocation] ?? []
+    public func moveItem(
+        itemId _: Int,
+        fromIndex sourceIndex: Int,
+        toIndex destinationIndex: Int,
+        in storageLocation: StorageLocation)
+    {
+        guard var items = itemsByStorageLocation[storageLocation],
+              sourceIndex < items.count,
+              destinationIndex <= items.count else { return }
 
-        guard let sourceIndex = filteredItems.firstIndex(where: { $0.id == itemId }) else { return }
+        let item = items.remove(at: sourceIndex)
+        items.insert(item, at: destinationIndex)
 
-        if sourceIndex == targetIndex { return }
-
-        let item = filteredItems.remove(at: sourceIndex)
-
-        let adjustedTargetIndex = sourceIndex < targetIndex ? targetIndex - 1 : targetIndex
-        filteredItems.insert(item, at: adjustedTargetIndex)
-
-        items.removeAll { $0.storageLocation == storageLocation }
-        items.append(contentsOf: filteredItems)
+        itemsByStorageLocation[storageLocation] = items
     }
 
-    public func moveItemToLocation(itemId: Int, to newLocation: StorageLocation, atIndex targetIndex: Int) {
-        guard let sourceIndex = items.firstIndex(where: { $0.id == itemId }) else { return }
-        let item = items[sourceIndex]
+    public func moveItem(
+        itemId: Int,
+        to targetStorageLocation: StorageLocation,
+        atIndex targetIndex: Int)
+    {
+        guard let (sourceLocation, sourceIndex) = findItem(id: itemId) else { return }
 
-        let updatedItem = ShoppingItem(
-            id: item.id,
-            title: nil,
-            createdAt: item.createdAt,
-            updatedAt: Date(),
-            source: item.source,
-            status: item.status,
-            storageLocation: newLocation,
-            product: item.product)
+        var sourceItems = itemsByStorageLocation[sourceLocation] ?? []
+        var item = sourceItems.remove(at: sourceIndex)
+        itemsByStorageLocation[sourceLocation] = sourceItems.isEmpty ? nil : sourceItems
 
-        items.remove(at: sourceIndex)
+        let locationChanged = sourceLocation != targetStorageLocation
 
-        var targetItems = items.filter { $0.storageLocation == newLocation }
+        if locationChanged {
+            item.storageLocation = targetStorageLocation
+            item.updatedAt = Date()
+        }
 
-        let safeTargetIndex = min(targetIndex, targetItems.count)
-        targetItems.insert(updatedItem, at: safeTargetIndex)
+        var targetItems = itemsByStorageLocation[targetStorageLocation] ?? []
+        let safeIndex = min(targetIndex, targetItems.count)
+        targetItems.insert(item, at: safeIndex)
+        itemsByStorageLocation[targetStorageLocation] = targetItems
 
-        items.removeAll { $0.storageLocation == newLocation }
-        items.append(contentsOf: targetItems)
+        if locationChanged {
+            updateItem(id: itemId, request: .init(storageLocation: targetStorageLocation))
+        }
     }
 
     public func fetchItems() async {
         state = .loading
 
         do {
-            items = try await api.getShoppingItems()
+            let items = try await api.getShoppingItems()
+            itemsByStorageLocation = Dictionary(
+                grouping: items.filter { $0.storageLocation != nil },
+                by: \.storageLocation!)
             state = .loaded
         } catch {
             state = .error
         }
     }
 
-    public func addItem(
-        request: AddShoppingItemRequest)
-    {
+    public func addItem(request: AddShoppingItemRequest) {
         Task {
             do {
-                let shoppingItems = try await api.addShoppingItem(request)
+                let newItems = try await api.addShoppingItem(request)
 
-                items.append(contentsOf: shoppingItems)
+                for item in newItems where item.storageLocation != nil {
+                    let location = item.storageLocation!
+                    var locationItems = itemsByStorageLocation[location] ?? []
+                    locationItems.append(item)
+                    itemsByStorageLocation[location] = locationItems
+                }
             } catch {
-                print("Adding inventory item failed with error: \(error)")
+                print("Adding shopping item failed with error: \(error)")
 
                 if let urlError = error as? URLError {
                     print("URL Error details: \(urlError.localizedDescription)")
@@ -108,7 +117,7 @@ public final class Shopping {
             do {
                 try await api.updateShoppingItem(for: id, request)
             } catch {
-                print("Upadating inventory item failed with error: \(error)")
+                print("Updating shopping item failed with error: \(error)")
 
                 if let urlError = error as? URLError {
                     print("URL Error details: \(urlError.localizedDescription)")
@@ -123,27 +132,40 @@ public final class Shopping {
         }
     }
 
-    // see if this can be used to simplify the drag and drop logic
     public func updateItemStorageLocation(id: Int, storageLocation: StorageLocation) {
-        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+        guard let (currentLocation, index) = findItem(id: id) else { return }
 
-        items[index].storageLocation = storageLocation
-        items[index].updatedAt = Date()
+        var currentItems = itemsByStorageLocation[currentLocation] ?? []
+        var item = currentItems.remove(at: index)
+        itemsByStorageLocation[currentLocation] = currentItems.isEmpty ? nil : currentItems
+
+        item.storageLocation = storageLocation
+        item.updatedAt = Date()
+
+        var targetItems = itemsByStorageLocation[storageLocation] ?? []
+        targetItems.append(item)
+        itemsByStorageLocation[storageLocation] = targetItems
 
         updateItem(id: id, request: .init(storageLocation: storageLocation))
     }
 
     public func updateItemTitle(id: Int, title: String) {
-        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+        guard let (location, index) = findItem(id: id) else { return }
 
+        var items = itemsByStorageLocation[location] ?? []
         items[index].title = title
+        itemsByStorageLocation[location] = items
+
         updateItem(id: id, request: .init(title: title))
     }
 
     public func updateItemStatus(id: Int, status: ShoppingItemStatus) {
-        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+        guard let (location, index) = findItem(id: id) else { return }
 
+        var items = itemsByStorageLocation[location] ?? []
         items[index].status = status
+        itemsByStorageLocation[location] = items
+
         updateItem(id: id, request: .init(status: status))
     }
 }

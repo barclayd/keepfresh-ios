@@ -21,8 +21,20 @@ public struct StorageLocationPanel: View {
     private func handleItemMove(sourceIndices: IndexSet, destinationIndex: Int) {
         guard let sourceIndex = sourceIndices.first else { return }
         guard sourceIndex < items.count else { return }
+
         let itemId = items[sourceIndex].id
-        shopping.moveItem(itemId: itemId, toIndex: destinationIndex, in: storageLocation)
+
+        // SwiftUI's .onMove provides destinationIndex that assumes the item is already removed
+        // We need to adjust: if moving forward, subtract 1; if moving backward, use as-is
+        let adjustedDestination = sourceIndex < destinationIndex
+            ? destinationIndex - 1
+            : destinationIndex
+
+        shopping.moveItem(
+            itemId: itemId,
+            fromIndex: sourceIndex,
+            toIndex: adjustedDestination,
+            in: storageLocation)
     }
 
     private var onMoveHandler: (IndexSet, Int) -> Void {
@@ -99,12 +111,7 @@ public struct StorageLocationPanel: View {
                                     guard let droppedItem = droppedItems.first else { return false }
 
                                     let targetIndex = items.count
-
-                                    if droppedItem.storageLocation == storageLocation {
-                                        shopping.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
-                                    } else {
-                                        shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-                                    }
+                                    shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
 
                                     return true
                                 }
@@ -132,12 +139,7 @@ public struct StorageLocationPanel: View {
                                     guard let droppedItem = droppedItems.first else { return false }
 
                                     let targetIndex = items.count
-
-                                    if droppedItem.storageLocation == storageLocation {
-                                        shopping.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
-                                    } else {
-                                        shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-                                    }
+                                    shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
 
                                     return true
                                 }
@@ -168,7 +170,7 @@ public struct StorageLocationPanel: View {
                                     return false
                                 } else {
                                     let targetIndex = items.count
-                                    shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
+                                    shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
                                     return true
                                 }
                             })
@@ -196,12 +198,7 @@ public struct StorageLocationPanel: View {
             }
 
             let targetIndex = items.count
-
-            if droppedItem.storageLocation == storageLocation {
-                shopping.moveItem(itemId: droppedItem.id, toIndex: targetIndex, in: storageLocation)
-            } else {
-                shopping.moveItemToLocation(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-            }
+            shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
 
             return true
         }
