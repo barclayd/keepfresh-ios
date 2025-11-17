@@ -118,7 +118,7 @@ struct InventoryItemSheetStatsGridRows: View {
                     VStack(spacing: 0) {
                         Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.fridge]?.count ?? 0)")
                             .fontWeight(.bold).font(.headline)
-                        Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
+                        Text("In Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }.foregroundStyle(.blue700)
                     Image(systemName: "house")
                         .font(.system(size: 32)).fontWeight(.bold)
@@ -126,7 +126,7 @@ struct InventoryItemSheetStatsGridRows: View {
                     VStack(spacing: 0) {
                         Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.freezer]?.count ?? 0)")
                             .fontWeight(.bold).font(.headline)
-                        Text("Located in Freezer").fontWeight(.light).font(.subheadline)
+                        Text("In Freezer").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
             }

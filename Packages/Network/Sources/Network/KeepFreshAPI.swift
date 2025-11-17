@@ -4,7 +4,7 @@ import Models
 public struct KeepFreshAPI: Sendable {
     private let client: APIClient
 
-    public init(baseURL: String = "https://api.keepfre.sh/") {
+    public init(baseURL: String = "https://feat-shopping-item-complete-endpoint-keepfresh-api.barclaysd.workers.dev/") {
         client = APIClient(baseURL: baseURL)
     }
 
@@ -93,6 +93,13 @@ public struct KeepFreshAPI: Sendable {
 
     public func deleteGroceryItem(for itemId: Int) async throws {
         try await client.delete(path: "v2/shopping/items/\(itemId)")
+    }
+
+    public func completeShoppingItem(for shoppingItemId: Int, _ request: CompleteShoppingItemRequest) async throws -> InventoryItem {
+        try await client.post(
+            InventoryItem.self,
+            path: "v2/shopping/items/\(shoppingItemId)/complete",
+            body: request)
     }
 
     // MARK: - Genmoji

@@ -190,56 +190,6 @@ public final class Inventory {
         }
     }
 
-    public func addItem(
-        shoppingItem: ShoppingItem,
-        expiryDate: Date)
-    {
-//        let newItems = Array(
-//            repeating: InventoryItem(from: request, productSearchResult: product, category: category, id: inventoryItemId, icon: icon),
-//            count: request.quantity)
-
-//        items.append(contentsOf: newItems)
-
-        guard let storageLocation = shoppingItem.storageLocation, let product = shoppingItem.product else { return }
-
-        // replace with Intelligence prediction model
-        let consumptionPrediction = 100
-
-        Task {
-            do {
-                let newItem = try await api.addInventoryItem(AddInventoryItemRequest(
-                    item: AddInventoryItemRequest
-                        .InventoryItem(
-                            expiryDate: expiryDate,
-                            storageLocation: storageLocation,
-                            status: .unopened,
-                            expiryType: product.category.expiryType,
-                            consumptionPrediction: consumptionPrediction,
-                            consumptionPredictionChangedAt: Date()),
-                    productId: product.id,
-                    quantity: 1))
-
-                // need to allow client to specify to receive the full item back.
-
-//                items.append(newItem)
-
-                await PushNotifications.shared.requestPushNotifications()
-            } catch {
-                print("Adding inventory item failed with error: \(error)")
-
-                if let urlError = error as? URLError {
-                    print("URL Error details: \(urlError.localizedDescription)")
-                }
-
-                if let httpError = error as? DecodingError {
-                    print("Decoding error: \(httpError)")
-                }
-
-                print("Full error details: \(String(describing: error))")
-            }
-        }
-    }
-
     public func updateItemStorageLocation(id: Int, storageLocation: StorageLocation) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
 

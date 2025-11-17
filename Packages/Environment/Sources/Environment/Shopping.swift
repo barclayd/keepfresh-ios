@@ -1,6 +1,7 @@
 import Foundation
 import Models
 import Network
+import Notifications
 import SwiftUI
 
 @Observable
@@ -195,6 +196,52 @@ public final class Shopping {
                 print("error deleting item: \(error)")
                 return
             }
+        }
+    }
+
+    public func markItemAsComplete(
+        shoppingItemId: Int,
+        expiryDate: Date) async -> InventoryItem?
+    {
+        guard let (sourceLocation, sourceIndex) = findItem(id: shoppingItemId) else {
+            return nil
+        }
+
+        var sourceItems = itemsByStorageLocation[sourceLocation] ?? []
+
+        let shoppingItem = sourceItems[sourceIndex]
+
+        sourceItems.remove(at: sourceIndex)
+
+        itemsByStorageLocation[sourceLocation] = sourceItems.isEmpty ? nil : sourceItems
+
+        do {
+            let inventoryItem = try await api.completeShoppingItem(for: shoppingItemId, CompleteShoppingItemRequest(expiryDate: expiryDate))
+
+            await PushNotifications.shared.requestPushNotifications()
+
+            return inventoryItem
+        } catch {
+            print("Adding inventory item failed with error: \(error)")
+
+            if let urlError = error as? URLError {
+                print("URL Error details: \(urlError.localizedDescription)")
+            }
+
+            if let httpError = error as? DecodingError {
+                print("Decoding error: \(httpError)")
+            }
+
+            print("Full error details: \(String(describing: error))")
+
+            sourceItems.insert(shoppingItem, at: sourceIndex)
+
+            let location = shoppingItem.storageLocation!
+            var locationItems = itemsByStorageLocation[location] ?? []
+            locationItems.append(shoppingItem)
+            itemsByStorageLocation[location] = locationItems
+
+            return nil
         }
     }
 }

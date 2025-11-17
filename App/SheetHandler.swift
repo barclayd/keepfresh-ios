@@ -24,11 +24,15 @@ extension View {
                     .presentationDragIndicator(.visible)
 
             case let .addInventoryItemFromShopping(shoppingItem):
-                // process category data to get suggested expiryDate
                 AddInventoryItemFromShoppingSheet(shoppingItem: shoppingItem, onAdd: { expiryDate in
                     Task {
-                        inventory.addItem(shoppingItem: shoppingItem, expiryDate: expiryDate)
-                        shopping.updateItem(id: shoppingItem.id, request: UpdateShoppingItemRequest(status: .completed))
+                        let inventoryItem = await shopping.markItemAsComplete(shoppingItemId: shoppingItem.id, expiryDate: expiryDate)
+
+                        if let inventoryItem {
+                            inventory.items.append(inventoryItem)
+                        } else {
+                            print("ended up here")
+                        }
                     }
                     router.presentedSheet = nil
                 })

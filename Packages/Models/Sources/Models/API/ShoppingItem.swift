@@ -93,3 +93,11 @@ public struct UpdateShoppingItemRequest: Codable, Sendable {
         self.storageLocation = storageLocation
     }
 }
+
+public struct CompleteShoppingItemRequest: Codable, Sendable {
+    public let expiryDate: Date
+
+    public init(expiryDate: Date) {
+        self.expiryDate = expiryDate
+    }
+}
