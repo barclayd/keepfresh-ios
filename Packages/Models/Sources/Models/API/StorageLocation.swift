@@ -141,4 +141,12 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         case .freezer: (.white100, .blue800)
         }
     }
+    
+    public var panelForegroundColor: (Color, Color, Color) {
+        switch self {
+        case .pantry: (.brown300, .blue800, .blue800)
+        case .fridge: (.blue600, .blue800, .blue800)
+        case .freezer: (.blue100, .white200, .blue200)
+        }
+    }
 }

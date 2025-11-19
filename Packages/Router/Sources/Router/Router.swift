@@ -20,8 +20,7 @@ public final class Router {
         set { paths[tab] = newValue }
     }
 
-    // reset
-    public var selectedTab: AppTab = .shopping
+    public var selectedTab: AppTab = .today
 
     public var presentedSheet: SheetDestination?
 

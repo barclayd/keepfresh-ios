@@ -63,17 +63,15 @@ public struct StorageLocationPanel: View {
 
                 Spacer()
 
-                if !items.isEmpty {
-                    HStack {
-                        Image(systemName: "\(items.count).square.fill")
-                            .frame(width: 20).foregroundColor(textColor)
+                HStack {
+                    Image(systemName: "\(items.count).square.fill")
+                        .frame(width: 20).foregroundColor(textColor)
 
-                        Image(systemName: "chevron.down")
-                            .rotationEffect(.degrees(isExpanded ? -180 : 0))
-                            .frame(width: 20).foregroundColor(textColor)
+                    Image(systemName: "chevron.down")
+                        .rotationEffect(.degrees(isExpanded ? -180 : 0))
+                        .frame(width: 20).foregroundColor(textColor)
 
-                    }.fontWeight(.bold)
-                }
+                }.fontWeight(.bold)
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 15)
@@ -89,9 +87,7 @@ public struct StorageLocationPanel: View {
                     endPoint: .trailing)))
             .onTapGesture {
                 withAnimation(.easeInOut) {
-                    if !items.isEmpty {
-                        isExpanded.toggle()
-                    }
+                    isExpanded.toggle()
                 }
             }
 
@@ -99,6 +95,10 @@ public struct StorageLocationPanel: View {
                 VStack {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1)
                         .offset(y: -10)
+
+                    if items.isEmpty {
+                        ShoppingPlaceholderView(storageLocation: storageLocation).frame(maxWidth: .infinity)
+                    }
 
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
@@ -188,11 +188,6 @@ public struct StorageLocationPanel: View {
                                     return true
                                 }
                             })
-            }
-        }
-        .onAppear {
-            if items.isEmpty {
-                isExpanded = false
             }
         }
         .onChange(of: items.count) { oldValue, newValue in

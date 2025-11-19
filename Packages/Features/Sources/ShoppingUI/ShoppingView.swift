@@ -15,7 +15,7 @@ public struct ShoppingView: View {
         VStack {
             ZStack(alignment: .bottomTrailing) {
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 20) {
                         ForEach(StorageLocation.allCases) { storageLocation in
                             StorageLocationPanel(storageLocation: storageLocation)
                         }
