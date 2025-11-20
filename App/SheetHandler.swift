@@ -18,7 +18,7 @@ extension View {
             switch presentedSheet {
             case .barcodeScan:
                 BarcodeView()
-                
+
             case .barcodeScanToShoppingList:
                 BarcodeToShoppingList()
 

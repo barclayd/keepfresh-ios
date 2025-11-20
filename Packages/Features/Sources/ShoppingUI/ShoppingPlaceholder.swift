@@ -5,9 +5,9 @@ import SwiftUI
 
 public struct ShoppingPlaceholderView: View {
     @Environment(Router.self) var router
-    
+
     let storageLocation: StorageLocation
-    
+
     public var body: some View {
         Button {
             router.presentedSheet = .shopppingSearch
@@ -27,9 +27,6 @@ public struct ShoppingPlaceholderView: View {
                     storageLocation.panelForegroundColor.2.opacity(0.2),
                     style: StrokeStyle(
                         lineWidth: 1,
-                        dash: [11, 6]
-                    )
-                )
-        )
+                        dash: [11, 6])))
     }
 }
