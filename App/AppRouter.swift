@@ -23,8 +23,6 @@ public struct AppRouter: ViewModifier {
                     AddInventoryItemView(productSearchItem: productSearchItem)
                 case let .storageLocationView(storageLocation):
                     StorageLocationView(storageLocation: storageLocation)
-                case .barcodeScan:
-                    BarcodeView()
                 }
             }
     }

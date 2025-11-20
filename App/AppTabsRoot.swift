@@ -163,7 +163,7 @@ public extension AppTab {
 
             ToolbarItemGroup {
                 Button(action: {
-                    router.presentedSheet = .barcodeScan
+                    router.presentedSheet = .barcodeScanToShoppingList
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
