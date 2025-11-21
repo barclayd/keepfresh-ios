@@ -799,7 +799,7 @@ public struct InventoryItemSheetView: View {
                 RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)
                     .presentationDetents(
                         inventoryItem.product.name
-                            .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                            .count > 15 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
                     .presentationDragIndicator(.visible)
             }
         }
