@@ -75,14 +75,12 @@ public struct RemoveInventoryItemSheet: View {
                                 Text("% waste").font(.callout).fontWeight(.light).foregroundStyle(.gray700).offset(y: 25)
                             }.offset(y: -10)
                     }
-                    .fixedSize(horizontal: false, vertical: true) // ← Add this
-//                    .border(Color(.red), width: 1)
+                    .fixedSize(horizontal: false, vertical: true)
 
                     Image(systemName: "trash.fill")
                         .foregroundStyle(.red500)
                         .font(.system(size: 32))
                 }
-//                .border(Color(.yellow), width: 1)
             }
 
             Spacer(minLength: 0)

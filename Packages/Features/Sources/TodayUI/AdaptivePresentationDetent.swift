@@ -11,11 +11,11 @@ public struct AdaptiveExtraSmallDetent: CustomPresentationDetent {
             return maxHeight * 0.4
 
         case 700 ..< 800:
-            // iPhone 13, 14, 15 (standard sizes)
+            // iPhone 13, 14, 15
             return maxHeight * 0.3
 
         case 800 ..< 900:
-            // iPhone 14/15/16 Pro Max, Plus models (860)
+            // iPhone 14/15/16 Pro Max, Plus models
             return maxHeight * 0.275
 
         case 900...:
@@ -39,15 +39,14 @@ public struct AdaptiveSmallDetent: CustomPresentationDetent {
             return maxHeight * 0.45
 
         case 700 ..< 800:
-            // iPhone 13, 14, 15 (standard sizes)
+            // iPhone 13, 14, 15
             return maxHeight * 0.375
 
         case 800 ..< 900:
-            // iPhone 14/15/16 Pro Max, Plus models (860)
+            // iPhone 14/15/16 Pro Max, Plus models
             return maxHeight * 0.35
 
         case 900...:
-            // iPhone 14/15/16 Pro Max, Plus models
             return maxHeight * 0.375
 
         default:
@@ -67,7 +66,7 @@ public struct AdaptiveMediumDetent: CustomPresentationDetent {
             return maxHeight * 0.7
 
         case 700 ..< 800:
-            // iPhone 13, 14, 15 (standard sizes)
+            // iPhone 13, 14, 15
             return maxHeight * 0.55
 
         case 800 ..< 900:
@@ -94,19 +93,18 @@ public struct AdaptiveLargeDetent: CustomPresentationDetent {
 
         switch maxHeight {
         case ..<700:
-            // iPhone SE, iPhone 8, etc.
+            // iPhone SE, iPhone 8
             return maxHeight * 0.985
 
         case 700 ..< 800:
-            // iPhone 13, 14, 15 (standard sizes)
+            // iPhone 13, 14, 15
             return maxHeight * 0.8
 
         case 800 ..< 900:
-            // iPhone 14/15/16 Pro Max, Plus models (860)
+            // iPhone 14/15/16 Pro Max, Plus models
             return maxHeight * 0.725
 
         case 900...:
-            // iPhone 14/15/16 Pro Max, Plus models
             return maxHeight * 0.6
 
         default:
@@ -127,11 +125,11 @@ public struct AdaptiveExtraLargeDetent: CustomPresentationDetent {
             return maxHeight
 
         case 700 ..< 800:
-            // iPhone 13, 14, 15 (standard sizes)
+            // iPhone 13, 14, 15
             return maxHeight * 0.85
 
         case 800 ..< 900:
-            // iPhone 14/15/16 Pro Max, Plus models (860)
+            // iPhone 14/15/16 Pro Max, Plus models
             return maxHeight * 0.775
 
         case 900...:
