@@ -13,6 +13,8 @@
 		4E8952D02E987903003F3366 /* Authentication in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8952CF2E987903003F3366 /* Authentication */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
 		4E95179F2D7BAD5700FAFC86 /* BarcodeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E95179E2D7BAD5700FAFC86 /* BarcodeUI */; };
+		4E9A8B7D2D9A8B7C0012CDF0 /* ShoppingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */; };
+		4E9A8B7F2D9A8B8C0012CDF1 /* SharedUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */; };
 		4EAF44BE2E8B3CFE000B5A6B /* Intelligence in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF44BD2E8B3CFE000B5A6B /* Intelligence */; };
 		4EEEBA792E806DFC0049511B /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA782E806DFC0049511B /* Models */; };
 		4EEEBA7B2E806E010049511B /* Network in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA7A2E806E010049511B /* Network */; };
@@ -123,6 +125,8 @@
 				4EEEBA792E806DFC0049511B /* Models in Frameworks */,
 				4E95179F2D7BAD5700FAFC86 /* BarcodeUI in Frameworks */,
 				4EEEBA7D2E8076900049511B /* Router in Frameworks */,
+				4E9A8B7D2D9A8B7C0012CDF0 /* ShoppingUI in Frameworks */,
+				4E9A8B7F2D9A8B8C0012CDF1 /* SharedUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,6 +232,8 @@
 				4EAF44BD2E8B3CFE000B5A6B /* Intelligence */,
 				4E8952CF2E987903003F3366 /* Authentication */,
 				4EF5AD0D2EBC0C1600F8E400 /* Notifications */,
+				4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */,
+				4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -335,7 +341,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -365,7 +371,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -534,7 +540,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -581,7 +587,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -657,6 +663,14 @@
 		4E95179E2D7BAD5700FAFC86 /* BarcodeUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BarcodeUI;
+		};
+		4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ShoppingUI;
+		};
+		4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SharedUI;
 		};
 		4EAF44BD2E8B3CFE000B5A6B /* Intelligence */ = {
 			isa = XCSwiftPackageProductDependency;

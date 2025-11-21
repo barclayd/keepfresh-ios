@@ -14,6 +14,7 @@ struct KeepFreshApp: App {
 
     @State var router: Router = .init()
     @State var inventory: Inventory = .init()
+    @State var shopping: Shopping = .init()
     @State var pushNotifications = PushNotifications.shared
 
     init() {
@@ -25,11 +26,15 @@ struct KeepFreshApp: App {
             AppTabRootView()
                 .environment(router)
                 .environment(inventory)
+                .environment(shopping)
                 .modelContainer(for: [RecentSearch.self, GenmojiCache.self])
                 .task {
                     try? await Authentication.shared.signInAnonymously()
 
-                    await inventory.fetchItems()
+                    await withTaskGroup(of: Void.self) { group in
+                        group.addTask { await inventory.fetchItems() }
+                        group.addTask { await shopping.fetchItems() }
+                    }
 
                     Task.detached {
                         await SuggestionsCache.shared.load()

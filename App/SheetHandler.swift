@@ -4,11 +4,13 @@ import Environment
 import Models
 import Network
 import Router
+import SearchUI
+import ShoppingUI
 import SwiftUI
 import TodayUI
 
 extension View {
-    func handleAppSheets(router: Router, inventory: Inventory) -> some View {
+    func handleSheets(router: Router, inventory: Inventory, shopping: Shopping) -> some View {
         sheet(item: Binding(
             get: { router.presentedSheet },
             set: { router.presentedSheet = $0 }))
@@ -16,6 +18,28 @@ extension View {
             switch presentedSheet {
             case .barcodeScan:
                 BarcodeView()
+
+            case .barcodeScanToShoppingList:
+                BarcodeToShoppingList()
+
+            case .shopppingSearch:
+                AddShoppingSheet()
+                    .presentationDragIndicator(.visible)
+
+            case let .addInventoryItemFromShopping(shoppingItem):
+                AddInventoryItemFromShoppingSheet(shoppingItem: shoppingItem, onAdd: { expiryDate in
+                    Task {
+                        let inventoryItem = await shopping.markItemAsComplete(shoppingItemId: shoppingItem.id, expiryDate: expiryDate)
+
+                        if let inventoryItem {
+                            inventory.items.append(inventoryItem)
+                        }
+                    }
+                    router.presentedSheet = nil
+                })
+                .presentationDetents(
+                    [.custom(AdaptiveSmallDetent.self)])
+                .presentationDragIndicator(.visible)
 
             case let .inventoryItem(item, action):
                 InventoryItemSheetView(inventoryItem: item, action: action)

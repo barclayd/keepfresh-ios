@@ -51,6 +51,26 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         }
     }
 
+    public var viewGradientStopsReversed: [Gradient.Stop] {
+        switch self {
+        case .pantry:
+            [
+                Gradient.Stop(color: .brown100, location: 0),
+                Gradient.Stop(color: .brown300, location: 1),
+            ]
+        case .fridge:
+            [
+                Gradient.Stop(color: .blue50, location: 0),
+                Gradient.Stop(color: .blue600, location: 1),
+            ]
+        case .freezer:
+            [
+                Gradient.Stop(color: .blue600, location: 0),
+                Gradient.Stop(color: .blue800, location: 1),
+            ]
+        }
+    }
+
     public var foregroundColor: Color {
         switch self {
         case .pantry: .brown900
@@ -111,6 +131,22 @@ public enum StorageLocation: String, Codable, Identifiable, CaseIterable, Equata
         case .pantry: .brown100
         case .fridge: .blue100
         case .freezer: .blue100
+        }
+    }
+
+    public var controlColors: (Color, Color) {
+        switch self {
+        case .pantry: (.blue700, .brown100)
+        case .fridge: (.blue700, .blue100)
+        case .freezer: (.white100, .blue800)
+        }
+    }
+
+    public var panelForegroundColor: (Color, Color, Color) {
+        switch self {
+        case .pantry: (.brown300, .blue800, .blue800)
+        case .fridge: (.blue600, .blue800, .blue800)
+        case .freezer: (.blue100, .white200, .blue200)
         }
     }
 }

@@ -205,8 +205,14 @@ public extension InventoryItem {
             name: productSearchResult.name,
             unit: productSearchResult.unit,
             brand: productSearchResult.brand,
+            barcode: nil,
             amount: productSearchResult.amount,
-            category: CategoryDetails(icon: icon, id: category.id, name: category.name, pathDisplay: category.path))
+            category: CategoryDetails(
+                icon: icon,
+                id: category.id,
+                name: category.name,
+                pathDisplay: category.path,
+                expiryType: request.item.expiryType))
         consumptionPrediction = 100
         consumptionPredictionChangedAt = Date()
     }
@@ -248,12 +254,14 @@ public struct Product: Codable, Sendable, Hashable {
         name: String,
         unit: String?,
         brand: Brand,
+        barcode: String?,
         amount: Double?,
         category: CategoryDetails)
     {
         self.id = id
         self.name = name
         self.unit = unit
+        self.barcode = barcode
         self.brand = brand
         self.amount = amount
         self.category = category
@@ -262,6 +270,7 @@ public struct Product: Codable, Sendable, Hashable {
     public let id: Int
     public let name: String
     public let unit: String?
+    public let barcode: String?
     public let brand: Brand
     public let amount: Double?
     public let category: CategoryDetails
@@ -280,17 +289,19 @@ public struct Product: Codable, Sendable, Hashable {
 }
 
 public struct CategoryDetails: Codable, Sendable, Hashable {
-    public init(icon: String, id: Int, name: String, pathDisplay: String) {
+    public init(icon: String, id: Int, name: String, pathDisplay: String, expiryType: ExpiryType) {
         self.id = id
         self.icon = icon
         self.name = name
         self.pathDisplay = pathDisplay
+        self.expiryType = expiryType
     }
 
     public let icon: String
     public let id: Int
     public let name: String
     public let pathDisplay: String
+    public let expiryType: ExpiryType
 }
 
 public enum Brand: Codable, Equatable, Hashable, Sendable {
@@ -422,12 +433,13 @@ public extension InventoryItem {
                 name: "Sample Product",
                 unit: "g",
                 brand: .tesco,
+                barcode: nil,
                 amount: 500,
                 category: CategoryDetails(
                     icon: "chicken",
                     id: 1,
                     name: "Vegetables",
-                    pathDisplay: "Food > Vegetables")))
+                    pathDisplay: "Food > Vegetables", expiryType: .BestBefore)))
     }
 
     static func mocks(count: Int) -> [InventoryItem] {

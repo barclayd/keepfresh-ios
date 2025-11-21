@@ -5,12 +5,14 @@ import KitchenUI
 import Models
 import Router
 import SearchUI
+import ShoppingUI
 import SwiftUI
 import TodayUI
 
 struct AppTabRootView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
+    @Environment(Shopping.self) var shopping
 
     var body: some View {
         @Bindable var router = router
@@ -26,17 +28,23 @@ struct AppTabRootView: View {
                 makeNavigationStack(for: .search, router: router)
             } label: {
                 AppTab.search.label
-            }
+            }.hidden(router.selectedTab == .shopping)
 
             Tab(value: AppTab.kitchen) {
                 makeNavigationStack(for: .kitchen, router: router)
             } label: {
                 AppTab.kitchen.label
-            }.disabled(inventory.state == .loading || inventory.state == .error)
+            }
+
+            Tab(value: AppTab.shopping) {
+                makeNavigationStack(for: .shopping, router: router)
+            } label: {
+                AppTab.shopping.label
+            }
         }
         .tint(.blue600)
         .tabBarMinimizeBehavior(.onScrollDown)
-        .handleAppSheets(router: router, inventory: inventory)
+        .handleSheets(router: router, inventory: inventory, shopping: shopping)
     }
 
     @ViewBuilder
@@ -72,6 +80,8 @@ private extension AppTab {
             SearchView()
         case .kitchen:
             KitchenView()
+        case .shopping:
+            ShoppingView()
         }
     }
 }
@@ -87,9 +97,30 @@ public extension AppTab {
     @ToolbarContentBuilder
     func toolbarContent(router: Router) -> some ToolbarContent {
         switch self {
-        case .today, .kitchen:
+        case .today:
             ToolbarItem(placement: .title) {
                 Text("KeepFresh")
+                    .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
+            }
+
+            ToolbarItemGroup {
+                Button(action: {
+                    router.selectedTab = .search
+                }) {
+                    Image(systemName: "plus.app").resizable()
+                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
+                }
+                Button(action: {
+                    router.presentedSheet = .barcodeScan
+                }) {
+                    Image(systemName: "barcode.viewfinder").resizable()
+                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
+                }
+            }
+
+        case .kitchen:
+            ToolbarItem(placement: .title) {
+                Text("Kitchen")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
             }
 
@@ -122,6 +153,21 @@ public extension AppTab {
                         .frame(width: 24, height: 24)
                 }
                 .buttonStyle(.plain).tint(.white200)
+            }
+
+        case .shopping:
+            ToolbarItem(placement: .title) {
+                Text("Shopping")
+                    .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
+            }
+
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                Button(action: {
+                    router.presentedSheet = .barcodeScanToShoppingList
+                }) {
+                    Image(systemName: "barcode.viewfinder").resizable()
+                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
+                }
             }
         }
     }

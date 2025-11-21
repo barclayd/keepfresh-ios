@@ -72,6 +72,42 @@ public struct KeepFreshAPI: Sendable {
         try await client.delete(path: "v2/inventory/items/\(itemId)")
     }
 
+    // MARK: - Shopping
+
+    public func getShoppingItems() async throws -> [ShoppingItem] {
+        try await client.fetch(
+            [ShoppingItem].self,
+            path: "v2/shopping")
+    }
+
+    public func addShoppingItem(_ request: AddShoppingItemRequest) async throws -> [ShoppingItem] {
+        try await client.post(
+            [ShoppingItem].self,
+            path: "v2/shopping/items",
+            body: request)
+    }
+
+    public func updateShoppingItem(for shoppingItemId: Int, _ request: UpdateShoppingItemRequest) async throws {
+        try await client.patch(path: "v2/shopping/items/\(shoppingItemId)", body: request)
+    }
+
+    public func deleteGroceryItem(for itemId: Int) async throws {
+        try await client.delete(path: "v2/shopping/items/\(itemId)")
+    }
+
+    public func addShoppingItemByBarcode(barcode: String) async throws -> ShoppingItem {
+        try await client.post(
+            ShoppingItem.self,
+            path: "v2/shopping/barcode/\(barcode)")
+    }
+
+    public func completeShoppingItem(for shoppingItemId: Int, _ request: CompleteShoppingItemRequest) async throws -> InventoryItem {
+        try await client.post(
+            InventoryItem.self,
+            path: "v2/shopping/items/\(shoppingItemId)/complete",
+            body: request)
+    }
+
     // MARK: - Genmoji
 
     public func uploadGenmoji(_ request: GenmojiUploadRequest) async throws {

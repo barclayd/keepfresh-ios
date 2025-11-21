@@ -1,5 +1,6 @@
 import CodeScanner
 import DesignSystem
+import Environment
 import Models
 import Network
 import Router
@@ -33,8 +34,9 @@ private func shapeWidth(geometry: GeometryProxy) -> CGFloat {
     (geometry.size.width / 10) * 6
 }
 
-public struct BarcodeView: View {
+public struct BarcodeToShoppingList: View {
     @Environment(Router.self) var router
+    @Environment(Shopping.self) var shopping
 
     @State private var barcodeIndex: Int = 0
     @State private var isAnimating: Bool = false
@@ -52,16 +54,14 @@ public struct BarcodeView: View {
                     CodeScannerView(codeTypes: [.ean8, .ean13, .upce], scanMode: .continuous, simulatedData: "5059697710001") { response in
                         switch response {
                         case let .success(result):
-                            Task {
-                                let api = KeepFreshAPI()
-                                do {
-                                    let product = try await api.getProduct(barcode: result.string)
-                                    router.navigateTo(.addProduct(product: product))
-                                    router.presentedSheet = nil
-                                } catch {
-                                    print("Error fetching product: \(error.localizedDescription)")
-                                }
+                            guard let shoppingItem = shopping.findItem(barcode: result.string) else {
+                                shopping.addItem(barcode: result.string)
+
+                                router.presentedSheet = nil
+                                return
                             }
+
+                            router.presentedSheet = .addInventoryItemFromShopping(shoppingItem)
                         case let .failure(error):
                             print(error.localizedDescription)
                         }

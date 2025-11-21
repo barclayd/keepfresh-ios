@@ -118,7 +118,7 @@ struct InventoryItemSheetStatsGridRows: View {
                     VStack(spacing: 0) {
                         Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.fridge]?.count ?? 0)")
                             .fontWeight(.bold).font(.headline)
-                        Text("Located in Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
+                        Text("In Fridge").fontWeight(.light).font(.subheadline).lineLimit(1)
                     }.foregroundStyle(.blue700)
                     Image(systemName: "house")
                         .font(.system(size: 32)).fontWeight(.bold)
@@ -126,7 +126,7 @@ struct InventoryItemSheetStatsGridRows: View {
                     VStack(spacing: 0) {
                         Text("\(inventory.productsByLocation[inventoryItem.product.id]?[.freezer]?.count ?? 0)")
                             .fontWeight(.bold).font(.headline)
-                        Text("Located in Freezer").fontWeight(.light).font(.subheadline)
+                        Text("In Freezer").fontWeight(.light).font(.subheadline)
                     }.foregroundStyle(.blue700)
                 }
             }
@@ -306,6 +306,7 @@ enum Sheet: Identifiable {
 public struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
+    @Environment(Shopping.self) var shopping
 
     @Environment(\.dismiss) private var dismiss
 
@@ -553,63 +554,80 @@ public struct InventoryItemSheetView: View {
                 }
                 Spacer()
                 Menu {
-                    Button {
-                        inventory.deleteItem(id: inventoryItem.id)
-                        dismiss()
-                    } label: {
-                        Label("Remove", systemImage: "arrow.uturn.backward")
-                    }
-                    Button {
-                        showSheet = .edit
-                    } label: {
-                        Label("Edit", systemImage: "pencil")
-                    }
-
-                    if inventoryItem.status != .opened {
+                    ControlGroup {
                         Button {
-                            onOpen()
+                            inventory.deleteItem(id: inventoryItem.id)
+                            dismiss()
                         } label: {
-                            Label(title: {
-                                Text("Open")
-                            }) {
-                                Image("tin.open")
-                                    .renderingMode(.template)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 22, height: 22)
+                            Label("Remove", systemImage: "arrow.uturn.backward")
+                        }
+                        Button {
+                            showSheet = .edit
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+
+                        if inventoryItem.status != .opened {
+                            Button {
+                                onOpen()
+                            } label: {
+                                Label(title: {
+                                    Text("Open")
+                                }) {
+                                    Image("tin.open")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 22, height: 22)
+                                }
+                            }
+                        }
+
+                        Menu {
+                            if inventoryItem.storageLocation != .pantry {
+                                Button {
+                                    showSheet = .move(.pantry)
+                                } label: {
+                                    Label("Pantry", systemImage: StorageLocation.pantry.icon)
+                                }.tint(StorageLocation.pantry.backgroundColor)
+                            }
+
+                            if inventoryItem.storageLocation != .fridge {
+                                Button {
+                                    showSheet = .move(.fridge)
+                                } label: {
+                                    Label("Fridge", systemImage: StorageLocation.fridge.icon)
+                                }.tint(StorageLocation.fridge.backgroundColor)
+                            }
+
+                            if inventoryItem.storageLocation != .freezer {
+                                Button {
+                                    showSheet = .move(.freezer)
+                                } label: {
+                                    Label("Freezer", systemImage: StorageLocation.freezer.icon)
+                                }.tint(StorageLocation.freezer.backgroundColor)
+                            }
+                        } label: {
+                            Button {} label: {
+                                Label("Move", systemImage: "house.fill")
                             }
                         }
                     }
 
-                    Menu {
-                        if inventoryItem.storageLocation != .pantry {
-                            Button {
-                                showSheet = .move(.pantry)
-                            } label: {
-                                Label("Pantry", systemImage: StorageLocation.pantry.icon)
-                            }.tint(StorageLocation.pantry.backgroundColor)
-                        }
-
-                        if inventoryItem.storageLocation != .fridge {
-                            Button {
-                                showSheet = .move(.fridge)
-                            } label: {
-                                Label("Fridge", systemImage: StorageLocation.fridge.icon)
-                            }.tint(StorageLocation.fridge.backgroundColor)
-                        }
-
-                        if inventoryItem.storageLocation != .freezer {
-                            Button {
-                                showSheet = .move(.freezer)
-                            } label: {
-                                Label("Freezer", systemImage: StorageLocation.freezer.icon)
-                            }.tint(StorageLocation.freezer.backgroundColor)
-                        }
-                    } label: {
-                        Button {} label: {
-                            Label("Move", systemImage: "house.fill")
+                    Section {
+                        Button {
+                            dismiss()
+                            shopping.addItem(request: AddShoppingItemRequest(
+                                title: nil,
+                                source: .user,
+                                storageLocation: inventoryItem.storageLocation,
+                                productId: inventoryItem.product.id,
+                                quantity: 1), categoryId: inventoryItem.product.category.id)
+                        } label: {
+                            Label("Add to shopping list", systemImage: "cart.fill.badge.plus")
                         }
                     }
+
                     Button {
                         dismiss()
                         router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(
@@ -671,6 +689,8 @@ public struct InventoryItemSheetView: View {
             .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 200)
             .offset(x: 0, y: -8)
 
+            Spacer(minLength: 0)
+
             Grid(horizontalSpacing: 16, verticalSpacing: 20) {
                 suggestionView(suggestion: .onTrack(inventoryItem.consumptionUrgency))
 
@@ -696,6 +716,8 @@ public struct InventoryItemSheetView: View {
                 isLoadingStats = false
             }
             .redactedShimmer(when: isLoadingStats)
+
+            Spacer(minLength: 0)
 
             if let nextBestAction = inventoryItem.getNextBestAction(onOpen: onOpen, onMove: onMove) {
                 Button(action: nextBestAction.action) {
@@ -748,7 +770,7 @@ public struct InventoryItemSheetView: View {
             }
             .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
         }
-        .padding(10).frame(maxWidth: .infinity, alignment: .center).ignoresSafeArea()
+        .padding(10).frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 10)
         .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
         .sheet(item: $showSheet) { sheet in

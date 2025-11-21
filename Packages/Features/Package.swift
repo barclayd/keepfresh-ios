@@ -20,6 +20,7 @@ let package = Package(
         .library(name: "KitchenUI", type: .static, targets: ["KitchenUI"]),
         .library(name: "BarcodeUI", type: .static, targets: ["BarcodeUI"]),
         .library(name: "SharedUI", type: .static, targets: ["SharedUI"]),
+        .library(name: "ShoppingUI", type: .static, targets: ["ShoppingUI"]),
     ],
     dependencies: [
         .package(path: "../Models"),
@@ -47,4 +48,7 @@ let package = Package(
         .target(
             name: "SharedUI",
             dependencies: baseDeps),
+        .target(
+            name: "ShoppingUI",
+            dependencies: baseDeps + ["SharedUI", "SearchUI"]),
     ])
