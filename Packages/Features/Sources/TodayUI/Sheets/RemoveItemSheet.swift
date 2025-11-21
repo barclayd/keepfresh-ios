@@ -45,11 +45,11 @@ public struct RemoveInventoryItemSheet: View {
                     EmptyView()
                         .frame(width: 20, alignment: .center)
                 }
+
                 HStack(alignment: .center, spacing: 30) {
                     Image(systemName: "trash.slash.fill")
                         .foregroundStyle(.green500)
                         .font(.system(size: 32))
-                        .offset(y: -12)
 
                     GeometryReader { geometry in
                         Slider(value: $wastePercentage, in: 0...100)
@@ -71,17 +71,21 @@ public struct RemoveInventoryItemSheet: View {
                             .onAppear {
                                 sliderWidth = geometry.frame(in: .local).width
                             }
+                            .overlay {
+                                Text("% waste").font(.callout).fontWeight(.light).foregroundStyle(.gray700).offset(y: 25)
+                            }.offset(y: -10)
                     }
+                    .fixedSize(horizontal: false, vertical: true) // ← Add this
+//                    .border(Color(.red), width: 1)
 
                     Image(systemName: "trash.fill")
                         .foregroundStyle(.red500)
                         .font(.system(size: 32))
-                        .offset(y: -12)
                 }
-                Text("% waste").font(.callout).fontWeight(.light).foregroundStyle(.gray700).offset(y: -25)
+//                .border(Color(.yellow), width: 1)
             }
 
-            Spacer()
+            Spacer(minLength: 0)
 
             Button(action: {
                 onMarkAsDone(wastePercentage)
