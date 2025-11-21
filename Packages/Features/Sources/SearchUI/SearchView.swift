@@ -210,7 +210,7 @@ public struct SearchView: View {
                 search = Search(onSaveSearch: saveRecentSearch)
             }
         }
-        .searchable(text: searchTextBinding, placement: .toolbar)
+        .searchable(text: searchTextBinding)
         .scrollDismissesKeyboard(.immediately)
         .onSubmit(of: .search) {
             Task {

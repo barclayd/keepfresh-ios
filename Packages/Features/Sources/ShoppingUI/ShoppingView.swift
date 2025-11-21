@@ -28,7 +28,7 @@ public struct ShoppingView: View {
                 Button(action: {
                     router.presentedSheet = .shopppingSearch
                 }) {
-                    Label("Add Exercise", systemImage: "plus")
+                    Label("Add item to shopping list", systemImage: "plus")
                         .font(.title3)
                         .bold()
                         .labelStyle(.iconOnly)

@@ -33,8 +33,6 @@ extension View {
 
                         if let inventoryItem {
                             inventory.items.append(inventoryItem)
-                        } else {
-                            print("ended up here")
                         }
                     }
                     router.presentedSheet = nil
