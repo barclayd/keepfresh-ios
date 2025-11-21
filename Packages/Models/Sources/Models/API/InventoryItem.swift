@@ -205,6 +205,7 @@ public extension InventoryItem {
             name: productSearchResult.name,
             unit: productSearchResult.unit,
             brand: productSearchResult.brand,
+            barcode: nil,
             amount: productSearchResult.amount,
             category: CategoryDetails(
                 icon: icon,
@@ -253,12 +254,14 @@ public struct Product: Codable, Sendable, Hashable {
         name: String,
         unit: String?,
         brand: Brand,
+        barcode: String?,
         amount: Double?,
         category: CategoryDetails)
     {
         self.id = id
         self.name = name
         self.unit = unit
+        self.barcode = barcode
         self.brand = brand
         self.amount = amount
         self.category = category
@@ -267,6 +270,7 @@ public struct Product: Codable, Sendable, Hashable {
     public let id: Int
     public let name: String
     public let unit: String?
+    public let barcode: String?
     public let brand: Brand
     public let amount: Double?
     public let category: CategoryDetails
@@ -429,6 +433,7 @@ public extension InventoryItem {
                 name: "Sample Product",
                 unit: "g",
                 brand: .tesco,
+                barcode: nil,
                 amount: 500,
                 category: CategoryDetails(
                     icon: "chicken",

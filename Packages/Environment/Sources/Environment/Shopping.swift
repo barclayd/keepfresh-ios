@@ -28,6 +28,15 @@ public final class Shopping {
         return nil
     }
 
+    public func findItem(barcode: String) -> ShoppingItem? {
+        for (location, items) in itemsByStorageLocation {
+            if let index = items.firstIndex(where: { $0.product?.barcode == barcode }) {
+                return itemsByStorageLocation[location]?[index]
+            }
+        }
+        return nil
+    }
+
     public func moveItem(
         itemId _: Int,
         fromIndex sourceIndex: Int,

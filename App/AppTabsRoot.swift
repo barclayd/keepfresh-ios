@@ -34,7 +34,7 @@ struct AppTabRootView: View {
                 makeNavigationStack(for: .kitchen, router: router)
             } label: {
                 AppTab.kitchen.label
-            }.disabled(inventory.state == .loading || inventory.state == .error)
+            }
 
             Tab(value: AppTab.shopping) {
                 makeNavigationStack(for: .shopping, router: router)
@@ -161,18 +161,11 @@ public extension AppTab {
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
             }
 
-            ToolbarItemGroup {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 Button(action: {
                     router.presentedSheet = .barcodeScanToShoppingList
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
-                        .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
-                }
-
-                Button(action: {
-                    // implement settings screen
-                }) {
-                    Image(systemName: "gear").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
             }

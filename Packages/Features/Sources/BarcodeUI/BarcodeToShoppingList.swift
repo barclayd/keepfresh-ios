@@ -54,9 +54,14 @@ public struct BarcodeToShoppingList: View {
                     CodeScannerView(codeTypes: [.ean8, .ean13, .upce], scanMode: .continuous, simulatedData: "5059697710001") { response in
                         switch response {
                         case let .success(result):
-                            shopping.addItem(barcode: result.string)
+                            guard let shoppingItem = shopping.findItem(barcode: result.string) else {
+                                shopping.addItem(barcode: result.string)
 
-                            router.presentedSheet = nil
+                                router.presentedSheet = nil
+                                return
+                            }
+
+                            router.presentedSheet = .addInventoryItemFromShopping(shoppingItem)
                         case let .failure(error):
                             print(error.localizedDescription)
                         }
