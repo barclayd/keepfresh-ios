@@ -3,29 +3,28 @@ import SwiftUI
 
 struct EditableText: View {
     @Environment(Shopping.self) var shopping
-    
+
     @Binding var text: String?
-    
+
     @FocusState.Binding var editingTitleFocus: UUID?
-    
+
     let shoppingItemUUID: UUID
-    
+
     var isFocused: Bool {
         editingTitleFocus == shoppingItemUUID
     }
-    
+
     private var textBinding: Binding<String> {
         Binding(
             get: { text ?? "" },
-            set: { text = $0.isEmpty ? nil : $0 }
-        )
+            set: { text = $0.isEmpty ? nil : $0 })
     }
-    
+
     var body: some View {
         ZStack(alignment: .leading) {
             Text(text ?? "")
                 .opacity(isFocused ? 0 : 1)
-            
+
             TextField("Shopping list item", text: textBinding)
                 .tint(.gray700)
                 .labelsHidden()
@@ -38,7 +37,7 @@ struct EditableText: View {
                             editingTitleFocus = nil
                             return
                         }
-                        
+
                         shopping.updateItemByUUID(uuid: shoppingItemUUID, title: currentText)
                         editingTitleFocus = nil
                     }
@@ -49,7 +48,7 @@ struct EditableText: View {
                 editingTitleFocus = shoppingItemUUID
             }
         }
-        .onChange(of: isFocused) { oldValue, newValue in
+        .onChange(of: isFocused) { _, newValue in
             if !newValue, let text, !text.isEmpty {
                 shopping.updateItemByUUID(uuid: shoppingItemUUID, title: text)
             }

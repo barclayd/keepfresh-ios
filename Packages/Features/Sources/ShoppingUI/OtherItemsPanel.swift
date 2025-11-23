@@ -6,42 +6,42 @@ import SwiftUI
 
 public struct OtherItemsPanel: View {
     @Environment(Shopping.self) var shopping
-        
+
     @State private var isExpanded: Bool = true
-    
+
     @FocusState private var editingTitleFocus: UUID?
-    
+
     private var items: [ShoppingItem] {
         shopping.itemsWithoutStorageLocation
     }
-    
+
     private func handleItemMove(sourceIndices: IndexSet, destinationIndex: Int) {
         guard let sourceIndex = sourceIndices.first else { return }
         guard sourceIndex < items.count else { return }
-        
+
         let itemId = items[sourceIndex].id
-        
+
         let adjustedDestination = sourceIndex < destinationIndex
             ? destinationIndex - 1
             : destinationIndex
-        
+
         shopping.moveNonStorageLocationItem(
             itemId: itemId,
             fromIndex: sourceIndex,
             toIndex: adjustedDestination)
     }
-    
+
     private var onMoveHandler: (IndexSet, Int) -> Void {
         handleItemMove
     }
-    
+
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
                 HStack(alignment: .firstTextBaseline) {
                     Image(systemName: "list.bullet")
                         .frame(width: 22).foregroundColor(.white200).fontWeight(.bold)
-                    
+
                     Text("Other")
                         .fontWeight(.bold)
                         .foregroundStyle(.white200)
@@ -51,17 +51,17 @@ public struct OtherItemsPanel: View {
                             d[.bottom] * 0.75
                         }
                 }
-                
+
                 Spacer()
-                
+
                 HStack {
                     Image(systemName: "\(items.count).square.fill")
                         .frame(width: 20).foregroundColor(.white200)
-                    
+
                     Image(systemName: "chevron.down")
                         .rotationEffect(.degrees(isExpanded ? -180 : 0))
                         .frame(width: 20).foregroundColor(.white200)
-                    
+
                 }.fontWeight(.bold)
             }
             .padding(.vertical, 14)
@@ -84,14 +84,14 @@ public struct OtherItemsPanel: View {
                     isExpanded.toggle()
                 }
             }
-            
+
             if isExpanded {
                 VStack {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1)
                         .offset(y: -10)
-                    
+
                     VStack(spacing: 0) {
-                        ScrollViewReader { proxy in
+                        ScrollViewReader { _ in
                             List {
                                 ForEach(items, id: \.uuid) { shoppingItem in
                                     OtherShoppingItemView(shoppingItem: shoppingItem, editingTitleFocus: $editingTitleFocus)
@@ -140,7 +140,7 @@ public struct OtherItemsPanel: View {
                             .scrollContentBackground(.hidden)
                             .scrollDismissesKeyboard(.immediately)
                         }
-                    
+
                         ShoppingPlaceholderView(storageLocation: nil, onTap: {
                             shopping.addItemWithoutStorageLocation()
                         }).padding(.bottom, 20)
@@ -166,15 +166,14 @@ public struct OtherItemsPanel: View {
                             endPoint: .trailing))
                         .onTapGesture {
                             editingTitleFocus = nil
-                        }
-                )
+                        })
             }
         }
         .onChange(of: items.count) { oldValue, newValue in
             if newValue > 0, oldValue == 0 {
                 isExpanded = true
             }
-            
+
             if newValue > oldValue {
                 editingTitleFocus = items.last?.uuid
             }
