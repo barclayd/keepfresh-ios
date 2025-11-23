@@ -16,6 +16,28 @@ public enum ShoppingItemSource: String, Codable, Sendable {
 }
 
 public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transferable {
+    public var id: Int
+    public var title: String?
+    public let createdAt: Date
+    public var updatedAt: Date
+    public let source: ShoppingItemSource
+    public var status: ShoppingItemStatus
+    public var storageLocation: StorageLocation?
+    public let product: Product?
+
+    public let uuid: UUID = .init()
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case createdAt
+        case updatedAt
+        case source
+        case status
+        case storageLocation
+        case product
+    }
+
     public init(
         id: Int,
         title: String?,
@@ -35,15 +57,6 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
         self.storageLocation = storageLocation
         self.product = product
     }
-
-    public let id: Int
-    public var title: String?
-    public let createdAt: Date
-    public var updatedAt: Date
-    public let source: ShoppingItemSource
-    public var status: ShoppingItemStatus
-    public var storageLocation: StorageLocation?
-    public let product: Product?
 
     public static var transferRepresentation: some TransferRepresentation {
         CodableRepresentation(contentType: .shoppingItem)

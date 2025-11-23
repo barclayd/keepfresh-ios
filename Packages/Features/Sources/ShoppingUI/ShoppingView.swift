@@ -19,6 +19,7 @@ public struct ShoppingView: View {
                         ForEach(StorageLocation.allCases) { storageLocation in
                             StorageLocationPanel(storageLocation: storageLocation)
                         }
+                        OtherItemsPanel()
                     }
                     .padding(.horizontal, 12.5)
                     .padding(.top, 20)
