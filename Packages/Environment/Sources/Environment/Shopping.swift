@@ -67,7 +67,7 @@ public final class Shopping {
     }
 
     public func moveItem(
-        itemId: Int,
+        itemId _: Int,
         fromIndex sourceIndex: Int,
         toIndex destinationIndex: Int,
         in storageLocation: StorageLocation)
@@ -83,7 +83,7 @@ public final class Shopping {
 
         let itemsBeforeDestination = items.filter { $0.storageLocation == storageLocation }
         let targetIndex = min(destinationIndex, itemsBeforeDestination.count)
-        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == storageLocation }.map { $0.offset }
+        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == storageLocation }.map(\.offset)
         let insertIndex = insertionPoints.count > targetIndex ? insertionPoints[targetIndex] : items.count
 
         items.insert(itemToMove, at: insertIndex)
@@ -105,7 +105,7 @@ public final class Shopping {
 
         let itemsBeforeDestination = items.filter { $0.storageLocation == nil }
         let targetIndex = min(destinationIndex, itemsBeforeDestination.count)
-        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == nil }.map { $0.offset }
+        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == nil }.map(\.offset)
         let insertIndex = insertionPoints.count > targetIndex ? insertionPoints[targetIndex] : items.count
 
         items.insert(itemToMove, at: insertIndex)
@@ -131,7 +131,7 @@ public final class Shopping {
 
         let targetItems = items.filter { $0.storageLocation == targetStorageLocation }
         let safeIndex = min(targetIndex, targetItems.count)
-        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == targetStorageLocation }.map { $0.offset }
+        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == targetStorageLocation }.map(\.offset)
         let insertIndex = insertionPoints.count > safeIndex ? insertionPoints[safeIndex] : items.count
 
         items.insert(item, at: insertIndex)
