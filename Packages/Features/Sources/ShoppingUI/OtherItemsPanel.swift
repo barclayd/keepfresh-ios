@@ -91,54 +91,56 @@ public struct OtherItemsPanel: View {
                         .offset(y: -10)
                     
                     VStack(spacing: 0) {
-                        List {
-                            ForEach(items, id: \.uuid) { shoppingItem in
-                                OtherShoppingItemView(shoppingItem: shoppingItem, editingTitleFocus: $editingTitleFocus)
-                                    .zIndex(1)
-                                    .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
-                                        length * 0.95
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                        Button(role: .destructive) {
-                                            withAnimation {
-                                                shopping.deleteItem(id: shoppingItem.id)
-                                            }
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }.tint(Color.red500)
-                                        Button {
-                                            shopping.addItem(
-                                                request: AddShoppingItemRequest(
-                                                    title: shoppingItem.title,
-                                                    source: .user,
-                                                    storageLocation: shoppingItem.storageLocation,
-                                                    productId: shoppingItem.product?.id,
-                                                    quantity: 1),
-                                                categoryId: shoppingItem.product?.category.id)
-                                        } label: {
-                                            Label("Add another", systemImage: "plus.rectangle.fill.on.rectangle.fill")
-                                        }.tint(Color.green500)
-                                    }
-                                    .transition(.asymmetric(
-                                        insertion: .move(edge: .top).combined(with: .opacity),
-                                        removal: .move(edge: .top).combined(with: .opacity)))
+                        ScrollViewReader { proxy in
+                            List {
+                                ForEach(items, id: \.uuid) { shoppingItem in
+                                    OtherShoppingItemView(shoppingItem: shoppingItem, editingTitleFocus: $editingTitleFocus)
+                                        .zIndex(1)
+                                        .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
+                                            length * 0.95
+                                        }
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                            Button(role: .destructive) {
+                                                withAnimation {
+                                                    shopping.deleteItem(id: shoppingItem.id)
+                                                }
+                                            } label: {
+                                                Label("Delete", systemImage: "trash")
+                                            }.tint(Color.red500)
+                                            Button {
+                                                shopping.addItem(
+                                                    request: AddShoppingItemRequest(
+                                                        title: shoppingItem.title,
+                                                        source: .user,
+                                                        storageLocation: shoppingItem.storageLocation,
+                                                        productId: shoppingItem.product?.id,
+                                                        quantity: 1),
+                                                    categoryId: shoppingItem.product?.category.id)
+                                            } label: {
+                                                Label("Add another", systemImage: "plus.rectangle.fill.on.rectangle.fill")
+                                            }.tint(Color.green500)
+                                        }
+                                        .transition(.asymmetric(
+                                            insertion: .move(edge: .top).combined(with: .opacity),
+                                            removal: .move(edge: .top).combined(with: .opacity)))
+                                }
+                                .onMove(perform: onMoveHandler)
+                                .listRowInsets(EdgeInsets())
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
+                                .scrollDismissesKeyboard(.immediately)
                             }
-                            .onMove(perform: onMoveHandler)
-                            .listRowInsets(EdgeInsets())
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color.clear)
+                            .animation(.smooth, value: items.count)
+                            .padding(.horizontal, -15)
+                            .frame(height: CGFloat(items.count) * 75)
+                            .listStyle(.plain)
+                            .scrollDisabled(true)
+                            .listRowSpacing(10)
+                            .scrollContentBackground(.hidden)
                             .scrollDismissesKeyboard(.immediately)
                         }
-                        .animation(.smooth, value: items.count)
-                        .padding(.horizontal, -15)
-                        .frame(height: CGFloat(items.count) * 75)
-                        .listStyle(.plain)
-                        .scrollDisabled(true)
-                        .listRowSpacing(10)
-                        .scrollContentBackground(.hidden)
-                        .scrollDismissesKeyboard(.immediately)
-                        
+                    
                         ShoppingPlaceholderView(storageLocation: nil, onTap: {
                             shopping.addItemWithoutStorageLocation()
                         }).padding(.bottom, 20)

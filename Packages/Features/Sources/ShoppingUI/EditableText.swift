@@ -28,6 +28,7 @@ struct EditableText: View {
             
             TextField("Shopping list item", text: textBinding)
                 .tint(.gray700)
+                .labelsHidden()
                 .opacity(isFocused ? 1 : 0)
                 .focused($editingTitleFocus, equals: shoppingItemUUID)
                 .onSubmit {
