@@ -96,14 +96,14 @@ public final class Inventory {
 
         productCounts = counts
         productsByLocation = locationCounts
+
+        Task { await cache.save(items) }
     }
 
     private func mergeItems(local: [InventoryItem], server: [InventoryItem]) -> [InventoryItem] {
-        // Build lookup dictionary of server items by ID
         var serverById = Dictionary(uniqueKeysWithValues: server.map { ($0.id, $0) })
         var result: [InventoryItem] = []
 
-        // Process local items - keep whichever has newer updatedAt
         for localItem in local {
             if let serverItem = serverById[localItem.id] {
                 result.append(serverItem.updatedAt > localItem.updatedAt ? serverItem : localItem)
@@ -113,7 +113,6 @@ public final class Inventory {
             }
         }
 
-        // Add new items from server
         result.append(contentsOf: serverById.values)
 
         return result
@@ -136,7 +135,6 @@ public final class Inventory {
             let serverItems = try await api.getInventoryItems()
             let localItems = items
             items = mergeItems(local: localItems, server: serverItems)
-            await cache.save(items)
             state = .loaded
         } catch {
             if items.isEmpty {
@@ -209,8 +207,6 @@ public final class Inventory {
             items[index].status = status
             items[index].openedAt = nil
         }
-
-        Task { await cache.save(items) }
     }
 
     public func deleteItem(id: Int) {
@@ -233,8 +229,6 @@ public final class Inventory {
 
         items[index].storageLocation = storageLocation
         items[index].updatedAt = Date()
-
-        Task { await cache.save(items) }
     }
 
     public func updateItemExpiryDate(id: Int, expiryDate: Date) {
@@ -242,7 +236,5 @@ public final class Inventory {
 
         items[index].expiryDate = expiryDate
         items[index].updatedAt = Date()
-
-        Task { await cache.save(items) }
     }
 }
