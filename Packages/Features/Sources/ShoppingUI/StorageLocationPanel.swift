@@ -195,10 +195,6 @@ public struct StorageLocationPanel: View {
             }
         }
         .onChange(of: items.count) { oldValue, newValue in
-            if newValue == 0, oldValue != 0 {
-                isExpanded = false
-            }
-
             if newValue > 0, oldValue == 0 {
                 isExpanded = true
             }

@@ -26,7 +26,7 @@ struct EditableText: View {
             Text(text ?? "")
                 .opacity(isFocused ? 0 : 1)
             
-            TextField("", text: textBinding)
+            TextField("Shopping list item", text: textBinding)
                 .tint(.gray700)
                 .opacity(isFocused ? 1 : 0)
                 .focused($editingTitleFocus, equals: shoppingItemUUID)
@@ -49,10 +49,6 @@ struct EditableText: View {
             }
         }
         .onChange(of: isFocused) { oldValue, newValue in
-            print("old: \(oldValue)")
-            print("new: \(newValue)")
-            print("text: \(text)")
-            
             if !newValue, let text, !text.isEmpty {
                 shopping.updateItemByUUID(uuid: shoppingItemUUID, title: text)
             }

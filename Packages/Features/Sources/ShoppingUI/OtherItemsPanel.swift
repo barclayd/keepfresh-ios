@@ -94,6 +94,7 @@ public struct OtherItemsPanel: View {
                         List {
                             ForEach(items, id: \.uuid) { shoppingItem in
                                 OtherShoppingItemView(shoppingItem: shoppingItem, editingTitleFocus: $editingTitleFocus)
+                                    .zIndex(1)
                                     .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                         length * 0.95
                                     }
@@ -119,6 +120,9 @@ public struct OtherItemsPanel: View {
                                             Label("Add another", systemImage: "plus.rectangle.fill.on.rectangle.fill")
                                         }.tint(Color.green500)
                                     }
+                                    .transition(.asymmetric(
+                                        insertion: .move(edge: .top).combined(with: .opacity),
+                                        removal: .move(edge: .top).combined(with: .opacity)))
                             }
                             .onMove(perform: onMoveHandler)
                             .listRowInsets(EdgeInsets())
@@ -126,6 +130,7 @@ public struct OtherItemsPanel: View {
                             .listRowBackground(Color.clear)
                             .scrollDismissesKeyboard(.immediately)
                         }
+                        .animation(.smooth, value: items.count)
                         .padding(.horizontal, -15)
                         .frame(height: CGFloat(items.count) * 75)
                         .listStyle(.plain)
@@ -137,17 +142,13 @@ public struct OtherItemsPanel: View {
                         ShoppingPlaceholderView(storageLocation: nil, onTap: {
                             shopping.addItemWithoutStorageLocation()
                         }).padding(.bottom, 20)
+                    }.onTapGesture {
+                        editingTitleFocus = nil
                     }
                 }
                 .padding(.vertical, 10)
                 .padding(.horizontal, 15)
                 .frame(maxWidth: .infinity)
-                .background(
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            editingTitleFocus = nil
-                        })
                 .background(
                     UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(
                         topLeading: 0,
@@ -161,15 +162,13 @@ public struct OtherItemsPanel: View {
                             ],
                             startPoint: .leading,
                             endPoint: .trailing))
+                        .onTapGesture {
+                            editingTitleFocus = nil
+                        }
                 )
             }
         }
         .onChange(of: items.count) { oldValue, newValue in
-            print("fired: \(oldValue), \(newValue)")
-            if newValue == 0, oldValue != 0 {
-                isExpanded = false
-            }
-            
             if newValue > 0, oldValue == 0 {
                 isExpanded = true
             }

@@ -327,6 +327,18 @@ public final class Shopping {
         updateItem(id: id, request: .init(status: status))
     }
     
+    public func updateItemWithoutStorageLocationStatus(uuid: UUID, to status: ShoppingItemStatus) {
+        guard let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.firstIndex(where: { $0.uuid == uuid }) else {
+            return
+        }
+        
+        let idToUpdate = itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id
+        
+        itemsWithoutStorageLocation.remove(at: shoppingItemIndexToUpdate)
+        
+        updateItem(id: idToUpdate, request: .init(status: status))
+    }
+    
     public func deleteItem(id: Int) {
         Task {
             do {
