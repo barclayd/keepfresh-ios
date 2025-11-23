@@ -40,7 +40,7 @@ public final class Inventory {
         }
     }
 
-    public var state: FetchState = .empty
+    public var state: FetchState = .loading
 
     let api = KeepFreshAPI()
     private let cache = InventoryCache.shared
