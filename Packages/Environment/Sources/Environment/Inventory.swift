@@ -40,17 +40,24 @@ public final class Inventory {
         }
     }
 
-    public var state: FetchState = .empty
+    public var state: FetchState = .loading
 
     let api = KeepFreshAPI()
+    private let cache = InventoryCache.shared
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [InventoryItem]] = [:]
     public private(set) var productCounts: [Int: Int] = [:]
     public private(set) var productsByLocation: [Int: [StorageLocation: [InventoryItem]]] = [:]
     public private(set) var detailsByStorageLocation: [StorageLocation: InventoryLocationDetails] = [:]
 
-    public init(initialState: [InventoryItem] = InventoryItem.mocks(count: 10)) {
-        items = initialState
+    public init(initialState: [InventoryItem] = []) {
+        items = cache.load()
+        if items.isEmpty {
+            items = initialState
+        } else {
+            state = .loaded
+        }
+        updateCaches()
     }
 
     private func updateCaches() {
@@ -89,6 +96,26 @@ public final class Inventory {
 
         productCounts = counts
         productsByLocation = locationCounts
+
+        Task { await cache.save(items) }
+    }
+
+    private func mergeItems(local: [InventoryItem], server: [InventoryItem]) -> [InventoryItem] {
+        var serverById = Dictionary(uniqueKeysWithValues: server.map { ($0.id, $0) })
+        var result: [InventoryItem] = []
+
+        for localItem in local {
+            if let serverItem = serverById[localItem.id] {
+                result.append(serverItem.updatedAt > localItem.updatedAt ? serverItem : localItem)
+                serverById.removeValue(forKey: localItem.id)
+            } else {
+                result.append(localItem)
+            }
+        }
+
+        result.append(contentsOf: serverById.values)
+
+        return result
     }
 
     public var itemsSortedByRecentlyAddedDescending: [InventoryItem] {
@@ -100,13 +127,20 @@ public final class Inventory {
     }
 
     public func fetchItems() async {
-        state = .loading
+        if items.isEmpty {
+            state = .loading
+        }
 
         do {
-            items = try await api.getInventoryItems()
+            let serverItems = try await api.getInventoryItems()
+            let localItems = items
+            items = mergeItems(local: localItems, server: serverItems)
             state = .loaded
         } catch {
-            state = .error
+            if items.isEmpty {
+                state = .error
+            }
+            print("Failed to fetch inventory items: \(error)")
         }
     }
 

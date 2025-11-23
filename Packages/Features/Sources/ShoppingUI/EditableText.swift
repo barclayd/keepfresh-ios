@@ -8,6 +8,8 @@ struct EditableText: View {
 
     @FocusState.Binding var editingTitleFocus: UUID?
 
+    @State private var saveTask: Task<Void, Never>?
+
     let shoppingItemUUID: UUID
 
     var isFocused: Bool {
@@ -25,7 +27,7 @@ struct EditableText: View {
             Text(text ?? "")
                 .opacity(isFocused ? 0 : 1)
 
-            TextField("Shopping list item", text: textBinding)
+            TextField("", text: textBinding)
                 .tint(.gray700)
                 .labelsHidden()
                 .opacity(isFocused ? 1 : 0)
@@ -48,13 +50,28 @@ struct EditableText: View {
                 editingTitleFocus = shoppingItemUUID
             }
         }
-        .onChange(of: isFocused) { _, newValue in
-            if !newValue, let text, !text.isEmpty {
-                shopping.updateItemByUUID(uuid: shoppingItemUUID, title: text)
+        .onChange(of: text) { _, newValue in
+            saveTask?.cancel()
+            saveTask = Task {
+                try? await Task.sleep(for: .milliseconds(1500))
+                guard !Task.isCancelled else { return }
+
+                if let newValue, !newValue.isEmpty {
+                    shopping.updateItemByUUID(uuid: shoppingItemUUID, title: newValue)
+                } else {
+                    shopping.deleteItemByUUID(uuid: shoppingItemUUID)
+                }
             }
-            if !newValue, text == nil {
+        }
+        .onDisappear {
+            saveTask?.cancel()
+
+            guard let text, !text.isEmpty else {
                 shopping.deleteItemByUUID(uuid: shoppingItemUUID)
+                return
             }
+
+            shopping.updateItemByUUID(uuid: shoppingItemUUID, title: text)
         }
     }
 }

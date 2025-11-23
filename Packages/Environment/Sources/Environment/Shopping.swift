@@ -7,35 +7,63 @@ import SwiftUI
 @Observable
 @MainActor
 public final class Shopping {
-    public var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
-    public var itemsWithoutStorageLocation: [ShoppingItem] = []
+    public var items: [ShoppingItem] = [] {
+        didSet {
+            updateCaches()
+        }
+    }
 
-    public var state: FetchState = .empty
+    public var state: FetchState = .loading
+
+    let api = KeepFreshAPI()
+    private let cache = ShoppingCache.shared
+
+    public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
+    public private(set) var itemsWithoutStorageLocation: [ShoppingItem] = []
 
     public init(items: [ShoppingItem] = []) {
+        self.items = cache.load()
+        if self.items.isEmpty {
+            self.items = items
+        } else {
+            state = .loaded
+        }
+        updateCaches()
+    }
+
+    private func updateCaches() {
         itemsByStorageLocation = Dictionary(
             grouping: items.filter { $0.storageLocation != nil },
             by: \.storageLocation!)
+        itemsWithoutStorageLocation = items.filter { $0.storageLocation == nil }
+
+        Task { await cache.save(items) }
     }
 
-    let api = KeepFreshAPI()
-
-    private func findItem(id: Int) -> (StorageLocation, Int)? {
-        for (location, items) in itemsByStorageLocation {
-            if let index = items.firstIndex(where: { $0.id == id }) {
-                return (location, index)
-            }
-        }
-        return nil
+    private func findItem(id: Int) -> Int? {
+        items.firstIndex(where: { $0.id == id })
     }
 
     public func findItem(barcode: String) -> ShoppingItem? {
-        for (location, items) in itemsByStorageLocation {
-            if let index = items.firstIndex(where: { $0.product?.barcode == barcode }) {
-                return itemsByStorageLocation[location]?[index]
+        items.first(where: { $0.product?.barcode == barcode })
+    }
+
+    private func mergeItems(local: [ShoppingItem], server: [ShoppingItem]) -> [ShoppingItem] {
+        var serverById = Dictionary(uniqueKeysWithValues: server.map { ($0.id, $0) })
+        var result: [ShoppingItem] = []
+
+        for localItem in local {
+            if let serverItem = serverById[localItem.id] {
+                result.append(serverItem.updatedAt > localItem.updatedAt ? serverItem : localItem)
+                serverById.removeValue(forKey: localItem.id)
+            } else {
+                result.append(localItem)
             }
         }
-        return nil
+
+        result.append(contentsOf: serverById.values)
+
+        return result
     }
 
     public func moveItem(
@@ -44,14 +72,21 @@ public final class Shopping {
         toIndex destinationIndex: Int,
         in storageLocation: StorageLocation)
     {
-        guard var items = itemsByStorageLocation[storageLocation],
-              sourceIndex < items.count,
-              destinationIndex <= items.count else { return }
+        let itemsInLocation = items.filter { $0.storageLocation == storageLocation }
+        guard sourceIndex < itemsInLocation.count,
+              destinationIndex <= itemsInLocation.count else { return }
+        let itemToMove = itemsInLocation[sourceIndex]
 
-        let item = items.remove(at: sourceIndex)
-        items.insert(item, at: destinationIndex)
+        guard let actualIndex = items.firstIndex(where: { $0.id == itemToMove.id }) else { return }
 
-        itemsByStorageLocation[storageLocation] = items
+        items.remove(at: actualIndex)
+
+        let itemsBeforeDestination = items.filter { $0.storageLocation == storageLocation }
+        let targetIndex = min(destinationIndex, itemsBeforeDestination.count)
+        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == storageLocation }.map(\.offset)
+        let insertIndex = insertionPoints.count > targetIndex ? insertionPoints[targetIndex] : items.count
+
+        items.insert(itemToMove, at: insertIndex)
     }
 
     public func moveNonStorageLocationItem(
@@ -59,11 +94,21 @@ public final class Shopping {
         fromIndex sourceIndex: Int,
         toIndex destinationIndex: Int)
     {
-        guard sourceIndex < itemsWithoutStorageLocation.count,
-              destinationIndex <= itemsWithoutStorageLocation.count else { return }
+        let itemsWithoutLocation = items.filter { $0.storageLocation == nil }
+        guard sourceIndex < itemsWithoutLocation.count,
+              destinationIndex <= itemsWithoutLocation.count else { return }
+        let itemToMove = itemsWithoutLocation[sourceIndex]
 
-        let item = itemsWithoutStorageLocation.remove(at: sourceIndex)
-        itemsWithoutStorageLocation.insert(item, at: destinationIndex)
+        guard let actualIndex = items.firstIndex(where: { $0.id == itemToMove.id }) else { return }
+
+        items.remove(at: actualIndex)
+
+        let itemsBeforeDestination = items.filter { $0.storageLocation == nil }
+        let targetIndex = min(destinationIndex, itemsBeforeDestination.count)
+        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == nil }.map(\.offset)
+        let insertIndex = insertionPoints.count > targetIndex ? insertionPoints[targetIndex] : items.count
+
+        items.insert(itemToMove, at: insertIndex)
     }
 
     public func moveItem(
@@ -71,12 +116,10 @@ public final class Shopping {
         to targetStorageLocation: StorageLocation,
         atIndex targetIndex: Int)
     {
-        guard let (sourceLocation, sourceIndex) = findItem(id: itemId) else { return }
+        guard let index = findItem(id: itemId) else { return }
 
-        var sourceItems = itemsByStorageLocation[sourceLocation] ?? []
-        var item = sourceItems.remove(at: sourceIndex)
-        itemsByStorageLocation[sourceLocation] = sourceItems.isEmpty ? nil : sourceItems
-
+        var item = items[index]
+        let sourceLocation = item.storageLocation
         let locationChanged = sourceLocation != targetStorageLocation
 
         if locationChanged {
@@ -84,10 +127,14 @@ public final class Shopping {
             item.updatedAt = Date()
         }
 
-        var targetItems = itemsByStorageLocation[targetStorageLocation] ?? []
+        items.remove(at: index)
+
+        let targetItems = items.filter { $0.storageLocation == targetStorageLocation }
         let safeIndex = min(targetIndex, targetItems.count)
-        targetItems.insert(item, at: safeIndex)
-        itemsByStorageLocation[targetStorageLocation] = targetItems
+        let insertionPoints = items.enumerated().filter { $0.element.storageLocation == targetStorageLocation }.map(\.offset)
+        let insertIndex = insertionPoints.count > safeIndex ? insertionPoints[safeIndex] : items.count
+
+        items.insert(item, at: insertIndex)
 
         if locationChanged {
             updateItem(id: itemId, request: .init(storageLocation: targetStorageLocation))
@@ -95,19 +142,20 @@ public final class Shopping {
     }
 
     public func fetchItems() async {
-        state = .loading
+        if items.isEmpty {
+            state = .loading
+        }
 
         do {
-            let items = try await api.getShoppingItems()
-            itemsByStorageLocation = Dictionary(
-                grouping: items.filter { $0.storageLocation != nil },
-                by: \.storageLocation!)
-            itemsWithoutStorageLocation = items.filter { $0.storageLocation == nil }
-
+            let serverItems = try await api.getShoppingItems()
+            let localItems = items
+            items = mergeItems(local: localItems, server: serverItems)
             state = .loaded
         } catch {
+            if items.isEmpty {
+                state = .error
+            }
             print("Failed to fetch shopping items: \(error)")
-            state = .error
         }
     }
 
@@ -116,16 +164,7 @@ public final class Shopping {
             do {
                 let newItems = try await api.addShoppingItem(request)
 
-                for item in newItems where item.storageLocation != nil {
-                    let location = item.storageLocation!
-                    var locationItems = itemsByStorageLocation[location] ?? []
-                    locationItems.append(item)
-                    itemsByStorageLocation[location] = locationItems
-                }
-
-                for item in newItems where item.storageLocation == nil {
-                    itemsWithoutStorageLocation.append(item)
-                }
+                items.append(contentsOf: newItems)
 
                 guard let categoryId, let productId = request.productId else { return }
 
@@ -154,15 +193,17 @@ public final class Shopping {
     }
 
     public func addItemWithoutStorageLocation() {
-        itemsWithoutStorageLocation.append(ShoppingItem(
-            id: itemsWithoutStorageLocation.map(\.id).max() ?? 99999,
+        let tempItem = ShoppingItem(
+            id: items.map(\.id).max() ?? 99999,
             title: "",
             createdAt: Date(),
             updatedAt: Date(),
             source: .user,
             status: .created,
             storageLocation: nil,
-            product: nil))
+            product: nil)
+
+        items.append(tempItem)
 
         Task {
             do {
@@ -174,8 +215,9 @@ public final class Shopping {
                     quantity: nil))
 
                 for item in newItems {
-                    let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.count - 1
-                    itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id = item.id
+                    if let index = items.firstIndex(where: { $0.id == tempItem.id }) {
+                        items[index].id = item.id
+                    }
                 }
             } catch {
                 print("Adding shopping item failed with error: \(error)")
@@ -198,10 +240,7 @@ public final class Shopping {
             do {
                 let newItem = try await api.addShoppingItemByBarcode(barcode: barcode)
 
-                let location = newItem.storageLocation!
-                var locationItems = itemsByStorageLocation[location] ?? []
-                locationItems.append(newItem)
-                itemsByStorageLocation[location] = locationItems
+                items.append(newItem)
 
                 guard let categoryId = newItem.product?.category.id, let productId = newItem.product?.id else { return }
 
@@ -250,16 +289,16 @@ public final class Shopping {
     }
 
     public func updateItemByUUID(uuid: UUID, title: String) {
-        guard let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.firstIndex(where: { $0.uuid == uuid }) else {
+        guard let index = items.firstIndex(where: { $0.uuid == uuid }) else {
             return
         }
 
-        itemsWithoutStorageLocation[shoppingItemIndexToUpdate].title = title
+        items[index].title = title
 
         Task {
             do {
                 try await api.updateShoppingItem(
-                    for: itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id,
+                    for: items[index].id,
                     UpdateShoppingItemRequest(title: title))
             } catch {
                 print("Updating shopping item failed with error: \(error)")
@@ -278,13 +317,13 @@ public final class Shopping {
     }
 
     public func deleteItemByUUID(uuid: UUID) {
-        guard let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.firstIndex(where: { $0.uuid == uuid }) else {
+        guard let index = items.firstIndex(where: { $0.uuid == uuid }) else {
             return
         }
 
-        let idToRemove = itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id
+        let idToRemove = items[index].id
 
-        itemsWithoutStorageLocation.remove(at: shoppingItemIndexToUpdate)
+        items.remove(at: index)
 
         Task {
             do {
@@ -306,50 +345,38 @@ public final class Shopping {
     }
 
     public func updateItemStorageLocation(id: Int, storageLocation: StorageLocation) {
-        guard let (currentLocation, index) = findItem(id: id) else { return }
+        guard let index = findItem(id: id) else { return }
 
-        var currentItems = itemsByStorageLocation[currentLocation] ?? []
-        var item = currentItems.remove(at: index)
-        itemsByStorageLocation[currentLocation] = currentItems.isEmpty ? nil : currentItems
-
-        item.storageLocation = storageLocation
-        item.updatedAt = Date()
-
-        var targetItems = itemsByStorageLocation[storageLocation] ?? []
-        targetItems.append(item)
-        itemsByStorageLocation[storageLocation] = targetItems
+        items[index].storageLocation = storageLocation
+        items[index].updatedAt = Date()
 
         updateItem(id: id, request: .init(storageLocation: storageLocation))
     }
 
     public func updateItemTitle(id: Int, title: String) {
-        guard let (location, index) = findItem(id: id) else { return }
+        guard let index = findItem(id: id) else { return }
 
-        var items = itemsByStorageLocation[location] ?? []
         items[index].title = title
-        itemsByStorageLocation[location] = items
 
         updateItem(id: id, request: .init(title: title))
     }
 
     public func updateItemStatus(id: Int, status: ShoppingItemStatus) {
-        guard let (location, index) = findItem(id: id) else { return }
+        guard let index = findItem(id: id) else { return }
 
-        var items = itemsByStorageLocation[location] ?? []
         items[index].status = status
-        itemsByStorageLocation[location] = items
 
         updateItem(id: id, request: .init(status: status))
     }
 
     public func updateItemWithoutStorageLocationStatus(uuid: UUID, to status: ShoppingItemStatus) {
-        guard let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.firstIndex(where: { $0.uuid == uuid }) else {
+        guard let index = items.firstIndex(where: { $0.uuid == uuid }) else {
             return
         }
 
-        let idToUpdate = itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id
+        let idToUpdate = items[index].id
 
-        itemsWithoutStorageLocation.remove(at: shoppingItemIndexToUpdate)
+        items.remove(at: index)
 
         updateItem(id: idToUpdate, request: .init(status: status))
     }
@@ -359,18 +386,9 @@ public final class Shopping {
             do {
                 try await api.deleteGroceryItem(for: id)
 
-                guard let (sourceLocation, sourceIndex) = findItem(id: id) else {
-                    if let index = itemsWithoutStorageLocation.firstIndex(where: { $0.id == id }) {
-                        itemsWithoutStorageLocation.remove(at: index)
-                    }
-
-                    return
+                if let index = findItem(id: id) {
+                    items.remove(at: index)
                 }
-
-                var sourceItems = itemsByStorageLocation[sourceLocation] ?? []
-                sourceItems.remove(at: sourceIndex)
-
-                itemsByStorageLocation[sourceLocation] = sourceItems.isEmpty ? nil : sourceItems
             } catch {
                 print("error deleting item: \(error)")
                 return
@@ -382,17 +400,13 @@ public final class Shopping {
         shoppingItemId: Int,
         expiryDate: Date) async -> InventoryItem?
     {
-        guard let (sourceLocation, sourceIndex) = findItem(id: shoppingItemId) else {
+        guard let index = findItem(id: shoppingItemId) else {
             return nil
         }
 
-        var sourceItems = itemsByStorageLocation[sourceLocation] ?? []
+        let shoppingItem = items[index]
 
-        let shoppingItem = sourceItems[sourceIndex]
-
-        sourceItems.remove(at: sourceIndex)
-
-        itemsByStorageLocation[sourceLocation] = sourceItems.isEmpty ? nil : sourceItems
+        items.remove(at: index)
 
         do {
             let inventoryItem = try await api.completeShoppingItem(for: shoppingItemId, CompleteShoppingItemRequest(expiryDate: expiryDate))
@@ -413,12 +427,7 @@ public final class Shopping {
 
             print("Full error details: \(String(describing: error))")
 
-            sourceItems.insert(shoppingItem, at: sourceIndex)
-
-            let location = shoppingItem.storageLocation!
-            var locationItems = itemsByStorageLocation[location] ?? []
-            locationItems.append(shoppingItem)
-            itemsByStorageLocation[location] = locationItems
+            items.insert(shoppingItem, at: index)
 
             return nil
         }
