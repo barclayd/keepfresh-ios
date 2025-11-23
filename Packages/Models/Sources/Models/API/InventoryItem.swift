@@ -346,6 +346,12 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let brandString = try container.decode(String.self)
+
+        if brandString.lowercased().contains("m&s") {
+            self = .marksAndSpencer
+            return
+        }
+
         self = Self.knownBrands[brandString] ?? .unknown(brandString)
     }
 

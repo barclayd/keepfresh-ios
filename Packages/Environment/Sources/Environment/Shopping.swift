@@ -8,6 +8,7 @@ import SwiftUI
 @MainActor
 public final class Shopping {
     public var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
+    public var itemsWithoutStorageLocation: [ShoppingItem] = []
 
     public var state: FetchState = .empty
 
@@ -53,6 +54,18 @@ public final class Shopping {
         itemsByStorageLocation[storageLocation] = items
     }
 
+    public func moveNonStorageLocationItem(
+        itemId _: Int,
+        fromIndex sourceIndex: Int,
+        toIndex destinationIndex: Int)
+    {
+        guard sourceIndex < itemsWithoutStorageLocation.count,
+              destinationIndex <= itemsWithoutStorageLocation.count else { return }
+
+        let item = itemsWithoutStorageLocation.remove(at: sourceIndex)
+        itemsWithoutStorageLocation.insert(item, at: destinationIndex)
+    }
+
     public func moveItem(
         itemId: Int,
         to targetStorageLocation: StorageLocation,
@@ -89,8 +102,11 @@ public final class Shopping {
             itemsByStorageLocation = Dictionary(
                 grouping: items.filter { $0.storageLocation != nil },
                 by: \.storageLocation!)
+            itemsWithoutStorageLocation = items.filter { $0.storageLocation == nil }
+
             state = .loaded
         } catch {
+            print("Failed to fetch shopping items: \(error)")
             state = .error
         }
     }
@@ -107,6 +123,10 @@ public final class Shopping {
                     itemsByStorageLocation[location] = locationItems
                 }
 
+                for item in newItems where item.storageLocation == nil {
+                    itemsWithoutStorageLocation.append(item)
+                }
+
                 guard let categoryId, let productId = request.productId else { return }
 
                 guard SuggestionsCache.shared.getSuggestions(for: categoryId) == nil else {
@@ -117,6 +137,46 @@ public final class Shopping {
 
                 await SuggestionsCache.shared.saveSuggestions(categoryId: categoryId, categorySuggestions: response.suggestions)
 
+            } catch {
+                print("Adding shopping item failed with error: \(error)")
+
+                if let urlError = error as? URLError {
+                    print("URL Error details: \(urlError.localizedDescription)")
+                }
+
+                if let httpError = error as? DecodingError {
+                    print("Decoding error: \(httpError)")
+                }
+
+                print("Full error details: \(String(describing: error))")
+            }
+        }
+    }
+
+    public func addItemWithoutStorageLocation() {
+        itemsWithoutStorageLocation.append(ShoppingItem(
+            id: itemsWithoutStorageLocation.map(\.id).max() ?? 99999,
+            title: "",
+            createdAt: Date(),
+            updatedAt: Date(),
+            source: .user,
+            status: .created,
+            storageLocation: nil,
+            product: nil))
+
+        Task {
+            do {
+                let newItems = try await api.addShoppingItem(AddShoppingItemRequest(
+                    title: "",
+                    source: .user,
+                    storageLocation: nil,
+                    productId: nil,
+                    quantity: nil))
+
+                for item in newItems {
+                    let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.count - 1
+                    itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id = item.id
+                }
             } catch {
                 print("Adding shopping item failed with error: \(error)")
 
@@ -189,6 +249,62 @@ public final class Shopping {
         }
     }
 
+    public func updateItemByUUID(uuid: UUID, title: String) {
+        guard let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.firstIndex(where: { $0.uuid == uuid }) else {
+            return
+        }
+
+        itemsWithoutStorageLocation[shoppingItemIndexToUpdate].title = title
+
+        Task {
+            do {
+                try await api.updateShoppingItem(
+                    for: itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id,
+                    UpdateShoppingItemRequest(title: title))
+            } catch {
+                print("Updating shopping item failed with error: \(error)")
+
+                if let urlError = error as? URLError {
+                    print("URL Error details: \(urlError.localizedDescription)")
+                }
+
+                if let httpError = error as? DecodingError {
+                    print("Decoding error: \(httpError)")
+                }
+
+                print("Full error details: \(String(describing: error))")
+            }
+        }
+    }
+
+    public func deleteItemByUUID(uuid: UUID) {
+        guard let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.firstIndex(where: { $0.uuid == uuid }) else {
+            return
+        }
+
+        let idToRemove = itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id
+
+        itemsWithoutStorageLocation.remove(at: shoppingItemIndexToUpdate)
+
+        Task {
+            do {
+                try await api.deleteGroceryItem(for: idToRemove)
+            } catch {
+                print("Updating shopping item failed with error: \(error)")
+
+                if let urlError = error as? URLError {
+                    print("URL Error details: \(urlError.localizedDescription)")
+                }
+
+                if let httpError = error as? DecodingError {
+                    print("Decoding error: \(httpError)")
+                }
+
+                print("Full error details: \(String(describing: error))")
+            }
+        }
+    }
+
     public func updateItemStorageLocation(id: Int, storageLocation: StorageLocation) {
         guard let (currentLocation, index) = findItem(id: id) else { return }
 
@@ -226,12 +342,30 @@ public final class Shopping {
         updateItem(id: id, request: .init(status: status))
     }
 
+    public func updateItemWithoutStorageLocationStatus(uuid: UUID, to status: ShoppingItemStatus) {
+        guard let shoppingItemIndexToUpdate = itemsWithoutStorageLocation.firstIndex(where: { $0.uuid == uuid }) else {
+            return
+        }
+
+        let idToUpdate = itemsWithoutStorageLocation[shoppingItemIndexToUpdate].id
+
+        itemsWithoutStorageLocation.remove(at: shoppingItemIndexToUpdate)
+
+        updateItem(id: idToUpdate, request: .init(status: status))
+    }
+
     public func deleteItem(id: Int) {
         Task {
             do {
                 try await api.deleteGroceryItem(for: id)
 
-                guard let (sourceLocation, sourceIndex) = findItem(id: id) else { return }
+                guard let (sourceLocation, sourceIndex) = findItem(id: id) else {
+                    if let index = itemsWithoutStorageLocation.firstIndex(where: { $0.id == id }) {
+                        itemsWithoutStorageLocation.remove(at: index)
+                    }
+
+                    return
+                }
 
                 var sourceItems = itemsByStorageLocation[sourceLocation] ?? []
                 sourceItems.remove(at: sourceIndex)

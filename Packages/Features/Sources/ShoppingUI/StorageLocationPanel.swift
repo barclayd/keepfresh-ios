@@ -1,10 +1,12 @@
 import DesignSystem
 import Environment
 import Models
+import Router
 import SharedUI
 import SwiftUI
 
 public struct StorageLocationPanel: View {
+    @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
 
     @State private var isExpanded: Bool = true
@@ -97,7 +99,9 @@ public struct StorageLocationPanel: View {
                         .offset(y: -10)
 
                     if items.isEmpty {
-                        ShoppingPlaceholderView(storageLocation: storageLocation).frame(maxWidth: .infinity)
+                        ShoppingPlaceholderView(storageLocation: storageLocation, onTap: {
+                            router.presentedSheet = .shopppingSearch
+                        }).frame(maxWidth: .infinity)
                     }
 
                     List {
@@ -191,10 +195,6 @@ public struct StorageLocationPanel: View {
             }
         }
         .onChange(of: items.count) { oldValue, newValue in
-            if newValue == 0, oldValue != 0 {
-                isExpanded = false
-            }
-
             if newValue > 0, oldValue == 0 {
                 isExpanded = true
             }
