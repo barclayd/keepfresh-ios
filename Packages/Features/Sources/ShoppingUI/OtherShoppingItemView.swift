@@ -82,6 +82,9 @@ public struct OtherShoppingItemView: View {
                 Toggle("Selected Expiry Date", isOn: isSetToComplete)
                     .toggleStyle(CheckToggleStyle(customColor: .gray700))
                     .labelsHidden()
+                    .highPriorityGesture(TapGesture().onEnded {
+                        isSetToComplete.wrappedValue.toggle()
+                    })
             }
             .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
         }

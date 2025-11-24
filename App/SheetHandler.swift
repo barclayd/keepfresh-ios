@@ -95,7 +95,7 @@ extension View {
                         }
                         router.presentedSheet = nil
                     })
-                    .presentationDetents([.custom(AdaptiveExtraSmallDetent.self)])
+                    .presentationDetents([.custom(AdaptiveSmallDetent.self)])
                     .presentationDragIndicator(.visible)
 
             case let .removeInventoryItemDirect(item):
