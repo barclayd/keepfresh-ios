@@ -792,8 +792,7 @@ public struct InventoryItemSheetView: View {
             case let .open(expiryDate):
                 OpenInventoryItemSheet(inventoryItem: inventoryItem, expiryDate: expiryDate, onOpen: onOpenTap)
                     .presentationDetents(
-                        inventoryItem.product.name
-                            .count >= 20 ? [.custom(AdaptiveSmallDetent.self)] : [.custom(AdaptiveExtraSmallDetent.self)])
+                        [.custom(AdaptiveSmallDetent.self)])
                     .presentationDragIndicator(.visible)
             case .remove:
                 RemoveInventoryItemSheet(inventoryItem: inventoryItem, onMarkAsDone: onMarkAsDone)

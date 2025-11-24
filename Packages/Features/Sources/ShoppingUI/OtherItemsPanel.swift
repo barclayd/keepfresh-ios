@@ -139,13 +139,13 @@ public struct OtherItemsPanel: View {
                             .listRowSpacing(10)
                             .scrollContentBackground(.hidden)
                             .scrollDismissesKeyboard(.immediately)
-                        }
+                        }.simultaneousGesture(TapGesture().onEnded {
+                            editingTitleFocus = nil
+                        })
 
                         ShoppingPlaceholderView(storageLocation: nil, onTap: {
                             shopping.addItemWithoutStorageLocation()
                         }).padding(.bottom, 20)
-                    }.onTapGesture {
-                        editingTitleFocus = nil
                     }
                 }
                 .padding(.vertical, 10)
