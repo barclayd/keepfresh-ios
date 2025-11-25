@@ -1,5 +1,55 @@
 import DesignSystem
+import Models
+import SwiftData
 import SwiftUI
+
+// MARK: - Genmoji Confetti Cache
+
+/// Static cache for genmoji images used in confetti animation.
+/// Must be pre-populated before confetti triggers to ensure synchronous rendering.
+@MainActor
+public enum GenmojiConfettiCache {
+    public static var images: [String: UIImage] = [:]
+
+    /// Preload genmoji images from SwiftData cache into memory.
+    /// Call this before confetti can be triggered.
+    public static func preload(names: [String], modelContext: ModelContext) {
+        for name in names {
+            guard images[name] == nil else { continue }
+
+            let descriptor = FetchDescriptor<GenmojiCache>(
+                predicate: #Predicate { $0.name == name })
+
+            if let cached = try? modelContext.fetch(descriptor).first,
+               let image = UIImage(data: cached.imageData) {
+                images[name] = image
+            }
+        }
+    }
+}
+
+/// Synchronous genmoji view for confetti animation.
+/// NO @State, NO .task - just reads from pre-populated cache.
+private struct SyncGenmojiView: View {
+    let name: String
+    let size: CGFloat
+
+    var body: some View {
+        if let image = GenmojiConfettiCache.images[name] {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(width: size, height: size)
+        } else {
+            // Fallback: colored circle if not cached
+            Circle()
+                .fill(.orange)
+                .frame(width: size, height: size)
+        }
+    }
+}
+
+// MARK: - Confetti Types
 
 public enum ConfettiType: CaseIterable, Hashable {
     public enum Shape: CaseIterable {
@@ -33,7 +83,7 @@ public enum ConfettiType: CaseIterable, Hashable {
             Text(text)
                 .font(.system(size: size))
         case .genmoji(let name):
-            GenmojiView(name: name, fontSize: size, tint: .clear)
+            SyncGenmojiView(name: name, size: size)
         }
     }
 }
@@ -50,9 +100,7 @@ private struct Triangle: Shape {
 }
 
 private struct ConfettiAnimationView: View {
-    let confettiType: ConfettiType
-    let color: Color
-    let size: CGFloat
+    let confettiView: AnyView
     let spinDirX: CGFloat
     let spinDirZ: CGFloat
 
@@ -62,7 +110,7 @@ private struct ConfettiAnimationView: View {
     @State private var anchor = CGFloat.random(in: 0...1).rounded()
 
     var body: some View {
-        confettiType.view(color: color, size: size)
+        confettiView
             .rotation3DEffect(.degrees(move ? 360 : 0), axis: (x: spinDirX, y: 0, z: 0))
             .animation(.linear(duration: xSpeed).repeatCount(10, autoreverses: false), value: move)
             .rotation3DEffect(.degrees(move ? 360 : 0), axis: (x: 0, y: 0, z: spinDirZ), anchor: UnitPoint(x: anchor, y: anchor))
@@ -91,9 +139,7 @@ private struct ConfettiParticleView: View {
 
     var body: some View {
         ConfettiAnimationView(
-            confettiType: confettiType,
-            color: color,
-            size: size,
+            confettiView: AnyView(confettiType.view(color: color, size: size)),
             spinDirX: spinDirX,
             spinDirZ: spinDirZ
         )

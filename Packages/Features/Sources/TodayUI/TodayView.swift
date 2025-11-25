@@ -5,11 +5,13 @@ import Models
 import Network
 import Router
 import SharedUI
+import SwiftData
 import SwiftUI
 
 public struct TodayView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
+    @Environment(\.modelContext) private var modelContext
 
     public init() {}
 
@@ -84,5 +86,8 @@ public struct TodayView: View {
             }
         }
         .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: [.genmoji("turkey")])
+        .task {
+            GenmojiConfettiCache.preload(names: ["turkey"], modelContext: modelContext)
+        }
     }
 }
