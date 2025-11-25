@@ -11,6 +11,7 @@ public struct RemoveInventoryItemSheet: View {
     @State private var sliderWidth: CGFloat = 0
     @State private var increaseHaptic: Int = 0
     @State private var decreaseHaptic: Int = 0
+    @State private var confettiTrigger: Int = 0
 
     let predictedWastePercentage: Double = 25
 
@@ -86,7 +87,10 @@ public struct RemoveInventoryItemSheet: View {
             Spacer(minLength: 0)
 
             Button(action: {
-                onMarkAsDone(wastePercentage)
+                if wastePercentage == 0 {
+                    confettiTrigger += 1
+                }
+//                onMarkAsDone(wastePercentage)
             }) {
                 HStack(spacing: 10) {
                     Image(systemName: "trash")
@@ -106,5 +110,6 @@ public struct RemoveInventoryItemSheet: View {
         }.frame(maxWidth: .infinity)
             .padding(.horizontal, 20)
             .padding(.vertical, 20)
+            .confetti(trigger: $confettiTrigger)
     }
 }
