@@ -441,7 +441,10 @@ public struct InventoryItemSheetView: View {
     }
 
     func onMarkAsDone(wastePercentage: Double) {
-        updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
+        if wastePercentage == 0 {
+            inventory.triggerConfetti()
+        }
+//        updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
     func onEdit(expiryDate: Date) {

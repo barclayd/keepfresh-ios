@@ -41,6 +41,7 @@ public final class Inventory {
     }
 
     public var state: FetchState = .loading
+    public var confettiTrigger: Int = 0
 
     let api = KeepFreshAPI()
     private let cache = InventoryCache.shared
@@ -236,5 +237,9 @@ public final class Inventory {
 
         items[index].expiryDate = expiryDate
         items[index].updatedAt = Date()
+    }
+
+    public func triggerConfetti() {
+        confettiTrigger += 1
     }
 }

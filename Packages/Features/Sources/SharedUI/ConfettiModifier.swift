@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 public enum ConfettiType: CaseIterable, Hashable {
@@ -7,12 +8,13 @@ public enum ConfettiType: CaseIterable, Hashable {
 
     case shape(Shape)
     case text(String)
+    case genmoji(String)
 
     public static var allCases: [ConfettiType] {
         Shape.allCases.map { .shape($0) }
     }
 
-    @ViewBuilder
+    @MainActor @ViewBuilder
     func view(color: Color, size: CGFloat) -> some View {
         switch self {
         case .shape(.circle):
@@ -30,6 +32,8 @@ public enum ConfettiType: CaseIterable, Hashable {
         case .text(let text):
             Text(text)
                 .font(.system(size: size))
+        case .genmoji(let name):
+            GenmojiView(name: name, fontSize: size, tint: .clear)
         }
     }
 }
