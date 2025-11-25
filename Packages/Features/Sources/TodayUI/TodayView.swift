@@ -83,6 +83,6 @@ public struct TodayView: View {
                 .background(.white200)
             }
         }
-        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }))
+        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: [.genmoji("turkey")])
     }
 }

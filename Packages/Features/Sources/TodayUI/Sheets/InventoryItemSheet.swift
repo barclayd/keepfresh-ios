@@ -776,6 +776,7 @@ public struct InventoryItemSheetView: View {
         .padding(10).frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 10)
         .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
+        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: [.genmoji("turkey")])
         .sheet(item: $showSheet) { sheet in
             switch sheet {
             case .edit:

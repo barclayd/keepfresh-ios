@@ -174,19 +174,26 @@ private struct ConfettiModifier<T: Equatable>: ViewModifier {
     @Binding var trigger: T
     let confettis: [ConfettiType]
 
+    @State private var containerHeight: CGFloat = 800
+
     func body(content: Content) -> some View {
         content
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.height
+            } action: { newHeight in
+                containerHeight = newHeight
+            }
             .overlay(alignment: .bottom) {
                 ConfettiCannon(
                     trigger: $trigger,
                     confettis: confettis,
                     colors: [.red, .orange, .yellow, .green, .blue, .purple],
-                    num: 25,
+                    num: 40,
                     confettiSize: 10,
-                    rainHeight: 600,
+                    rainHeight: containerHeight * 1.25,
                     openingAngle: .degrees(60),
                     closingAngle: .degrees(120),
-                    radius: 300
+                    radius: containerHeight
                 )
                 .allowsHitTesting(false)
             }
