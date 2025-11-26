@@ -85,9 +85,9 @@ public struct TodayView: View {
                 .background(.white200)
             }
         }
-        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: [.genmoji("turkey")])
+        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: [.genmoji("turkey"), .genmoji("milk")])
         .task {
-            GenmojiConfettiCache.preload(names: ["turkey"], modelContext: modelContext)
+            GenmojiConfettiCache.preload(names: ["turkey", "milk"], modelContext: modelContext)
         }
     }
 }

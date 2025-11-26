@@ -235,7 +235,7 @@ private struct ConfettiModifier<T: Equatable>: ViewModifier {
                     confettis: confettis,
                     colors: [.red, .orange, .yellow, .green, .blue, .purple],
                     num: 40,
-                    confettiSize: 10,
+                    confettiSize: confettis.contains { if case .genmoji = $0 { true } else { false } } ? 30 : 10,
                     rainHeight: containerHeight * 1.25,
                     openingAngle: .degrees(60),
                     closingAngle: .degrees(120),

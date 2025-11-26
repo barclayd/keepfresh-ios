@@ -174,7 +174,7 @@ func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
     }
 
     if date.timeUntil.totalDays == 1 {
-        return "by tomorrow"
+        return "tomorrow"
     }
 
     if date.timeUntil.totalDays < 8 {
