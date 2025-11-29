@@ -5,12 +5,15 @@ import Models
 import Notifications
 import Router
 import SwiftData
+import SharedUI
 import SwiftUI
 import UserNotifications
 
 @main
 struct KeepFreshApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    
+    @Environment(\.modelContext) private var modelContext
 
     @State var router: Router = .init()
     @State var inventory: Inventory = .init()
@@ -35,6 +38,8 @@ struct KeepFreshApp: App {
                         group.addTask { await inventory.fetchItems() }
                         group.addTask { await shopping.fetchItems() }
                     }
+                    
+                    await GenmojiConfettiCache.prefetch(modelContext: modelContext)
 
                     Task.detached {
                         await SuggestionsCache.shared.load()

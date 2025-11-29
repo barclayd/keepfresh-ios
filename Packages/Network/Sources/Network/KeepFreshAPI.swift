@@ -121,4 +121,17 @@ public struct KeepFreshAPI: Sendable {
             GenmojiGetResponse.self,
             path: "v1/images/genmoji/\(name)")
     }
+
+    // MARK: - Confetti
+
+    public func getConfettiGenmojis() async -> [ConfettiGenmojiItem] {
+        do {
+            return try await client.fetch(
+                [ConfettiGenmojiItem].self,
+                path: "v2/confetti",
+                queryParameters: ["timeZone": TimeZone.current.identifier])
+        } catch {
+            return []
+        }
+    }
 }

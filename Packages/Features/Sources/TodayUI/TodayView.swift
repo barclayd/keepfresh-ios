@@ -4,6 +4,8 @@ import Extensions
 import Models
 import Network
 import Router
+import SharedUI
+import SwiftData
 import SwiftUI
 
 public struct TodayView: View {
@@ -82,5 +84,9 @@ public struct TodayView: View {
                 .background(.white200)
             }
         }
+        .confetti(
+            trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }),
+            confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) }
+        )
     }
 }

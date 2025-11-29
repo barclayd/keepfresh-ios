@@ -174,7 +174,7 @@ func getRelativeDateInFuture(medianNumberOfDays: Double) -> String {
     }
 
     if date.timeUntil.totalDays == 1 {
-        return "by tomorrow"
+        return "tomorrow"
     }
 
     if date.timeUntil.totalDays < 8 {
@@ -441,6 +441,9 @@ public struct InventoryItemSheetView: View {
     }
 
     func onMarkAsDone(wastePercentage: Double) {
+        if wastePercentage == 0 {
+            inventory.triggerConfetti()
+        }
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
@@ -773,6 +776,7 @@ public struct InventoryItemSheetView: View {
         .padding(10).frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 10)
         .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
+        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
         .sheet(item: $showSheet) { sheet in
             switch sheet {
             case .edit:
