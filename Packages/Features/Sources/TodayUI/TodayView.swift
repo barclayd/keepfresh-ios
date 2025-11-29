@@ -11,7 +11,6 @@ import SwiftUI
 public struct TodayView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
-    @Environment(\.modelContext) private var modelContext
 
     public init() {}
 
@@ -89,8 +88,5 @@ public struct TodayView: View {
             trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }),
             confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) }
         )
-        .task {
-            await GenmojiConfettiCache.prefetch(modelContext: modelContext)
-        }
     }
 }

@@ -444,7 +444,7 @@ public struct InventoryItemSheetView: View {
         if wastePercentage == 0 {
             inventory.triggerConfetti()
         }
-//        updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
+        updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 
     func onEdit(expiryDate: Date) {
@@ -776,7 +776,7 @@ public struct InventoryItemSheetView: View {
         .padding(10).frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 10)
         .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
-        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: [.genmoji("turkey")])
+        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
         .sheet(item: $showSheet) { sheet in
             switch sheet {
             case .edit:
