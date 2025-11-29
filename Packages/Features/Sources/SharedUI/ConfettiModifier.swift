@@ -1,35 +1,42 @@
 import DesignSystem
 import Models
+import Network
 import SwiftData
 import SwiftUI
 
 // MARK: - Genmoji Confetti Cache
 
-/// Static cache for genmoji images used in confetti animation.
-/// Must be pre-populated before confetti triggers to ensure synchronous rendering.
 @MainActor
 public enum GenmojiConfettiCache {
     public static var images: [String: UIImage] = [:]
+    public static var confettiNames: [String] = []
 
-    /// Preload genmoji images from SwiftData cache into memory.
-    /// Call this before confetti can be triggered.
-    public static func preload(names: [String], modelContext: ModelContext) {
-        for name in names {
-            guard images[name] == nil else { continue }
+    public static func prefetch(modelContext: ModelContext) async {
+        let api = KeepFreshAPI()
+        let items = await api.getConfettiGenmojis()
 
-            let descriptor = FetchDescriptor<GenmojiCache>(
-                predicate: #Predicate { $0.name == name })
-
-            if let cached = try? modelContext.fetch(descriptor).first,
-               let image = UIImage(data: cached.imageData) {
-                images[name] = image
-            }
+        guard !items.isEmpty else {
+            confettiNames = []
+            return
         }
+
+        for item in items {
+            guard images[item.name] == nil else { continue }
+
+            guard let imageData = item.genmoji.imageContentData,
+                  let image = UIImage(data: imageData) else { continue }
+
+            images[item.name] = image
+
+            let cached = GenmojiCache(name: item.name, imageData: imageData)
+            modelContext.insert(cached)
+        }
+
+        try? modelContext.save()
+        confettiNames = items.map { $0.name }
     }
 }
 
-/// Synchronous genmoji view for confetti animation.
-/// NO @State, NO .task - just reads from pre-populated cache.
 private struct SyncGenmojiView: View {
     let name: String
     let size: CGFloat
@@ -39,11 +46,6 @@ private struct SyncGenmojiView: View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
-                .frame(width: size, height: size)
-        } else {
-            // Fallback: colored circle if not cached
-            Circle()
-                .fill(.orange)
                 .frame(width: size, height: size)
         }
     }
@@ -64,7 +66,8 @@ public enum ConfettiType: CaseIterable, Hashable {
         Shape.allCases.map { .shape($0) }
     }
 
-    @MainActor @ViewBuilder
+    @MainActor
+    @ViewBuilder
     func view(color: Color, size: CGFloat) -> some View {
         switch self {
         case .shape(.circle):
@@ -192,7 +195,7 @@ private struct ConfettiCannon<T: Equatable>: View {
     var body: some View {
         ZStack {
             ForEach(animate.dropFirst(finishedCount), id: \.self) { _ in
-                ForEach(0..<num, id: \.self) { _ in
+                ForEach(0 ..< num, id: \.self) { _ in
                     ConfettiParticleView(
                         confettiType: (confettis.isEmpty ? ConfettiType.allCases : confettis).randomElement()!,
                         color: colors.randomElement()!,
@@ -234,7 +237,7 @@ private struct ConfettiModifier<T: Equatable>: ViewModifier {
                     trigger: $trigger,
                     confettis: confettis,
                     colors: [.red, .orange, .yellow, .green, .blue, .purple],
-                    num: 40,
+                    num: confettis.contains { if case .genmoji = $0 { true } else { false } } ? 40 : 60,
                     confettiSize: confettis.contains { if case .genmoji = $0 { true } else { false } } ? 30 : 10,
                     rainHeight: containerHeight * 1.25,
                     openingAngle: .degrees(60),
