@@ -119,7 +119,7 @@ class ShoppingSearch {
         do {
             let searchResponse = try await api.searchProducts(query: lastSearchedTerm, page: currentPage)
 
-            let existingIds = Set(searchResults.map { $0.id })
+            let existingIds = Set(searchResults.map(\.id))
             let newResults = searchResponse.results.filter { !existingIds.contains($0.id) }
 
             searchResults.append(contentsOf: newResults)

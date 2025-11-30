@@ -9,7 +9,7 @@ public enum Overriden {
 }
 
 public enum InventoryItemFormType {
-    case expiry(date: Binding<Date>, isRecommended: Bool, overriden: Binding<Overriden?>)
+    case expiry(date: Binding<Date>, isRecommended: Bool, overriden: Binding<Overriden?>, storageLocation: StorageLocation)
     case compactExpiry(date: Binding<Date>, isRecommended: Bool, expiryType: ExpiryType, storageLocation: StorageLocation)
     case storage(location: Binding<StorageLocation>, isRecommended: Bool, overriden: Binding<Overriden?>)
     case readOnlyStorage(location: StorageLocation, isRecommended: Bool)
@@ -59,18 +59,22 @@ private extension InventoryItemFormType {
     @ViewBuilder
     func overviewLabel(customColor: Color? = nil) -> some View {
         switch self {
-        case let .expiry(date, isRecommended, _), let .compactExpiry(date, isRecommended, _, _):
+        case let .expiry(date, isRecommended, _, _), let .compactExpiry(date, isRecommended, _, _):
             VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: 0) {
                         Text(date.wrappedValue.formattedWithOrdinal).foregroundStyle(customColor ?? .gray600)
+                            .contentTransition(.numericText())
+                            .animation(.default, value: date.wrappedValue)
                         if isRecommended {
                             Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                                 .offset(y: -8)
                         }
                     }
                     HStack(spacing: 0) {
-                        Text(date.wrappedValue.formattedAbbreviation).foregroundStyle(customColor ?? .gray600)
+                        Text(date.wrappedValue.formattedAbbreviation)
+                            .contentTransition(.numericText())
+                            .animation(.default, value: date.wrappedValue).foregroundStyle(customColor ?? .gray600)
                         if isRecommended {
                             Image(systemName: "sparkles").font(.system(size: 16)).foregroundColor(.yellow500)
                                 .offset(y: -8)
@@ -118,7 +122,10 @@ private extension InventoryItemFormType {
 
         case let .quantity(quantity):
             VStack(alignment: .leading, spacing: 0) {
-                Text("\(quantity.wrappedValue)").foregroundStyle(.gray600)
+                Text("\(quantity.wrappedValue)")
+                    .contentTransition(.numericText())
+                    .animation(.default, value: quantity.wrappedValue)
+                    .foregroundStyle(.gray600)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -128,13 +135,15 @@ private extension InventoryItemFormType {
     @ViewBuilder
     func overviewSwitch(isToggled: Binding<Bool>, customColor: Color? = nil) -> some View {
         switch self {
-        case .expiry, .compactExpiry, .status, .storage, .readOnlyStorage:
+        case let .expiry(date, _, _, storageLocation):
+            ExpiryDateAdjustmentButtons(date: date, storageLocation: storageLocation, invertColors: true)
+        case .compactExpiry, .status, .storage, .readOnlyStorage:
             Toggle("Selected Expiry Date", isOn: isToggled)
                 .toggleStyle(CheckToggleStyle(customColor: customColor))
                 .labelsHidden()
                 .disabled(true)
         case let .quantity(quantity):
-            Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
+            Stepper(value: quantity, in: 1...50, step: 1) {}.tint(.blue700)
         }
     }
 
@@ -142,7 +151,7 @@ private extension InventoryItemFormType {
     @ViewBuilder
     func expandedContent(forceExpanded _: Bool) -> some View {
         switch self {
-        case let .expiry(date, _, overriden):
+        case let .expiry(date, _, overriden, _):
             InventoryItemExpiryDateContent(expiryDate: date, overriden: overriden)
         case let .compactExpiry(date, _, expiryType, storageLocation):
             InventoryItemExpiryDateCompactContent(expiryDate: date, expiryType: expiryType, storageLocation: storageLocation)
@@ -154,6 +163,83 @@ private extension InventoryItemFormType {
             InventoryItemReadOnlyStorageContent(storageLocation: location)
         case .quantity:
             EmptyView()
+        }
+    }
+}
+
+struct ExpiryDateAdjustmentButtons: View {
+    @Binding var date: Date
+
+    @State private var plusTrigger = 0
+    @State private var minusTrigger = 0
+
+    let storageLocation: StorageLocation
+    var invertColors: Bool = false
+
+    var controlColors: (Color, Color) {
+        invertColors ? (storageLocation.controlColors.1, storageLocation.controlColors.0) : (
+            storageLocation.controlColors.0,
+            storageLocation.controlColors.1)
+    }
+
+    var body: some View {
+        HStack(spacing: 2) {
+            Button(action: {
+                plusTrigger += 1
+                date.addDays(1)
+            }) {
+                Image(systemName: "plus.square.fill")
+                    .font(.system(size: 21))
+                    .fontWeight(.bold)
+                    .foregroundStyle(controlColors.0, controlColors.1)
+            }
+            .sensoryFeedback(.increase, trigger: plusTrigger)
+
+            Button(action: {
+                minusTrigger += 1
+                date.addDays(-1)
+            }) {
+                Image(systemName: "minus.square.fill")
+                    .font(.system(size: 21))
+                    .fontWeight(.bold)
+                    .foregroundStyle(controlColors.0, controlColors.1)
+            }
+            .sensoryFeedback(.decrease, trigger: minusTrigger)
+        }
+    }
+}
+
+struct ExpiryDateCompactButtons: View {
+    @Binding var date: Date
+
+    @State private var plusTrigger = 0
+    @State private var minusTrigger = 0
+
+    let storageLocation: StorageLocation
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Button(action: {
+                plusTrigger += 1
+                date.addDays(1)
+            }) {
+                Image(systemName: "plus.square.fill")
+                    .font(.system(size: 28))
+                    .fontWeight(.bold)
+                    .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
+            }
+            .sensoryFeedback(.increase, trigger: plusTrigger)
+
+            Button(action: {
+                minusTrigger += 1
+                date.addDays(-1)
+            }) {
+                Image(systemName: "minus.square.fill")
+                    .font(.system(size: 28))
+                    .fontWeight(.bold)
+                    .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
+            }
+            .sensoryFeedback(.decrease, trigger: minusTrigger)
         }
     }
 }
@@ -428,9 +514,6 @@ struct InventoryItemExpiryDateContent: View {
 struct InventoryItemExpiryDateCompactContent: View {
     @Binding var expiryDate: Date
 
-    @State private var plusTrigger = 0
-    @State private var minusTrigger = 0
-
     let expiryType: ExpiryType
     let storageLocation: StorageLocation
 
@@ -457,27 +540,7 @@ struct InventoryItemExpiryDateCompactContent: View {
 
                 Spacer()
 
-                VStack(spacing: 2) {
-                    Button(action: {
-                        plusTrigger += 1
-                        expiryDate.addDays(1)
-                    }) {
-                        Image(systemName: "plus.square.fill")
-                            .font(.system(size: 28))
-                            .fontWeight(.bold)
-                            .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
-                    }.sensoryFeedback(.increase, trigger: plusTrigger)
-
-                    Button(action: {
-                        minusTrigger += 1
-                        expiryDate.addDays(-1)
-                    }) {
-                        Image(systemName: "minus.square.fill")
-                            .font(.system(size: 28))
-                            .fontWeight(.bold)
-                            .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
-                    }.sensoryFeedback(.decrease, trigger: minusTrigger)
-                }
+                ExpiryDateCompactButtons(date: $expiryDate, storageLocation: storageLocation)
             }
         }
         .padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity)
