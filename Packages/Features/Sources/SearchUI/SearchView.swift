@@ -120,7 +120,6 @@ class Search {
         do {
             let searchResponse = try await api.searchProducts(query: lastSearchedTerm, page: currentPage)
 
-            // Filter out duplicates before appending
             let existingIds = Set(searchResults.map { $0.id })
             let newResults = searchResponse.results.filter { !existingIds.contains($0.id) }
 
