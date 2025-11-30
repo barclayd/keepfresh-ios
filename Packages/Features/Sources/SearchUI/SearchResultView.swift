@@ -76,9 +76,16 @@ public struct SearchResultCard: View {
                     Spacer()
                 }
                 HStack {
-                    Text(searchProduct.brand.name)
-                        .font(.subheadline)
-                        .foregroundStyle(searchProduct.brand.color)
+                    HStack(spacing: 4) {
+                        if let logoAsset = searchProduct.brand.logoAssetName {
+                            Image(logoAsset)
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                        }
+                        Text(searchProduct.brand.name)
+                            .font(.subheadline)
+                            .foregroundStyle(searchProduct.brand.color)
+                    }
 
                     if let amountFormatted = searchProduct.amountUnitFormatted {
                         Circle()

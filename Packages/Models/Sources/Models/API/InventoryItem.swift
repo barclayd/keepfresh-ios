@@ -351,6 +351,21 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
             self = .marksAndSpencer
             return
         }
+        
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("sainsbury") {
+            self = .sainsburys
+            return
+        }
+        
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("aldi") {
+            self = .aldi
+            return
+        }
+        
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("lidl") {
+            self = .lidl
+            return
+        }
 
         self = Self.knownBrands[brandString] ?? .unknown(brandString)
     }
@@ -364,6 +379,44 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
 public extension Brand {
     init(from brandString: String) {
         self = Self.knownBrands[brandString] ?? .unknown(brandString)
+    }
+}
+
+public extension Brand {
+    var parentBrand: Brand? {
+        guard case let .unknown(brandName) = self else { return nil }
+
+        guard let parentName = SubBrandMapper.shared.parentBrand(for: brandName) else {
+            return nil
+        }
+
+        return Brand(from: parentName.capitalized)
+    }
+
+    var logoBrand: Brand? {
+        if let parent = parentBrand {
+            return parent
+        }
+        if case .unknown = self {
+            return nil
+        }
+        return self
+    }
+
+    var logoAssetName: String? {
+        guard let brand = logoBrand else { return nil }
+
+        switch brand {
+        case .aldi: return "aldi"
+        case .asda: return "asda"
+        case .coop: return "coop"
+        case .lidl: return "lidl"
+        case .marksAndSpencer: return "marksAndSpencer"
+        case .morrisons: return "morrisons"
+        case .sainsburys: return "sainsburys"
+        case .tesco: return "tesco"
+        default: return nil
+        }
     }
 }
 
