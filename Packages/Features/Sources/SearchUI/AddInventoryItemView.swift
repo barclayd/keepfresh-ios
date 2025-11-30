@@ -76,7 +76,7 @@ public struct AddInventoryItemView: View {
         }
         return expiry
     }
-    
+
     var recommendedStorageLocationsByPriority: (StorageLocation, StorageLocation) {
         let recommended: StorageLocation = if formState.status == .unopened {
             preview.suggestions?.recommendedStorageLocation ?? .fridge
@@ -172,14 +172,14 @@ public struct AddInventoryItemView: View {
 
                         if usageGenerator.isAvailable {
                             VStack {
-                                
                                 Text("100%")
                                     .font(.title)
                                     .fontWeight(.bold)
                                     .hidden()
                                     .overlay {
                                         if let percentagePrediction = usageGenerator.percentagePrediction,
-                                           usageGenerator.state != .loading {
+                                           usageGenerator.state != .loading
+                                        {
                                             Text("\(percentagePrediction)%")
                                                 .font(.title)
                                                 .foregroundStyle(.yellow500)
@@ -229,10 +229,13 @@ public struct AddInventoryItemView: View {
                             GridRow {
                                 Spacer()
                                 VStack(spacing: 0) {
-                                    Text("\(inventory.productsByLocation[productSearchItem.id]?[recommendedStorageLocationsByPriority.0]?.count ?? 0)").fontWeight(.bold)
+                                    Text(
+                                        "\(inventory.productsByLocation[productSearchItem.id]?[recommendedStorageLocationsByPriority.0]?.count ?? 0)")
+                                        .fontWeight(.bold)
                                         .font(.headline).foregroundStyle(.blue700)
                                         .foregroundStyle(.blue700)
-                                    Text("In \(recommendedStorageLocationsByPriority.0.rawValue.capitalized)").fontWeight(.light).font(.subheadline)
+                                    Text("In \(recommendedStorageLocationsByPriority.0.rawValue.capitalized)").fontWeight(.light)
+                                        .font(.subheadline)
                                         .foregroundStyle(.blue700)
                                 }
                                 Spacer()
@@ -241,10 +244,13 @@ public struct AddInventoryItemView: View {
                                     .foregroundStyle(.blue700)
                                 Spacer()
                                 VStack(spacing: 0) {
-                                    Text("\(inventory.productsByLocation[productSearchItem.id]?[recommendedStorageLocationsByPriority.1]?.count ?? 0)").fontWeight(.bold)
+                                    Text(
+                                        "\(inventory.productsByLocation[productSearchItem.id]?[recommendedStorageLocationsByPriority.1]?.count ?? 0)")
+                                        .fontWeight(.bold)
                                         .font(.headline).foregroundStyle(.blue700)
-                                    Text("In \(recommendedStorageLocationsByPriority.1.rawValue.capitalized)").fontWeight(.light).font(.subheadline).foregroundStyle(
-                                        .blue700)
+                                    Text("In \(recommendedStorageLocationsByPriority.1.rawValue.capitalized)").fontWeight(.light)
+                                        .font(.subheadline).foregroundStyle(
+                                            .blue700)
                                 }
                                 Spacer()
                             }
@@ -340,13 +346,13 @@ public struct AddInventoryItemView: View {
             if let calculatedExpiryDate, formState.expiryOverridden != .user {
                 formState.expiryDate = calculatedExpiryDate
             }
-            
+
             guard formState.storageOverridden != .user, let storageOptions = preview.suggestions?.shelfLifeInDays[newStatus] else {
                 return
             }
 
             let preferredOrder: [StorageLocation] = [.pantry, .fridge, .freezer]
-            
+
             if let firstAvailableLocation = preferredOrder.first(where: { storageOptions[$0] != nil }) {
                 formState.storageLocation = firstAvailableLocation
             }
