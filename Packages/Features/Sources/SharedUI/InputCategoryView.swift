@@ -133,6 +133,28 @@ private extension InventoryItemFormType {
                 .toggleStyle(CheckToggleStyle(customColor: customColor))
                 .labelsHidden()
                 .disabled(true)
+        case .expiry:
+            VStack(spacing: 2) {
+                Button(action: {
+                    plusTrigger += 1
+                    expiryDate.addDays(1)
+                }) {
+                    Image(systemName: "plus.square.fill")
+                        .font(.system(size: 28))
+                        .fontWeight(.bold)
+                        .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
+                }.sensoryFeedback(.increase, trigger: plusTrigger)
+
+                Button(action: {
+                    minusTrigger += 1
+                    expiryDate.addDays(-1)
+                }) {
+                    Image(systemName: "minus.square.fill")
+                        .font(.system(size: 28))
+                        .fontWeight(.bold)
+                        .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
+                }.sensoryFeedback(.decrease, trigger: minusTrigger)
+            }
         case let .quantity(quantity):
             Stepper(value: quantity, in: 1...10, step: 1) {}.tint(.blue700)
         }
