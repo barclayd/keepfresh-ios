@@ -118,7 +118,11 @@ class ShoppingSearch {
 
         do {
             let searchResponse = try await api.searchProducts(query: lastSearchedTerm, page: currentPage)
-            searchResults.append(contentsOf: searchResponse.results)
+
+            let existingIds = Set(searchResults.map { $0.id })
+            let newResults = searchResponse.results.filter { !existingIds.contains($0.id) }
+
+            searchResults.append(contentsOf: newResults)
             hasMorePages = searchResponse.pagination.hasNext
 
             print("Loaded more results: Now have \(searchResults.count) total products")
