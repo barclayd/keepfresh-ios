@@ -452,6 +452,25 @@ public struct InventoryItemSheetView: View {
     func onMarkAsDone(wastePercentage: Double) {
         if wastePercentage == 0 {
             inventory.triggerConfetti()
+
+            let otherItemsInCategory = inventory.items.filter { item in
+                item.id != inventoryItem.id &&
+                    item.product.category.id == inventoryItem.product.category.id &&
+                    (item.status == .unopened || item.status == .opened)
+            }
+
+            if otherItemsInCategory.isEmpty {
+                Task {
+                    await shopping.addItem(
+                        request: AddShoppingItemRequest(
+                            title: nil,
+                            source: .ai,
+                            storageLocation: inventoryItem.storageLocation,
+                            productId: inventoryItem.product.id,
+                            quantity: 1),
+                        categoryId: inventoryItem.product.category.id)
+                }
+            }
         }
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
