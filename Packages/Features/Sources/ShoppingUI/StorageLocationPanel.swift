@@ -129,14 +129,16 @@ public struct StorageLocationPanel: View {
                                         Label("Delete", systemImage: "trash")
                                     }.tint(Color.red500)
                                     Button {
-                                        shopping.addItem(
-                                            request: AddShoppingItemRequest(
-                                                title: shoppingItem.title,
-                                                source: .user,
-                                                storageLocation: shoppingItem.storageLocation,
-                                                productId: shoppingItem.product?.id,
-                                                quantity: 1),
-                                            categoryId: shoppingItem.product?.category.id)
+                                        Task {
+                                            await shopping.addItem(
+                                                request: AddShoppingItemRequest(
+                                                    title: shoppingItem.title,
+                                                    source: .user,
+                                                    storageLocation: shoppingItem.storageLocation,
+                                                    productId: shoppingItem.product?.id,
+                                                    quantity: 1),
+                                                categoryId: shoppingItem.product?.category.id)
+                                        }
                                     } label: {
                                         Label("Add another", systemImage: "plus.rectangle.fill.on.rectangle.fill")
                                     }.tint(Color.green500)

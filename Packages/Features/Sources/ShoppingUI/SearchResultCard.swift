@@ -36,6 +36,13 @@ public struct SearchResultCard: View {
                     Spacer()
                 }
                 HStack {
+                    if let logoAsset = searchProduct.brand.logoAssetName {
+                        Image(logoAsset)
+                            .resizable()
+                            .frame(width: 18, height: 18)
+                            .clipShape(RoundedRectangle(cornerRadius: searchProduct.brand.hasRoundedLogo ? 4 : 0))
+                    }
+
                     Text(searchProduct.brand.name)
                         .font(.subheadline)
                         .foregroundStyle(searchProduct.brand.color)

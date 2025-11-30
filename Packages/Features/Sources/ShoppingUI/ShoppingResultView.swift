@@ -43,7 +43,7 @@ public struct SearchShoppingResultView: View {
 public struct SearchShoppingResultCard: View {
     @Environment(Shopping.self) var shopping
 
-    @State private var isAddedToList: Bool = false
+    @State private var shoppingItemId: Int?
 
     var searchProduct: ProductSearchResultItemResponse
 
@@ -59,7 +59,7 @@ public struct SearchShoppingResultCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
                 Spacer()
-                Image(systemName: isAddedToList ? "checkmark" : "plus")
+                Image(systemName: shoppingItemId != nil ? "checkmark" : "plus")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
                     .foregroundColor(.white200)
@@ -78,6 +78,13 @@ public struct SearchShoppingResultCard: View {
                     Spacer()
                 }
                 HStack {
+                    if let logoAsset = searchProduct.brand.logoAssetName {
+                        Image(logoAsset)
+                            .resizable()
+                            .frame(width: 18, height: 18)
+                            .clipShape(RoundedRectangle(cornerRadius: searchProduct.brand.hasRoundedLogo ? 4 : 0))
+                    }
+
                     Text(searchProduct.brand.name)
                         .font(.subheadline)
                         .foregroundStyle(searchProduct.brand.color)
@@ -103,20 +110,26 @@ public struct SearchShoppingResultCard: View {
                     style: .continuous).fill(.white100))
         }
         .onTapGesture {
-            isAddedToList = true
-
-            Task {
-                shopping.addItem(request: AddShoppingItemRequest(
-                    title: nil,
-                    source: .user,
-                    storageLocation: searchProduct.category.recommendedStorageLocation,
-                    productId: searchProduct.id,
-                    quantity: 1), categoryId: searchProduct.category.id)
+            if let itemId = shoppingItemId {
+                shoppingItemId = nil
+                shopping.deleteItem(id: itemId)
+            } else {
+                Task {
+                    let id = await shopping.addItem(
+                        request: AddShoppingItemRequest(
+                            title: nil,
+                            source: .user,
+                            storageLocation: searchProduct.category.recommendedStorageLocation,
+                            productId: searchProduct.id,
+                            quantity: 1),
+                        categoryId: searchProduct.category.id)
+                    shoppingItemId = id
+                }
             }
         }
         .background(searchProduct.category.recommendedStorageLocation.tileColor)
         .cornerRadius(20)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
-        .sensoryFeedback(.selection, trigger: isAddedToList)
+        .sensoryFeedback(.selection, trigger: shoppingItemId)
     }
 }

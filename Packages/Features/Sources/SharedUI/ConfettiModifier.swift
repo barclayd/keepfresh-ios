@@ -33,7 +33,7 @@ public enum GenmojiConfettiCache {
         }
 
         try? modelContext.save()
-        confettiNames = items.map { $0.name }
+        confettiNames = items.map(\.name)
     }
 }
 
@@ -82,10 +82,10 @@ public enum ConfettiType: CaseIterable, Hashable {
             RoundedRectangle(cornerRadius: 2)
                 .fill(color)
                 .frame(width: size, height: size * 0.6)
-        case .text(let text):
+        case let .text(text):
             Text(text)
                 .font(.system(size: size))
-        case .genmoji(let name):
+        case let .genmoji(name):
             SyncGenmojiView(name: name, size: size)
         }
     }
@@ -144,28 +144,27 @@ private struct ConfettiParticleView: View {
         ConfettiAnimationView(
             confettiView: AnyView(confettiType.view(color: color, size: size)),
             spinDirX: spinDirX,
-            spinDirZ: spinDirZ
-        )
-        .offset(x: location.x, y: location.y)
-        .opacity(opacity)
-        .onAppear {
-            let randomAngle = CGFloat.random(in: openingAngle.degrees...closingAngle.degrees)
-            let distance = pow(CGFloat.random(in: 0.01...1), 2.0 / 7.0) * radius
-            let variation = CGFloat.random(in: 0...0.5)
+            spinDirZ: spinDirZ)
+            .offset(x: location.x, y: location.y)
+            .opacity(opacity)
+            .onAppear {
+                let randomAngle = CGFloat.random(in: openingAngle.degrees...closingAngle.degrees)
+                let distance = pow(CGFloat.random(in: 0.01...1), 2.0 / 7.0) * radius
+                let variation = CGFloat.random(in: 0...0.5)
 
-            withAnimation(.timingCurve(0.1, 0.8, 0, 1, duration: 0.2 + explosionDuration + variation)) {
-                opacity = 1.0
-                location.x = distance * cos(deg2rad(randomAngle))
-                location.y = -distance * sin(deg2rad(randomAngle))
-            }
+                withAnimation(.timingCurve(0.1, 0.8, 0, 1, duration: 0.2 + explosionDuration + variation)) {
+                    opacity = 1.0
+                    location.x = distance * cos(deg2rad(randomAngle))
+                    location.y = -distance * sin(deg2rad(randomAngle))
+                }
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + explosionDuration * 0.1) {
-                withAnimation(.timingCurve(0.12, 0, 0.39, 0, duration: rainDuration)) {
-                    location.y += rainHeight
-                    opacity = 0
+                DispatchQueue.main.asyncAfter(deadline: .now() + explosionDuration * 0.1) {
+                    withAnimation(.timingCurve(0.12, 0, 0.39, 0, duration: rainDuration)) {
+                        location.y += rainHeight
+                        opacity = 0
+                    }
                 }
             }
-        }
     }
 
     private func deg2rad(_ degrees: CGFloat) -> CGFloat {
@@ -203,8 +202,7 @@ private struct ConfettiCannon<T: Equatable>: View {
                         openingAngle: openingAngle,
                         closingAngle: closingAngle,
                         radius: radius,
-                        rainHeight: rainHeight
-                    )
+                        rainHeight: rainHeight)
                 }
             }
         }
@@ -242,16 +240,15 @@ private struct ConfettiModifier<T: Equatable>: ViewModifier {
                     rainHeight: containerHeight * 1.25,
                     openingAngle: .degrees(60),
                     closingAngle: .degrees(120),
-                    radius: containerHeight
-                )
-                .allowsHitTesting(false)
+                    radius: containerHeight)
+                    .allowsHitTesting(false)
             }
             .sensoryFeedback(.success, trigger: trigger)
     }
 }
 
 public extension View {
-    func confetti<T: Equatable>(trigger: Binding<T>, confettis: [ConfettiType] = []) -> some View {
+    func confetti(trigger: Binding<some Equatable>, confettis: [ConfettiType] = []) -> some View {
         modifier(ConfettiModifier(trigger: trigger, confettis: confettis))
     }
 }

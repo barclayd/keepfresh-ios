@@ -115,7 +115,7 @@ public struct AddInventoryItemView: View {
         GeometryReader { geometry in
             ScrollView(showsIndicators: false) {
                 ZStack(alignment: .bottom) {
-                    VStack(spacing: 5) {
+                    VStack {
                         GenmojiView(name: productSearchItem.icon, fontSize: 106, tint: formState.storageLocation.foregroundColor)
 
                         Text("\(productSearchItem.name)").font(.largeTitle).lineSpacing(0).foregroundStyle(
@@ -134,9 +134,17 @@ public struct AddInventoryItemView: View {
                             }
                         }.foregroundStyle(formState.storageLocation.infoColor)
 
-                        Text(productSearchItem.brand.name)
-                            .font(.headline).fontWeight(.bold)
-                            .foregroundStyle(formState.storageLocation == .freezer ? .blue400 : productSearchItem.brand.color)
+                        HStack {
+                            if let logoAsset = productSearchItem.brand.logoAssetName {
+                                Image(logoAsset)
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .clipShape(RoundedRectangle(cornerRadius: productSearchItem.brand.hasRoundedLogo ? 4 : 0))
+                            }
+                            Text(productSearchItem.brand.name)
+                                .font(.headline).fontWeight(.bold)
+                                .foregroundStyle(formState.storageLocation == .freezer ? .blue400 : productSearchItem.brand.color)
+                        }
 
                         if usageGenerator.isAvailable {
                             VStack {

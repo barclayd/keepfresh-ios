@@ -86,7 +86,6 @@ public struct TodayView: View {
         }
         .confetti(
             trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }),
-            confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) }
-        )
+            confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
     }
 }

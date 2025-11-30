@@ -101,6 +101,12 @@ public struct InventoryItemView: View {
                                 .lineLimit(1)
 
                             HStack(spacing: 4) {
+                                if let logoAsset = inventoryItem.product.brand.logoAssetName {
+                                    Image(logoAsset)
+                                        .resizable()
+                                        .frame(width: 14, height: 14)
+                                        .clipShape(RoundedRectangle(cornerRadius: inventoryItem.product.brand.hasRoundedLogo ? 4 : 0))
+                                }
                                 Text(inventoryItem.product.brand.name)
                                     .foregroundStyle(inventoryItem.product.brand.color).font(.caption)
 
@@ -121,7 +127,7 @@ public struct InventoryItemView: View {
                             progress: inventoryItem.progress,
                             backgroundColor: inventoryItem.consumptionUrgency.tileColor.background,
                             foregroundColor: inventoryItem.consumptionUrgency.tileColor.foreground)
-                            .frame(width: 35, height: 35)
+                            .frame(width: 32, height: 32)
                             .overlay {
                                 Text(
                                     inventoryItem.expiryDate.timeUntil.totalDaysFormatted)

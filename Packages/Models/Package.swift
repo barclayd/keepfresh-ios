@@ -14,5 +14,6 @@ let package = Package(
     targets: [
         .target(
             name: "Models",
-            dependencies: ["DesignSystem", "Extensions"]),
+            dependencies: ["DesignSystem", "Extensions"],
+            resources: [.process("Resources")]),
     ])

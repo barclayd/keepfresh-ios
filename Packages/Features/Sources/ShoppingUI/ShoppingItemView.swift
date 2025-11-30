@@ -51,6 +51,13 @@ public struct ShoppingItemView: View {
 
                             if let product = shoppingItem.product {
                                 HStack(spacing: 4) {
+                                    if let logoAsset = product.brand.logoAssetName {
+                                        Image(logoAsset)
+                                            .resizable()
+                                            .frame(width: 14, height: 14)
+                                            .clipShape(RoundedRectangle(cornerRadius: product.brand.hasRoundedLogo ? 4 : 0))
+                                    }
+
                                     Text(product.brand.name)
                                         .foregroundStyle(product.brand.color).font(.caption)
 

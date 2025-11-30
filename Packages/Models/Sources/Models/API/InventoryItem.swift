@@ -339,6 +339,10 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
         }()
     }
 
+    public var shortName: String {
+        self == .marksAndSpencer ? "M&S" : name
+    }
+
     public var color: Color {
         Self.brandColors[self] ?? .blue700
     }
@@ -347,8 +351,53 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
         let container = try decoder.singleValueContainer()
         let brandString = try container.decode(String.self)
 
-        if brandString.lowercased().contains("m&s") {
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("m&s") {
             self = .marksAndSpencer
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("marks and spencer") {
+            self = .marksAndSpencer
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("marks & spencer") {
+            self = .marksAndSpencer
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("sainsbury") {
+            self = .sainsburys
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("aldi") {
+            self = .aldi
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("lidl") {
+            self = .lidl
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("tesco") {
+            self = .tesco
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("co-op") {
+            self = .coop
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("coop") {
+            self = .coop
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("morrison") {
+            self = .morrisons
             return
         }
 
@@ -364,6 +413,49 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
 public extension Brand {
     init(from brandString: String) {
         self = Self.knownBrands[brandString] ?? .unknown(brandString)
+    }
+}
+
+public extension Brand {
+    var parentBrand: Brand? {
+        guard case let .unknown(brandName) = self else { return nil }
+
+        guard let parentName = SubBrandMapper.shared.parentBrand(for: brandName) else {
+            return nil
+        }
+
+        return Brand(from: parentName.capitalized)
+    }
+
+    var logoBrand: Brand? {
+        if let parent = parentBrand {
+            return parent
+        }
+        if case .unknown = self {
+            return nil
+        }
+        return self
+    }
+
+    var logoAssetName: String? {
+        guard let brand = logoBrand else { return nil }
+
+        switch brand {
+        case .aldi: return "aldi"
+        case .asda: return "asda"
+        case .coop: return "coop"
+        case .lidl: return "lidl"
+        case .marksAndSpencer: return "marks-and-spencer"
+        case .morrisons: return "morrisons"
+        case .sainsburys: return "sainsburys"
+        case .tesco: return "tesco"
+        default: return nil
+        }
+    }
+
+    var hasRoundedLogo: Bool {
+        guard let brand = logoBrand else { return false }
+        return ![.tesco, .lidl].contains(brand)
     }
 }
 

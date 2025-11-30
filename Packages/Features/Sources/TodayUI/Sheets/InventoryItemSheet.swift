@@ -90,9 +90,18 @@ struct InventoryItemSheetStatsGridRows: View {
                     Text(inventoryItem.storageLocation.rawValue).fontWeight(.bold).font(.headline)
                     Image(systemName: inventoryItem.storageLocation.icon)
                         .font(.system(size: 28)).fontWeight(.bold)
-                    Image(systemName: "circle.bottomrighthalf.pattern.checkered")
-                        .font(.system(size: 28)).fontWeight(.bold)
-                    Text(inventoryItem.product.brand.name).fontWeight(.bold)
+
+                    if let logoAsset = inventoryItem.product.brand.logoAssetName {
+                        Image(logoAsset)
+                            .resizable()
+                            .frame(width: 28, height: 28)
+                            .clipShape(RoundedRectangle(cornerRadius: inventoryItem.product.brand.hasRoundedLogo ? 4 : 0))
+                    } else {
+                        Image(systemName: "circle.bottomrighthalf.pattern.checkered")
+                            .font(.system(size: 28)).fontWeight(.bold)
+                    }
+
+                    Text(inventoryItem.product.brand.shortName).fontWeight(.bold)
                         .foregroundStyle(inventoryItem.product.brand.color).font(.headline)
                         .lineLimit(1)
                 }.foregroundStyle(.blue700)
@@ -620,12 +629,14 @@ public struct InventoryItemSheetView: View {
                     Section {
                         Button {
                             dismiss()
-                            shopping.addItem(request: AddShoppingItemRequest(
-                                title: nil,
-                                source: .user,
-                                storageLocation: inventoryItem.storageLocation,
-                                productId: inventoryItem.product.id,
-                                quantity: 1), categoryId: inventoryItem.product.category.id)
+                            Task {
+                                await shopping.addItem(request: AddShoppingItemRequest(
+                                    title: nil,
+                                    source: .user,
+                                    storageLocation: inventoryItem.storageLocation,
+                                    productId: inventoryItem.product.id,
+                                    quantity: 1), categoryId: inventoryItem.product.category.id)
+                            }
                         } label: {
                             Label("Add to shopping list", systemImage: "cart.fill.badge.plus")
                         }
@@ -776,7 +787,9 @@ public struct InventoryItemSheetView: View {
         .padding(10).frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 10)
         .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
-        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
+        .confetti(
+            trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }),
+            confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
         .sheet(item: $showSheet) { sheet in
             switch sheet {
             case .edit:

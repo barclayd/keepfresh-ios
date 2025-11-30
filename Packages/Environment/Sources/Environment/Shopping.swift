@@ -159,36 +159,41 @@ public final class Shopping {
         }
     }
 
-    public func addItem(request: AddShoppingItemRequest, categoryId: Int?) {
-        Task {
-            do {
-                let newItems = try await api.addShoppingItem(request)
+    @discardableResult
+    public func addItem(request: AddShoppingItemRequest, categoryId: Int?) async -> Int? {
+        do {
+            let newItems = try await api.addShoppingItem(request)
 
-                items.append(contentsOf: newItems)
+            items.append(contentsOf: newItems)
 
-                guard let categoryId, let productId = request.productId else { return }
+            let itemId = newItems.last?.id
 
-                guard SuggestionsCache.shared.getSuggestions(for: categoryId) == nil else {
-                    return
-                }
+            guard let categoryId, let productId = request.productId else { return itemId }
 
-                let response = try await api.getInventoryPreview(categoryId: categoryId, productId: productId)
-
-                await SuggestionsCache.shared.saveSuggestions(categoryId: categoryId, categorySuggestions: response.suggestions)
-
-            } catch {
-                print("Adding shopping item failed with error: \(error)")
-
-                if let urlError = error as? URLError {
-                    print("URL Error details: \(urlError.localizedDescription)")
-                }
-
-                if let httpError = error as? DecodingError {
-                    print("Decoding error: \(httpError)")
-                }
-
-                print("Full error details: \(String(describing: error))")
+            guard SuggestionsCache.shared.getSuggestions(for: categoryId) == nil else {
+                return itemId
             }
+
+            let response = try await api.getInventoryPreview(categoryId: categoryId, productId: productId)
+
+            await SuggestionsCache.shared.saveSuggestions(categoryId: categoryId, categorySuggestions: response.suggestions)
+
+            return itemId
+
+        } catch {
+            print("Adding shopping item failed with error: \(error)")
+
+            if let urlError = error as? URLError {
+                print("URL Error details: \(urlError.localizedDescription)")
+            }
+
+            if let httpError = error as? DecodingError {
+                print("Decoding error: \(httpError)")
+            }
+
+            print("Full error details: \(String(describing: error))")
+
+            return nil
         }
     }
 
