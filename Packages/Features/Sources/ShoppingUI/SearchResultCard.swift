@@ -40,6 +40,7 @@ public struct SearchResultCard: View {
                         Image(logoAsset)
                             .resizable()
                             .frame(width: 18, height: 18)
+                            .clipShape(RoundedRectangle(cornerRadius: searchProduct.brand.hasRoundedLogo ? 4 : 0))
                     }
 
                     Text(searchProduct.brand.name)

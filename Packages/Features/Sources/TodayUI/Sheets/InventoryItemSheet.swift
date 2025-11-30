@@ -90,9 +90,18 @@ struct InventoryItemSheetStatsGridRows: View {
                     Text(inventoryItem.storageLocation.rawValue).fontWeight(.bold).font(.headline)
                     Image(systemName: inventoryItem.storageLocation.icon)
                         .font(.system(size: 28)).fontWeight(.bold)
-                    Image(systemName: "circle.bottomrighthalf.pattern.checkered")
-                        .font(.system(size: 28)).fontWeight(.bold)
-                    Text(inventoryItem.product.brand.name).fontWeight(.bold)
+
+                    if let logoAsset = inventoryItem.product.brand.logoAssetName {
+                        Image(logoAsset)
+                            .resizable()
+                            .frame(width: 28, height: 28)
+                            .clipShape(RoundedRectangle(cornerRadius: inventoryItem.product.brand.hasRoundedLogo ? 4 : 0))
+                    } else {
+                        Image(systemName: "circle.bottomrighthalf.pattern.checkered")
+                            .font(.system(size: 28)).fontWeight(.bold)
+                    }
+
+                    Text(inventoryItem.product.brand.shortName).fontWeight(.bold)
                         .foregroundStyle(inventoryItem.product.brand.color).font(.headline)
                         .lineLimit(1)
                 }.foregroundStyle(.blue700)

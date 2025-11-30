@@ -104,7 +104,8 @@ public struct InventoryItemView: View {
                                 if let logoAsset = inventoryItem.product.brand.logoAssetName {
                                     Image(logoAsset)
                                         .resizable()
-                                        .frame(width: 16, height: 16)
+                                        .frame(width: 14, height: 14)
+                                        .clipShape(RoundedRectangle(cornerRadius: inventoryItem.product.brand.hasRoundedLogo ? 4 : 0))
                                 }
                                 Text(inventoryItem.product.brand.name)
                                     .foregroundStyle(inventoryItem.product.brand.color).font(.caption)

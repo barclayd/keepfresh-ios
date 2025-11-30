@@ -338,6 +338,10 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
             return "Unknown"
         }()
     }
+    
+    public var shortName: String {
+        self == .marksAndSpencer ? "M&S" : self.name
+    }
 
     public var color: Color {
         Self.brandColors[self] ?? .blue700
@@ -347,7 +351,17 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
         let container = try decoder.singleValueContainer()
         let brandString = try container.decode(String.self)
 
-        if brandString.lowercased().contains("m&s") {
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("m&s") {
+            self = .marksAndSpencer
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("marks and spencer") {
+            self = .marksAndSpencer
+            return
+        }
+
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("marks & spencer") {
             self = .marksAndSpencer
             return
         }
@@ -364,6 +378,26 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
         
         if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("lidl") {
             self = .lidl
+            return
+        }
+        
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("tesco") {
+            self = .tesco
+            return
+        }
+        
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("co-op") {
+            self = .coop
+            return
+        }
+        
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("coop") {
+            self = .coop
+            return
+        }
+        
+        if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("morrison") {
+            self = .morrisons
             return
         }
 
@@ -411,11 +445,20 @@ public extension Brand {
         case .asda: return "asda"
         case .coop: return "coop"
         case .lidl: return "lidl"
-        case .marksAndSpencer: return "marksAndSpencer"
+        case .marksAndSpencer: return "marks-and-spencer"
         case .morrisons: return "morrisons"
         case .sainsburys: return "sainsburys"
         case .tesco: return "tesco"
         default: return nil
+        }
+    }
+
+    var hasRoundedLogo: Bool {
+        guard let brand = logoBrand else { return false }
+
+        switch brand {
+        case .tesco, .lidl: return false
+        default: return true
         }
     }
 }
