@@ -629,12 +629,14 @@ public struct InventoryItemSheetView: View {
                     Section {
                         Button {
                             dismiss()
-                            shopping.addItem(request: AddShoppingItemRequest(
-                                title: nil,
-                                source: .user,
-                                storageLocation: inventoryItem.storageLocation,
-                                productId: inventoryItem.product.id,
-                                quantity: 1), categoryId: inventoryItem.product.category.id)
+                            Task {
+                                await shopping.addItem(request: AddShoppingItemRequest(
+                                    title: nil,
+                                    source: .user,
+                                    storageLocation: inventoryItem.storageLocation,
+                                    productId: inventoryItem.product.id,
+                                    quantity: 1), categoryId: inventoryItem.product.category.id)
+                            }
                         } label: {
                             Label("Add to shopping list", systemImage: "cart.fill.badge.plus")
                         }
@@ -785,7 +787,9 @@ public struct InventoryItemSheetView: View {
         .padding(10).frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 10)
         .sensoryFeedback(actionCompleted.feedbackType, trigger: actionCompleted.triggered)
-        .confetti(trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }), confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
+        .confetti(
+            trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }),
+            confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
         .sheet(item: $showSheet) { sheet in
             switch sheet {
             case .edit:

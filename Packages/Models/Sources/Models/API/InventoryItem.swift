@@ -338,9 +338,9 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
             return "Unknown"
         }()
     }
-    
+
     public var shortName: String {
-        self == .marksAndSpencer ? "M&S" : self.name
+        self == .marksAndSpencer ? "M&S" : name
     }
 
     public var color: Color {
@@ -365,37 +365,37 @@ public enum Brand: Codable, Equatable, Hashable, Sendable {
             self = .marksAndSpencer
             return
         }
-        
+
         if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("sainsbury") {
             self = .sainsburys
             return
         }
-        
+
         if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("aldi") {
             self = .aldi
             return
         }
-        
+
         if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("lidl") {
             self = .lidl
             return
         }
-        
+
         if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("tesco") {
             self = .tesco
             return
         }
-        
+
         if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("co-op") {
             self = .coop
             return
         }
-        
+
         if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("coop") {
             self = .coop
             return
         }
-        
+
         if brandString.lowercased().replacingOccurrences(of: "'", with: "").contains("morrison") {
             self = .morrisons
             return
@@ -455,11 +455,7 @@ public extension Brand {
 
     var hasRoundedLogo: Bool {
         guard let brand = logoBrand else { return false }
-
-        switch brand {
-        case .tesco, .lidl: return false
-        default: return true
-        }
+        return ![.tesco, .lidl].contains(brand)
     }
 }
 
