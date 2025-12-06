@@ -68,6 +68,17 @@ public struct KeepFreshAPI: Sendable {
             ])
     }
 
+    public func getInventoryHistory(cursor: Date? = nil) async throws -> [InventoryItem] {
+        var queryParameters: [String: String] = [:]
+        if let cursor {
+            queryParameters["cursor"] = ISO8601DateFormatter().string(from: cursor)
+        }
+        return try await client.fetch(
+            [InventoryItem].self,
+            path: "v2/inventory/history",
+            queryParameters: queryParameters)
+    }
+
     public func deleteInventoryItem(for itemId: Int) async throws {
         try await client.delete(path: "v2/inventory/items/\(itemId)")
     }
