@@ -1,5 +1,6 @@
 import DesignSystem
 import Models
+import Network
 import SharedUI
 import SwiftData
 import SwiftUI
@@ -9,19 +10,19 @@ public struct RecentConsumedItem: View {
     let onTap: (String) -> Void
     let onDelete: () -> Void
     let colorConfiguration: ColorConfiguration
-
+    
     struct ColorConfiguration {
         let text: Color
         let background: Color
         let closeIcon: Color
     }
-
+    
     public var body: some View {
         Button(action: { onTap(search.text) }) {
             HStack {
                 HStack(spacing: 10) {
                     GenmojiView(name: search.icon, fontSize: 35, tint: colorConfiguration.background)
-
+                    
                     Text(search.text)
                         .font(.subheadline)
                         .fontWeight(.bold)
@@ -51,23 +52,46 @@ public struct RecentConsumedItem: View {
 
 public struct RecentConsumedView: View {
     @Environment(\.modelContext) var modelContext
-
+    
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
-
+    
     @Binding var searchText: String
-
+    
+    @State private var recentlyConsumedInventoryItems: [InventoryItem] = []
+    
     private func deleteRecentSearch(at offsets: IndexSet) {
         for offset in offsets {
             let recentSearch = recentSearches[offset]
             modelContext.delete(recentSearch)
         }
     }
-
+    
     private func deleteRecentSearch(_ recentSearch: RecentSearch) {
         modelContext.delete(recentSearch)
     }
-
+    
     public var body: some View {
+        if !recentlyConsumedInventoryItems.isEmpty {
+            HStack {
+                Text("Recently consumed")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.blue800)
+                Spacer()
+            }.padding(.horizontal, 20).padding(.bottom, 10)
+            
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 10) {
+                    ForEach(recentlyConsumedInventoryItems) { recentlyConsumedInventoryItem in
+                        Tile(recentlyConsumedInventoryItem: recentlyConsumedInventoryItem).padding(.horizontal, 5)
+                    }
+                }.padding(.vertical, 8)
+            }
+            .scrollIndicators(.hidden)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 10)
+        }
+        
         List {
             HStack {
                 Text("Recent searches")
@@ -76,7 +100,7 @@ public struct RecentConsumedView: View {
                     .foregroundStyle(.blue800)
                 Spacer()
             }.padding(.top, 10)
-
+            
             ForEach(recentSearches) { recentSearch in
                 RecentConsumedItem(
                     search: recentSearch,
@@ -100,5 +124,14 @@ public struct RecentConsumedView: View {
         }
         .frame(maxWidth: .infinity)
         .listStyle(.plain)
+        .task {
+            let api = KeepFreshAPI()
+            
+            do {
+                recentlyConsumedInventoryItems = try await api.getInventoryHistory()
+            } catch {
+                recentlyConsumedInventoryItems = []
+            }
+        }
     }
 }
