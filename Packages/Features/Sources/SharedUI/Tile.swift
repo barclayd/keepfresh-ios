@@ -17,9 +17,11 @@ public struct Tile: View {
     public var body: some View {
         VStack(alignment: .leading) {
             Text(recentlyConsumedInventoryItem.product.name).foregroundStyle(recentlyConsumedInventoryItem.storageLocation.foregroundColor).font(.headline).fontWeight(.bold)
+                .lineLimit(2, reservesSpace: true).padding([.top, .leading], 5)
+
             HStack {
                 VStack(alignment: .leading) {
-                    HStack(spacing: 4) {
+                    HStack(alignment: .top, spacing: 4) {
                         if let logoAsset = recentlyConsumedInventoryItem.product.brand.logoAssetName {
                             Image(logoAsset)
                                 .resizable()
@@ -28,7 +30,8 @@ public struct Tile: View {
                         }
 
                         Text(recentlyConsumedInventoryItem.product.brand.shortName)
-                            .foregroundStyle(recentlyConsumedInventoryItem.storageLocation == .freezer ? .white200 : recentlyConsumedInventoryItem.product.brand.color).font(.caption)
+                            .foregroundStyle(recentlyConsumedInventoryItem.storageLocation == .freezer ? .white200 : recentlyConsumedInventoryItem.product.brand.color)
+                            .font(.caption)
                     }
 
                     if let amountUnitFormatted = recentlyConsumedInventoryItem.product.amountUnitFormatted {
@@ -57,8 +60,9 @@ public struct Tile: View {
                     }) {
                         Image(systemName: shoppingItemId != nil ? "checkmark.circle.fill" : "plus.circle.fill").foregroundStyle(recentlyConsumedInventoryItem.storageLocation.foregroundColor)
                             .font(.system(size: 28))
+                            .contentTransition(.symbolEffect(.replace))
                     }
-                }
+                }.padding(.leading, 5)
 
                 Spacer()
 
@@ -71,7 +75,7 @@ public struct Tile: View {
                 }
             }
         }
-        .padding(.horizontal, 10).padding(.vertical, 15).frame(width: 170, height: 150)
+        .padding(.horizontal, 10).padding(.vertical, 15).frame(width: 170, height: 155)
         .background(
             RoundedRectangle(cornerRadius: 25)
                 .fill(LinearGradient(
