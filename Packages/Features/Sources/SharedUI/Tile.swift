@@ -16,7 +16,8 @@ public struct Tile: View {
 
     public var body: some View {
         VStack(alignment: .leading) {
-            Text(recentlyConsumedInventoryItem.product.name).foregroundStyle(recentlyConsumedInventoryItem.storageLocation.foregroundColor).font(.headline).fontWeight(.bold)
+            Text(recentlyConsumedInventoryItem.product.name).foregroundStyle(recentlyConsumedInventoryItem.storageLocation.foregroundColor)
+                .font(.headline).fontWeight(.bold)
                 .lineLimit(2, reservesSpace: true).padding([.top, .leading], 5)
 
             HStack {
@@ -26,16 +27,24 @@ public struct Tile: View {
                             Image(logoAsset)
                                 .resizable()
                                 .frame(width: 14, height: 14)
-                                .clipShape(RoundedRectangle(cornerRadius: recentlyConsumedInventoryItem.product.brand.hasRoundedLogo ? 4 : 0))
+                                .clipShape(RoundedRectangle(
+                                    cornerRadius: recentlyConsumedInventoryItem.product.brand
+                                        .hasRoundedLogo ? 4 : 0))
                         }
 
                         Text(recentlyConsumedInventoryItem.product.brand.shortName)
-                            .foregroundStyle(recentlyConsumedInventoryItem.storageLocation == .freezer ? .white200 : recentlyConsumedInventoryItem.product.brand.color)
+                            .foregroundStyle(
+                                recentlyConsumedInventoryItem
+                                    .storageLocation == .freezer ? .white200 : recentlyConsumedInventoryItem.product.brand.color)
                             .font(.caption)
                     }
 
                     if let amountUnitFormatted = recentlyConsumedInventoryItem.product.amountUnitFormatted {
-                        Text(amountUnitFormatted).foregroundStyle(recentlyConsumedInventoryItem.storageLocation == .fridge ? .gray600 : recentlyConsumedInventoryItem.storageLocation.infoColor).font(.caption)
+                        Text(amountUnitFormatted)
+                            .foregroundStyle(
+                                recentlyConsumedInventoryItem
+                                    .storageLocation == .fridge ? .gray600 : recentlyConsumedInventoryItem.storageLocation.infoColor)
+                            .font(.caption)
                     }
 
                     Spacer()
@@ -58,7 +67,8 @@ public struct Tile: View {
                             }
                         }
                     }) {
-                        Image(systemName: shoppingItemId != nil ? "checkmark.circle.fill" : "plus.circle.fill").foregroundStyle(recentlyConsumedInventoryItem.storageLocation.foregroundColor)
+                        Image(systemName: shoppingItemId != nil ? "checkmark.circle.fill" : "plus.circle.fill")
+                            .foregroundStyle(recentlyConsumedInventoryItem.storageLocation.foregroundColor)
                             .font(.system(size: 28))
                             .contentTransition(.symbolEffect(.replace))
                     }
