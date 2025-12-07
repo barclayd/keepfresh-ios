@@ -58,6 +58,7 @@ public struct ShoppingSearchView: View {
     @Binding var searchText: String
 
     @State private var recentlyConsumedInventoryItems: [InventoryItem] = []
+    @State private var seenProductIds: Set<Int> = []
     @State private var isLoadingMore = false
     @State private var hasMoreData = true
 
@@ -85,7 +86,11 @@ public struct ShoppingSearchView: View {
             if newItems.isEmpty {
                 hasMoreData = false
             } else {
-                recentlyConsumedInventoryItems.append(contentsOf: newItems)
+                for item in newItems {
+                    if seenProductIds.insert(item.product.id).inserted {
+                        recentlyConsumedInventoryItems.append(item)
+                    }
+                }
             }
         } catch {}
     }
@@ -164,7 +169,14 @@ public struct ShoppingSearchView: View {
             let api = KeepFreshAPI()
 
             do {
-                recentlyConsumedInventoryItems = try await api.getInventoryHistory()
+                let items = try await api.getInventoryHistory()
+                seenProductIds.removeAll()
+                recentlyConsumedInventoryItems.removeAll()
+                for item in items {
+                    if seenProductIds.insert(item.product.id).inserted {
+                        recentlyConsumedInventoryItems.append(item)
+                    }
+                }
             } catch {
                 recentlyConsumedInventoryItems = []
             }

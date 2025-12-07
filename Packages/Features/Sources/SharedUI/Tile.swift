@@ -35,7 +35,7 @@ public struct Tile: View {
                     }
 
                     if let amountUnitFormatted = recentlyConsumedInventoryItem.product.amountUnitFormatted {
-                        Text(amountUnitFormatted).foregroundStyle(recentlyConsumedInventoryItem.storageLocation.infoColor).font(.caption)
+                        Text(amountUnitFormatted).foregroundStyle(recentlyConsumedInventoryItem.storageLocation == .fridge ? .gray600 : recentlyConsumedInventoryItem.storageLocation.infoColor).font(.caption)
                     }
 
                     Spacer()
