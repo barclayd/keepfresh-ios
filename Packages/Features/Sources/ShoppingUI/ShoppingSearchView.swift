@@ -50,7 +50,7 @@ public struct RecentConsumedItem: View {
     }
 }
 
-public struct RecentConsumedView: View {
+public struct ShoppingSearchView: View {
     @Environment(\.modelContext) var modelContext
 
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
@@ -58,6 +58,8 @@ public struct RecentConsumedView: View {
     @Binding var searchText: String
 
     @State private var recentlyConsumedInventoryItems: [InventoryItem] = []
+    @State private var isLoadingMore = false
+    @State private var hasMoreData = true
 
     private func deleteRecentSearch(at offsets: IndexSet) {
         for offset in offsets {
@@ -68,6 +70,24 @@ public struct RecentConsumedView: View {
 
     private func deleteRecentSearch(_ recentSearch: RecentSearch) {
         modelContext.delete(recentSearch)
+    }
+
+    private func loadMoreItems() async {
+        guard !isLoadingMore, hasMoreData else { return }
+        guard let lastItem = recentlyConsumedInventoryItems.last else { return }
+
+        isLoadingMore = true
+        defer { isLoadingMore = false }
+
+        let api = KeepFreshAPI()
+        do {
+            let newItems = try await api.getInventoryHistory(cursor: lastItem.updatedAt)
+            if newItems.isEmpty {
+                hasMoreData = false
+            } else {
+                recentlyConsumedInventoryItems.append(contentsOf: newItems)
+            }
+        } catch {}
     }
 
     public var body: some View {
@@ -83,7 +103,23 @@ public struct RecentConsumedView: View {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 10) {
                     ForEach(recentlyConsumedInventoryItems) { recentlyConsumedInventoryItem in
-                        Tile(recentlyConsumedInventoryItem: recentlyConsumedInventoryItem).padding(.horizontal, 5)
+                        Tile(recentlyConsumedInventoryItem: recentlyConsumedInventoryItem)
+                            .padding(.horizontal, 5)
+                            .onAppear {
+                                if recentlyConsumedInventoryItem.id == recentlyConsumedInventoryItems.last?.id,
+                                   hasMoreData,
+                                   !isLoadingMore
+                                {
+                                    Task {
+                                        await loadMoreItems()
+                                    }
+                                }
+                            }
+                    }
+
+                    if isLoadingMore {
+                        ProgressView()
+                            .padding(.horizontal, 20)
                     }
                 }.padding(.vertical, 8)
             }

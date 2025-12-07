@@ -16,7 +16,7 @@ public struct Tile: View {
 
     public var body: some View {
         VStack(alignment: .leading) {
-            Text(recentlyConsumedInventoryItem.product.name).foregroundStyle(.blue800).font(.headline).fontWeight(.bold)
+            Text(recentlyConsumedInventoryItem.product.name).foregroundStyle(recentlyConsumedInventoryItem.storageLocation.foregroundColor).font(.headline).fontWeight(.bold)
             HStack {
                 VStack(alignment: .leading) {
                     HStack(spacing: 4) {
@@ -28,11 +28,11 @@ public struct Tile: View {
                         }
 
                         Text(recentlyConsumedInventoryItem.product.brand.shortName)
-                            .foregroundStyle(recentlyConsumedInventoryItem.product.brand.color).font(.caption)
+                            .foregroundStyle(recentlyConsumedInventoryItem.storageLocation == .freezer ? .white200 : recentlyConsumedInventoryItem.product.brand.color).font(.caption)
                     }
 
                     if let amountUnitFormatted = recentlyConsumedInventoryItem.product.amountUnitFormatted {
-                        Text(amountUnitFormatted).foregroundStyle(.gray700).font(.caption)
+                        Text(amountUnitFormatted).foregroundStyle(recentlyConsumedInventoryItem.storageLocation.infoColor).font(.caption)
                     }
 
                     Spacer()
