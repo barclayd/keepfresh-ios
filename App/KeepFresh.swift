@@ -37,6 +37,7 @@ struct KeepFreshApp: App {
                     await withTaskGroup(of: Void.self) { group in
                         group.addTask { await inventory.fetchItems() }
                         group.addTask { await shopping.fetchItems() }
+                        group.addTask { await RecentlyConsumed.fetch() }
                     }
 
                     await GenmojiConfettiCache.prefetch(modelContext: modelContext)

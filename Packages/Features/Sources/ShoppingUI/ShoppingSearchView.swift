@@ -140,8 +140,5 @@ public struct ShoppingSearchView: View {
             .frame(maxWidth: .infinity)
             .listStyle(.plain)
         }
-        .task {
-            await recentlyConsumed.loadInitial()
-        }
     }
 }

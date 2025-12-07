@@ -156,8 +156,5 @@ public struct RecentSearchView: View {
             .frame(maxWidth: .infinity)
             .listStyle(.plain)
         }
-        .task {
-            await recentlyConsumed.loadInitial()
-        }
     }
 }
