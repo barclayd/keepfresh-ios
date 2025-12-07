@@ -101,7 +101,7 @@ public struct RecentSearchView: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 10) {
                         ForEach(recentlyConsumed.items) { item in
-                            Tile(recentlyConsumedInventoryItem: item)
+                            Tile(recentlyConsumedInventoryItem: item, action: .addItem)
                                 .padding(.trailing, 5)
                                 .onAppear {
                                     Task {

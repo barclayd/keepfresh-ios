@@ -1,25 +1,40 @@
 import DesignSystem
 import Environment
 import Models
+import Router
 import SwiftUI
 
 public struct Tile: View {
     @Environment(Shopping.self) var shopping
-
+    @Environment(Router.self) var router
+    
     @State private var shoppingItemId: Int?
-
+    
     let recentlyConsumedInventoryItem: InventoryItem
-
-    public init(recentlyConsumedInventoryItem: InventoryItem) {
-        self.recentlyConsumedInventoryItem = recentlyConsumedInventoryItem
+    
+    let action: Action
+    
+    public enum Action {
+        case shopping, addItem
     }
-
+    
+    public init(recentlyConsumedInventoryItem: InventoryItem, action: Action) {
+        self.recentlyConsumedInventoryItem = recentlyConsumedInventoryItem
+        self.action = action
+    }
+    
+    var icon: String {
+        guard action == .shopping else { return "plus.circle.fill" }
+        
+        return shoppingItemId != nil  ? "checkmark.circle.fill" : "plus.circle.fill"
+    }
+        
     public var body: some View {
         VStack(alignment: .leading) {
             Text(recentlyConsumedInventoryItem.product.name).foregroundStyle(recentlyConsumedInventoryItem.storageLocation.foregroundColor)
                 .font(.headline).fontWeight(.bold)
                 .lineLimit(2, reservesSpace: true).padding([.top, .leading], 5)
-
+            
             HStack {
                 VStack(alignment: .leading) {
                     HStack(alignment: .top, spacing: 4) {
@@ -31,14 +46,14 @@ public struct Tile: View {
                                     cornerRadius: recentlyConsumedInventoryItem.product.brand
                                         .hasRoundedLogo ? 4 : 0))
                         }
-
+                        
                         Text(recentlyConsumedInventoryItem.product.brand.shortName)
                             .foregroundStyle(
                                 recentlyConsumedInventoryItem
                                     .storageLocation == .freezer ? .white200 : recentlyConsumedInventoryItem.product.brand.color)
                             .font(.caption)
                     }
-
+                    
                     if let amountUnitFormatted = recentlyConsumedInventoryItem.product.amountUnitFormatted {
                         Text(amountUnitFormatted)
                             .foregroundStyle(
@@ -46,25 +61,30 @@ public struct Tile: View {
                                     .storageLocation == .fridge ? .gray600 : recentlyConsumedInventoryItem.storageLocation.infoColor)
                             .font(.caption)
                     }
-
+                    
                     Spacer()
-
+                    
                     Button(action: {
-                        if let itemId = shoppingItemId {
-                            shoppingItemId = nil
-                            shopping.deleteItem(id: itemId)
-                        } else {
-                            Task {
-                                let id = await shopping.addItem(
-                                    request: AddShoppingItemRequest(
-                                        title: nil,
-                                        source: .user,
-                                        storageLocation: recentlyConsumedInventoryItem.storageLocation,
-                                        productId: recentlyConsumedInventoryItem.product.id,
-                                        quantity: 1),
-                                    categoryId: recentlyConsumedInventoryItem.product.category.id)
-                                shoppingItemId = id
+                        switch action {
+                        case .shopping:
+                            if let itemId = shoppingItemId {
+                                shoppingItemId = nil
+                                shopping.deleteItem(id: itemId)
+                            } else {
+                                Task {
+                                    let id = await shopping.addItem(
+                                        request: AddShoppingItemRequest(
+                                            title: nil,
+                                            source: .user,
+                                            storageLocation: recentlyConsumedInventoryItem.storageLocation,
+                                            productId: recentlyConsumedInventoryItem.product.id,
+                                            quantity: 1),
+                                        categoryId: recentlyConsumedInventoryItem.product.category.id)
+                                    shoppingItemId = id
+                                }
                             }
+                        case .addItem:
+                            router.navigateTo(.addProduct(product: ProductSearchResultItemResponse(id: recentlyConsumedInventoryItem.product.id, name: recentlyConsumedInventoryItem.product.name, brand: recentlyConsumedInventoryItem.product.brand, category: ProductSearchItemCategory(id: recentlyConsumedInventoryItem.product.category.id, name: recentlyConsumedInventoryItem.product.category.name, path: recentlyConsumedInventoryItem.product.category.pathDisplay, recommendedStorageLocation: recentlyConsumedInventoryItem.storageLocation), amount: recentlyConsumedInventoryItem.product.amount, unit: recentlyConsumedInventoryItem.product.unit, icon: recentlyConsumedInventoryItem.product.category.icon)))
                         }
                     }) {
                         Image(systemName: shoppingItemId != nil ? "checkmark.circle.fill" : "plus.circle.fill")
@@ -73,9 +93,9 @@ public struct Tile: View {
                             .contentTransition(.symbolEffect(.replace))
                     }
                 }.padding(.leading, 5)
-
+                
                 Spacer()
-
+                
                 VStack(alignment: .trailing) {
                     Spacer()
                     GenmojiView(
