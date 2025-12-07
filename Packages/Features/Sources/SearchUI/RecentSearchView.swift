@@ -68,6 +68,8 @@ public struct RecentSearchView: View {
 
     @Binding var searchText: String
 
+    @State private var recentlyConsumed = RecentlyConsumed()
+
     public init(searchText: Binding<String>) {
         _searchText = searchText
     }
@@ -84,37 +86,78 @@ public struct RecentSearchView: View {
     }
 
     public var body: some View {
-        List {
-            HStack {
-                Text("Recent searches")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.blue800)
-                Spacer()
-            }.padding(.top, 10)
+        VStack(spacing: 0) {
+            if !recentlyConsumed.items.isEmpty {
+                HStack {
+                    Text("Recent items")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.blue800)
+                    Spacer()
+                }
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
 
-            ForEach(recentSearches) { recentSearch in
-                RecentSearchItem(
-                    search: recentSearch,
-                    onTap: { previousSearchText in
-                        searchText = previousSearchText
-                    },
-                    onDelete: { deleteRecentSearch(recentSearch) },
-                    colorConfiguration: RecentSearchItem.ColorConfiguration(
-                        text: recentSearch.recommendedStorageLocation.textColor,
-                        background: recentSearch.recommendedStorageLocation.tileColor,
-                        closeIcon: recentSearch.recommendedStorageLocation.textColor))
-                    .listRowInsets(EdgeInsets(
-                        top: 5,
-                        leading: 10,
-                        bottom: 5,
-                        trailing: 10))
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 10) {
+                        ForEach(recentlyConsumed.items) { item in
+                            Tile(recentlyConsumedInventoryItem: item)
+                                .padding(.trailing, 5)
+                                .onAppear {
+                                    Task {
+                                        await recentlyConsumed.loadMoreIfNeeded(currentItem: item)
+                                    }
+                                }
+                        }
+
+                        if recentlyConsumed.isLoadingMore {
+                            ProgressView()
+                                .padding(.horizontal, 20)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 20)
+                }
+                .scrollIndicators(.hidden)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, -10)
             }
-            .onDelete(perform: deleteRecentSearch)
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
+
+            List {
+                HStack {
+                    Text("Recent searches")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.blue800)
+                    Spacer()
+                }.padding(.top, 10)
+
+                ForEach(recentSearches) { recentSearch in
+                    RecentSearchItem(
+                        search: recentSearch,
+                        onTap: { previousSearchText in
+                            searchText = previousSearchText
+                        },
+                        onDelete: { deleteRecentSearch(recentSearch) },
+                        colorConfiguration: RecentSearchItem.ColorConfiguration(
+                            text: recentSearch.recommendedStorageLocation.textColor,
+                            background: recentSearch.recommendedStorageLocation.tileColor,
+                            closeIcon: recentSearch.recommendedStorageLocation.textColor))
+                        .listRowInsets(EdgeInsets(
+                            top: 5,
+                            leading: 10,
+                            bottom: 5,
+                            trailing: 10))
+                }
+                .onDelete(perform: deleteRecentSearch)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+            }
+            .frame(maxWidth: .infinity)
+            .listStyle(.plain)
         }
-        .frame(maxWidth: .infinity)
-        .listStyle(.plain)
+        .task {
+            await recentlyConsumed.loadInitial()
+        }
     }
 }

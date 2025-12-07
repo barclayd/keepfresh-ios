@@ -1,6 +1,5 @@
 import DesignSystem
 import Models
-import Network
 import SharedUI
 import SwiftData
 import SwiftUI
@@ -57,10 +56,7 @@ public struct ShoppingSearchView: View {
 
     @Binding var searchText: String
 
-    @State private var recentlyConsumedInventoryItems: [InventoryItem] = []
-    @State private var seenProductIds: Set<Int> = []
-    @State private var isLoadingMore = false
-    @State private var hasMoreData = true
+    @State private var recentlyConsumed = RecentlyConsumed()
 
     private func deleteRecentSearch(at offsets: IndexSet) {
         for offset in offsets {
@@ -73,113 +69,79 @@ public struct ShoppingSearchView: View {
         modelContext.delete(recentSearch)
     }
 
-    private func loadMoreItems() async {
-        guard !isLoadingMore, hasMoreData else { return }
-        guard let lastItem = recentlyConsumedInventoryItems.last else { return }
-
-        isLoadingMore = true
-        defer { isLoadingMore = false }
-
-        let api = KeepFreshAPI()
-        do {
-            let newItems = try await api.getInventoryHistory(cursor: lastItem.updatedAt)
-            if newItems.isEmpty {
-                hasMoreData = false
-            } else {
-                for item in newItems {
-                    if seenProductIds.insert(item.product.id).inserted {
-                        recentlyConsumedInventoryItems.append(item)
-                    }
-                }
-            }
-        } catch {}
-    }
-
     public var body: some View {
-        if !recentlyConsumedInventoryItems.isEmpty {
-            HStack {
-                Text("Recent items")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.blue800)
-                Spacer()
-            }.padding(.horizontal, 20).padding(.bottom, 10)
+        VStack(spacing: 0) {
+            if !recentlyConsumed.items.isEmpty {
+                HStack {
+                    Text("Recent items")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.blue800)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 10)
 
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 10) {
-                    ForEach(recentlyConsumedInventoryItems) { recentlyConsumedInventoryItem in
-                        Tile(recentlyConsumedInventoryItem: recentlyConsumedInventoryItem)
-                            .padding(.horizontal, 5)
-                            .onAppear {
-                                if recentlyConsumedInventoryItem.id == recentlyConsumedInventoryItems.last?.id,
-                                   hasMoreData,
-                                   !isLoadingMore
-                                {
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 10) {
+                        ForEach(recentlyConsumed.items) { item in
+                            Tile(recentlyConsumedInventoryItem: item)
+                                .padding(.horizontal, 5)
+                                .onAppear {
                                     Task {
-                                        await loadMoreItems()
+                                        await recentlyConsumed.loadMoreIfNeeded(currentItem: item)
                                     }
                                 }
-                            }
+                        }
+
+                        if recentlyConsumed.isLoadingMore {
+                            ProgressView()
+                                .padding(.horizontal, 20)
+                        }
                     }
-
-                    if isLoadingMore {
-                        ProgressView()
-                            .padding(.horizontal, 20)
-                    }
-                }.padding(.vertical, 8)
-            }
-            .scrollIndicators(.hidden)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 10)
-        }
-
-        List {
-            HStack {
-                Text("Recent searches")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.blue800)
-                Spacer()
-            }.padding(.top, 10)
-
-            ForEach(recentSearches) { recentSearch in
-                RecentConsumedItem(
-                    search: recentSearch,
-                    onTap: { previousSearchText in
-                        searchText = previousSearchText
-                    },
-                    onDelete: { deleteRecentSearch(recentSearch) },
-                    colorConfiguration: RecentConsumedItem.ColorConfiguration(
-                        text: recentSearch.recommendedStorageLocation.textColor,
-                        background: recentSearch.recommendedStorageLocation.tileColor,
-                        closeIcon: recentSearch.recommendedStorageLocation.textColor))
-                    .listRowInsets(EdgeInsets(
-                        top: 5,
-                        leading: 10,
-                        bottom: 5,
-                        trailing: 10))
-            }
-            .onDelete(perform: deleteRecentSearch)
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-        }
-        .frame(maxWidth: .infinity)
-        .listStyle(.plain)
-        .task {
-            let api = KeepFreshAPI()
-
-            do {
-                let items = try await api.getInventoryHistory()
-                seenProductIds.removeAll()
-                recentlyConsumedInventoryItems.removeAll()
-                for item in items {
-                    if seenProductIds.insert(item.product.id).inserted {
-                        recentlyConsumedInventoryItems.append(item)
-                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 20)
                 }
-            } catch {
-                recentlyConsumedInventoryItems = []
+                .scrollIndicators(.hidden)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, -10)
             }
+
+            List {
+                HStack {
+                    Text("Recent searches")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.blue800)
+                    Spacer()
+                }.padding(.top, 10)
+
+                ForEach(recentSearches) { recentSearch in
+                    RecentConsumedItem(
+                        search: recentSearch,
+                        onTap: { previousSearchText in
+                            searchText = previousSearchText
+                        },
+                        onDelete: { deleteRecentSearch(recentSearch) },
+                        colorConfiguration: RecentConsumedItem.ColorConfiguration(
+                            text: recentSearch.recommendedStorageLocation.textColor,
+                            background: recentSearch.recommendedStorageLocation.tileColor,
+                            closeIcon: recentSearch.recommendedStorageLocation.textColor))
+                        .listRowInsets(EdgeInsets(
+                            top: 5,
+                            leading: 10,
+                            bottom: 5,
+                            trailing: 10))
+                }
+                .onDelete(perform: deleteRecentSearch)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+            }
+            .frame(maxWidth: .infinity)
+            .listStyle(.plain)
+        }
+        .task {
+            await recentlyConsumed.loadInitial()
         }
     }
 }
