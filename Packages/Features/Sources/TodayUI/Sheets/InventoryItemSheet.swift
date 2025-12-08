@@ -474,9 +474,7 @@ public struct InventoryItemSheetView: View {
             }
         }
 
-        if wastePercentage < 50 {
-            recentlyConsumed.addItem(inventoryItem)
-        }
+        recentlyConsumed.addItem(inventoryItem)
 
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
