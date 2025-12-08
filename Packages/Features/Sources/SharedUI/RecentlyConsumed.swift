@@ -8,48 +8,53 @@ public final class RecentlyConsumed {
     public private(set) var items: [InventoryItem] = []
     public private(set) var isLoadingMore = false
     public private(set) var hasMoreData = true
-    
+
     private var seenProductIds: Set<Int> = []
     private let cache = RecentlyConsumedCache.shared
-    
+
     let api = KeepFreshAPI()
-    
+
     public init() {
         items = cache.load()
-        
+
         rebuildSeenProductIds()
     }
-    
-    public static func fetch() async {
-        let instance = RecentlyConsumed()
 
-        await instance.fetchItems()
+    public func addItem(_ item: InventoryItem) {
+        var newItem = item
+        newItem.updatedAt = Date()
+
+        items.removeAll { $0.product.id == newItem.product.id }
+        items.insert(newItem, at: 0)
+        rebuildSeenProductIds()
+
+        Task { await cache.save(items) }
     }
-    
+
     private func rebuildSeenProductIds() {
-        seenProductIds = Set(items.map { $0.product.id })
+        seenProductIds = Set(items.map(\.product.id))
     }
-    
+
     public func fetchItems() async {
         do {
             let serverItems = try await api.getInventoryHistory()
-            
+
             let localItems = items
             let merged = mergeItems(local: localItems, server: serverItems)
-            
+
             items = deduplicateByProductId(merged)
             rebuildSeenProductIds()
-            
+
             Task { await cache.save(items) }
         } catch {
             print("Failed to fetch recently consumed items: \(error)")
         }
     }
-    
+
     private func mergeItems(local: [InventoryItem], server: [InventoryItem]) -> [InventoryItem] {
         var serverById = Dictionary(uniqueKeysWithValues: server.map { ($0.id, $0) })
         var result: [InventoryItem] = []
-        
+
         for localItem in local {
             if let serverItem = serverById[localItem.id] {
                 result.append(serverItem.updatedAt > localItem.updatedAt ? serverItem : localItem)
@@ -58,11 +63,11 @@ public final class RecentlyConsumed {
                 result.append(localItem)
             }
         }
-        
+
         result.append(contentsOf: serverById.values)
         return result
     }
-    
+
     private func deduplicateByProductId(_ items: [InventoryItem]) -> [InventoryItem] {
         var latestByProductId: [Int: InventoryItem] = [:]
         for item in items {
@@ -76,22 +81,22 @@ public final class RecentlyConsumed {
         }
         return latestByProductId.values.sorted { $0.updatedAt > $1.updatedAt }
     }
-    
+
     public func loadMoreIfNeeded(currentItem: InventoryItem) async {
         guard currentItem.id == items.last?.id,
               hasMoreData,
               !isLoadingMore else { return }
-        
+
         await loadMore()
     }
-    
+
     private func loadMore() async {
         guard !isLoadingMore, hasMoreData else { return }
         guard let lastItem = items.last else { return }
-        
+
         isLoadingMore = true
         defer { isLoadingMore = false }
-        
+
         do {
             let newItems = try await api.getInventoryHistory(cursor: lastItem.updatedAt)
             if newItems.isEmpty {

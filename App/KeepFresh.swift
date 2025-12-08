@@ -18,6 +18,7 @@ struct KeepFreshApp: App {
     @State var router: Router = .init()
     @State var inventory: Inventory = .init()
     @State var shopping: Shopping = .init()
+    @State var recentlyConsumed: RecentlyConsumed = .init()
     @State var pushNotifications = PushNotifications.shared
 
     init() {
@@ -30,6 +31,7 @@ struct KeepFreshApp: App {
                 .environment(router)
                 .environment(inventory)
                 .environment(shopping)
+                .environment(recentlyConsumed)
                 .modelContainer(for: [RecentSearch.self, GenmojiCache.self])
                 .task {
                     try? await Authentication.shared.signInAnonymously()
@@ -37,7 +39,7 @@ struct KeepFreshApp: App {
                     await withTaskGroup(of: Void.self) { group in
                         group.addTask { await inventory.fetchItems() }
                         group.addTask { await shopping.fetchItems() }
-                        group.addTask { await RecentlyConsumed.fetch() }
+                        group.addTask { await recentlyConsumed.fetchItems() }
                     }
 
                     await GenmojiConfettiCache.prefetch(modelContext: modelContext)

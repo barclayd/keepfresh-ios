@@ -68,7 +68,7 @@ public struct RecentSearchView: View {
 
     @Binding var searchText: String
 
-    @State private var recentlyConsumed = RecentlyConsumed()
+    @Environment(RecentlyConsumed.self) var recentlyConsumed
 
     public init(searchText: Binding<String>) {
         _searchText = searchText

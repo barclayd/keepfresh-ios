@@ -143,7 +143,7 @@ private extension InventoryItemFormType {
                 .labelsHidden()
                 .disabled(true)
         case let .quantity(quantity):
-            Stepper(value: quantity, in: 1 ... 50, step: 1) {}.tint(.blue700)
+            Stepper(value: quantity, in: 1...50, step: 1) {}.tint(.blue700)
         }
     }
 

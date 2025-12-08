@@ -56,7 +56,7 @@ public struct ShoppingSearchView: View {
 
     @Binding var searchText: String
 
-    @State private var recentlyConsumed = RecentlyConsumed()
+    @Environment(RecentlyConsumed.self) var recentlyConsumed
 
     private func deleteRecentSearch(at offsets: IndexSet) {
         for offset in offsets {
