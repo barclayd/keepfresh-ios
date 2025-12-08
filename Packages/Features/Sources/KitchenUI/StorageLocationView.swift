@@ -3,6 +3,7 @@ import Environment
 import Intelligence
 import Models
 import Router
+import SharedUI
 import SwiftUI
 import TodayUI
 
@@ -290,5 +291,8 @@ public struct StorageLocationView: View {
                 }
             }
         }
+        .confetti(
+            trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }),
+            confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
     }
 }

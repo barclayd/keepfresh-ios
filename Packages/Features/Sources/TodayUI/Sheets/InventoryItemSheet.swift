@@ -316,6 +316,7 @@ public struct InventoryItemSheetView: View {
     @Environment(Inventory.self) var inventory
     @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
+    @Environment(RecentlyConsumed.self) var recentlyConsumed
 
     @Environment(\.dismiss) private var dismiss
 
@@ -472,6 +473,11 @@ public struct InventoryItemSheetView: View {
                 }
             }
         }
+
+        if wastePercentage < 50 {
+            recentlyConsumed.addItem(inventoryItem)
+        }
+
         updateInventoryItem(status: wastePercentage == 0 ? .consumed : .discarded, percentageRemaining: wastePercentage)
     }
 

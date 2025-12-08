@@ -185,17 +185,6 @@ struct ExpiryDateAdjustmentButtons: View {
     var body: some View {
         HStack(spacing: 2) {
             Button(action: {
-                plusTrigger += 1
-                date.addDays(1)
-            }) {
-                Image(systemName: "plus.square.fill")
-                    .font(.system(size: 21))
-                    .fontWeight(.bold)
-                    .foregroundStyle(controlColors.0, controlColors.1)
-            }
-            .sensoryFeedback(.increase, trigger: plusTrigger)
-
-            Button(action: {
                 minusTrigger += 1
                 date.addDays(-1)
             }) {
@@ -205,6 +194,17 @@ struct ExpiryDateAdjustmentButtons: View {
                     .foregroundStyle(controlColors.0, controlColors.1)
             }
             .sensoryFeedback(.decrease, trigger: minusTrigger)
+
+            Button(action: {
+                plusTrigger += 1
+                date.addDays(1)
+            }) {
+                Image(systemName: "plus.square.fill")
+                    .font(.system(size: 21))
+                    .fontWeight(.bold)
+                    .foregroundStyle(controlColors.0, controlColors.1)
+            }
+            .sensoryFeedback(.increase, trigger: plusTrigger)
         }
     }
 }
@@ -256,7 +256,7 @@ struct InventoryItemOverview: View {
             return 90
         }
 
-        return 105
+        return 85
     }
 
     var body: some View {
@@ -311,7 +311,7 @@ struct IventoryItemStatusContent: View {
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
-                    .frame(width: 105, alignment: .leading)
+                    .frame(width: 85, alignment: .leading)
 
                 Picker("Select inventory item status", selection: Binding(get: {
                     status
@@ -359,7 +359,7 @@ struct InventoryItemStorageContent: View {
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
-                    .frame(width: 105, alignment: .leading)
+                    .frame(width: 85, alignment: .leading)
 
                 Picker("Select storage location", selection: Binding(get: {
                     storageLocation
@@ -404,7 +404,7 @@ struct InventoryItemReadOnlyStorageContent: View {
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
-                    .frame(width: 105, alignment: .leading)
+                    .frame(width: 85, alignment: .leading)
 
                 HStack {
                     Text(storageLocation.rawValue.capitalized).foregroundStyle(.gray600)
@@ -447,7 +447,7 @@ struct InventoryItemExpiryDateContent: View {
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
-                    .frame(width: 105, alignment: .leading)
+                    .frame(width: 85, alignment: .leading)
 
                 Button(action: {
                     showDatePicker.toggle()
@@ -487,7 +487,7 @@ struct InventoryItemExpiryDateContent: View {
                     .foregroundStyle(.blue700)
                     .font(.callout)
                     .lineLimit(1)
-                    .frame(width: 105, alignment: .leading)
+                    .frame(width: 85, alignment: .leading)
 
                 Picker("Select expiry type", selection: $expiryType) {
                     ForEach(ExpiryType.allCases) { expiryType in

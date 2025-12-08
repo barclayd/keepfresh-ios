@@ -4,28 +4,16 @@ import SharedUI
 import SwiftData
 import SwiftUI
 
-public struct RecentSearchItem: View {
+public struct RecentConsumedItem: View {
     let search: RecentSearch
     let onTap: (String) -> Void
     let onDelete: () -> Void
     let colorConfiguration: ColorConfiguration
 
-    public struct ColorConfiguration {
+    struct ColorConfiguration {
         let text: Color
         let background: Color
         let closeIcon: Color
-    }
-
-    public init(
-        search: RecentSearch,
-        onTap: @escaping (String) -> Void,
-        onDelete: @escaping () -> Void,
-        colorConfiguration: RecentSearchItem.ColorConfiguration)
-    {
-        self.search = search
-        self.onTap = onTap
-        self.onDelete = onDelete
-        self.colorConfiguration = colorConfiguration
     }
 
     public var body: some View {
@@ -61,7 +49,7 @@ public struct RecentSearchItem: View {
     }
 }
 
-public struct RecentSearchView: View {
+public struct ShoppingSearchView: View {
     @Environment(\.modelContext) var modelContext
 
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
@@ -69,10 +57,6 @@ public struct RecentSearchView: View {
     @Binding var searchText: String
 
     @Environment(RecentlyConsumed.self) var recentlyConsumed
-
-    public init(searchText: Binding<String>) {
-        _searchText = searchText
-    }
 
     private func deleteRecentSearch(at offsets: IndexSet) {
         for offset in offsets {
@@ -95,14 +79,14 @@ public struct RecentSearchView: View {
                         .foregroundStyle(.blue800)
                     Spacer()
                 }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 10)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 10)
 
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 10) {
                         ForEach(recentlyConsumed.items) { item in
-                            Tile(recentlyConsumedInventoryItem: item, action: .addItem)
-                                .padding(.trailing, 5)
+                            Tile(recentlyConsumedInventoryItem: item, action: .shopping)
+                                .padding(.horizontal, 5)
                                 .onAppear {
                                     Task {
                                         await recentlyConsumed.loadMoreIfNeeded(currentItem: item)
@@ -133,13 +117,13 @@ public struct RecentSearchView: View {
                 }.padding(.top, 10)
 
                 ForEach(recentSearches) { recentSearch in
-                    RecentSearchItem(
+                    RecentConsumedItem(
                         search: recentSearch,
                         onTap: { previousSearchText in
                             searchText = previousSearchText
                         },
                         onDelete: { deleteRecentSearch(recentSearch) },
-                        colorConfiguration: RecentSearchItem.ColorConfiguration(
+                        colorConfiguration: RecentConsumedItem.ColorConfiguration(
                             text: recentSearch.recommendedStorageLocation.textColor,
                             background: recentSearch.recommendedStorageLocation.tileColor,
                             closeIcon: recentSearch.recommendedStorageLocation.textColor))

@@ -202,7 +202,7 @@ public struct AddShoppingSheet: View {
                             }
                         })
                 } else {
-                    RecentConsumedView(searchText: searchTextBinding)
+                    ShoppingSearchView(searchText: searchTextBinding)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
