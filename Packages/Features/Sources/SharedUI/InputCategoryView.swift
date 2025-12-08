@@ -194,6 +194,7 @@ struct ExpiryDateAdjustmentButtons: View {
                     .foregroundStyle(controlColors.0, controlColors.1)
             }
             .sensoryFeedback(.decrease, trigger: minusTrigger)
+            .buttonRepeatBehavior(.enabled)
 
             Button(action: {
                 plusTrigger += 1
@@ -205,6 +206,7 @@ struct ExpiryDateAdjustmentButtons: View {
                     .foregroundStyle(controlColors.0, controlColors.1)
             }
             .sensoryFeedback(.increase, trigger: plusTrigger)
+            .buttonRepeatBehavior(.enabled)
         }
     }
 }
@@ -229,6 +231,7 @@ struct ExpiryDateCompactButtons: View {
                     .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
             }
             .sensoryFeedback(.increase, trigger: plusTrigger)
+            .buttonRepeatBehavior(.enabled)
 
             Button(action: {
                 minusTrigger += 1
@@ -240,6 +243,7 @@ struct ExpiryDateCompactButtons: View {
                     .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
             }
             .sensoryFeedback(.decrease, trigger: minusTrigger)
+            .buttonRepeatBehavior(.enabled)
         }
     }
 }
