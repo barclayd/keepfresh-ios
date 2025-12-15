@@ -33,6 +33,7 @@ public final class Router {
     public var selectedTabPath: [RouterDestination] {
         paths[selectedTab] ?? []
     }
+    
 
     public var currentTabPathTint: Color? {
         selectedTabPath.last?.tint

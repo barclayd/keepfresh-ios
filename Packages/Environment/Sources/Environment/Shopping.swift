@@ -17,6 +17,7 @@ public final class Shopping {
 
     let api = KeepFreshAPI()
     private let cache = ShoppingCache.shared
+    private var tempIdCounter: Int = -1
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
     public private(set) var itemsWithoutStorageLocation: [ShoppingItem] = []
@@ -49,10 +50,13 @@ public final class Shopping {
     }
 
     private func mergeItems(local: [ShoppingItem], server: [ShoppingItem]) -> [ShoppingItem] {
+        let validLocal = local.filter { $0.id > 0 }
+        let tempItems = local.filter { $0.id <= 0 }
+
         var serverById = Dictionary(uniqueKeysWithValues: server.map { ($0.id, $0) })
         var result: [ShoppingItem] = []
 
-        for localItem in local {
+        for localItem in validLocal {
             if let serverItem = serverById[localItem.id] {
                 result.append(serverItem.updatedAt > localItem.updatedAt ? serverItem : localItem)
                 serverById.removeValue(forKey: localItem.id)
@@ -62,6 +66,7 @@ public final class Shopping {
         }
 
         result.append(contentsOf: serverById.values)
+        result.append(contentsOf: tempItems)
 
         return result
     }
@@ -198,8 +203,11 @@ public final class Shopping {
     }
 
     public func addItemWithoutStorageLocation() {
+        let tempId = tempIdCounter
+        tempIdCounter -= 1
+
         let tempItem = ShoppingItem(
-            id: items.map(\.id).max() ?? 99999,
+            id: tempId,
             title: "",
             createdAt: Date(),
             updatedAt: Date(),
@@ -220,7 +228,7 @@ public final class Shopping {
                     quantity: nil))
 
                 for item in newItems {
-                    if let index = items.firstIndex(where: { $0.id == tempItem.id }) {
+                    if let index = items.firstIndex(where: { $0.uuid == tempItem.uuid }) {
                         items[index].id = item.id
                     }
                 }
