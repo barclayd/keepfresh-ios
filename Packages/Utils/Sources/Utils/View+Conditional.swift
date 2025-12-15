@@ -17,10 +17,10 @@ public extension View {
     ///     }
     /// ```
     @ViewBuilder
-    func conditional<Content: View>(
+    func conditional(
         if condition: @autoclosure () -> Bool,
-        @ViewBuilder apply modifier: (Self) -> Content
-    ) -> some View {
+        @ViewBuilder apply modifier: (Self) -> some View) -> some View
+    {
         if condition() {
             modifier(self)
         } else {
@@ -46,11 +46,11 @@ public extension View {
     ///     )
     /// ```
     @ViewBuilder
-    func conditional<PrimaryContent: View, FallbackContent: View>(
+    func conditional(
         if condition: () -> Bool,
-        apply primary: (Self) -> PrimaryContent,
-        otherwise fallback: (Self) -> FallbackContent
-    ) -> some View {
+        apply primary: (Self) -> some View,
+        otherwise fallback: (Self) -> some View) -> some View
+    {
         if condition() {
             primary(self)
         } else {
@@ -78,9 +78,9 @@ public extension View {
     ///     }
     /// ```
     @ViewBuilder
-    func conditional<Content: View>(
-        @ViewBuilder apply modifier: (Self) -> Content
-    ) -> some View {
+    func conditional(
+        @ViewBuilder apply modifier: (Self) -> some View) -> some View
+    {
         modifier(self)
     }
 
@@ -102,10 +102,10 @@ public extension View {
     ///     }
     /// ```
     @ViewBuilder
-    func conditional<Content: View, Value>(
+    func conditional<Value>(
         if optional: Value?,
-        @ViewBuilder apply modifier: (Self, Value) -> Content
-    ) -> some View {
+        @ViewBuilder apply modifier: (Self, Value) -> some View) -> some View
+    {
         if let value = optional {
             modifier(self, value)
         } else {
@@ -132,10 +132,10 @@ public extension View {
     ///     }
     /// ```
     @ViewBuilder
-    func conditional<Content: View>(
+    func conditional(
         unless condition: @autoclosure () -> Bool,
-        @ViewBuilder apply modifier: (Self) -> Content
-    ) -> some View {
+        @ViewBuilder apply modifier: (Self) -> some View) -> some View
+    {
         if !condition() {
             modifier(self)
         } else {
