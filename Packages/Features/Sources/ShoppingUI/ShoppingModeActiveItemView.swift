@@ -179,14 +179,7 @@ public struct ShoppingModeActiveItem: View {
                         if let storageLocation = shoppingItem.storageLocation {
                             HStack(spacing: 4) {
                                 ExpiryDateMinusButton(date: $expiryDate, storageLocation: storageLocation)
-
-//                                DatePicker(
-//                                    "Expiry",
-//                                    selection: $expiryDate,
-//                                    displayedComponents: [.date])
-//                                    .datePickerStyle(.compact).labelsHidden().tint(.blue700)
-//                                    .scaleEffect(0.7)
-
+                                
                                 Button {
                                     showDatePicker.toggle()
                                 } label: {
@@ -206,6 +199,9 @@ public struct ShoppingModeActiveItem: View {
                                     )
                                     .datePickerStyle(.graphical)
                                     .labelsHidden()
+                                    .frame(minWidth: 300)
+                                    .tint(.blue700)
+                                    .padding(.horizontal, 5)
                                     .presentationCompactAdaptation(.popover)
                                 }
 
