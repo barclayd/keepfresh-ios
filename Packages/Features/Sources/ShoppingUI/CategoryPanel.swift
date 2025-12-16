@@ -15,11 +15,13 @@ public struct CategoryPanel: View {
     let category: CategoryDetails
 
     private var items: [ShoppingItem] {
-        shopping.itemsByStorageLocation[storageLocation] ?? []
+        let locationItems = shopping.itemsByStorageLocation[storageLocation] ?? []
+        return locationItems.filter { $0.product?.category.id == category.id }
     }
 
-    public init(storageLocation: StorageLocation) {
+    public init(storageLocation: StorageLocation, category: CategoryDetails) {
         self.storageLocation = storageLocation
+        self.category = category
     }
 
     private func handleItemMove(sourceIndices: IndexSet, destinationIndex: Int) {
@@ -50,11 +52,13 @@ public struct CategoryPanel: View {
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
-                HStack(alignment: .firstTextBaseline) {
-                    Image(systemName: storageLocation.iconFilled)
-                        .frame(width: 22).foregroundColor(textColor).fontWeight(.bold)
+                HStack {
+                    GenmojiView(
+                        name: category.icon,
+                        fontSize: 35,
+                        tint: storageLocation.backgroundColor)
 
-                    Text(storageLocation.rawValue.capitalized)
+                    Text(category.name)
                         .fontWeight(.bold)
                         .foregroundStyle(textColor)
                         .font(.title3)
@@ -107,7 +111,7 @@ public struct CategoryPanel: View {
 
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
-                            ShoppingItemView(shoppingItem: shoppingItem)
+                            ShoppingModeActiveItem(shoppingItem: shoppingItem)
                                 .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                     length * 0.95
                                 }
@@ -149,22 +153,6 @@ public struct CategoryPanel: View {
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
-
-                        if !items.isEmpty {
-                            Color.clear
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .listRowInsets(EdgeInsets())
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
-                                .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-                                    guard let droppedItem = droppedItems.first else { return false }
-
-                                    let targetIndex = items.count
-                                    shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-
-                                    return true
-                                }
-                        }
                     }
                     .padding(.horizontal, -15)
                     .frame(height: CGFloat(items.count) * 75)
@@ -183,7 +171,7 @@ public struct CategoryPanel: View {
                             .fill(LinearGradient(
                                 stops: storageLocation.viewGradientStopsReversed,
                                 startPoint: .leading,
-                                endPoint: .trailing))
+                                endPoint: .trailing)))
             }
         }
         .onChange(of: items.count) { oldValue, newValue in

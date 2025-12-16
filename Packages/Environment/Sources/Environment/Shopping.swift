@@ -27,6 +27,7 @@ public final class Shopping {
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
     public private(set) var itemsWithoutStorageLocation: [ShoppingItem] = []
+    public private(set) var categoriesByStorageLocation: [StorageLocation: [CategoryDetails]] = [:]
 
     public init(items: [ShoppingItem] = []) {
         self.items = cache.load()
@@ -43,6 +44,20 @@ public final class Shopping {
             grouping: items.filter { $0.storageLocation != nil },
             by: \.storageLocation!)
         itemsWithoutStorageLocation = items.filter { $0.storageLocation == nil }
+
+        var categoriesCache: [StorageLocation: [CategoryDetails]] = [:]
+        for (location, locationItems) in itemsByStorageLocation {
+            var seenIds = Set<Int>()
+            var categories: [CategoryDetails] = []
+            for item in locationItems {
+                if let category = item.product?.category, !seenIds.contains(category.id) {
+                    seenIds.insert(category.id)
+                    categories.append(category)
+                }
+            }
+            categoriesCache[location] = categories.sorted { $0.name < $1.name }
+        }
+        categoriesByStorageLocation = categoriesCache
 
         Task { await cache.save(items) }
     }

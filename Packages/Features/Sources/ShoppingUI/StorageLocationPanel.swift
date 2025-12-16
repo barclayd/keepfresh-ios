@@ -98,12 +98,6 @@ public struct StorageLocationPanel: View {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1)
                         .offset(y: -10)
 
-                    if items.isEmpty {
-                        ShoppingPlaceholderView(storageLocation: storageLocation, onTap: {
-                            router.presentedSheet = .shopppingSearch
-                        }).frame(maxWidth: .infinity)
-                    }
-
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
                             ShoppingItemView(shoppingItem: shoppingItem)
@@ -149,28 +143,33 @@ public struct StorageLocationPanel: View {
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
 
-                        if !items.isEmpty {
-                            Color.clear
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .listRowInsets(EdgeInsets())
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
-                                .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-                                    guard let droppedItem = droppedItems.first else { return false }
-
-                                    let targetIndex = items.count
-                                    shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-
-                                    return true
-                                }
-                        }
+//                        if !items.isEmpty {
+//                            Color.clear
+//                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                                .listRowInsets(EdgeInsets())
+//                                .listRowSeparator(.hidden)
+//                                .listRowBackground(Color.clear)
+//                        }
                     }
                     .padding(.horizontal, -15)
-                    .frame(height: CGFloat(items.count) * 75)
+                    .frame(height: CGFloat(items.count) * 67.5)
                     .listStyle(.plain)
                     .scrollDisabled(true)
                     .listRowSpacing(10)
                     .scrollContentBackground(.hidden)
+
+                    ShoppingPlaceholderView(storageLocation: storageLocation, onTap: {
+                        router.presentedSheet = .shopppingSearch
+                    })
+                    .frame(maxWidth: .infinity)
+                    .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
+                        guard let droppedItem = droppedItems.first else { return false }
+
+                        let targetIndex = items.count
+                        shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
+
+                        return true
+                    }
 
                 }.padding(.vertical, 10).padding(.horizontal, 15).frame(maxWidth: .infinity)
                     .background(

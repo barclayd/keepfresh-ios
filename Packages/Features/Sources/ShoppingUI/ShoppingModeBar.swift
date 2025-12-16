@@ -23,6 +23,18 @@ public struct ShoppingModeBar: View {
 
             Spacer()
             
+            Button(action: {
+                shopping.shoppingMode = shopping.shoppingMode == .initial ? .active : .initial
+            }) {
+                Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.fill")
+                    .font(.title3)
+                    .bold()
+                    .labelStyle(.iconOnly)
+                    .tint(shopping.shoppingMode == .initial ? .green500 : .red500)
+                    .contentTransition(.symbolEffect(.replace))
+                    .padding(shopping.shoppingMode == .initial ? [.trailing] : [])
+            }
+            
             if shopping.shoppingMode == .active {
                 Button(action: {
                     
@@ -34,19 +46,8 @@ public struct ShoppingModeBar: View {
                         .tint(.blue700)
                         .contentTransition(.symbolEffect(.replace))
                         .transition(.opacity.animation(.easeInOut(duration: 0.2)))
+                        .padding(.trailing)
                 }
-            }
-
-            Button(action: {
-                shopping.shoppingMode = shopping.shoppingMode == .initial ? .active : .initial
-            }) {
-                Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.fill")
-                    .font(.title3)
-                    .bold()
-                    .labelStyle(.iconOnly)
-                    .padding(.trailing)
-                    .tint(shopping.shoppingMode == .initial ? .green500 : .red500)
-                    .contentTransition(.symbolEffect(.replace))
             }
         }
     }

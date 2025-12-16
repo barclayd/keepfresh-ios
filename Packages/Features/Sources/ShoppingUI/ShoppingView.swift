@@ -19,13 +19,22 @@ public struct ShoppingView: View {
                     if shopping.shoppingMode == .initial {
                         ForEach(StorageLocation.allCases) { storageLocation in
                             StorageLocationPanel(storageLocation: storageLocation)
+                                .transition(.move(edge: .bottom))
                         }
                     } else {
-                        // parse through each StorageLocation categoryId,
-                        // render for each StorageLocation
+                        ForEach(StorageLocation.allCases) { storageLocation in
+                            ForEach(shopping.categoriesByStorageLocation[storageLocation] ?? [], id: \.id) { category in
+                                CategoryPanel(storageLocation: storageLocation, category: category)
+                                    .transition(.move(edge: .bottom))
+                            }
+                        }
                     }
-                    OtherItemsPanel()
+
+                    if shopping.shoppingMode == .initial || !shopping.itemsWithoutStorageLocation.isEmpty {
+                        OtherItemsPanel()
+                    }
                 }
+                .animation(.easeInOut, value: shopping.shoppingMode)
                 .padding(.horizontal, 12.5)
                 .padding(.top, 20)
                 .padding(.bottom, 10)
