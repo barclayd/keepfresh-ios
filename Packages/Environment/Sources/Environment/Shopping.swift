@@ -4,6 +4,10 @@ import Network
 import Notifications
 import SwiftUI
 
+public enum ShoppingMode {
+    case initial, active, completed
+}
+
 @Observable
 @MainActor
 public final class Shopping {
@@ -14,6 +18,8 @@ public final class Shopping {
     }
 
     public var state: FetchState = .loading
+    
+    public var shoppingMode: ShoppingMode = .initial
 
     let api = KeepFreshAPI()
     private let cache = ShoppingCache.shared

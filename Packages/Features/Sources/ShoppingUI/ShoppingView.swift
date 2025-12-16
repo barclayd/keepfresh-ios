@@ -6,6 +6,7 @@ import SwiftUI
 
 public struct ShoppingView: View {
     @Environment(Router.self) var router
+    @Environment(Shopping.self) var shopping
 
     @State private var currentPage: Int = 3
 
@@ -13,31 +14,21 @@ public struct ShoppingView: View {
 
     public var body: some View {
         VStack {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    LazyVStack(spacing: 20) {
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    if shopping.shoppingMode == .initial {
                         ForEach(StorageLocation.allCases) { storageLocation in
                             StorageLocationPanel(storageLocation: storageLocation)
                         }
-                        OtherItemsPanel()
+                    } else {
+                        // parse through each StorageLocation categoryId,
+                        // render for each StorageLocation
                     }
-                    .padding(.horizontal, 12.5)
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
+                    OtherItemsPanel()
                 }
-
-                Button(action: {
-                    router.presentedSheet = .shopppingSearch
-                }) {
-                    Label("Add item to shopping list", systemImage: "magnifyingglass")
-                        .font(.title3)
-                        .bold()
-                        .labelStyle(.iconOnly)
-                        .padding()
-                        .tint(Color.white)
-                }
-                .glassEffect(.regular.tint(.blue600))
-                .scenePadding(.trailing)
+                .padding(.horizontal, 12.5)
+                .padding(.top, 20)
+                .padding(.bottom, 10)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -29,7 +29,7 @@ struct AppTabRootView: View {
                 makeNavigationStack(for: .search, router: router)
             } label: {
                 AppTab.search.label
-            }.hidden(router.selectedTab == .shopping)
+            }
 
             Tab(value: AppTab.kitchen) {
                 makeNavigationStack(for: .kitchen, router: router)
@@ -46,6 +46,13 @@ struct AppTabRootView: View {
         .tint(.blue600)
         .tabBarMinimizeBehavior(.onScrollDown)
         .handleSheets(router: router, inventory: inventory, shopping: shopping)
+        .conditional { view in
+            if #available(iOS 26.1, *) {
+                view.tabViewBottomAccessory(isEnabled: router.selectedTab == .shopping) {
+                    ShoppingModeBar()
+                }
+            }
+        }
     }
 
     @ViewBuilder
