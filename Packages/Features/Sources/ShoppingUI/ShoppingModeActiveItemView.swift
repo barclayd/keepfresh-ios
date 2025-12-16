@@ -27,6 +27,7 @@ struct ExpiryDateMinusButton: View {
                 .fontWeight(.bold)
                 .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
         }
+        .buttonStyle(.borderless)
         .sensoryFeedback(.decrease, trigger: minusTrigger)
         .buttonRepeatBehavior(.enabled)
     }
@@ -55,8 +56,53 @@ struct ExpiryDatePlusButton: View {
                 .fontWeight(.bold)
                 .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
         }
+        .buttonStyle(.borderless)
         .sensoryFeedback(.increase, trigger: plusTrigger)
         .buttonRepeatBehavior(.enabled)
+    }
+}
+
+struct ExpiryDateButtons: View {
+    @Binding var date: Date
+
+    @State private var plusTrigger = 0
+    @State private var minusTrigger = 0
+
+    let storageLocation: StorageLocation
+
+    init(date: Binding<Date>, storageLocation: StorageLocation) {
+        self._date = date
+        self.storageLocation = storageLocation
+    }
+
+    var body: some View {
+        VStack {
+            Button(action: {
+                plusTrigger += 1
+                date.addDays(1)
+            }) {
+                Image(systemName: "plus.square.fill")
+                    .font(.system(size: 20))
+                    .fontWeight(.bold)
+                    .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
+            }
+            .buttonStyle(.borderless)
+            .sensoryFeedback(.increase, trigger: plusTrigger)
+            .buttonRepeatBehavior(.enabled)
+
+            Button(action: {
+                minusTrigger += 1
+                date.addDays(-1)
+            }) {
+                Image(systemName: "minus.square.fill")
+                    .font(.system(size: 16))
+                    .fontWeight(.bold)
+                    .foregroundStyle(storageLocation.controlColors.0, storageLocation.controlColors.1)
+            }
+            .buttonStyle(.borderless)
+            .sensoryFeedback(.decrease, trigger: minusTrigger)
+            .buttonRepeatBehavior(.enabled)
+        }
     }
 }
 
@@ -67,6 +113,8 @@ public struct ShoppingModeActiveItem: View {
 
     // change this to follow what is shown in sheet when item is tapped
     @State private var expiryDate: Date = .init()
+
+    @State private var showDatePicker = false
 
     var shoppingItem: ShoppingItem
 
@@ -86,7 +134,8 @@ public struct ShoppingModeActiveItem: View {
                 } else {
                     status = .created
                 }
-            })
+            }
+        )
     }
 
     public var body: some View {
@@ -120,34 +169,53 @@ public struct ShoppingModeActiveItem: View {
                                         Text(amountUnit)
                                             .foregroundStyle(.gray600).font(.caption)
                                     }
-                                }
+                                }.fixedSize(horizontal: true, vertical: false)
                             }
 
                         }.frame(maxWidth: .infinity, alignment: .leading)
 
-                        Spacer()
+//                        Spacer()
 
                         if let storageLocation = shoppingItem.storageLocation {
-                            HStack(spacing: 0) {
+                            HStack(spacing: 4) {
                                 ExpiryDateMinusButton(date: $expiryDate, storageLocation: storageLocation)
-                                    .offset(x: 10)
 
-                                DatePicker(
-                                    "Expiry",
-                                    selection: $expiryDate,
-                                    displayedComponents: [.date])
-                                    .datePickerStyle(.compact).labelsHidden().tint(.blue700)
-                                    .scaleEffect(0.7)
-                                    .border(.red)
+//                                DatePicker(
+//                                    "Expiry",
+//                                    selection: $expiryDate,
+//                                    displayedComponents: [.date])
+//                                    .datePickerStyle(.compact).labelsHidden().tint(.blue700)
+//                                    .scaleEffect(0.7)
+
+                                Button {
+                                    showDatePicker.toggle()
+                                } label: {
+                                    Text(expiryDate, format: .dateTime.day().month(.abbreviated))
+                                        .foregroundStyle(.blue700).font(.caption)
+                                }
+                                .padding(.vertical, 5).padding(.horizontal, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.gray200)
+                                )
+                                .popover(isPresented: $showDatePicker) {
+                                    DatePicker(
+                                        "Expiry",
+                                        selection: $expiryDate,
+                                        displayedComponents: [.date]
+                                    )
+                                    .datePickerStyle(.graphical)
+                                    .labelsHidden()
+                                    .presentationCompactAdaptation(.popover)
+                                }
 
                                 ExpiryDatePlusButton(date: $expiryDate, storageLocation: storageLocation)
-                                    .offset(x: -10)
                             }
                         }
 
-//                        Toggle("Selected Expiry Date", isOn: isSetToComplete)
-//                            .toggleStyle(CheckToggleStyle(customColor: shoppingItem.storageLocation?.backgroundColor ?? .gray600))
-//                            .labelsHidden()
+                        Toggle("Selected Expiry Date", isOn: isSetToComplete)
+                            .toggleStyle(CheckToggleStyle(customColor: shoppingItem.storageLocation?.backgroundColor ?? .gray600))
+                            .labelsHidden()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
                 }

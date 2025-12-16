@@ -9,7 +9,7 @@ public struct ShoppingModeBar: View {
 
     public var body: some View {
         HStack {
-            Label("Add item to shopping list", systemImage: "basket.fill")
+            Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "list.number" : "basket.fill")
                 .font(.title3)
                 .bold()
                 .labelStyle(.iconOnly)
@@ -22,7 +22,19 @@ public struct ShoppingModeBar: View {
             }.foregroundStyle(.blue700)
 
             Spacer()
-            
+
+            if shopping.shoppingMode == .active {
+                Button(action: {}) {
+                    Label("Add item to shopping list", systemImage: "camera.viewfinder")
+                        .font(.title3)
+                        .bold()
+                        .labelStyle(.iconOnly)
+                        .tint(.blue700)
+                        .contentTransition(.symbolEffect(.replace))
+                        .transition(.opacity.animation(.easeInOut(duration: 0.2)))
+                }
+            }
+
             Button(action: {
                 shopping.shoppingMode = shopping.shoppingMode == .initial ? .active : .initial
             }) {
@@ -32,22 +44,7 @@ public struct ShoppingModeBar: View {
                     .labelStyle(.iconOnly)
                     .tint(shopping.shoppingMode == .initial ? .green500 : .red500)
                     .contentTransition(.symbolEffect(.replace))
-                    .padding(shopping.shoppingMode == .initial ? [.trailing] : [])
-            }
-            
-            if shopping.shoppingMode == .active {
-                Button(action: {
-                    
-                }) {
-                    Label("Add item to shopping list", systemImage: "camera.viewfinder")
-                        .font(.title3)
-                        .bold()
-                        .labelStyle(.iconOnly)
-                        .tint(.blue700)
-                        .contentTransition(.symbolEffect(.replace))
-                        .transition(.opacity.animation(.easeInOut(duration: 0.2)))
-                        .padding(.trailing)
-                }
+                    .padding(.trailing)
             }
         }
     }
