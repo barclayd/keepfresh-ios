@@ -142,14 +142,6 @@ public struct StorageLocationPanel: View {
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
-
-//                        if !items.isEmpty {
-//                            Color.clear
-//                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                                .listRowInsets(EdgeInsets())
-//                                .listRowSeparator(.hidden)
-//                                .listRowBackground(Color.clear)
-//                        }
                     }
                     .padding(.horizontal, -15)
                     .frame(height: CGFloat(items.count) * 67.5)

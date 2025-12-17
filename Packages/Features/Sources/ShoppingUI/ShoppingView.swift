@@ -22,6 +22,8 @@ public struct ShoppingView: View {
                                 .transition(.move(edge: .bottom))
                         }
                     } else {
+                        UpNextPanel(storageLocation: .pantry)
+                        
                         ForEach(StorageLocation.allCases) { storageLocation in
                             ForEach(shopping.categoriesByStorageLocation[storageLocation] ?? [], id: \.id) { category in
                                 CategoryPanel(storageLocation: storageLocation, category: category)

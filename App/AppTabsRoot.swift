@@ -20,25 +20,25 @@ struct AppTabRootView: View {
 
         TabView(selection: $router.selectedTab) {
             Tab(value: AppTab.today) {
-                makeNavigationStack(for: .today, router: router)
+                makeNavigationStack(for: .today, router: router, shopping: shopping)
             } label: {
                 AppTab.today.label
             }
 
             Tab(value: AppTab.search, role: .search) {
-                makeNavigationStack(for: .search, router: router)
+                makeNavigationStack(for: .search, router: router, shopping: shopping)
             } label: {
                 AppTab.search.label
             }
 
             Tab(value: AppTab.kitchen) {
-                makeNavigationStack(for: .kitchen, router: router)
+                makeNavigationStack(for: .kitchen, router: router, shopping: shopping)
             } label: {
                 AppTab.kitchen.label
             }
 
             Tab(value: AppTab.shopping) {
-                makeNavigationStack(for: .shopping, router: router)
+                makeNavigationStack(for: .shopping, router: router, shopping: shopping)
             } label: {
                 AppTab.shopping.label
             }
@@ -56,8 +56,9 @@ struct AppTabRootView: View {
     }
 
     @ViewBuilder
-    private func makeNavigationStack(for tab: AppTab, router: Router) -> some View {
+    private func makeNavigationStack(for tab: AppTab, router: Router, shopping: Shopping) -> some View {
         @Bindable var router = router
+        @Bindable var shopping = shopping
 
         NavigationStack(path: $router[tab]) {
             tab.rootView()
@@ -66,7 +67,7 @@ struct AppTabRootView: View {
                 .environment(\.currentTab, tab)
                 .toolbarRole(.browser)
                 .toolbar {
-                    tab.toolbarContent(router: router)
+                    tab.toolbarContent(router: router, shopping: shopping)
                 }
                 .toolbar(router.tabBarVisibilityForCurrentTab, for: .tabBar)
                 .toolbarBackground(tab.toolbarBackground, for: .navigationBar)
@@ -103,7 +104,7 @@ public extension AppTab {
 
     @MainActor
     @ToolbarContentBuilder
-    func toolbarContent(router: Router) -> some ToolbarContent {
+    func toolbarContent(router: Router, shopping: Shopping) -> some ToolbarContent {
         switch self {
         case .today:
             ToolbarItem(placement: .title) {
@@ -165,8 +166,10 @@ public extension AppTab {
 
         case .shopping:
             ToolbarItem(placement: .title) {
-                Text("Shopping")
+                Text(shopping.shoppingMode == .initial ? "List" : "Shopping")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
+                    .contentTransition(.numericText())
+                    .animation(.easeInOut(duration: 2.0), value: shopping.shoppingMode)
             }
 
             ToolbarItemGroup(placement: .topBarTrailing) {

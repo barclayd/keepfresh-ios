@@ -38,11 +38,16 @@ public struct ShoppingModeBar: View {
             Button(action: {
                 shopping.shoppingMode = shopping.shoppingMode == .initial ? .active : .initial
             }) {
-                Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.fill")
+                Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")
                     .font(.title3)
                     .bold()
                     .labelStyle(.iconOnly)
-                    .tint(shopping.shoppingMode == .initial ? .green500 : .red500)
+                    .symbolRenderingMode(shopping.shoppingMode == .active ? .palette : .monochrome)
+                    .foregroundStyle(
+                        shopping.shoppingMode == .initial ? .green500 : .red500,
+                        .blue700
+                    )
+                    .symbolEffect(.breathe, options: .repeating, isActive: shopping.shoppingMode == .active)
                     .contentTransition(.symbolEffect(.replace))
                     .padding(.trailing)
             }

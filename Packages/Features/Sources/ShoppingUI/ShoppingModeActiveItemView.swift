@@ -174,18 +174,17 @@ public struct ShoppingModeActiveItem: View {
 
                         }.frame(maxWidth: .infinity, alignment: .leading)
 
-//                        Spacer()
-
                         if let storageLocation = shoppingItem.storageLocation {
                             HStack(spacing: 4) {
                                 ExpiryDateMinusButton(date: $expiryDate, storageLocation: storageLocation)
-                                
+
                                 Button {
                                     showDatePicker.toggle()
                                 } label: {
                                     Text(expiryDate, format: .dateTime.day().month(.abbreviated))
                                         .foregroundStyle(.blue700).font(.caption)
                                 }
+                                .buttonStyle(.borderless)
                                 .padding(.vertical, 5).padding(.horizontal, 10)
                                 .background(
                                     RoundedRectangle(cornerRadius: 25)
