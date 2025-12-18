@@ -3,14 +3,19 @@ import SwiftUI
 public func formatCategoryPath(pathDisplay: String?) -> Text {
     guard let pathDisplay else { return Text("") }
     
-    let parts = pathDisplay.split(separator: ".").dropFirst()
+    let parts = Array(pathDisplay.split(separator: ".").dropFirst().reversed())
+    
     var result = Text("")
     
     for (index, part) in parts.enumerated() {
+        let text = Text(String(part))
+            .font(index == 0 ? .body : .caption)
+        
         if index > 0 {
-            result = Text("\(result) \(Image(systemName: "arrow.right")) ")
+            result = Text("\(result)\n\(text)")
+        } else {
+            result = text
         }
-        result = Text("\(result)\(part)")
     }
     
     return result

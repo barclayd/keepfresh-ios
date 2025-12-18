@@ -150,7 +150,7 @@ public struct ShoppingModeActiveItem: View {
         dismissTask?.cancel()
 
         dismissTask = Task {
-            try? await Task.sleep(for: .seconds(2))
+            try? await Task.sleep(for: .seconds(1))
 
             guard !Task.isCancelled else {
                 return
@@ -249,7 +249,7 @@ public struct ShoppingModeActiveItem: View {
             .background(.white100)
             .cornerRadius(22)
             .opacity(isAnimatingCompletion ? 0.25 : 1)
-        } 
+        }
         .matchedGeometryEffect(id: shoppingItem.id, in: animation)
         .padding(.bottom, 4)
         .padding(.horizontal, 4)

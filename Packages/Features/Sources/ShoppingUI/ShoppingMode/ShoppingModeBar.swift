@@ -7,6 +7,10 @@ public struct ShoppingModeBar: View {
 
     public init() {}
 
+    var badgeCount: Int {
+        shopping.shoppingMode == .initial ? shopping.items.count : shopping.pendingExpiryDates.count
+    }
+
     public var body: some View {
         HStack {
             Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "list.number" : "basket.fill")
@@ -15,6 +19,19 @@ public struct ShoppingModeBar: View {
                 .labelStyle(.iconOnly)
                 .padding(.leading)
                 .foregroundStyle(.blue700)
+                .conditional(if: badgeCount > 0) { view in
+                    view.padding(.trailing, 8)
+                        .overlay(alignment: .topTrailing) {
+                            Text("\(badgeCount)")
+                                .font(.caption2)
+                                .foregroundStyle(.white100)
+                                .padding(4)
+                                .background(.blue700, in: Circle())
+                                .offset(x: shopping.shoppingMode == .active ? 2 : 4, y: shopping.shoppingMode == .active ? -10 : -12)
+                        }
+                        .contentTransition(.numericText())
+                        .animation(.default, value: badgeCount)
+                }
 
             VStack(alignment: .leading) {
                 Text("Start shop").font(.callout)

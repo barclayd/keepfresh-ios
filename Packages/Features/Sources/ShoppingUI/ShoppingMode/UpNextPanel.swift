@@ -1,7 +1,7 @@
 import DesignSystem
 import Models
-import Utils
 import SwiftUI
+import Utils
 
 struct UpNextPanel: View {
     let storageLocation: StorageLocation
@@ -15,11 +15,10 @@ struct UpNextPanel: View {
                     Image(systemName: "arrow.forward.square.fill").resizable()
                         .frame(width: 25, height: 25).foregroundColor(.blue800).fontWeight(.bold)
 
-                    Text("Up next: \(formatCategoryPath(pathDisplay: shoppingItem.product?.category.pathDisplay))")
+                    formatCategoryPath(pathDisplay: shoppingItem.product?.category.pathDisplay)
                         .fontWeight(.bold)
                         .foregroundStyle(.blue800)
                         .font(.subheadline)
-                        .lineLimit(2, reservesSpace: true)
 
                     Spacer()
                 }
