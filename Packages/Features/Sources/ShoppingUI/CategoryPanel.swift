@@ -60,11 +60,11 @@ public struct CategoryPanel: View {
                         fontSize: 35,
                         tint: storageLocation.backgroundColor)
 
-                    Text(formatCategoryPath(pathDisplay: category.pathDisplay))
+                    Text("\(formatCategoryPath(pathDisplay: category.pathDisplay))")
                         .fontWeight(.bold)
                         .foregroundStyle(textColor)
-                        .font(.title3)
-                        .lineLimit(1)
+                        .font(.subheadline)
+                        .lineLimit(2)
                         .alignmentGuide(.firstTextBaseline) { d in
                             d[.bottom] * 0.75
                         }

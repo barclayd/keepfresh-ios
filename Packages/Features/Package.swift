@@ -52,5 +52,5 @@ let package = Package(
             dependencies: baseDeps),
         .target(
             name: "ShoppingUI",
-            dependencies: baseDeps + ["SharedUI", "SearchUI"]),
+            dependencies: baseDeps + ["SharedUI", "SearchUI", .product(name: "Utils", package: "Utils")]),
     ])

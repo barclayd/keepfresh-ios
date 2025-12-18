@@ -8,7 +8,7 @@ public func formatCategoryPath(pathDisplay: String?) -> Text {
     
     for (index, part) in parts.enumerated() {
         if index > 0 {
-            result = Text("\(result) \(Image(systemName: "arrow.right"))")
+            result = Text("\(result) \(Image(systemName: "arrow.right")) ")
         }
         result = Text("\(result)\(part)")
     }
