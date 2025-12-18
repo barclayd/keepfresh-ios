@@ -20,6 +20,7 @@ public final class Shopping {
     public var state: FetchState = .loading
 
     public var shoppingMode: ShoppingMode = .initial
+    public var shoppingModeStartDate: Date?
 
     let api = KeepFreshAPI()
     private let cache = ShoppingCache.shared

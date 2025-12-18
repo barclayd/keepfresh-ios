@@ -10,6 +10,10 @@ public struct ShoppingModeBar: View {
     var badgeCount: Int {
         shopping.shoppingMode == .initial ? shopping.items.count : shopping.pendingExpiryDates.count
     }
+    
+    var title: String {
+        shopping.shoppingMode == .initial ? "Start shop" : "\(shopping.items.count - shopping.pendingExpiryDates.count) items left"
+    }
 
     public var body: some View {
         HStack {
@@ -34,9 +38,21 @@ public struct ShoppingModeBar: View {
                 }
 
             VStack(alignment: .leading) {
-                Text("Start shop").font(.callout)
-                Text("Last shop: 19th December").font(.caption)
-            }.foregroundStyle(.blue700)
+                Text(title)
+                    .font(.callout)
+                    .contentTransition(.numericText())
+                    .animation(.default, value: badgeCount)
+
+                if shopping.shoppingMode == .active, let startDate = shopping.shoppingModeStartDate {
+                    Text(startDate, style: .timer)
+                        .font(.caption)
+                        .monospacedDigit()
+                } else {
+                    Text("Last shop: 19th December")
+                        .font(.caption)
+                }
+            }
+            .foregroundStyle(.blue700)
 
             Spacer()
 
@@ -54,9 +70,13 @@ public struct ShoppingModeBar: View {
 
             Button(action: {
                 if shopping.shoppingMode == .active {
+                    shopping.shoppingModeStartDate = nil
                     shopping.resetShoppingModeItems()
+                    shopping.shoppingMode = .initial
+                } else {
+                    shopping.shoppingModeStartDate = Date.now
+                    shopping.shoppingMode = .active
                 }
-                shopping.shoppingMode = shopping.shoppingMode == .initial ? .active : .initial
             }) {
                 Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")
                     .font(.title3)

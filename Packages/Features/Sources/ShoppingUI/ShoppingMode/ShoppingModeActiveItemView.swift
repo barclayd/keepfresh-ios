@@ -172,7 +172,7 @@ public struct ShoppingModeActiveItem: View {
             HStack(spacing: 0) {
                 VStack {
                     HStack {
-                        VStack(alignment: .leading, spacing: 0) {
+                        VStack(alignment: .leading, spacing: 4) {
                             Text(shoppingItem.title ?? shoppingItem.product?.name.truncated(to: 26) ?? "")
                                 .font(.headline)
                                 .foregroundStyle(.blue800)
@@ -212,6 +212,8 @@ public struct ShoppingModeActiveItem: View {
                                 } label: {
                                     Text(expiryDate, format: .dateTime.day().month(.abbreviated))
                                         .foregroundStyle(.blue700).font(.caption)
+                                        .contentTransition(.numericText())
+                                        .animation(.default, value: expiryDate)
                                 }
                                 .buttonStyle(.borderless)
                                 .padding(.vertical, 5).padding(.horizontal, 10)

@@ -33,7 +33,8 @@ public struct GenmojiView: View {
             }
         }
         .frame(width: fontSize, height: fontSize)
-        .task {
+        .task(id: name) {
+            genmojiImage = nil
             await fetchGenmoji()
         }
     }
