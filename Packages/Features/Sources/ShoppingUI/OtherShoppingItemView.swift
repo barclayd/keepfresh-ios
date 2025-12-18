@@ -9,8 +9,9 @@ public struct OtherShoppingItemView: View {
     @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
 
-    @State private var status: ShoppingItemStatus = .created
+    @State private var isAnimatingCompletion = false
     @State private var shoppingItem: ShoppingItem
+
     @State private var verticalOffset: CGFloat = 0
     @State private var fadeOpacity: CGFloat = 1
 
@@ -25,18 +26,17 @@ public struct OtherShoppingItemView: View {
 
     private var isSetToComplete: Binding<Bool> {
         Binding(
-            get: {
-                status == .pendingCompletion || status == .completed
-            },
+            get: { isAnimatingCompletion },
             set: { newValue in
                 if newValue {
-                    status = .pendingCompletion
+                    isAnimatingCompletion = true
                     triggerDismissAnimation()
                 } else {
                     dismissTask?.cancel()
-                    status = .created
+                    isAnimatingCompletion = false
                 }
-            })
+            }
+        )
     }
 
     private func triggerDismissAnimation() {
@@ -55,8 +55,6 @@ public struct OtherShoppingItemView: View {
             }
 
             try? await Task.sleep(for: .seconds(0.6))
-
-            status = .completed
 
             shopping.updateItemWithoutStorageLocationStatus(uuid: shoppingItem.uuid, to: .completed)
         }
@@ -91,7 +89,7 @@ public struct OtherShoppingItemView: View {
         .padding(.vertical, 14)
         .padding(.horizontal, 9)
         .background(.white100)
-        .opacity(status == .created ? 1 : 0.25)
+        .opacity(isAnimatingCompletion ? 0.25 : 1)
         .background(.white100)
         .cornerRadius(22)
         .frame(maxWidth: .infinity, alignment: .center)

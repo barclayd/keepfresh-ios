@@ -1,3 +1,4 @@
+import Environment
 import Intelligence
 import Models
 import Router
@@ -108,34 +109,62 @@ struct ExpiryDateButtons: View {
 
 public struct ShoppingModeActiveItem: View {
     @Environment(Router.self) var router
+    @Environment(Shopping.self) var shopping
 
-    @State private var status: ShoppingItemStatus = .created
+    @State private var isAnimatingCompletion = false
 
     // change this to follow what is shown in sheet when item is tapped
     @State private var expiryDate: Date = .init()
 
     @State private var showDatePicker = false
 
-    var shoppingItem: ShoppingItem
+    @State private var verticalOffset: CGFloat = 0
+    @State private var fadeOpacity: CGFloat = 1
 
-    public init(shoppingItem: ShoppingItem) {
+    @State private var dismissTask: Task<Void, Never>?
+
+    var shoppingItem: ShoppingItem
+    var animation: Namespace.ID
+
+    public init(shoppingItem: ShoppingItem, animation: Namespace.ID) {
         self.shoppingItem = shoppingItem
+        self.animation = animation
     }
 
     private var isSetToComplete: Binding<Bool> {
         Binding(
-            get: {
-                status == .pendingCompletion || status == .completed
-            },
+            get: { isAnimatingCompletion },
             set: { newValue in
                 if newValue {
-                    status = .pendingCompletion
-//                    router.presentedSheet = .addInventoryItemFromShopping(shoppingItem)
+                    isAnimatingCompletion = true
+                    triggerDismissAnimation()
                 } else {
-                    status = .created
+                    dismissTask?.cancel()
+                    isAnimatingCompletion = false
                 }
             }
         )
+    }
+
+    private func triggerDismissAnimation() {
+        dismissTask?.cancel()
+
+        dismissTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+
+            guard !Task.isCancelled else {
+                return
+            }
+
+            withAnimation(.smooth(duration: 0.6)) {
+                verticalOffset = -100
+                fadeOpacity = 0
+            }
+
+            try? await Task.sleep(for: .seconds(0.6))
+            
+            shopping.markItemPendingCompletion(id: shoppingItem.id, expiryDate: expiryDate)
+        }
     }
 
     public var body: some View {
@@ -219,21 +248,21 @@ public struct ShoppingModeActiveItem: View {
             .padding(.horizontal, 5)
             .background(.white100)
             .cornerRadius(22)
-            .opacity(status == .created ? 1 : 0.25)
-        }
+            .opacity(isAnimatingCompletion ? 0.25 : 1)
+        } 
+        .matchedGeometryEffect(id: shoppingItem.id, in: animation)
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
         .background(.white100)
         .cornerRadius(22)
         .frame(maxWidth: .infinity, alignment: .center)
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
-//        .onChange(of: router.presentedSheet) { _, newSheet in
-//            if case .addInventoryItemFromShopping = newSheet {
-//                return
-//            }
-//
-//            status = .created
-//        }
         .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 22))
+        .onChange(of: shoppingItem) { oldShoppingItem, newShoppingItem in
+            if (oldShoppingItem.id != newShoppingItem.id) {
+                isAnimatingCompletion = false
+                fadeOpacity = 1
+            }
+        }
     }
 }

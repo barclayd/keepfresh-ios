@@ -9,6 +9,7 @@ public struct ShoppingView: View {
     @Environment(Shopping.self) var shopping
 
     @State private var currentPage: Int = 3
+    @Namespace private var shoppingAnimation
 
     public init() {}
 
@@ -18,18 +19,11 @@ public struct ShoppingView: View {
                 LazyVStack(spacing: 20) {
                     if shopping.shoppingMode == .initial {
                         ForEach(StorageLocation.allCases) { storageLocation in
-                            StorageLocationPanel(storageLocation: storageLocation)
+                            StorageLocationPanel(storageLocation: storageLocation, animation: shoppingAnimation)
                                 .transition(.move(edge: .bottom))
                         }
                     } else {
-                        UpNextPanel(storageLocation: .pantry)
-                        
-                        ForEach(StorageLocation.allCases) { storageLocation in
-                            ForEach(shopping.categoriesByStorageLocation[storageLocation] ?? [], id: \.id) { category in
-                                CategoryPanel(storageLocation: storageLocation, category: category)
-                                    .transition(.move(edge: .bottom))
-                            }
-                        }
+                        ShoppingMode(animation: shoppingAnimation)
                     }
 
                     if shopping.shoppingMode == .initial || !shopping.itemsWithoutStorageLocation.isEmpty {

@@ -36,6 +36,9 @@ public struct ShoppingModeBar: View {
             }
 
             Button(action: {
+                if shopping.shoppingMode == .active {
+                    shopping.resetShoppingModeItems()
+                }
                 shopping.shoppingMode = shopping.shoppingMode == .initial ? .active : .initial
             }) {
                 Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")
@@ -45,8 +48,7 @@ public struct ShoppingModeBar: View {
                     .symbolRenderingMode(shopping.shoppingMode == .active ? .palette : .monochrome)
                     .foregroundStyle(
                         shopping.shoppingMode == .initial ? .green500 : .red500,
-                        .blue700
-                    )
+                        .blue700)
                     .symbolEffect(.breathe, options: .repeating, isActive: shopping.shoppingMode == .active)
                     .contentTransition(.symbolEffect(.replace))
                     .padding(.trailing)

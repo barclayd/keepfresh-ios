@@ -18,7 +18,7 @@ public final class Shopping {
     }
 
     public var state: FetchState = .loading
-    
+
     public var shoppingMode: ShoppingMode = .initial
 
     let api = KeepFreshAPI()
@@ -28,6 +28,57 @@ public final class Shopping {
     public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
     public private(set) var itemsWithoutStorageLocation: [ShoppingItem] = []
     public private(set) var categoriesByStorageLocation: [StorageLocation: [CategoryDetails]] = [:]
+
+    // MARK: - Shopping Mode
+
+    public var upNextStorageLocation: StorageLocation? {
+        for location in StorageLocation.allCases {
+            if let items = itemsByStorageLocation[location],
+               items.contains(where: { $0.status == .created })
+            {
+                return location
+            }
+        }
+        return nil
+    }
+
+    public var upNextItem: ShoppingItem? {
+        guard let location = upNextStorageLocation,
+              let items = itemsByStorageLocation[location]
+        else {
+            return nil
+        }
+        return items.first(where: { $0.status == .created })
+    }
+
+    public func shoppingModeItems(for storageLocation: StorageLocation, category: CategoryDetails) -> [ShoppingItem] {
+        let locationItems = itemsByStorageLocation[storageLocation] ?? []
+        return locationItems.filter {
+            $0.product?.category.id == category.id &&
+                $0.id != upNextItem?.id &&
+                $0.status == .created
+        }
+    }
+
+    // MARK: - Pending Expiry
+
+    public var pendingExpiryDates: [Int: Date] = [:]
+
+    public func markItemPendingCompletion(id: Int, expiryDate: Date) {
+        guard let index = findItem(id: id) else { return }
+
+        items[index].status = .pendingCompletion
+        pendingExpiryDates[id] = expiryDate
+    }
+
+    public func resetShoppingModeItems() {
+        for index in items.indices {
+            if items[index].status == .pendingCompletion {
+                items[index].status = .created
+            }
+        }
+        pendingExpiryDates.removeAll()
+    }
 
     public init(items: [ShoppingItem] = []) {
         self.items = cache.load()

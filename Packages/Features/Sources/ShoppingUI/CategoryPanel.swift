@@ -3,6 +3,7 @@ import Environment
 import Models
 import Router
 import SharedUI
+import Utils
 import SwiftUI
 
 public struct CategoryPanel: View {
@@ -13,15 +14,16 @@ public struct CategoryPanel: View {
 
     let storageLocation: StorageLocation
     let category: CategoryDetails
+    var animation: Namespace.ID
 
     private var items: [ShoppingItem] {
-        let locationItems = shopping.itemsByStorageLocation[storageLocation] ?? []
-        return locationItems.filter { $0.product?.category.id == category.id }
+        shopping.shoppingModeItems(for: storageLocation, category: category)
     }
 
-    public init(storageLocation: StorageLocation, category: CategoryDetails) {
+    public init(storageLocation: StorageLocation, category: CategoryDetails, animation: Namespace.ID) {
         self.storageLocation = storageLocation
         self.category = category
+        self.animation = animation
     }
 
     private func handleItemMove(sourceIndices: IndexSet, destinationIndex: Int) {
@@ -58,7 +60,7 @@ public struct CategoryPanel: View {
                         fontSize: 35,
                         tint: storageLocation.backgroundColor)
 
-                    Text(category.name)
+                    Text(formatCategoryPath(pathDisplay: category.pathDisplay))
                         .fontWeight(.bold)
                         .foregroundStyle(textColor)
                         .font(.title3)
@@ -111,7 +113,7 @@ public struct CategoryPanel: View {
 
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
-                            ShoppingModeActiveItem(shoppingItem: shoppingItem)
+                            ShoppingModeActiveItem(shoppingItem: shoppingItem, animation: animation)
                                 .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                     length * 0.95
                                 }

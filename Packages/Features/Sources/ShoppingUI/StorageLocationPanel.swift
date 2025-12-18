@@ -12,13 +12,15 @@ public struct StorageLocationPanel: View {
     @State private var isExpanded: Bool = true
 
     let storageLocation: StorageLocation
+    var animation: Namespace.ID
 
     private var items: [ShoppingItem] {
         shopping.itemsByStorageLocation[storageLocation] ?? []
     }
 
-    public init(storageLocation: StorageLocation) {
+    public init(storageLocation: StorageLocation, animation: Namespace.ID) {
         self.storageLocation = storageLocation
+        self.animation = animation
     }
 
     private func handleItemMove(sourceIndices: IndexSet, destinationIndex: Int) {
@@ -100,7 +102,7 @@ public struct StorageLocationPanel: View {
 
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
-                            ShoppingItemView(shoppingItem: shoppingItem)
+                            ShoppingItemView(shoppingItem: shoppingItem, animation: animation)
                                 .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                     length * 0.95
                                 }
