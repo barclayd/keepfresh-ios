@@ -108,6 +108,13 @@ public final class Shopping {
         shoppingModeStartDate = nil
     }
 
+    public func completeShoppingSession() {
+        let pendingItemIds = Set(pendingItems.map(\.id))
+        items.removeAll { pendingItemIds.contains($0.id) }
+        shoppingModeStartDate = nil
+        shoppingMode = .initial
+    }
+
     public init(items: [ShoppingItem] = []) {
         self.items = cache.load()
         if self.items.isEmpty {

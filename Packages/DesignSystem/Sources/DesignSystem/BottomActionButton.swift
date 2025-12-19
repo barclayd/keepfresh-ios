@@ -4,7 +4,7 @@ public struct BottomActionButton: View {
     private let title: String
     private let action: () async throws -> Void
     private let safeAreaInsets: EdgeInsets
-
+    
     public init(
         title: String,
         safeAreaInsets: EdgeInsets,
@@ -14,15 +14,15 @@ public struct BottomActionButton: View {
         self.safeAreaInsets = safeAreaInsets
         self.action = action
     }
-
+    
     private var cornerRadius: CGFloat {
         safeAreaInsets.bottom > 20 ? 40 : 0
     }
-
+    
     public var body: some View {
         ZStack(alignment: .bottom) {
             LiquidGlassBackground(cornerRadius: cornerRadius)
-
+            
             ActionButton(
                 title: title,
                 safeAreaInsets: safeAreaInsets,
@@ -33,11 +33,11 @@ public struct BottomActionButton: View {
 
 public struct BottomActionCustomButton: View {
     @State private var markAsDonePressed = false
-
+    
     private let title: String
     private let action: () async throws -> Void
     private let safeAreaInsets: EdgeInsets
-
+    
     public init(
         title: String,
         safeAreaInsets: EdgeInsets,
@@ -47,18 +47,23 @@ public struct BottomActionCustomButton: View {
         self.safeAreaInsets = safeAreaInsets
         self.action = action
     }
-
+    
     private var cornerRadius: CGFloat {
         safeAreaInsets.bottom > 20 ? 40 : 0
     }
-
+    
     public var body: some View {
         ZStack(alignment: .center) {
             LiquidGlassBackground(cornerRadius: cornerRadius, height: 120)
-
+            
             Button(action: {
                 markAsDonePressed.toggle()
-//                showSheet = .remove
+                
+                Task {
+                    do {
+                        try await action()
+                    } catch {}
+                }
             }) {
                 HStack(spacing: 10) {
                     Image(systemName: "cart.fill.badge.plus")
@@ -86,14 +91,14 @@ public struct BottomActionCustomButton: View {
 
 public struct LiquidGlassBackground: View {
     let cornerRadius: CGFloat
-
+    
     let height: CGFloat
-
+    
     public init(cornerRadius: CGFloat, height: CGFloat = 80) {
         self.cornerRadius = cornerRadius
         self.height = height
     }
-
+    
     public var body: some View {
         Color.clear
             .frame(height: height)
@@ -122,17 +127,17 @@ private struct ActionButton: View {
     let title: String
     let safeAreaInsets: EdgeInsets
     let action: () async throws -> Void
-
+    
     @State private var isProcessing = false
-
+    
     private var verticalPadding: CGFloat {
         safeAreaInsets.bottom > 20 ? 0 : 10
     }
-
+    
     var body: some View {
         Button {
             guard !isProcessing else { return }
-
+            
             isProcessing = true
             Task {
                 do {
@@ -154,7 +159,7 @@ private struct ActionButton: View {
 private struct ButtonLabel: View {
     let title: String
     let isProcessing: Bool
-
+    
     var body: some View {
         HStack(spacing: 12) {
             Text(title)
@@ -162,7 +167,7 @@ private struct ButtonLabel: View {
                 .foregroundStyle(.blue600)
                 .fontWeight(.medium)
                 .opacity(isProcessing ? 0.6 : 1.0)
-
+            
             if isProcessing {
                 ProgressView()
                     .tint(.blue600)

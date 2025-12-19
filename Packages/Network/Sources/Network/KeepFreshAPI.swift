@@ -122,7 +122,7 @@ public struct KeepFreshAPI: Sendable {
     public func createShoppingSession(_ request: CreateShoppingSessionRequest) async throws -> [InventoryItem] {
         try await client.post(
             [InventoryItem].self,
-            path: "v2/shopping/session",
+            path: "v2/shopping/sessions",
             body: request)
     }
 
