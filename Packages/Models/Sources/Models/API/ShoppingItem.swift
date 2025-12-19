@@ -118,3 +118,25 @@ public struct CompleteShoppingItemRequest: Codable, Sendable {
         self.expiryDate = expiryDate
     }
 }
+
+public struct CreateShoppingSessionRequest: Codable, Sendable {
+    public let createdAt: Date
+    public let updatedAt: Date
+    public let shoppingItems: [ShoppingSessionItem]
+
+    public init(createdAt: Date, updatedAt: Date, shoppingItems: [ShoppingSessionItem]) {
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.shoppingItems = shoppingItems
+    }
+}
+
+public struct ShoppingSessionItem: Codable, Sendable {
+    public let shoppingItemId: Int
+    public let expiryDate: Date?
+
+    public init(shoppingItemId: Int, expiryDate: Date?) {
+        self.shoppingItemId = shoppingItemId
+        self.expiryDate = expiryDate
+    }
+}

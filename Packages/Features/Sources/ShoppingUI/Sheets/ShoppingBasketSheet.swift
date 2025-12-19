@@ -1,11 +1,14 @@
 import DesignSystem
 import Environment
 import Models
+import Network
 import SwiftUI
 
 public struct ShoppingBasketSheet: View {
-    @Environment(\.dismiss) private var dismiss
     @Environment(Shopping.self) var shopping
+    @Environment(Inventory.self) var inventory
+
+    @Environment(\.dismiss) private var dismiss
 
     public init() {}
 
@@ -64,7 +67,25 @@ public struct ShoppingBasketSheet: View {
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            // Empty for now - batch API coming soon
+                            Task {
+                                let api = KeepFreshAPI()
+                                let request = CreateShoppingSessionRequest(
+                                    createdAt: shopping.shoppingModeStartDate ?? Date(),
+                                    updatedAt: Date(),
+                                    shoppingItems: shopping.pendingItems.map {
+                                        ShoppingSessionItem(shoppingItemId: $0.id, expiryDate: $0.expiryDate)
+                                    })
+
+                                if let inventoryItems = try? await api.createShoppingSession(request) {
+                                    withAnimation {
+                                        inventory.items.append(contentsOf: inventoryItems)
+
+                                        for pendingItem in shopping.pendingItems {
+                                            shopping.items.remove(at: shopping.items.firstIndex(where: { $0.id == pendingItem.id })!)
+                                        }
+                                    }
+                                }
+                            }
                         } label: {
                             Image(systemName: "checkmark")
                                 .fontWeight(.semibold)
