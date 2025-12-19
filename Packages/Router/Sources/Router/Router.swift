@@ -20,7 +20,15 @@ public final class Router {
         set { paths[tab] = newValue }
     }
 
-    public var selectedTab: AppTab = .today
+    public var selectedTab: AppTab = .today {
+        didSet {
+            if oldValue != selectedTab {
+                previousTab = oldValue
+            }
+        }
+    }
+
+    public private(set) var previousTab: AppTab?
 
     public var presentedSheet: SheetDestination?
 
