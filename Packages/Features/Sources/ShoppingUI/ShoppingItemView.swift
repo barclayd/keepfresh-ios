@@ -27,8 +27,7 @@ public struct ShoppingItemView: View {
                 } else {
                     isAnimatingCompletion = false
                 }
-            }
-        )
+            })
     }
 
     public var body: some View {

@@ -92,7 +92,7 @@ public struct InventoryItemView: View {
                         name: inventoryItem.product.category.icon,
                         fontSize: 35,
                         tint: inventoryItem.consumptionUrgency.tileColor.background)
-                    
+
                     GenmojiView(
                         name: inventoryItem.product.category.icon,
                         fontSize: 35,

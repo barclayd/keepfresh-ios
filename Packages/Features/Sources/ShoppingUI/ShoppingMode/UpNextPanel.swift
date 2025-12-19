@@ -1,6 +1,6 @@
 import DesignSystem
-import SharedUI
 import Models
+import SharedUI
 import SwiftUI
 import Utils
 
@@ -15,7 +15,7 @@ struct UpNextPanel: View {
                 HStack {
                     Image(systemName: "arrow.forward.square.fill").resizable()
                         .frame(width: 25, height: 25).foregroundColor(.blue800).fontWeight(.bold)
-                    
+
                     if let icon = shoppingItem.product?.category.icon {
                         GenmojiView(
                             name: icon,

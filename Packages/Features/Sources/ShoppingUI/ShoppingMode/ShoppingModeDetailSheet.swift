@@ -2,9 +2,8 @@ import DesignSystem
 import SwiftUI
 
 public struct ShoppingModeDetailSheet: View {
-    
     @Environment(\.dismiss) private var dismiss
-    
+
     public init() {}
 
     public var body: some View {
@@ -12,8 +11,7 @@ public struct ShoppingModeDetailSheet: View {
             Image(systemName: "basket.fill")
                 .font(.system(size: 60))
                 .foregroundStyle(.blue700)
-            
-            
+
             Button(action: {
                 dismiss()
             }) {

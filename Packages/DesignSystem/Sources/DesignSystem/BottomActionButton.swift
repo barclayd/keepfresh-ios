@@ -33,8 +33,7 @@ public struct BottomActionButton: View {
 
 public struct BottomActionCustomButton: View {
     @State private var markAsDonePressed = false
-    
-    
+
     private let title: String
     private let action: () async throws -> Void
     private let safeAreaInsets: EdgeInsets
@@ -87,7 +86,7 @@ public struct BottomActionCustomButton: View {
 
 public struct LiquidGlassBackground: View {
     let cornerRadius: CGFloat
-    
+
     let height: CGFloat
 
     public init(cornerRadius: CGFloat, height: CGFloat = 80) {

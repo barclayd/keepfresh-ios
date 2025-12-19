@@ -19,8 +19,7 @@ struct BasketItemRow: View {
                 GenmojiView(
                     name: icon,
                     fontSize: 35,
-                    tint: item.storageLocation?.backgroundColor ?? .gray600
-                )
+                    tint: item.storageLocation?.backgroundColor ?? .gray600)
             }
 
             VStack(alignment: .leading, spacing: 2) {

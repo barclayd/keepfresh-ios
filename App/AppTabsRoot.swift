@@ -182,6 +182,30 @@ public extension AppTab {
                     Image(systemName: "barcode.viewfinder").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
+
+                if shopping.shoppingMode == .active {
+                    Button(action: {
+                        router.presentedSheet = .basketDetail
+                    }) {
+                        Image(systemName: "basket.fill").resizable()
+                            .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
+                            .conditional(if: !shopping.pendingItems.isEmpty) { view in
+                                view.padding(.trailing, 8)
+                                    .overlay(alignment: .topTrailing) {
+                                        Text("\(shopping.pendingItems.count)")
+                                            .font(.caption2)
+                                            .foregroundStyle(.white100)
+                                            .padding(4)
+                                            .background(.blue700, in: Circle())
+                                            .offset(
+                                                x: shopping.shoppingMode == .active ? 2 : 4,
+                                                y: shopping.shoppingMode == .active ? -10 : -12)
+                                    }
+                                    .contentTransition(.numericText())
+                                    .animation(.default, value: shopping.pendingItems.count)
+                            }
+                    }
+                }
             }
         }
     }

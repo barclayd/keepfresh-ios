@@ -3,8 +3,8 @@ import Environment
 import Models
 import Router
 import SharedUI
-import Utils
 import SwiftUI
+import Utils
 
 public struct CategoryPanel: View {
     @Environment(Router.self) var router

@@ -10,7 +10,8 @@ struct ShoppingMode: View {
 
     var body: some View {
         if let storageLocation = shopping.upNextStorageLocation,
-           let shoppingItem = shopping.upNextItem {
+           let shoppingItem = shopping.upNextItem
+        {
             UpNextPanel(storageLocation: storageLocation, shoppingItem: shoppingItem, animation: animation)
         }
 
@@ -22,7 +23,7 @@ struct ShoppingMode: View {
                 }
             }
         }
-        
+
         if !shopping.itemsWithoutStorageLocation.isEmpty {
             ShoppingModeOtherItemsPanel()
         }

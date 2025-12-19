@@ -40,8 +40,7 @@ public struct ShoppingModeActiveItem: View {
                     dismissTask?.cancel()
                     isAnimatingCompletion = false
                 }
-            }
-        )
+            })
     }
 
     private func triggerDismissAnimation() {
@@ -58,7 +57,7 @@ public struct ShoppingModeActiveItem: View {
             }
 
             try? await Task.sleep(for: .seconds(0.8))
-            
+
             shopping.markItemPendingCompletion(id: shoppingItem.id, expiryDate: expiryDate)
         }
     }
@@ -115,20 +114,18 @@ public struct ShoppingModeActiveItem: View {
                                 .padding(.vertical, 5).padding(.horizontal, 10)
                                 .background(
                                     RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.gray200)
-                                )
+                                        .fill(Color.gray200))
                                 .popover(isPresented: $showDatePicker) {
                                     DatePicker(
                                         "Expiry",
                                         selection: $expiryDate,
-                                        displayedComponents: [.date]
-                                    )
-                                    .datePickerStyle(.graphical)
-                                    .labelsHidden()
-                                    .frame(minWidth: 300)
-                                    .tint(.blue700)
-                                    .padding(.horizontal, 5)
-                                    .presentationCompactAdaptation(.popover)
+                                        displayedComponents: [.date])
+                                        .datePickerStyle(.graphical)
+                                        .labelsHidden()
+                                        .frame(minWidth: 300)
+                                        .tint(.blue700)
+                                        .padding(.horizontal, 5)
+                                        .presentationCompactAdaptation(.popover)
                                 }
 
                                 ExpiryDatePlusButton(date: $expiryDate, storageLocation: storageLocation)
@@ -157,7 +154,7 @@ public struct ShoppingModeActiveItem: View {
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 22))
         .onChange(of: shoppingItem) { oldShoppingItem, newShoppingItem in
-            if (oldShoppingItem.id != newShoppingItem.id) {
+            if oldShoppingItem.id != newShoppingItem.id {
                 isAnimatingCompletion = false
                 fadeOpacity = 1
             }

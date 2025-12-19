@@ -5,20 +5,20 @@ import SwiftUI
 
 struct OtherBasketStorageLocationPanel: View {
     @Environment(Shopping.self) var shopping
-    
+
     @State private var isExpanded: Bool = true
-    
+
     private var items: [ShoppingItem] {
-        shopping.itemsWithoutStorageLocation.filter({ $0.status == .pendingCompletion })
+        shopping.itemsWithoutStorageLocation.filter { $0.status == .pendingCompletion }
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 HStack(alignment: .firstTextBaseline) {
                     Image(systemName: "list.bullet")
                         .frame(width: 22).foregroundColor(.white200).fontWeight(.bold)
-                    
+
                     Text("Other")
                         .fontWeight(.bold)
                         .foregroundStyle(.white200)
@@ -28,9 +28,9 @@ struct OtherBasketStorageLocationPanel: View {
                             d[.bottom] * 0.75
                         }
                 }
-                
+
                 Spacer()
-                
+
                 HStack {
                     Image(systemName: "\(items.count).square.fill")
                         .frame(width: 20)
@@ -51,31 +51,26 @@ struct OtherBasketStorageLocationPanel: View {
                         topLeading: 10,
                         bottomLeading: isExpanded ? 0 : 10,
                         bottomTrailing: isExpanded ? 0 : 10,
-                        topTrailing: 10
-                    )
-                )
-                .fill(
-                    LinearGradient(
-                        stops: [
-                            Gradient.Stop(color: .gray500, location: 0),
-                            Gradient.Stop(color: .gray700, location: 1),
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-            )
+                        topTrailing: 10))
+                    .fill(
+                        LinearGradient(
+                            stops: [
+                                Gradient.Stop(color: .gray500, location: 0),
+                                Gradient.Stop(color: .gray700, location: 1),
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing)))
             .onTapGesture {
                 withAnimation(.easeInOut) {
                     isExpanded.toggle()
                 }
             }
-            
+
             if isExpanded {
                 VStack {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1)
                         .offset(y: -10)
-                    
+
                     List {
                         ForEach(items, id: \.uuid) { shoppingItem in
                             ReadOnlyOtherShoppingItemView(shoppingItem: shoppingItem)
@@ -100,10 +95,8 @@ struct OtherBasketStorageLocationPanel: View {
                                                     source: .user,
                                                     storageLocation: shoppingItem.storageLocation,
                                                     productId: shoppingItem.product?.id,
-                                                    quantity: 1
-                                                ),
-                                                categoryId: shoppingItem.product?.category.id
-                                            )
+                                                    quantity: 1),
+                                                categoryId: shoppingItem.product?.category.id)
                                         }
                                     } label: {
                                         Label("Add another", systemImage: "plus.rectangle.fill.on.rectangle.fill")
@@ -111,8 +104,7 @@ struct OtherBasketStorageLocationPanel: View {
                                 }
                                 .transition(.asymmetric(
                                     insertion: .move(edge: .top).combined(with: .opacity),
-                                    removal: .move(edge: .top).combined(with: .opacity)
-                                ))
+                                    removal: .move(edge: .top).combined(with: .opacity)))
                         }
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
@@ -135,20 +127,15 @@ struct OtherBasketStorageLocationPanel: View {
                             topLeading: 0,
                             bottomLeading: 10,
                             bottomTrailing: 10,
-                            topTrailing: 0
-                        )
-                    )
-                    .fill(
-                        LinearGradient(
-                            stops: [
-                                Gradient.Stop(color: .gray500, location: 0),
-                                Gradient.Stop(color: .gray700, location: 1),
-                            ],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                )
+                            topTrailing: 0))
+                        .fill(
+                            LinearGradient(
+                                stops: [
+                                    Gradient.Stop(color: .gray500, location: 0),
+                                    Gradient.Stop(color: .gray700, location: 1),
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing)))
             }
         }
         .padding(.horizontal)

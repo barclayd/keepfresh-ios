@@ -22,7 +22,7 @@ public struct ShoppingView: View {
                             StorageLocationPanel(storageLocation: storageLocation, animation: shoppingAnimation)
                                 .transition(.move(edge: .bottom))
                         }
-                        
+
                         if shopping.shoppingMode == .initial || !shopping.itemsWithoutStorageLocation.isEmpty {
                             OtherItemsPanel()
                         }

@@ -35,8 +35,7 @@ public struct ShoppingModeActiveOtherItem: View {
                     dismissTask?.cancel()
                     isAnimatingCompletion = false
                 }
-            }
-        )
+            })
     }
 
     private func triggerDismissAnimation() {

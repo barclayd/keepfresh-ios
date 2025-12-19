@@ -40,6 +40,7 @@ public final class Shopping {
     public var itemsWithoutStorageLocation: [ShoppingItem] {
         items.filter { $0.storageLocation == nil }
     }
+
     public private(set) var categoriesByStorageLocation: [StorageLocation: [CategoryDetails]] = [:]
 
     // MARK: - Shopping Mode

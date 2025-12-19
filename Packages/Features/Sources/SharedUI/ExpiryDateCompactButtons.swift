@@ -11,7 +11,7 @@ public struct ExpiryDateCompactButtons: View {
     let storageLocation: StorageLocation
 
     public init(date: Binding<Date>, storageLocation: StorageLocation) {
-        self._date = date
+        _date = date
         self.storageLocation = storageLocation
     }
 

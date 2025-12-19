@@ -97,7 +97,7 @@ public struct ShoppingModeBar: View {
             Color.clear
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    if shopping.shoppingMode == .active && shopping.hasPendingItems {
+                    if shopping.shoppingMode == .active, shopping.hasPendingItems {
                         router.presentedSheet = .basketDetail
                     }
                 }

@@ -26,7 +26,7 @@ public struct ShoppingModeConfirmItemView: View {
     public init(shoppingItem: ShoppingItem, expiryDate: Date, animation: Namespace.ID) {
         self.shoppingItem = shoppingItem
         self.animation = animation
-        self._expiryDate = State(initialValue: expiryDate)
+        _expiryDate = State(initialValue: expiryDate)
     }
 
     private var isSetToComplete: Binding<Bool> {
@@ -40,8 +40,7 @@ public struct ShoppingModeConfirmItemView: View {
                     dismissTask?.cancel()
                     isAnimatingCompletion = false
                 }
-            }
-        )
+            })
     }
 
     private func triggerDismissAnimation() {
@@ -72,8 +71,7 @@ public struct ShoppingModeConfirmItemView: View {
                     GenmojiView(
                         name: icon,
                         fontSize: 35,
-                        tint: shoppingItem.storageLocation?.backgroundColor ?? .gray600
-                    )
+                        tint: shoppingItem.storageLocation?.backgroundColor ?? .gray600)
                 }
 
                 VStack {
@@ -122,20 +120,18 @@ public struct ShoppingModeConfirmItemView: View {
                             .padding(.vertical, 5).padding(.horizontal, 10)
                             .background(
                                 RoundedRectangle(cornerRadius: 25)
-                                    .fill(Color.gray200)
-                            )
+                                    .fill(Color.gray200))
                             .popover(isPresented: $showDatePicker) {
                                 DatePicker(
                                     "Expiry",
                                     selection: $expiryDate,
-                                    displayedComponents: [.date]
-                                )
-                                .datePickerStyle(.graphical)
-                                .labelsHidden()
-                                .frame(minWidth: 300)
-                                .tint(.blue700)
-                                .padding(.horizontal, 5)
-                                .presentationCompactAdaptation(.popover)
+                                    displayedComponents: [.date])
+                                    .datePickerStyle(.graphical)
+                                    .labelsHidden()
+                                    .frame(minWidth: 300)
+                                    .tint(.blue700)
+                                    .padding(.horizontal, 5)
+                                    .presentationCompactAdaptation(.popover)
                             }
 
                             Button(action: {
@@ -143,7 +139,8 @@ public struct ShoppingModeConfirmItemView: View {
                                     shopping.deleteItem(id: shoppingItem.id)
                                 }
                             }) {
-                                Image(systemName: "xmark").resizable().frame(width: 12, height: 12).foregroundStyle(.blue700).fontWeight(.bold)
+                                Image(systemName: "xmark").resizable().frame(width: 12, height: 12).foregroundStyle(.blue700)
+                                    .fontWeight(.bold)
                                     .padding(.leading, 12)
                             }
                         }

@@ -8,9 +8,9 @@ import SwiftUI
 public struct ReadOnlyOtherShoppingItemView: View {
     @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
-    
+
     @State private var shoppingItem: ShoppingItem
-    
+
     public init(shoppingItem: ShoppingItem) {
         self.shoppingItem = shoppingItem
     }
@@ -24,11 +24,11 @@ public struct ReadOnlyOtherShoppingItemView: View {
                         .foregroundStyle(.blue800)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .lineLimit(1)
-                    
+
                     Spacer()
                 }
                 .contentShape(Rectangle())
-                
+
                 Button(action: {
                     withAnimation {
                         shopping.deleteItem(id: shoppingItem.id)

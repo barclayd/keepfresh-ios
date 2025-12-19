@@ -11,7 +11,7 @@ struct ExpiryDateMinusButton: View {
     let storageLocation: StorageLocation
 
     init(date: Binding<Date>, storageLocation: StorageLocation) {
-        self._date = date
+        _date = date
         self.storageLocation = storageLocation
     }
 
@@ -40,7 +40,7 @@ struct ExpiryDatePlusButton: View {
     let storageLocation: StorageLocation
 
     init(date: Binding<Date>, storageLocation: StorageLocation) {
-        self._date = date
+        _date = date
         self.storageLocation = storageLocation
     }
 
@@ -69,7 +69,7 @@ struct ExpiryDateButtons: View {
     let storageLocation: StorageLocation
 
     init(date: Binding<Date>, storageLocation: StorageLocation) {
-        self._date = date
+        _date = date
         self.storageLocation = storageLocation
     }
 

@@ -42,7 +42,7 @@ struct BasketStorageLocationPanel: View {
     let items: [ShoppingItem]
 
     @State private var isExpanded: Bool = true
-    
+
     @Namespace private var animation
 
     private var textColor: Color {
@@ -91,17 +91,12 @@ struct BasketStorageLocationPanel: View {
                         topLeading: 10,
                         bottomLeading: isExpanded ? 0 : 10,
                         bottomTrailing: isExpanded ? 0 : 10,
-                        topTrailing: 10
-                    )
-                )
-                .fill(
-                    LinearGradient(
-                        stops: storageLocation.viewGradientStopsReversed,
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-            )
+                        topTrailing: 10))
+                    .fill(
+                        LinearGradient(
+                            stops: storageLocation.viewGradientStopsReversed,
+                            startPoint: .leading,
+                            endPoint: .trailing)))
             .onTapGesture {
                 withAnimation(.easeInOut) {
                     isExpanded.toggle()
@@ -114,11 +109,13 @@ struct BasketStorageLocationPanel: View {
                         .fill(Color.black)
                         .opacity(0.15)
                         .frame(maxWidth: .infinity, maxHeight: 1)
-                    
+
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
-                            let expiryDate = calculateExpiryDate(categoryId: shoppingItem.product!.category.id, storageLocation: storageLocation) ?? Date()
-                            
+                            let expiryDate = calculateExpiryDate(
+                                categoryId: shoppingItem.product!.category.id,
+                                storageLocation: storageLocation) ?? Date()
+
                             ShoppingModeConfirmItemView(shoppingItem: shoppingItem, expiryDate: expiryDate, animation: animation)
                                 .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                     length * 0.95
@@ -168,17 +165,12 @@ struct BasketStorageLocationPanel: View {
                             topLeading: 0,
                             bottomLeading: 10,
                             bottomTrailing: 10,
-                            topTrailing: 0
-                        )
-                    )
-                    .fill(
-                        LinearGradient(
-                            stops: storageLocation.viewGradientStopsReversed,
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                )
+                            topTrailing: 0))
+                        .fill(
+                            LinearGradient(
+                                stops: storageLocation.viewGradientStopsReversed,
+                                startPoint: .leading,
+                                endPoint: .trailing)))
             }
         }
         .padding(.horizontal)

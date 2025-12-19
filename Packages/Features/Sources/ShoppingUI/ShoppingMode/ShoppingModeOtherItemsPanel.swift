@@ -179,7 +179,7 @@ public struct ShoppingModeOtherItemsPanel: View {
             if newValue > oldValue {
                 editingTitleFocus = items.last?.uuid
             }
-            
+
             if newValue == 0, oldValue > 0 {
                 withAnimation(.easeInOut(duration: 0.6)) {
                     isExpanded = false
