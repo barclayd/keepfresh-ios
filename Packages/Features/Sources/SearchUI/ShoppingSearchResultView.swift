@@ -114,8 +114,11 @@ public struct SearchShoppingResultCard: View {
                 shoppingItemId = nil
                 shopping.deleteItem(id: itemId)
             } else {
+                let tempId = -searchProduct.id
+                shoppingItemId = tempId
+
                 Task {
-                    let id = await shopping.addItem(
+                    let realId = await shopping.addItem(
                         request: AddShoppingItemRequest(
                             title: nil,
                             source: .user,
@@ -123,7 +126,12 @@ public struct SearchShoppingResultCard: View {
                             productId: searchProduct.id,
                             quantity: 1),
                         categoryId: searchProduct.category.id)
-                    shoppingItemId = id
+
+                    if let realId {
+                        shoppingItemId = realId
+                    } else {
+                        shoppingItemId = nil
+                    }
                 }
             }
         }

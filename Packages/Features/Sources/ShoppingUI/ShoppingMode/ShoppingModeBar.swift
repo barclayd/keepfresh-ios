@@ -71,13 +71,21 @@ public struct ShoppingModeBar: View {
             }
 
             Button(action: {
-                if shopping.shoppingMode == .active {
+                guard shopping.shoppingMode == .active else {
+                    shopping.startShoppingMode()
+
+                    return
+                }
+
+                guard shopping.hasPendingItems else {
                     shopping.shoppingModeStartDate = nil
                     shopping.resetShoppingModeItems()
                     shopping.shoppingMode = .initial
-                } else {
-                    shopping.startShoppingMode()
+
+                    return
                 }
+                
+                router.presentedSheet = .basketDetail
             }) {
                 Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")
                     .font(.title3)
