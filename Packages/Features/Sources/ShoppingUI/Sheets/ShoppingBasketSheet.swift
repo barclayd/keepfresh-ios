@@ -53,12 +53,6 @@ public struct ShoppingBasketSheet: View {
                         title: "Finish shop",
                         safeAreaInsets: geometry.safeAreaInsets,
                         action: {
-                            print("[DEBUG] Finish shop tapped")
-                            let api = KeepFreshAPI()
-
-                            print("[DEBUG] pendingItems count: \(shopping.pendingItems.count)")
-                            print("[DEBUG] shoppingModeStartDate: \(String(describing: shopping.shoppingModeStartDate))")
-
                             let request = CreateShoppingSessionRequest(
                                 createdAt: shopping.shoppingModeStartDate ?? Date(),
                                 updatedAt: Date(),
@@ -66,16 +60,12 @@ public struct ShoppingBasketSheet: View {
                                     ShoppingSessionItem(shoppingItemId: $0.id, expiryDate: $0.expiryDate)
                                 })
 
-                            print("[DEBUG] Request shoppingItems: \(request.shoppingItems)")
+                            shopping.completeShoppingSession()
+                            dismiss()
 
-                            do {
-                                let inventoryItems = try await api.createShoppingSession(request)
-                                print("[DEBUG] Success! Received \(inventoryItems.count) inventory items")
+                            let api = KeepFreshAPI()
+                            if let inventoryItems = try? await api.createShoppingSession(request) {
                                 inventory.items.append(contentsOf: inventoryItems)
-                                shopping.completeShoppingSession()
-                                dismiss()
-                            } catch {
-                                print("[DEBUG] API Error: \(error)")
                             }
                         })
                 }
@@ -93,8 +83,6 @@ public struct ShoppingBasketSheet: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             Task {
-                                let api = KeepFreshAPI()
-                                
                                 let request = CreateShoppingSessionRequest(
                                     createdAt: shopping.shoppingModeStartDate ?? Date(),
                                     updatedAt: Date(),
@@ -102,10 +90,12 @@ public struct ShoppingBasketSheet: View {
                                         ShoppingSessionItem(shoppingItemId: $0.id, expiryDate: $0.expiryDate)
                                     })
 
+                                shopping.completeShoppingSession()
+                                dismiss()
+
+                                let api = KeepFreshAPI()
                                 if let inventoryItems = try? await api.createShoppingSession(request) {
                                     inventory.items.append(contentsOf: inventoryItems)
-                                    shopping.completeShoppingSession()
-                                    dismiss()
                                 }
                             }
                         } label: {
