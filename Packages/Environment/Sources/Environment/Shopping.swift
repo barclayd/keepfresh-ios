@@ -37,7 +37,9 @@ public final class Shopping {
     private var tempIdCounter: Int = -1
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
-    public private(set) var itemsWithoutStorageLocation: [ShoppingItem] = []
+    public var itemsWithoutStorageLocation: [ShoppingItem] {
+        items.filter { $0.storageLocation == nil }
+    }
     public private(set) var categoriesByStorageLocation: [StorageLocation: [CategoryDetails]] = [:]
 
     // MARK: - Shopping Mode
@@ -85,10 +87,13 @@ public final class Shopping {
         guard let index = findItem(id: id) else { return }
 
         items[index].status = .pendingCompletion
+        items[index].updatedAt = Date()
 
         if let expiryDate {
             items[index].expiryDate = expiryDate
         }
+
+        saveItems()
     }
 
     public func resetShoppingModeItems() {
@@ -96,6 +101,7 @@ public final class Shopping {
             if items[index].status == .pendingCompletion {
                 items[index].status = .created
                 items[index].expiryDate = nil
+                items[index].updatedAt = Date()
             }
         }
         shoppingModeStartDate = nil
@@ -131,7 +137,6 @@ public final class Shopping {
         itemsByStorageLocation = Dictionary(
             grouping: items.filter { $0.storageLocation != nil },
             by: \.storageLocation!)
-        itemsWithoutStorageLocation = items.filter { $0.storageLocation == nil }
 
         var categoriesCache: [StorageLocation: [CategoryDetails]] = [:]
         for (location, locationItems) in itemsByStorageLocation {
@@ -147,6 +152,10 @@ public final class Shopping {
         }
         categoriesByStorageLocation = categoriesCache
 
+        Task { await cache.save(items) }
+    }
+
+    private func saveItems() {
         Task { await cache.save(items) }
     }
 
@@ -167,7 +176,12 @@ public final class Shopping {
 
         for localItem in validLocal {
             if let serverItem = serverById[localItem.id] {
-                result.append(serverItem.updatedAt > localItem.updatedAt ? serverItem : localItem)
+                if localItem.status == .pendingCompletion {
+                    result.append(localItem)
+                } else {
+                    let useServer = serverItem.updatedAt > localItem.updatedAt
+                    result.append(useServer ? serverItem : localItem)
+                }
                 serverById.removeValue(forKey: localItem.id)
             } else {
                 result.append(localItem)
