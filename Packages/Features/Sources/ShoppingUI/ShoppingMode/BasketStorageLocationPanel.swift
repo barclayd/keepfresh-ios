@@ -3,6 +3,38 @@ import Environment
 import Models
 import SwiftUI
 
+@MainActor
+func calculateExpiryDate(categoryId: Int, storageLocation: StorageLocation) -> Date? {
+    guard
+        let shelfLife = SuggestionsCache.shared.getSuggestions(for: categoryId)?.shelfLifeInDays,
+        let expiry = getExpiryDateForSelection(
+            storageLocation: storageLocation,
+            status: .unopened,
+            shelfLife: shelfLife)
+    else {
+        return nil
+    }
+    return expiry
+}
+
+func addDaysToNow(_ days: Int) -> Date {
+    let calendar: Calendar = .current
+    return calendar.date(byAdding: .day, value: days, to: Date())!
+}
+
+@MainActor
+func getExpiryDateForSelection(
+    storageLocation: StorageLocation,
+    status: ProductSearchItemStatus,
+    shelfLife: ShelfLifeInDays) -> Date?
+{
+    guard let expiryInDays = shelfLife[status][storageLocation] else {
+        return nil
+    }
+
+    return addDaysToNow(expiryInDays)
+}
+
 struct BasketStorageLocationPanel: View {
     @Environment(Shopping.self) var shopping
 
@@ -85,7 +117,9 @@ struct BasketStorageLocationPanel: View {
                     
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
-                            ShoppingModeConfirmItemView(shoppingItem: shoppingItem, animation: animation)
+                            let expiryDate = calculateExpiryDate(categoryId: shoppingItem.product!.category.id, storageLocation: storageLocation) ?? Date()
+                            
+                            ShoppingModeConfirmItemView(shoppingItem: shoppingItem, expiryDate: expiryDate, animation: animation)
                                 .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                     length * 0.95
                                 }

@@ -11,8 +11,7 @@ public struct ShoppingModeConfirmItemView: View {
 
     @State private var isAnimatingCompletion = false
 
-    // change this to follow what is shown in sheet when item is tapped
-    @State private var expiryDate: Date = .init()
+    @State private var expiryDate: Date
 
     @State private var showDatePicker = false
 
@@ -24,9 +23,10 @@ public struct ShoppingModeConfirmItemView: View {
     var shoppingItem: ShoppingItem
     var animation: Namespace.ID
 
-    public init(shoppingItem: ShoppingItem, animation: Namespace.ID) {
+    public init(shoppingItem: ShoppingItem, expiryDate: Date, animation: Namespace.ID) {
         self.shoppingItem = shoppingItem
         self.animation = animation
+        self._expiryDate = State(initialValue: expiryDate)
     }
 
     private var isSetToComplete: Binding<Bool> {
