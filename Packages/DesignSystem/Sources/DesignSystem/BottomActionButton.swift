@@ -31,18 +31,73 @@ public struct BottomActionButton: View {
     }
 }
 
+public struct BottomActionCustomButton: View {
+    @State private var markAsDonePressed = false
+    
+    
+    private let title: String
+    private let action: () async throws -> Void
+    private let safeAreaInsets: EdgeInsets
+
+    public init(
+        title: String,
+        safeAreaInsets: EdgeInsets,
+        action: @escaping () async throws -> Void)
+    {
+        self.title = title
+        self.safeAreaInsets = safeAreaInsets
+        self.action = action
+    }
+
+    private var cornerRadius: CGFloat {
+        safeAreaInsets.bottom > 20 ? 40 : 0
+    }
+
+    public var body: some View {
+        ZStack(alignment: .center) {
+            LiquidGlassBackground(cornerRadius: cornerRadius, height: 120)
+
+            Button(action: {
+                markAsDonePressed.toggle()
+//                showSheet = .remove
+            }) {
+                HStack(spacing: 10) {
+                    Image(systemName: "cart.fill.badge.plus")
+                        .font(.system(size: 18))
+                        .frame(width: 20, alignment: .center)
+                    Text(title)
+                        .font(.headline)
+                        .frame(width: 175, alignment: .center)
+                }
+                .foregroundStyle(.blue600)
+                .fontWeight(.bold)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(.green300))
+            }
+            .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.7), trigger: markAsDonePressed)
+            .padding(.horizontal, 20)
+        }
+    }
+}
+
 // MARK: - Liquid Glass Background
 
 public struct LiquidGlassBackground: View {
     let cornerRadius: CGFloat
+    
+    let height: CGFloat
 
-    public init(cornerRadius: CGFloat) {
+    public init(cornerRadius: CGFloat, height: CGFloat = 80) {
         self.cornerRadius = cornerRadius
+        self.height = height
     }
 
     public var body: some View {
         Color.clear
-            .frame(height: 80)
+            .frame(height: height)
             .glassEffect(
                 .regular.interactive(),
                 in: UnevenRoundedRectangle(

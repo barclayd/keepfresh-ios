@@ -5,7 +5,7 @@ import Router
 import SharedUI
 import SwiftUI
 
-public struct ShoppingModeActiveItem: View {
+public struct ShoppingModeConfirmItemView: View {
     @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
 
@@ -48,16 +48,18 @@ public struct ShoppingModeActiveItem: View {
         dismissTask?.cancel()
 
         dismissTask = Task {
+            try? await Task.sleep(for: .seconds(1))
+
             guard !Task.isCancelled else {
                 return
             }
 
-            withAnimation(.smooth(duration: 0.8)) {
+            withAnimation(.smooth(duration: 0.6)) {
                 verticalOffset = -100
                 fadeOpacity = 0
             }
 
-            try? await Task.sleep(for: .seconds(0.8))
+            try? await Task.sleep(for: .seconds(0.6))
             
             shopping.markItemPendingCompletion(id: shoppingItem.id, expiryDate: expiryDate)
         }
@@ -66,9 +68,16 @@ public struct ShoppingModeActiveItem: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
+                if let icon = shoppingItem.product?.category.icon {
+                    GenmojiView(
+                        name: icon,
+                        fontSize: 35,
+                        tint: shoppingItem.storageLocation?.backgroundColor ?? .gray600)
+                }
+                
                 VStack {
                     HStack {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 0) {
                             Text(shoppingItem.title ?? shoppingItem.product?.name.truncated(to: 26) ?? "")
                                 .font(.headline)
                                 .foregroundStyle(.blue800)
@@ -134,10 +143,6 @@ public struct ShoppingModeActiveItem: View {
                                 ExpiryDatePlusButton(date: $expiryDate, storageLocation: storageLocation)
                             }
                         }
-
-                        Toggle("Selected Expiry Date", isOn: isSetToComplete)
-                            .toggleStyle(CheckToggleStyle(customColor: shoppingItem.storageLocation?.backgroundColor ?? .gray600))
-                            .labelsHidden()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 5)
                 }

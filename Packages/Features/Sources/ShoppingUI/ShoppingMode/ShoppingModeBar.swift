@@ -1,8 +1,10 @@
 import DesignSystem
 import Environment
+import Router
 import SwiftUI
 
 public struct ShoppingModeBar: View {
+    @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
 
     public init() {}
@@ -90,6 +92,15 @@ public struct ShoppingModeBar: View {
                     .contentTransition(.symbolEffect(.replace))
                     .padding(.trailing)
             }
+        }
+        .background {
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if shopping.shoppingMode == .active && shopping.pendingExpiryDates.count > 0 {
+                        router.presentedSheet = .basketDetail
+                    }
+                }
         }
     }
 }

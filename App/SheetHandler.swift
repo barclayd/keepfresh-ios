@@ -118,6 +118,11 @@ extension View {
                     })
                     .presentationDetents([.custom(AdaptiveSmallDetent.self)])
                     .presentationDragIndicator(.visible)
+
+            case .basketDetail:
+                BasketDetailView()
+                    .presentationDragIndicator(.visible)
+                    .presentationDetents([.custom(AdaptiveExtraExtraLargeDetent.self)])
             }
         }
     }

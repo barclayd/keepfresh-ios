@@ -30,4 +30,5 @@ public enum SheetDestination: Hashable, Identifiable {
     case removeInventoryItemDirect(InventoryItem)
 
     case addInventoryItemFromShopping(ShoppingItem)
+    case basketDetail
 }
