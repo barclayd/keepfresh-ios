@@ -24,6 +24,7 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
     public var status: ShoppingItemStatus
     public var storageLocation: StorageLocation?
     public let product: Product?
+    public var expiryDate: Date?
 
     public let uuid: UUID = .init()
 
@@ -36,6 +37,7 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
         case status
         case storageLocation
         case product
+        case expiryDate
     }
 
     public init(
@@ -46,7 +48,8 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
         source: ShoppingItemSource,
         status: ShoppingItemStatus,
         storageLocation: StorageLocation?,
-        product: Product?)
+        product: Product?,
+        expiryDate: Date? = nil)
     {
         self.id = id
         self.title = title
@@ -56,6 +59,7 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
         self.status = status
         self.storageLocation = storageLocation
         self.product = product
+        self.expiryDate = expiryDate
     }
 
     public static var transferRepresentation: some TransferRepresentation {

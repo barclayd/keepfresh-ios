@@ -10,7 +10,7 @@ struct BasketItemRow: View {
     let item: ShoppingItem
 
     private var expiryDate: Date? {
-        shopping.pendingExpiryDates[item.id]
+        item.expiryDate
     }
 
     var body: some View {

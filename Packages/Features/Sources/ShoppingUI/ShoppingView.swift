@@ -22,12 +22,12 @@ public struct ShoppingView: View {
                             StorageLocationPanel(storageLocation: storageLocation, animation: shoppingAnimation)
                                 .transition(.move(edge: .bottom))
                         }
+                        
+                        if shopping.shoppingMode == .initial || !shopping.itemsWithoutStorageLocation.isEmpty {
+                            OtherItemsPanel()
+                        }
                     } else {
                         ShoppingMode(animation: shoppingAnimation)
-                    }
-
-                    if shopping.shoppingMode == .initial || !shopping.itemsWithoutStorageLocation.isEmpty {
-                        OtherItemsPanel()
                     }
                 }
                 .animation(.easeInOut, value: shopping.shoppingMode)

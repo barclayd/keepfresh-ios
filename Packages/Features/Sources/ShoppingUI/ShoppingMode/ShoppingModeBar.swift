@@ -10,11 +10,11 @@ public struct ShoppingModeBar: View {
     public init() {}
 
     var badgeCount: Int {
-        shopping.shoppingMode == .initial ? shopping.items.count : shopping.pendingExpiryDates.count
+        shopping.shoppingMode == .initial ? shopping.items.count : shopping.pendingItems.count
     }
-    
+
     var title: String {
-        shopping.shoppingMode == .initial ? "Start shop" : "\(shopping.items.count - shopping.pendingExpiryDates.count) items left"
+        shopping.shoppingMode == .initial ? "Start shop" : "\(shopping.items.count - shopping.pendingItems.count) items left"
     }
 
     public var body: some View {
@@ -97,7 +97,7 @@ public struct ShoppingModeBar: View {
             Color.clear
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    if shopping.shoppingMode == .active && shopping.pendingExpiryDates.count > 0 {
+                    if shopping.shoppingMode == .active && shopping.hasPendingItems {
                         router.presentedSheet = .basketDetail
                     }
                 }

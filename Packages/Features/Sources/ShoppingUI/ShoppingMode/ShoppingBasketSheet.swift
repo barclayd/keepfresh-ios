@@ -37,6 +37,10 @@ public struct ShoppingBasketSheet: View {
                                     items: items)
                             }
                         }
+
+                        if !shopping.itemsWithoutStorageLocation.filter({ $0.status == .pendingCompletion }).isEmpty {
+                            OtherBasketStorageLocationPanel()
+                        }
                     }
                     .padding(.vertical)
                     .padding(.bottom, 100)

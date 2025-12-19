@@ -20,7 +20,17 @@ public final class Shopping {
     public var state: FetchState = .loading
 
     public var shoppingMode: ShoppingMode = .initial
-    public var shoppingModeStartDate: Date?
+    public var shoppingModeStartDate: Date? {
+        didSet {
+            if let date = shoppingModeStartDate {
+                UserDefaults.standard.set(date, forKey: timerKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: timerKey)
+            }
+        }
+    }
+
+    private let timerKey = "shoppingModeStartDate"
 
     let api = KeepFreshAPI()
     private let cache = ShoppingCache.shared
@@ -61,24 +71,34 @@ public final class Shopping {
         }
     }
 
-    // MARK: - Pending Expiry
+    // MARK: - Pending Items
 
-    public var pendingExpiryDates: [Int: Date] = [:]
+    public var pendingItems: [ShoppingItem] {
+        items.filter { $0.status == .pendingCompletion }
+    }
 
-    public func markItemPendingCompletion(id: Int, expiryDate: Date) {
+    public var hasPendingItems: Bool {
+        items.contains { $0.status == .pendingCompletion }
+    }
+
+    public func markItemPendingCompletion(id: Int, expiryDate: Date? = nil) {
         guard let index = findItem(id: id) else { return }
 
         items[index].status = .pendingCompletion
-        pendingExpiryDates[id] = expiryDate
+
+        if let expiryDate {
+            items[index].expiryDate = expiryDate
+        }
     }
 
     public func resetShoppingModeItems() {
         for index in items.indices {
             if items[index].status == .pendingCompletion {
                 items[index].status = .created
+                items[index].expiryDate = nil
             }
         }
-        pendingExpiryDates.removeAll()
+        shoppingModeStartDate = nil
     }
 
     public init(items: [ShoppingItem] = []) {
@@ -89,6 +109,22 @@ public final class Shopping {
             state = .loaded
         }
         updateCaches()
+
+        loadShoppingModeStartDate()
+        resumeShoppingModeIfNeeded()
+    }
+
+    private func loadShoppingModeStartDate() {
+        shoppingModeStartDate = UserDefaults.standard.object(forKey: timerKey) as? Date
+    }
+
+    private func resumeShoppingModeIfNeeded() {
+        if hasPendingItems {
+            shoppingMode = .active
+            if shoppingModeStartDate == nil {
+                shoppingModeStartDate = Date()
+            }
+        }
     }
 
     private func updateCaches() {

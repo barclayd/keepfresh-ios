@@ -22,5 +22,9 @@ struct ShoppingMode: View {
                 }
             }
         }
+        
+        if !shopping.itemsWithoutStorageLocation.isEmpty {
+            ShoppingModeOtherItemsPanel()
+        }
     }
 }
