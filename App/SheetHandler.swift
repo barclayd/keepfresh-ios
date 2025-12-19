@@ -120,7 +120,7 @@ extension View {
                     .presentationDragIndicator(.visible)
 
             case .basketDetail:
-                BasketDetailView()
+                ShoppingBasketSheet()
                     .presentationDragIndicator(.visible)
                     .presentationDetents([.custom(AdaptiveExtraExtraLargeDetent.self)])
             }

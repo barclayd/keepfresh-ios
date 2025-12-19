@@ -60,7 +60,7 @@ public struct ShoppingModeConfirmItemView: View {
             }
 
             try? await Task.sleep(for: .seconds(0.6))
-            
+
             shopping.markItemPendingCompletion(id: shoppingItem.id, expiryDate: expiryDate)
         }
     }
@@ -72,9 +72,10 @@ public struct ShoppingModeConfirmItemView: View {
                     GenmojiView(
                         name: icon,
                         fontSize: 35,
-                        tint: shoppingItem.storageLocation?.backgroundColor ?? .gray600)
+                        tint: shoppingItem.storageLocation?.backgroundColor ?? .gray600
+                    )
                 }
-                
+
                 VStack {
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {
@@ -108,39 +109,42 @@ public struct ShoppingModeConfirmItemView: View {
 
                         }.frame(maxWidth: .infinity, alignment: .leading)
 
-                        if let storageLocation = shoppingItem.storageLocation {
-                            HStack(spacing: 4) {
-                                ExpiryDateMinusButton(date: $expiryDate, storageLocation: storageLocation)
-
-                                Button {
-                                    showDatePicker.toggle()
-                                } label: {
-                                    Text(expiryDate, format: .dateTime.day().month(.abbreviated))
-                                        .foregroundStyle(.blue700).font(.caption)
-                                        .contentTransition(.numericText())
-                                        .animation(.default, value: expiryDate)
-                                }
-                                .buttonStyle(.borderless)
-                                .padding(.vertical, 5).padding(.horizontal, 10)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.gray200)
+                        HStack(spacing: 4) {
+                            Button {
+                                showDatePicker.toggle()
+                            } label: {
+                                Text(expiryDate, format: .dateTime.day().month(.abbreviated))
+                                    .foregroundStyle(.blue700).font(.caption)
+                                    .contentTransition(.numericText())
+                                    .animation(.default, value: expiryDate)
+                            }
+                            .buttonStyle(.borderless)
+                            .padding(.vertical, 5).padding(.horizontal, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.gray200)
+                            )
+                            .popover(isPresented: $showDatePicker) {
+                                DatePicker(
+                                    "Expiry",
+                                    selection: $expiryDate,
+                                    displayedComponents: [.date]
                                 )
-                                .popover(isPresented: $showDatePicker) {
-                                    DatePicker(
-                                        "Expiry",
-                                        selection: $expiryDate,
-                                        displayedComponents: [.date]
-                                    )
-                                    .datePickerStyle(.graphical)
-                                    .labelsHidden()
-                                    .frame(minWidth: 300)
-                                    .tint(.blue700)
-                                    .padding(.horizontal, 5)
-                                    .presentationCompactAdaptation(.popover)
-                                }
+                                .datePickerStyle(.graphical)
+                                .labelsHidden()
+                                .frame(minWidth: 300)
+                                .tint(.blue700)
+                                .padding(.horizontal, 5)
+                                .presentationCompactAdaptation(.popover)
+                            }
 
-                                ExpiryDatePlusButton(date: $expiryDate, storageLocation: storageLocation)
+                            Button(action: {
+                                withAnimation {
+                                    shopping.deleteItem(id: shoppingItem.id)
+                                }
+                            }) {
+                                Image(systemName: "xmark").resizable().frame(width: 12, height: 12).foregroundStyle(.blue700).fontWeight(.bold)
+                                    .padding(.leading, 12)
                             }
                         }
                     }
@@ -162,7 +166,7 @@ public struct ShoppingModeConfirmItemView: View {
         .shadow(color: .shadow, radius: 2, x: 0, y: 4)
         .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 22))
         .onChange(of: shoppingItem) { oldShoppingItem, newShoppingItem in
-            if (oldShoppingItem.id != newShoppingItem.id) {
+            if oldShoppingItem.id != newShoppingItem.id {
                 isAnimatingCompletion = false
                 fadeOpacity = 1
             }

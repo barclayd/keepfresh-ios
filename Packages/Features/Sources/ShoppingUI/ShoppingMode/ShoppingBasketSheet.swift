@@ -3,7 +3,7 @@ import Environment
 import Models
 import SwiftUI
 
-public struct BasketDetailView: View {
+public struct ShoppingBasketSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(Shopping.self) var shopping
 
@@ -39,7 +39,7 @@ public struct BasketDetailView: View {
                         }
                     }
                     .padding(.vertical)
-                    .padding(.bottom, 120)
+                    .padding(.bottom, 100)
                 }
                 .overlay(alignment: .bottom) {
                     BottomActionCustomButton(
@@ -53,11 +53,10 @@ public struct BasketDetailView: View {
                             dismiss()
                         } label: {
                             Image(systemName: "chevron.down")
-                                .foregroundStyle(.white100)
-                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                                .foregroundStyle(.gray600)
                         }
-                        .buttonStyle(.glassProminent)
-                        .tint(.blue700)
+                        .buttonStyle(.borderless)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
