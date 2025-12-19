@@ -169,7 +169,7 @@ public extension AppTab {
 
         case .shopping:
             ToolbarItem(placement: .title) {
-                Text(shopping.shoppingMode == .initial ? "List" : "Shopping")
+                Text(shopping.shoppingMode == .initial ? "List" : "Shop")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
                     .contentTransition(.numericText())
                     .animation(.easeInOut(duration: 2.0), value: shopping.shoppingMode)

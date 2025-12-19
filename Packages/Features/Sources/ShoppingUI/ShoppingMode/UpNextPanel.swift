@@ -34,7 +34,7 @@ struct UpNextPanel: View {
             .padding(.horizontal, 5)
             .frame(maxWidth: .infinity)
 
-            ShoppingModeActiveItem(shoppingItem: shoppingItem, animation: animation)
+            ShoppingModeActiveItem(itemId: shoppingItem.id, animation: animation)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 10)

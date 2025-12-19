@@ -112,11 +112,7 @@ struct BasketStorageLocationPanel: View {
 
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
-                            let expiryDate = calculateExpiryDate(
-                                categoryId: shoppingItem.product!.category.id,
-                                storageLocation: storageLocation) ?? Date()
-
-                            ShoppingModeConfirmItemView(shoppingItem: shoppingItem, expiryDate: expiryDate, animation: animation)
+                            ShoppingModeConfirmItemView(itemId: shoppingItem.id, animation: animation)
                                 .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                     length * 0.95
                                 }

@@ -108,6 +108,33 @@ public final class Shopping {
         shoppingModeStartDate = nil
     }
 
+    public func updateItemExpiryDate(id: Int, expiryDate: Date) {
+        guard let index = findItem(id: id) else { return }
+        items[index].expiryDate = expiryDate
+        items[index].updatedAt = Date()
+        saveItems()
+    }
+
+    public func startShoppingMode() {
+        guard shoppingMode == .initial else { return }
+
+        for index in items.indices where items[index].storageLocation != nil {
+            if let categoryId = items[index].product?.category.id,
+               let storageLocation = items[index].storageLocation,
+               let shelfLife = SuggestionsCache.shared.getSuggestions(for: categoryId)?.shelfLifeInDays,
+               let expiryInDays = shelfLife[.unopened][storageLocation]
+            {
+                items[index].expiryDate = Calendar.current.date(byAdding: .day, value: expiryInDays, to: Date())
+            } else {
+                items[index].expiryDate = Date()
+            }
+        }
+
+        shoppingMode = .active
+        shoppingModeStartDate = Date()
+        saveItems()
+    }
+
     public func completeShoppingSession() {
         let pendingItemIds = Set(pendingItems.map(\.id))
         items.removeAll { pendingItemIds.contains($0.id) }

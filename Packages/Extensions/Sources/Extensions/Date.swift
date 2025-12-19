@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 public extension Date {
     func isSameDay(as other: Date) -> Bool {
@@ -9,6 +10,13 @@ public extension Date {
     mutating func addDays(_ days: Int) {
         let calendar: Calendar = .current
         self = calendar.date(byAdding: .day, value: days, to: self)!
+    }
+}
+
+public extension Binding where Value == Date {
+    func addDays(_ days: Int) {
+        let calendar: Calendar = .current
+        self.wrappedValue = calendar.date(byAdding: .day, value: days, to: self.wrappedValue)!
     }
 }
 

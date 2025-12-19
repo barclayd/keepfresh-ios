@@ -60,7 +60,7 @@ public struct CategoryPanel: View {
                         fontSize: 35,
                         tint: storageLocation.backgroundColor)
 
-                    Text("\(formatCategoryPath(pathDisplay: category.pathDisplay))")
+                    formatCategoryPath(pathDisplay: category.pathDisplay)
                         .fontWeight(.bold)
                         .foregroundStyle(textColor)
                         .lineLimit(2)
@@ -112,20 +112,11 @@ public struct CategoryPanel: View {
 
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
-                            ShoppingModeActiveItem(shoppingItem: shoppingItem, animation: animation)
+                            ShoppingModeActiveItem(itemId: shoppingItem.id, animation: animation)
                                 .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                     length * 0.95
                                 }
                                 .frame(maxWidth: .infinity, alignment: .center)
-//                                .draggable(shoppingItem)
-//                                .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-//                                    guard let droppedItem = droppedItems.first else { return false }
-//
-//                                    let targetIndex = items.count
-//                                    shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-//
-//                                    return true
-//                                }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         withAnimation {
@@ -150,7 +141,6 @@ public struct CategoryPanel: View {
                                     }.tint(Color.green500)
                                 }
                         }
-//                        .onMove(perform: onMoveHandler)
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)

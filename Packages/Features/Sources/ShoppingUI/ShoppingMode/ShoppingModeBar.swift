@@ -76,8 +76,7 @@ public struct ShoppingModeBar: View {
                     shopping.resetShoppingModeItems()
                     shopping.shoppingMode = .initial
                 } else {
-                    shopping.shoppingModeStartDate = Date.now
-                    shopping.shoppingMode = .active
+                    shopping.startShoppingMode()
                 }
             }) {
                 Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")
