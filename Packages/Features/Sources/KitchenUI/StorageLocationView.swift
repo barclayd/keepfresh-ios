@@ -127,6 +127,7 @@ private struct SortButton: View {
 public struct StorageLocationView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
+    @Environment(\.storageLocationNamespace) var namespace
 
     @State private var sortMode: InventoryItemSortMode = .expiryDate(direction: .forward)
 
@@ -294,5 +295,6 @@ public struct StorageLocationView: View {
         .confetti(
             trigger: Binding(get: { inventory.confettiTrigger }, set: { inventory.confettiTrigger = $0 }),
             confettis: GenmojiConfettiCache.confettiNames.map { .genmoji($0) })
+        .navigationTransition(.zoom(sourceID: storageLocation, in: namespace!))
     }
 }

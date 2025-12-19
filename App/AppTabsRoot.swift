@@ -16,6 +16,7 @@ struct AppTabRootView: View {
     @Environment(Shopping.self) var shopping
 
     @Namespace private var inventoryItemAnimation
+    @Namespace private var storageLocationAnimation
 
     var body: some View {
         @Bindable var router = router
@@ -49,6 +50,7 @@ struct AppTabRootView: View {
         .tabBarMinimizeBehavior(.onScrollDown)
         .handleSheets(router: router, inventory: inventory, shopping: shopping)
         .environment(\.inventoryItemNamespace, inventoryItemAnimation)
+        .environment(\.storageLocationNamespace, storageLocationAnimation)
         .conditional { view in
             if #available(iOS 26.1, *) {
                 view.tabViewBottomAccessory(isEnabled: router.selectedTab == .shopping) {
