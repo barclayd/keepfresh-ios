@@ -192,9 +192,10 @@ public extension AppTab {
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
 
-                if shopping.shoppingMode == .active {
+                if shopping.shoppingMode == .active, shopping.hasPendingItems {
                     Button(action: {
                         router.presentedSheet = .basketDetail(.basket)
+
                     }) {
                         Image(systemName: "basket.fill").resizable()
                             .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
