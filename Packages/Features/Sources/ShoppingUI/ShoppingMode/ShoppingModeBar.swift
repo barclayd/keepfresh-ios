@@ -12,9 +12,10 @@ public struct ShoppingModeBar: View {
     var badgeCount: Int {
         shopping.shoppingMode == .initial ? shopping.items.count : shopping.pendingItems.count
     }
-    
+
     var title: LocalizedStringKey {
-        shopping.shoppingMode == .initial ? "Start shop" : "^[\(shopping.items.count - shopping.pendingItems.count) item](inflect: true) left"
+        shopping
+            .shoppingMode == .initial ? "Start shop" : "^[\(shopping.items.count - shopping.pendingItems.count) item](inflect: true) left"
     }
 
     public var body: some View {
@@ -79,10 +80,10 @@ public struct ShoppingModeBar: View {
 
                 guard shopping.hasPendingItems else {
                     shopping.endShopWithoutSaving()
-                    
+
                     return
                 }
-                
+
                 router.presentedSheet = .basketDetail(.stop)
             }) {
                 Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")

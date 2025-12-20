@@ -141,7 +141,7 @@ public final class Shopping {
         shoppingModeStartDate = nil
         shoppingMode = .initial
     }
-    
+
     public func endShopWithoutSaving() {
         shoppingModeStartDate = nil
         resetShoppingModeItems()

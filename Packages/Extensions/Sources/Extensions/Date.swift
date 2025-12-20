@@ -16,7 +16,7 @@ public extension Date {
 public extension Binding where Value == Date {
     func addDays(_ days: Int) {
         let calendar: Calendar = .current
-        self.wrappedValue = calendar.date(byAdding: .day, value: days, to: self.wrappedValue)!
+        wrappedValue = calendar.date(byAdding: .day, value: days, to: wrappedValue)!
     }
 }
 

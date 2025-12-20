@@ -36,7 +36,7 @@ public struct ShoppingView: View {
                 .padding(.top, 20)
                 .padding(.bottom, 10)
             }
-            .defaultScrollAnchor(shopping.items.allSatisfy({ $0.status == .pendingCompletion }) ? .center : .top, for: .alignment)
+            .defaultScrollAnchor(shopping.items.allSatisfy { $0.status == .pendingCompletion } ? .center : .top, for: .alignment)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white200)

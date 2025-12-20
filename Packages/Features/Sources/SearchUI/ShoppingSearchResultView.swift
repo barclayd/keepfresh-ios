@@ -141,4 +141,3 @@ public struct SearchShoppingResultCard: View {
         .sensoryFeedback(.selection, trigger: shoppingItemId)
     }
 }
-

@@ -27,7 +27,7 @@ struct ShoppingMode: View {
         if !shopping.itemsWithoutStorageLocation.isEmpty {
             ShoppingModeOtherItemsPanel()
         }
-        
+
         if shopping.items.allSatisfy({ $0.status == .pendingCompletion }) {
             Text("All items completed")
         }
