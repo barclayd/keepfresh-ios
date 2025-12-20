@@ -317,6 +317,7 @@ public struct InventoryItemSheetView: View {
     @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
     @Environment(RecentlyConsumed.self) var recentlyConsumed
+    @Environment(\.inventoryItemNamespace) var namespace
 
     @Environment(\.dismiss) private var dismiss
 
@@ -842,5 +843,6 @@ public struct InventoryItemSheetView: View {
                     .presentationDragIndicator(.visible)
             }
         }
+        .navigationTransition(.zoom(sourceID: inventoryItem.id, in: namespace!))
     }
 }

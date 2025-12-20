@@ -138,6 +138,8 @@ class Search {
 
 @MainActor
 public struct SearchView: View {
+    @Environment(Router.self) var router
+
     @Environment(\.modelContext) var modelContext
 
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
@@ -192,17 +194,30 @@ public struct SearchView: View {
     public var body: some View {
         VStack(spacing: 0) {
             if isSearching, let search {
-                SearchResultView(
-                    searchProducts: search.searchResults,
-                    isLoading: search.state != .loaded,
-                    hasMorePages: search.hasMorePages,
-                    isLoadingMore: search.isLoadingMore,
-                    onLoadMore: {
-                        Task {
-                            await search.loadMoreResults()
-                        }
-                    })
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                if router.previousTab == .shopping {
+                    ShoppingSearchResultView(
+                        searchProducts: search.searchResults,
+                        isLoading: search.state != .loaded,
+                        hasMorePages: search.hasMorePages,
+                        isLoadingMore: search.isLoadingMore,
+                        onLoadMore: {
+                            Task {
+                                await search.loadMoreResults()
+                            }
+                        })
+                } else {
+                    SearchResultView(
+                        searchProducts: search.searchResults,
+                        isLoading: search.state != .loaded,
+                        hasMorePages: search.hasMorePages,
+                        isLoadingMore: search.isLoadingMore,
+                        onLoadMore: {
+                            Task {
+                                await search.loadMoreResults()
+                            }
+                        })
+                }
+
             } else {
                 RecentSearchView(searchText: searchTextBinding)
             }

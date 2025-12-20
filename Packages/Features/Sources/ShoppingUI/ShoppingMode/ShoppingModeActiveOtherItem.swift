@@ -5,7 +5,7 @@ import Router
 import SharedUI
 import SwiftUI
 
-public struct OtherShoppingItemView: View {
+public struct ShoppingModeActiveOtherItem: View {
     @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
 
@@ -42,20 +42,18 @@ public struct OtherShoppingItemView: View {
         dismissTask?.cancel()
 
         dismissTask = Task {
-            try? await Task.sleep(for: .seconds(2))
-
             guard !Task.isCancelled else {
                 return
             }
 
-            withAnimation(.smooth(duration: 0.6)) {
+            withAnimation(.smooth(duration: 0.8)) {
                 verticalOffset = -100
                 fadeOpacity = 0
             }
 
-            try? await Task.sleep(for: .seconds(0.6))
+            try? await Task.sleep(for: .seconds(0.8))
 
-            shopping.updateItemWithoutStorageLocationStatus(uuid: shoppingItem.uuid, to: .completed)
+            shopping.markItemPendingCompletion(id: shoppingItem.id)
         }
     }
 

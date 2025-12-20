@@ -76,6 +76,7 @@ struct IconsView: View {
 
 public struct InventoryItemView: View {
     @Environment(Router.self) var router
+    @Environment(\.inventoryItemNamespace) var namespace
 
     var inventoryItem: InventoryItem
 
@@ -86,10 +87,18 @@ public struct InventoryItemView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
-                GenmojiView(
-                    name: inventoryItem.product.category.icon,
-                    fontSize: 35,
-                    tint: inventoryItem.consumptionUrgency.tileColor.background)
+                ZStack {
+                    GenmojiView(
+                        name: inventoryItem.product.category.icon,
+                        fontSize: 35,
+                        tint: inventoryItem.consumptionUrgency.tileColor.background)
+
+                    GenmojiView(
+                        name: inventoryItem.product.category.icon,
+                        fontSize: 35,
+                        tint: inventoryItem.consumptionUrgency.tileColor.background)
+                        .matchedTransitionSource(id: inventoryItem.id, in: namespace!)
+                }
 
                 VStack {
                     HStack {

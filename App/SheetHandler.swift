@@ -22,10 +22,6 @@ extension View {
             case .barcodeScanToShoppingList:
                 BarcodeToShoppingList()
 
-            case .shopppingSearch:
-                AddShoppingSheet()
-                    .presentationDragIndicator(.visible)
-
             case let .addInventoryItemFromShopping(shoppingItem):
                 AddInventoryItemFromShoppingSheet(shoppingItem: shoppingItem, onAdd: { expiryDate in
                     Task {
@@ -118,6 +114,11 @@ extension View {
                     })
                     .presentationDetents([.custom(AdaptiveSmallDetent.self)])
                     .presentationDragIndicator(.visible)
+
+            case let .basketDetail(source):
+                ShoppingBasketSheet(source: source)
+                    .presentationDragIndicator(.visible)
+                    .presentationDetents([.custom(AdaptiveExtraExtraLargeDetent.self)])
             }
         }
     }

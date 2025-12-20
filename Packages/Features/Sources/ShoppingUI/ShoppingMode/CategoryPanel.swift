@@ -4,22 +4,25 @@ import Models
 import Router
 import SharedUI
 import SwiftUI
+import Utils
 
-public struct StorageLocationPanel: View {
+public struct CategoryPanel: View {
     @Environment(Router.self) var router
     @Environment(Shopping.self) var shopping
 
     @State private var isExpanded: Bool = true
 
     let storageLocation: StorageLocation
+    let category: CategoryDetails
     var animation: Namespace.ID
 
     private var items: [ShoppingItem] {
-        shopping.itemsByStorageLocation[storageLocation] ?? []
+        shopping.shoppingModeItems(for: storageLocation, category: category)
     }
 
-    public init(storageLocation: StorageLocation, animation: Namespace.ID) {
+    public init(storageLocation: StorageLocation, category: CategoryDetails, animation: Namespace.ID) {
         self.storageLocation = storageLocation
+        self.category = category
         self.animation = animation
     }
 
@@ -51,15 +54,16 @@ public struct StorageLocationPanel: View {
     public var body: some View {
         VStack(spacing: 0) {
             HStack {
-                HStack(alignment: .firstTextBaseline) {
-                    Image(systemName: storageLocation.iconFilled)
-                        .frame(width: 22).foregroundColor(textColor).fontWeight(.bold)
+                HStack {
+                    GenmojiView(
+                        name: category.icon,
+                        fontSize: 35,
+                        tint: storageLocation.backgroundColor)
 
-                    Text(storageLocation.rawValue.capitalized)
+                    formatCategoryPath(pathDisplay: category.pathDisplay)
                         .fontWeight(.bold)
                         .foregroundStyle(textColor)
-                        .font(.title3)
-                        .lineLimit(1)
+                        .lineLimit(2)
                         .alignmentGuide(.firstTextBaseline) { d in
                             d[.bottom] * 0.75
                         }
@@ -100,22 +104,19 @@ public struct StorageLocationPanel: View {
                     RoundedRectangle(cornerRadius: 10).fill(Color.black).opacity(0.15).frame(maxWidth: .infinity, maxHeight: 1)
                         .offset(y: -10)
 
+                    if items.isEmpty {
+                        ShoppingPlaceholderView(storageLocation: storageLocation, onTap: {
+                            router.selectedTab = .shopping
+                        }).frame(maxWidth: .infinity)
+                    }
+
                     List {
                         ForEach(items, id: \.self) { shoppingItem in
-                            ShoppingItemView(shoppingItem: shoppingItem, animation: animation)
+                            ShoppingModeActiveItem(itemId: shoppingItem.id, animation: animation)
                                 .containerRelativeFrame(.horizontal, alignment: .trailing) { length, _ in
                                     length * 0.95
                                 }
                                 .frame(maxWidth: .infinity, alignment: .center)
-                                .draggable(shoppingItem)
-                                .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-                                    guard let droppedItem = droppedItems.first else { return false }
-
-                                    let targetIndex = items.count
-                                    shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-
-                                    return true
-                                }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         withAnimation {
@@ -140,30 +141,16 @@ public struct StorageLocationPanel: View {
                                     }.tint(Color.green500)
                                 }
                         }
-                        .onMove(perform: onMoveHandler)
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                     }
                     .padding(.horizontal, -15)
-                    .frame(height: CGFloat(items.count) * 67.5)
+                    .frame(height: CGFloat(items.count) * 75)
                     .listStyle(.plain)
                     .scrollDisabled(true)
                     .listRowSpacing(10)
                     .scrollContentBackground(.hidden)
-
-                    ShoppingPlaceholderView(storageLocation: storageLocation, onTap: {
-                        router.selectedTab = .search
-                    })
-                    .frame(maxWidth: .infinity)
-                    .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-                        guard let droppedItem = droppedItems.first else { return false }
-
-                        let targetIndex = items.count
-                        shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-
-                        return true
-                    }
 
                 }.padding(.vertical, 10).padding(.horizontal, 15).frame(maxWidth: .infinity)
                     .background(
@@ -175,36 +162,13 @@ public struct StorageLocationPanel: View {
                             .fill(LinearGradient(
                                 stops: storageLocation.viewGradientStopsReversed,
                                 startPoint: .leading,
-                                endPoint: .trailing))
-                            .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-                                guard let droppedItem = droppedItems.first else { return false }
-
-                                if droppedItem.storageLocation == storageLocation {
-                                    return false
-                                } else {
-                                    let targetIndex = items.count
-                                    shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-                                    return true
-                                }
-                            })
+                                endPoint: .trailing)))
             }
         }
         .onChange(of: items.count) { oldValue, newValue in
             if newValue > 0, oldValue == 0 {
                 isExpanded = true
             }
-        }
-        .dropDestination(for: ShoppingItem.self) { droppedItems, _ in
-            guard let droppedItem = droppedItems.first else { return false }
-
-            if droppedItem.storageLocation == storageLocation {
-                return false
-            }
-
-            let targetIndex = items.count
-            shopping.moveItem(itemId: droppedItem.id, to: storageLocation, atIndex: targetIndex)
-
-            return true
         }
     }
 }

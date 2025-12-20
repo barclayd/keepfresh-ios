@@ -119,6 +119,13 @@ public struct KeepFreshAPI: Sendable {
             body: request)
     }
 
+    public func createShoppingSession(_ request: CreateShoppingSessionRequest) async throws -> [InventoryItem] {
+        try await client.post(
+            [InventoryItem].self,
+            path: "v2/shopping/sessions",
+            body: request)
+    }
+
     // MARK: - Genmoji
 
     public func uploadGenmoji(_ request: GenmojiUploadRequest) async throws {

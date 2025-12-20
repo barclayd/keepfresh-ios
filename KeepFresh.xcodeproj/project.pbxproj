@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E5B218F2EEDE63D0027A88A /* Utils in Frameworks */ = {isa = PBXBuildFile; productRef = 4E5B218E2EEDE63D0027A88A /* Utils */; };
 		4E747F782D16F7A000DDCE17 /* KitchenUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747F772D16F7A000DDCE17 /* KitchenUI */; };
 		4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 4E747FB92D19F66900DDCE17 /* DesignSystem */; };
 		4E7AEB852E9D82DB00BE4A5E /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */; };
@@ -54,6 +55,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4E5B218D2EEDE3CB0027A88A /* Utils */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Utils; path = Packages/Utils; sourceTree = "<group>"; };
 		4E747FB62D19F28D00DDCE17 /* DesignSystem */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = DesignSystem; path = Packages/DesignSystem; sourceTree = "<group>"; };
 		4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		4E8952CE2E9878F8003F3366 /* Authentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Authentication; path = Packages/Authentication; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				4EEEBA7B2E806E010049511B /* Network in Frameworks */,
 				4EF1853B2D14E70900961F35 /* SearchUI in Frameworks */,
 				4E747FBA2D19F66900DDCE17 /* DesignSystem in Frameworks */,
+				4E5B218F2EEDE63D0027A88A /* Utils in Frameworks */,
 				4EF5AD0E2EBC0C1600F8E400 /* Notifications in Frameworks */,
 				4EF223CF2E874ECA00A93567 /* Environment in Frameworks */,
 				4EAF44BE2E8B3CFE000B5A6B /* Intelligence in Frameworks */,
@@ -140,6 +143,7 @@
 				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
 				9FAEE3B72CF099E600F86CDC /* PackageTests.xctestplan */,
+				4E5B218D2EEDE3CB0027A88A /* Utils */,
 				4E8952CE2E9878F8003F3366 /* Authentication */,
 				4E747FB62D19F28D00DDCE17 /* DesignSystem */,
 				4EF223D02E883D3800A93567 /* Extensions */,
@@ -234,6 +238,7 @@
 				4EF5AD0D2EBC0C1600F8E400 /* Notifications */,
 				4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */,
 				4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */,
+				4E5B218E2EEDE63D0027A88A /* Utils */,
 			);
 			productName = IcySky;
 			productReference = 9F2142232CE9DAA1004167D7 /* KeepFresh.app */;
@@ -341,7 +346,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.3;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -371,7 +376,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.3;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -540,7 +545,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.3.3;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -587,7 +592,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.3.3;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -644,6 +649,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4E5B218E2EEDE63D0027A88A /* Utils */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Utils;
+		};
 		4E747F772D16F7A000DDCE17 /* KitchenUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KitchenUI;

@@ -4,6 +4,10 @@ import Network
 import Notifications
 import SwiftUI
 
+public enum ShoppingMode {
+    case initial, active, completed
+}
+
 @Observable
 @MainActor
 public final class Shopping {
@@ -15,11 +19,134 @@ public final class Shopping {
 
     public var state: FetchState = .loading
 
+    public var shoppingMode: ShoppingMode = .initial
+    public var shoppingModeStartDate: Date? {
+        didSet {
+            if let date = shoppingModeStartDate {
+                UserDefaults.standard.set(date, forKey: timerKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: timerKey)
+            }
+        }
+    }
+
+    private let shoppingModeStartTimeKey = "shoppingModeStartDate"
+
     let api = KeepFreshAPI()
     private let cache = ShoppingCache.shared
+    private var tempIdCounter: Int = -1
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
-    public private(set) var itemsWithoutStorageLocation: [ShoppingItem] = []
+    public var itemsWithoutStorageLocation: [ShoppingItem] {
+        items.filter { $0.storageLocation == nil }
+    }
+
+    public private(set) var categoriesByStorageLocation: [StorageLocation: [CategoryDetails]] = [:]
+
+    // MARK: - Shopping Mode
+
+    public var upNextStorageLocation: StorageLocation? {
+        for location in StorageLocation.allCases {
+            if let items = itemsByStorageLocation[location],
+               items.contains(where: { $0.status == .created })
+            {
+                return location
+            }
+        }
+        return nil
+    }
+
+    public var upNextItem: ShoppingItem? {
+        guard let location = upNextStorageLocation,
+              let items = itemsByStorageLocation[location]
+        else {
+            return nil
+        }
+        return items.first(where: { $0.status == .created })
+    }
+
+    public func shoppingModeItems(for storageLocation: StorageLocation, category: CategoryDetails) -> [ShoppingItem] {
+        let locationItems = itemsByStorageLocation[storageLocation] ?? []
+        return locationItems.filter {
+            $0.product?.category.id == category.id &&
+                $0.id != upNextItem?.id &&
+                $0.status == .created
+        }
+    }
+
+    // MARK: - Pending Items
+
+    public var pendingItems: [ShoppingItem] {
+        items.filter { $0.status == .pendingCompletion }
+    }
+
+    public var hasPendingItems: Bool {
+        items.contains { $0.status == .pendingCompletion }
+    }
+
+    public func markItemPendingCompletion(id: Int, expiryDate: Date? = nil) {
+        guard let index = findItem(id: id) else { return }
+
+        items[index].status = .pendingCompletion
+        items[index].updatedAt = Date()
+
+        if let expiryDate {
+            items[index].expiryDate = expiryDate
+        }
+
+        saveItems()
+    }
+
+    public func resetShoppingModeItems() {
+        for index in items.indices {
+            if items[index].status == .pendingCompletion {
+                items[index].status = .created
+                items[index].expiryDate = nil
+                items[index].updatedAt = Date()
+            }
+        }
+        shoppingModeStartDate = nil
+    }
+
+    public func updateItemExpiryDate(id: Int, expiryDate: Date) {
+        guard let index = findItem(id: id) else { return }
+        items[index].expiryDate = expiryDate
+        items[index].updatedAt = Date()
+        saveItems()
+    }
+
+    public func startShoppingMode() {
+        guard shoppingMode == .initial else { return }
+
+        for index in items.indices where items[index].storageLocation != nil {
+            if let categoryId = items[index].product?.category.id,
+               let storageLocation = items[index].storageLocation,
+               let shelfLife = SuggestionsCache.shared.getSuggestions(for: categoryId)?.shelfLifeInDays,
+               let expiryInDays = shelfLife[.unopened][storageLocation]
+            {
+                items[index].expiryDate = Calendar.current.date(byAdding: .day, value: expiryInDays, to: Date())
+            } else {
+                items[index].expiryDate = Date()
+            }
+        }
+
+        shoppingMode = .active
+        shoppingModeStartDate = Date()
+        saveItems()
+    }
+
+    public func completeShoppingSession() {
+        let pendingItemIds = Set(pendingItems.map(\.id))
+        items.removeAll { pendingItemIds.contains($0.id) }
+        shoppingModeStartDate = nil
+        shoppingMode = .initial
+    }
+
+    public func endShopWithoutSaving() {
+        shoppingModeStartDate = nil
+        resetShoppingModeItems()
+        shoppingMode = .initial
+    }
 
     public init(items: [ShoppingItem] = []) {
         self.items = cache.load()
@@ -29,14 +156,46 @@ public final class Shopping {
             state = .loaded
         }
         updateCaches()
+
+        loadShoppingModeStartDate()
+        resumeShoppingMode()
+    }
+
+    private func loadShoppingModeStartDate() {
+        shoppingModeStartDate = UserDefaults.standard.object(forKey: shoppingModeStartTimeKey) as? Date
+    }
+
+    private func resumeShoppingMode() {
+        guard hasPendingItems else { return }
+        shoppingMode = .active
+
+        guard shoppingModeStartDate == nil else { return }
+        shoppingModeStartDate = Date()
     }
 
     private func updateCaches() {
         itemsByStorageLocation = Dictionary(
             grouping: items.filter { $0.storageLocation != nil },
             by: \.storageLocation!)
-        itemsWithoutStorageLocation = items.filter { $0.storageLocation == nil }
 
+        var categoriesCache: [StorageLocation: [CategoryDetails]] = [:]
+        for (location, locationItems) in itemsByStorageLocation {
+            var seenIds = Set<Int>()
+            var categories: [CategoryDetails] = []
+            for item in locationItems {
+                if let category = item.product?.category, !seenIds.contains(category.id) {
+                    seenIds.insert(category.id)
+                    categories.append(category)
+                }
+            }
+            categoriesCache[location] = categories.sorted { $0.name < $1.name }
+        }
+        categoriesByStorageLocation = categoriesCache
+
+        Task { await cache.save(items) }
+    }
+
+    private func saveItems() {
         Task { await cache.save(items) }
     }
 
@@ -49,12 +208,20 @@ public final class Shopping {
     }
 
     private func mergeItems(local: [ShoppingItem], server: [ShoppingItem]) -> [ShoppingItem] {
+        let validLocal = local.filter { $0.id > 0 }
+        let tempItems = local.filter { $0.id <= 0 }
+
         var serverById = Dictionary(uniqueKeysWithValues: server.map { ($0.id, $0) })
         var result: [ShoppingItem] = []
 
-        for localItem in local {
+        for localItem in validLocal {
             if let serverItem = serverById[localItem.id] {
-                result.append(serverItem.updatedAt > localItem.updatedAt ? serverItem : localItem)
+                if localItem.status == .pendingCompletion {
+                    result.append(localItem)
+                } else {
+                    let useServer = serverItem.updatedAt > localItem.updatedAt
+                    result.append(useServer ? serverItem : localItem)
+                }
                 serverById.removeValue(forKey: localItem.id)
             } else {
                 result.append(localItem)
@@ -62,6 +229,7 @@ public final class Shopping {
         }
 
         result.append(contentsOf: serverById.values)
+        result.append(contentsOf: tempItems)
 
         return result
     }
@@ -198,8 +366,11 @@ public final class Shopping {
     }
 
     public func addItemWithoutStorageLocation() {
+        let tempId = tempIdCounter
+        tempIdCounter -= 1
+
         let tempItem = ShoppingItem(
-            id: items.map(\.id).max() ?? 99999,
+            id: tempId,
             title: "",
             createdAt: Date(),
             updatedAt: Date(),
@@ -220,7 +391,7 @@ public final class Shopping {
                     quantity: nil))
 
                 for item in newItems {
-                    if let index = items.firstIndex(where: { $0.id == tempItem.id }) {
+                    if let index = items.firstIndex(where: { $0.uuid == tempItem.uuid }) {
                         items[index].id = item.id
                     }
                 }

@@ -17,12 +17,16 @@ public enum InventoryItemAction: Hashable, Identifiable {
     case edit
 }
 
+public enum BasketDetailButtonSource: String {
+    case basket
+    case stop
+}
+
 public enum SheetDestination: Hashable, Identifiable {
     public var id: Int { hashValue }
 
     case barcodeScan
     case barcodeScanToShoppingList
-    case shopppingSearch
     case inventoryItem(InventoryItem, InventoryItemAction?)
 
     case moveInventoryItemDirect(InventoryItem, StorageLocation)
@@ -30,4 +34,5 @@ public enum SheetDestination: Hashable, Identifiable {
     case removeInventoryItemDirect(InventoryItem)
 
     case addInventoryItemFromShopping(ShoppingItem)
+    case basketDetail(BasketDetailButtonSource)
 }

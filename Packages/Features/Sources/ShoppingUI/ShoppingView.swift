@@ -6,42 +6,39 @@ import SwiftUI
 
 public struct ShoppingView: View {
     @Environment(Router.self) var router
+    @Environment(Shopping.self) var shopping
 
     @State private var currentPage: Int = 3
+    @Namespace private var shoppingAnimation
 
     public init() {}
 
     public var body: some View {
         VStack {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    LazyVStack(spacing: 20) {
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    if shopping.shoppingMode == .initial {
                         ForEach(StorageLocation.allCases) { storageLocation in
-                            StorageLocationPanel(storageLocation: storageLocation)
+                            StorageLocationPanel(storageLocation: storageLocation, animation: shoppingAnimation)
+                                .transition(.move(edge: .bottom))
                         }
-                        OtherItemsPanel()
-                    }
-                    .padding(.horizontal, 12.5)
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
-                }
 
-                Button(action: {
-                    router.presentedSheet = .shopppingSearch
-                }) {
-                    Label("Add item to shopping list", systemImage: "plus")
-                        .font(.title3)
-                        .bold()
-                        .labelStyle(.iconOnly)
-                        .padding()
-                        .tint(Color.white)
+                        if shopping.shoppingMode == .initial || !shopping.itemsWithoutStorageLocation.isEmpty {
+                            OtherItemsPanel()
+                        }
+                    } else {
+                        ShoppingMode(animation: shoppingAnimation)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
-                .glassEffect(.regular.tint(.blue600))
-                .scenePadding(.trailing)
+                .animation(.easeInOut, value: shopping.shoppingMode)
+                .padding(.horizontal, 12.5)
+                .padding(.top, 20)
+                .padding(.bottom, 10)
             }
+            .defaultScrollAnchor(shopping.items.allSatisfy { $0.status == .pendingCompletion } ? .center : .top, for: .alignment)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white200)
-        .sensoryFeedback(.selection, trigger: router.presentedSheet == .shopppingSearch)
     }
 }

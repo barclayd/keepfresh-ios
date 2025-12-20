@@ -24,6 +24,7 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
     public var status: ShoppingItemStatus
     public var storageLocation: StorageLocation?
     public let product: Product?
+    public var expiryDate: Date?
 
     public let uuid: UUID = .init()
 
@@ -36,6 +37,7 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
         case status
         case storageLocation
         case product
+        case expiryDate
     }
 
     public init(
@@ -46,7 +48,8 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
         source: ShoppingItemSource,
         status: ShoppingItemStatus,
         storageLocation: StorageLocation?,
-        product: Product?)
+        product: Product?,
+        expiryDate: Date? = nil)
     {
         self.id = id
         self.title = title
@@ -56,6 +59,7 @@ public struct ShoppingItem: Codable, Sendable, Identifiable, Hashable, Transfera
         self.status = status
         self.storageLocation = storageLocation
         self.product = product
+        self.expiryDate = expiryDate
     }
 
     public static var transferRepresentation: some TransferRepresentation {
@@ -111,6 +115,28 @@ public struct CompleteShoppingItemRequest: Codable, Sendable {
     public let expiryDate: Date
 
     public init(expiryDate: Date) {
+        self.expiryDate = expiryDate
+    }
+}
+
+public struct CreateShoppingSessionRequest: Codable, Sendable {
+    public let createdAt: Date
+    public let updatedAt: Date
+    public let shoppingItems: [ShoppingSessionItem]
+
+    public init(createdAt: Date, updatedAt: Date, shoppingItems: [ShoppingSessionItem]) {
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.shoppingItems = shoppingItems
+    }
+}
+
+public struct ShoppingSessionItem: Codable, Sendable {
+    public let shoppingItemId: Int
+    public let expiryDate: Date?
+
+    public init(shoppingItemId: Int, expiryDate: Date?) {
+        self.shoppingItemId = shoppingItemId
         self.expiryDate = expiryDate
     }
 }

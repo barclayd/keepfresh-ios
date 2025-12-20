@@ -140,3 +140,20 @@ public struct AdaptiveExtraLargeDetent: CustomPresentationDetent {
         }
     }
 }
+
+public struct AdaptiveExtraExtraLargeDetent: CustomPresentationDetent {
+    public static func height(in context: Context) -> CGFloat? {
+        let maxHeight = context.maxDetentValue
+
+        print("maxHeight: \(maxHeight) XL")
+
+        switch maxHeight {
+        case ..<700:
+            // iPhone SE, iPhone 8, etc.
+            return maxHeight
+
+        default:
+            return maxHeight * 0.975
+        }
+    }
+}

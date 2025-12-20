@@ -7,25 +7,25 @@ import SwiftUI
 public struct ShoppingItemView: View {
     @Environment(Router.self) var router
 
-    @State private var status: ShoppingItemStatus = .created
+    @State private var isAnimatingCompletion = false
 
     var shoppingItem: ShoppingItem
+    var animation: Namespace.ID
 
-    public init(shoppingItem: ShoppingItem) {
+    public init(shoppingItem: ShoppingItem, animation: Namespace.ID) {
         self.shoppingItem = shoppingItem
+        self.animation = animation
     }
 
     private var isSetToComplete: Binding<Bool> {
         Binding(
-            get: {
-                status == .pendingCompletion || status == .completed
-            },
+            get: { isAnimatingCompletion },
             set: { newValue in
                 if newValue {
-                    status = .pendingCompletion
+                    isAnimatingCompletion = true
                     router.presentedSheet = .addInventoryItemFromShopping(shoppingItem)
                 } else {
-                    status = .created
+                    isAnimatingCompletion = false
                 }
             })
     }
@@ -86,8 +86,9 @@ public struct ShoppingItemView: View {
             .padding(.horizontal, 5)
             .background(.white100)
             .cornerRadius(22)
-            .opacity(status == .created ? 1 : 0.25)
+            .opacity(isAnimatingCompletion ? 0.25 : 1)
         }
+        .matchedGeometryEffect(id: shoppingItem.id, in: animation)
         .padding(.bottom, 4)
         .padding(.horizontal, 4)
         .background(.white100)
@@ -99,7 +100,7 @@ public struct ShoppingItemView: View {
                 return
             }
 
-            status = .created
+            isAnimatingCompletion = false
         }
         .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 22))
     }

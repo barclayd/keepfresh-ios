@@ -88,6 +88,7 @@ struct StatsView: View {
 
 private struct StorageLocationTileView: View {
     @Environment(Inventory.self) var inventory
+    @Environment(\.storageLocationNamespace) var namespace
 
     let storageLocation: StorageLocation
 
@@ -96,6 +97,7 @@ private struct StorageLocationTileView: View {
             HStack {
                 Image(systemName: storageLocation.icon)
                     .font(.system(size: 36)).foregroundStyle(storageLocation.titleColor)
+                    .matchedTransitionSource(id: storageLocation, in: namespace!)
 
                 Text(storageLocation.rawValue).foregroundStyle(storageLocation.titleColor).font(.title).fontWeight(.bold)
 

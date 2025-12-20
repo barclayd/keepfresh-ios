@@ -9,6 +9,7 @@ let baseDeps: [PackageDescription.Target.Dependency] = [
     .product(name: "Environment", package: "Environment"),
     .product(name: "Extensions", package: "Extensions"),
     .product(name: "Intelligence", package: "Intelligence"),
+    .product(name: "Utils", package: "Utils"),
 ]
 
 let package = Package(
@@ -30,6 +31,7 @@ let package = Package(
         .package(path: "../Environment"),
         .package(path: "../Extensions"),
         .package(path: "../Intelligence"),
+        .package(path: "../Utils"),
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.0"),
     ],
     targets: [
