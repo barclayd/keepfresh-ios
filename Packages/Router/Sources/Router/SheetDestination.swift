@@ -27,7 +27,6 @@ public enum SheetDestination: Hashable, Identifiable {
 
     case barcodeScan
     case barcodeScanToShoppingList
-    case shopppingSearch
     case inventoryItem(InventoryItem, InventoryItemAction?)
 
     case moveInventoryItemDirect(InventoryItem, StorageLocation)

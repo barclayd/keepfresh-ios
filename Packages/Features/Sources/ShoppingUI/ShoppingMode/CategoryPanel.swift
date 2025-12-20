@@ -106,7 +106,7 @@ public struct CategoryPanel: View {
 
                     if items.isEmpty {
                         ShoppingPlaceholderView(storageLocation: storageLocation, onTap: {
-                            router.presentedSheet = .shopppingSearch
+                            router.selectedTab = .shopping
                         }).frame(maxWidth: .infinity)
                     }
 

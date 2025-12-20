@@ -153,7 +153,7 @@ public struct StorageLocationPanel: View {
                     .scrollContentBackground(.hidden)
 
                     ShoppingPlaceholderView(storageLocation: storageLocation, onTap: {
-                        router.presentedSheet = .shopppingSearch
+                        router.selectedTab = .search
                     })
                     .frame(maxWidth: .infinity)
                     .dropDestination(for: ShoppingItem.self) { droppedItems, _ in

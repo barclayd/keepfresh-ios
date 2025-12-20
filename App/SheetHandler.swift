@@ -22,10 +22,6 @@ extension View {
             case .barcodeScanToShoppingList:
                 BarcodeToShoppingList()
 
-            case .shopppingSearch:
-                AddShoppingSheet()
-                    .presentationDragIndicator(.visible)
-
             case let .addInventoryItemFromShopping(shoppingItem):
                 AddInventoryItemFromShoppingSheet(shoppingItem: shoppingItem, onAdd: { expiryDate in
                     Task {

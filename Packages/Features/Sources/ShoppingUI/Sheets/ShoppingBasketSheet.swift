@@ -93,7 +93,7 @@ public struct ShoppingBasketSheet: View {
                                 presentEndShopAlert.toggle()
                             } label: {
                                 Image(systemName: "xmark")
-                                    .foregroundStyle(.red800)
+                                    .foregroundStyle(.red500.opacity(0.75))
                             }
                             .buttonStyle(.glassProminent)
                             .tint(.white100)

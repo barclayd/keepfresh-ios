@@ -218,7 +218,6 @@ public struct SearchView: View {
                         })
                 }
 
-//                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 RecentSearchView(searchText: searchTextBinding)
             }
