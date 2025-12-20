@@ -78,14 +78,12 @@ public struct ShoppingModeBar: View {
                 }
 
                 guard shopping.hasPendingItems else {
-                    shopping.shoppingModeStartDate = nil
-                    shopping.resetShoppingModeItems()
-                    shopping.shoppingMode = .initial
-
+                    shopping.endShopWithoutSaving()
+                    
                     return
                 }
                 
-                router.presentedSheet = .basketDetail
+                router.presentedSheet = .basketDetail(.stop)
             }) {
                 Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")
                     .font(.title3)
@@ -105,7 +103,7 @@ public struct ShoppingModeBar: View {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     if shopping.shoppingMode == .active, shopping.hasPendingItems {
-                        router.presentedSheet = .basketDetail
+                        router.presentedSheet = .basketDetail(.basket)
                     }
                 }
         }

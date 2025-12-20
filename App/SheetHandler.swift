@@ -119,8 +119,8 @@ extension View {
                     .presentationDetents([.custom(AdaptiveSmallDetent.self)])
                     .presentationDragIndicator(.visible)
 
-            case .basketDetail:
-                ShoppingBasketSheet()
+            case let .basketDetail(source):
+                ShoppingBasketSheet(source: source)
                     .presentationDragIndicator(.visible)
                     .presentationDetents([.custom(AdaptiveExtraExtraLargeDetent.self)])
             }

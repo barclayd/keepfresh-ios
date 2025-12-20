@@ -2,15 +2,22 @@ import DesignSystem
 import Environment
 import Models
 import Network
+import Router
 import SwiftUI
 
 public struct ShoppingBasketSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
     @Environment(Shopping.self) var shopping
     @Environment(Inventory.self) var inventory
 
-    @Environment(\.dismiss) private var dismiss
+    @State private var presentEndShopAlert = false
 
-    public init() {}
+    let source: BasketDetailButtonSource
+
+    public init(source: BasketDetailButtonSource) {
+        self.source = source
+    }
 
     private var pendingItems: [ShoppingItem] {
         shopping.items.filter { $0.status == .pendingCompletion }
@@ -71,14 +78,26 @@ public struct ShoppingBasketSheet: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "chevron.down")
-                                .font(.system(size: 24))
-                                .foregroundStyle(.gray600)
+                        switch source {
+                        case .basket:
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "chevron.down")
+                                    .foregroundStyle(.gray600)
+                            }
+                            .buttonStyle(.borderless)
+
+                        case .stop:
+                            Button {
+                                presentEndShopAlert.toggle()
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .foregroundStyle(.white100)
+                            }
+                            .buttonStyle(.glassProminent)
+                            .tint(.red500)
                         }
-                        .buttonStyle(.borderless)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
@@ -104,6 +123,19 @@ public struct ShoppingBasketSheet: View {
                         }
                         .buttonStyle(.glassProminent)
                         .tint(.green500)
+                    }
+                }
+                .alert(
+                    "Cancel shop?",
+                    isPresented: $presentEndShopAlert)
+                {
+                    Button("Cancel shop", role: .destructive) {
+                        shopping.endShopWithoutSaving()
+                        dismiss()
+                    }
+                    Button("Resume", role: .cancel) {
+                        presentEndShopAlert.toggle()
+                        dismiss()
                     }
                 }
             }.edgesIgnoringSafeArea(.bottom)

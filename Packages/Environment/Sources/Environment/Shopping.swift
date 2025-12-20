@@ -141,6 +141,12 @@ public final class Shopping {
         shoppingModeStartDate = nil
         shoppingMode = .initial
     }
+    
+    public func endShopWithoutSaving() {
+        shoppingModeStartDate = nil
+        resetShoppingModeItems()
+        shoppingMode = .initial
+    }
 
     public init(items: [ShoppingItem] = []) {
         self.items = cache.load()
