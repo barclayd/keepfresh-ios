@@ -30,7 +30,7 @@ public final class Shopping {
         }
     }
 
-    private let timerKey = "shoppingModeStartDate"
+    private let shoppingModeStartTimeKey = "shoppingModeStartDate"
 
     let api = KeepFreshAPI()
     private let cache = ShoppingCache.shared
@@ -158,20 +158,19 @@ public final class Shopping {
         updateCaches()
 
         loadShoppingModeStartDate()
-        resumeShoppingModeIfNeeded()
+        resumeShoppingMode()
     }
 
     private func loadShoppingModeStartDate() {
-        shoppingModeStartDate = UserDefaults.standard.object(forKey: timerKey) as? Date
+        shoppingModeStartDate = UserDefaults.standard.object(forKey: shoppingModeStartTimeKey) as? Date
     }
 
-    private func resumeShoppingModeIfNeeded() {
-        if hasPendingItems {
-            shoppingMode = .active
-            if shoppingModeStartDate == nil {
-                shoppingModeStartDate = Date()
-            }
-        }
+    private func resumeShoppingMode() {
+        guard hasPendingItems else { return }
+        shoppingMode = .active
+
+        guard shoppingModeStartDate == nil else { return }
+        shoppingModeStartDate = Date()
     }
 
     private func updateCaches() {
