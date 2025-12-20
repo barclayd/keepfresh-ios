@@ -24,7 +24,7 @@ struct ShoppingMode: View {
             }
         }
 
-        if !shopping.itemsWithoutStorageLocation.isEmpty {
+        if !shopping.shoppingModeItemsWithoutStorageLocation.isEmpty {
             ShoppingModeOtherItemsPanel()
         }
 
