@@ -14,32 +14,32 @@ struct AppTabRootView: View {
     @Environment(Router.self) var router
     @Environment(Inventory.self) var inventory
     @Environment(Shopping.self) var shopping
-    
+
     @Namespace private var inventoryItemAnimation
     @Namespace private var storageLocationAnimation
-    
+
     var body: some View {
         @Bindable var router = router
-        
+
         TabView(selection: $router.selectedTab) {
             Tab(value: AppTab.today) {
                 makeNavigationStack(for: .today, router: router, shopping: shopping)
             } label: {
                 AppTab.today.label
             }
-            
+
             Tab(value: AppTab.search, role: .search) {
                 makeNavigationStack(for: .search, router: router, shopping: shopping)
             } label: {
                 AppTab.search.label
             }
-            
+
             Tab(value: AppTab.kitchen) {
                 makeNavigationStack(for: .kitchen, router: router, shopping: shopping)
             } label: {
                 AppTab.kitchen.label
             }
-            
+
             Tab(value: AppTab.shopping) {
                 makeNavigationStack(for: .shopping, router: router, shopping: shopping)
             } label: {
@@ -59,12 +59,12 @@ struct AppTabRootView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func makeNavigationStack(for tab: AppTab, router: Router, shopping: Shopping) -> some View {
         @Bindable var router = router
         @Bindable var shopping = shopping
-        
+
         NavigationStack(path: $router[tab]) {
             tab.rootView()
                 .withAppRouter()
@@ -106,7 +106,7 @@ public extension AppTab {
         Label(title, systemImage: icon)
             .environment(\.symbolVariants, symbolVariants)
     }
-    
+
     @MainActor
     @ToolbarContentBuilder
     func toolbarContent(router: Router, shopping: Shopping) -> some ToolbarContent {
@@ -116,7 +116,7 @@ public extension AppTab {
                 Text("KeepFresh")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
             }
-            
+
             ToolbarItemGroup {
                 Button(action: {
                     router.selectedTab = .search
@@ -131,13 +131,13 @@ public extension AppTab {
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
             }
-            
+
         case .kitchen:
             ToolbarItem(placement: .title) {
                 Text("Kitchen")
                     .foregroundColor(.green500).font(Font.custom("Shrikhand-Regular", size: 32, relativeTo: .title))
             }
-            
+
             ToolbarItemGroup {
                 Button(action: {
                     router.selectedTab = .search
@@ -152,13 +152,13 @@ public extension AppTab {
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
             }
-            
+
         case .search:
             ToolbarItem(placement: .title) {
                 Text("Search")
                     .foregroundColor(.white200).font(Font.custom("Shrikhand-Regular", size: 28, relativeTo: .title))
             }
-            
+
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                     router.presentedSheet = .barcodeScan
@@ -168,7 +168,7 @@ public extension AppTab {
                 }
                 .buttonStyle(.plain).tint(.white200)
             }
-            
+
         case .shopping:
             ToolbarItem(placement: .title) {
                 Text(shopping.shoppingMode == .initial ? "List" : "Shop")
@@ -176,7 +176,7 @@ public extension AppTab {
                     .contentTransition(.numericText())
                     .animation(.easeInOut(duration: 2.0), value: shopping.shoppingMode)
             }
-            
+
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Button(action: {
                     router.selectedTab = .search
@@ -184,18 +184,18 @@ public extension AppTab {
                     Image(systemName: "plus.app").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
-                
+
                 Button(action: {
                     router.presentedSheet = .barcodeScanToShoppingList
                 }) {
                     Image(systemName: "barcode.viewfinder").resizable()
                         .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)
                 }
-                
+
                 if shopping.shoppingMode == .active, shopping.hasPendingItems {
                     Button(action: {
                         router.presentedSheet = .basketDetail(.basket)
-                        
+
                     }) {
                         Image(systemName: "basket.fill").resizable()
                             .frame(width: 24, height: 24).foregroundColor(.blue600).fontWeight(.bold)

@@ -79,7 +79,7 @@ public final class Shopping {
     public var pendingItems: [ShoppingItem] {
         items.filter { $0.status == .pendingCompletion }
     }
-    
+
     public var shoppingModeItemsWithoutStorageLocation: [ShoppingItem] {
         itemsWithoutStorageLocation.filter { $0.status == .created }
     }
