@@ -27,7 +27,7 @@ public struct ShoppingBasketSheet: View {
             GeometryReader { geometry in
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
-                        Text("\(pendingItems.count) items to be added")
+                        Text("^[\(pendingItems.count) item](inflect: true) to be added")
                             .font(.title3)
                             .foregroundStyle(.blue800)
                             .frame(maxWidth: .infinity, alignment: .leading)

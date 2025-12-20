@@ -12,9 +12,9 @@ public struct ShoppingModeBar: View {
     var badgeCount: Int {
         shopping.shoppingMode == .initial ? shopping.items.count : shopping.pendingItems.count
     }
-
-    var title: String {
-        shopping.shoppingMode == .initial ? "Start shop" : "\(shopping.items.count - shopping.pendingItems.count) items left"
+    
+    var title: LocalizedStringKey {
+        shopping.shoppingMode == .initial ? "Start shop" : "^[\(shopping.items.count - shopping.pendingItems.count) item](inflect: true) left"
     }
 
     public var body: some View {
