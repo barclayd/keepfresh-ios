@@ -93,10 +93,10 @@ public struct ShoppingBasketSheet: View {
                                 presentEndShopAlert.toggle()
                             } label: {
                                 Image(systemName: "xmark")
-                                    .foregroundStyle(.white100)
+                                    .foregroundStyle(.red800)
                             }
                             .buttonStyle(.glassProminent)
-                            .tint(.red500)
+                            .tint(.white100)
                         }
                     }
                     ToolbarItem(placement: .topBarTrailing) {
@@ -119,10 +119,10 @@ public struct ShoppingBasketSheet: View {
                             }
                         } label: {
                             Image(systemName: "checkmark")
+                                .foregroundStyle(.white100)
                                 .fontWeight(.semibold)
                         }
                         .buttonStyle(.glassProminent)
-                        .tint(.green500)
                     }
                 }
                 .alert(

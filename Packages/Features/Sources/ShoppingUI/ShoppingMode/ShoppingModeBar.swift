@@ -59,18 +59,6 @@ public struct ShoppingModeBar: View {
 
             Spacer()
 
-            if shopping.shoppingMode == .active {
-                Button(action: {}) {
-                    Label("Add item to shopping list", systemImage: "camera.viewfinder")
-                        .font(.title3)
-                        .bold()
-                        .labelStyle(.iconOnly)
-                        .tint(.blue700)
-                        .contentTransition(.symbolEffect(.replace))
-                        .transition(.opacity.animation(.easeInOut(duration: 0.2)))
-                }
-            }
-
             Button(action: {
                 guard shopping.shoppingMode == .active else {
                     shopping.startShoppingMode()
