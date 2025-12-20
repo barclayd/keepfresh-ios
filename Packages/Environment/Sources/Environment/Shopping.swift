@@ -23,9 +23,9 @@ public final class Shopping {
     public var shoppingModeStartDate: Date? {
         didSet {
             if let date = shoppingModeStartDate {
-                UserDefaults.standard.set(date, forKey: timerKey)
+                UserDefaults.standard.set(date, forKey: shoppingModeStartTimeKey)
             } else {
-                UserDefaults.standard.removeObject(forKey: timerKey)
+                UserDefaults.standard.removeObject(forKey: shoppingModeStartTimeKey)
             }
         }
     }
