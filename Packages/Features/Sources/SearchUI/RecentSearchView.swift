@@ -1,5 +1,6 @@
 import DesignSystem
 import Models
+import Router
 import SharedUI
 import SwiftData
 import SwiftUI
@@ -64,11 +65,12 @@ public struct RecentSearchItem: View {
 public struct RecentSearchView: View {
     @Environment(\.modelContext) var modelContext
 
+    @Environment(RecentlyConsumed.self) var recentlyConsumed
+    @Environment(Router.self) var router
+
     @Query(sort: \RecentSearch.date, order: .reverse) var recentSearches: [RecentSearch]
 
     @Binding var searchText: String
-
-    @Environment(RecentlyConsumed.self) var recentlyConsumed
 
     public init(searchText: Binding<String>) {
         _searchText = searchText
@@ -101,7 +103,7 @@ public struct RecentSearchView: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 10) {
                         ForEach(recentlyConsumed.items) { item in
-                            Tile(recentlyConsumedInventoryItem: item, action: .addItem)
+                            Tile(recentlyConsumedInventoryItem: item, action: router.previousTab == .shopping ? .shopping : .addItem)
                                 .padding(.trailing, 5)
                                 .onAppear {
                                     Task {
