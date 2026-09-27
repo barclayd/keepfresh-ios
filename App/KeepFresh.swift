@@ -1,4 +1,5 @@
 import Authentication
+import AppIntents
 import DesignSystem
 import Environment
 import Models
@@ -14,6 +15,7 @@ struct KeepFreshApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
 
     @State var router: Router = .init()
     @State var inventory: Inventory = .init()
@@ -54,6 +56,19 @@ struct KeepFreshApp: App {
                     }
                 }
                 .preferredColorScheme(.light)
+                .onOpenURL { url in
+                    guard url.scheme == "keepfresh", url.host == "shopping" else { return }
+                    router.selectedTab = .shopping
+                    router.popToRoot(for: .shopping)
+                    if url.path == "/basket", shopping.hasPendingItems {
+                        router.presentedSheet = .basketDetail(.basket)
+                    }
+                }
+                .onChange(of: scenePhase) { _, phase in
+                    guard phase == .active, shopping.shoppingMode == .active else { return }
+                    shopping.prepareActivityImages()
+                    Task { await ShoppingActivityController.shared.update() }
+                }
                 .onChange(of: pushNotifications.shouldRefreshInventory) { _, shouldRefresh in
                     guard shouldRefresh, inventory.state != .loading || inventory.state != .loaded else {
                         pushNotifications.shouldRefreshInventory = false
@@ -142,6 +157,11 @@ struct KeepFreshApp: App {
         }
     }
 }
+
+struct KeepFreshIntents: AppIntentsPackage {
+    static var includedPackages: [any AppIntentsPackage.Type] { [ShoppingActivityIntents.self] }
+}
+
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(

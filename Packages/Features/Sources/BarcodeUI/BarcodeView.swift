@@ -1,7 +1,7 @@
 import CodeScanner
 import DesignSystem
 import Models
-import Network
+import Networking
 import Router
 import SwiftUI
 

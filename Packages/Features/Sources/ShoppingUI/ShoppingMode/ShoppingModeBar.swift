@@ -74,7 +74,7 @@ public struct ShoppingModeBar: View {
 
                 router.presentedSheet = .basketDetail(.stop)
             }) {
-                Label("Add item to shopping list", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")
+                Label(shopping.shoppingMode == .initial ? "Start shopping" : "Finish shopping", systemImage: shopping.shoppingMode == .initial ? "play.fill" : "stop.circle")
                     .font(.title3)
                     .bold()
                     .labelStyle(.iconOnly)
@@ -86,6 +86,7 @@ public struct ShoppingModeBar: View {
                     .contentTransition(.symbolEffect(.replace))
                     .padding(.trailing)
             }
+            .disabled(shopping.shoppingMode == .initial && shopping.items.isEmpty)
         }
         .background {
             Color.clear

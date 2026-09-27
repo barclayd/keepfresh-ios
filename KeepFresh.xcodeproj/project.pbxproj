@@ -13,10 +13,14 @@
 		4E7AEB852E9D82DB00BE4A5E /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */; };
 		4E8952D02E987903003F3366 /* Authentication in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8952CF2E987903003F3366 /* Authentication */; };
 		4E8E8B5F2D162E7E009177AA /* TodayUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E8E8B5E2D162E7E009177AA /* TodayUI */; };
+		4E949BA92EFC040C00FBEE26 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E949BA82EFC040C00FBEE26 /* WidgetKit.framework */; };
+		4E949BAB2EFC040C00FBEE26 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E949BAA2EFC040C00FBEE26 /* SwiftUI.framework */; };
+		4E949BBC2EFC040D00FBEE26 /* ShoppingLiveActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4E949BA72EFC040C00FBEE26 /* ShoppingLiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4E95179F2D7BAD5700FAFC86 /* BarcodeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E95179E2D7BAD5700FAFC86 /* BarcodeUI */; };
 		4E9A8B7D2D9A8B7C0012CDF0 /* ShoppingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9A8B7C2D9A8B7C0012CDEF /* ShoppingUI */; };
 		4E9A8B7F2D9A8B8C0012CDF1 /* SharedUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9A8B7E2D9A8B8C0012CDF0 /* SharedUI */; };
 		4EAF44BE2E8B3CFE000B5A6B /* Intelligence in Frameworks */ = {isa = PBXBuildFile; productRef = 4EAF44BD2E8B3CFE000B5A6B /* Intelligence */; };
+		4EDAB301306976FF00225305 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4EDAB300306976FF00225305 /* Models */; };
 		4EEEBA792E806DFC0049511B /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA782E806DFC0049511B /* Models */; };
 		4EEEBA7B2E806E010049511B /* Network in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA7A2E806E010049511B /* Network */; };
 		4EEEBA7D2E8076900049511B /* Router in Frameworks */ = {isa = PBXBuildFile; productRef = 4EEEBA7C2E8076900049511B /* Router */; };
@@ -31,6 +35,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4E949BBA2EFC040D00FBEE26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9F21421B2CE9DAA1004167D7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4E949BA62EFC040C00FBEE26;
+			remoteInfo = ShoppingLiveActivityExtension;
+		};
 		4EF5AD182EBD1C8E00F8E400 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9F21421B2CE9DAA1004167D7 /* Project object */;
@@ -48,6 +59,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				4EF5AD1A2EBD1C8E00F8E400 /* NotificationServiceExtension.appex in Embed Foundation Extensions */,
+				4E949BBC2EFC040D00FBEE26 /* ShoppingLiveActivityExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -60,8 +72,12 @@
 		4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		4E8952CE2E9878F8003F3366 /* Authentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Authentication; path = Packages/Authentication; sourceTree = "<group>"; };
 		4E8E8B4E2D14E8DF009177AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4E949BA72EFC040C00FBEE26 /* ShoppingLiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShoppingLiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E949BA82EFC040C00FBEE26 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		4E949BAA2EFC040C00FBEE26 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		4EAF44BC2E8B3902000B5A6B /* Intelligence */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Intelligence; path = Packages/Intelligence; sourceTree = "<group>"; };
 		4ED27E822E849BA600296595 /* Environment */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Environment; path = Packages/Environment; sourceTree = "<group>"; };
+		4EDAB302306979F700225305 /* ShoppingLiveActivityExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShoppingLiveActivityExtension.entitlements; sourceTree = "<group>"; };
 		4EEEBA722E8063B70049511B /* Network */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Network; path = Packages/Network; sourceTree = "<group>"; };
 		4EEEBA732E8063DA0049511B /* Router */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Router; path = Packages/Router; sourceTree = "<group>"; };
 		4EEEBA742E80679B0049511B /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Models; path = Packages/Models; sourceTree = "<group>"; };
@@ -74,6 +90,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4E949BBD2EFC040D00FBEE26 /* Exceptions for "ShoppingLiveActivity" folder in "ShoppingLiveActivityExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4E949BA62EFC040C00FBEE26 /* ShoppingLiveActivityExtension */;
+		};
 		4EF5AD1B2EBD1C8E00F8E400 /* Exceptions for "NotificationServiceExtension" folder in "NotificationServiceExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -84,6 +107,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		4E949BAC2EFC040C00FBEE26 /* ShoppingLiveActivity */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4E949BBD2EFC040D00FBEE26 /* Exceptions for "ShoppingLiveActivity" folder in "ShoppingLiveActivityExtension" target */,
+			);
+			path = ShoppingLiveActivity;
+			sourceTree = "<group>";
+		};
 		4EF5AD142EBD1C8E00F8E400 /* NotificationServiceExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -100,6 +131,16 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4E949BA42EFC040C00FBEE26 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4EDAB301306976FF00225305 /* Models in Frameworks */,
+				4E949BAB2EFC040C00FBEE26 /* SwiftUI.framework in Frameworks */,
+				4E949BA92EFC040C00FBEE26 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4EF5AD102EBD1C8E00F8E400 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -139,6 +180,7 @@
 		9F21421A2CE9DAA1004167D7 = {
 			isa = PBXGroup;
 			children = (
+				4EDAB302306979F700225305 /* ShoppingLiveActivityExtension.entitlements */,
 				4E7AEB842E9D82DB00BE4A5E /* AppIcon.icon */,
 				9F2142252CE9DAA1004167D7 /* App */,
 				4E8E8B4E2D14E8DF009177AA /* Info.plist */,
@@ -155,6 +197,7 @@
 				4EF5AD0C2EBC066D00F8E400 /* Notifications */,
 				9FAEE3A72CF0994400F86CDC /* Features */,
 				4EF5AD142EBD1C8E00F8E400 /* NotificationServiceExtension */,
+				4E949BAC2EFC040C00FBEE26 /* ShoppingLiveActivity */,
 				9FAEE3B82CF09BB400F86CDC /* Frameworks */,
 				9F2142242CE9DAA1004167D7 /* Products */,
 			);
@@ -165,6 +208,7 @@
 			children = (
 				9F2142232CE9DAA1004167D7 /* KeepFresh.app */,
 				4EF5AD132EBD1C8E00F8E400 /* NotificationServiceExtension.appex */,
+				4E949BA72EFC040C00FBEE26 /* ShoppingLiveActivityExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -172,6 +216,8 @@
 		9FAEE3B82CF09BB400F86CDC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4E949BA82EFC040C00FBEE26 /* WidgetKit.framework */,
+				4E949BAA2EFC040C00FBEE26 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -179,6 +225,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4E949BA62EFC040C00FBEE26 /* ShoppingLiveActivityExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4E949BBE2EFC040D00FBEE26 /* Build configuration list for PBXNativeTarget "ShoppingLiveActivityExtension" */;
+			buildPhases = (
+				4E949BA32EFC040C00FBEE26 /* Sources */,
+				4E949BA42EFC040C00FBEE26 /* Frameworks */,
+				4E949BA52EFC040C00FBEE26 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4E949BAC2EFC040C00FBEE26 /* ShoppingLiveActivity */,
+			);
+			name = ShoppingLiveActivityExtension;
+			packageProductDependencies = (
+				4EDAB300306976FF00225305 /* Models */,
+			);
+			productName = ShoppingLiveActivityExtension;
+			productReference = 4E949BA72EFC040C00FBEE26 /* ShoppingLiveActivityExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		4EF5AD122EBD1C8E00F8E400 /* NotificationServiceExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4EF5AD1C2EBD1C8E00F8E400 /* Build configuration list for PBXNativeTarget "NotificationServiceExtension" */;
@@ -217,6 +286,7 @@
 			);
 			dependencies = (
 				4EF5AD192EBD1C8E00F8E400 /* PBXTargetDependency */,
+				4E949BBB2EFC040D00FBEE26 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				9F2142252CE9DAA1004167D7 /* App */,
@@ -251,9 +321,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2610;
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					4E949BA62EFC040C00FBEE26 = {
+						CreatedOnToolsVersion = 26.2;
+					};
 					4EF5AD122EBD1C8E00F8E400 = {
 						CreatedOnToolsVersion = 26.1;
 					};
@@ -282,11 +355,19 @@
 			targets = (
 				9F2142222CE9DAA1004167D7 /* KeepFresh */,
 				4EF5AD122EBD1C8E00F8E400 /* NotificationServiceExtension */,
+				4E949BA62EFC040C00FBEE26 /* ShoppingLiveActivityExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4E949BA52EFC040C00FBEE26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4EF5AD112EBD1C8E00F8E400 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -305,6 +386,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4E949BA32EFC040C00FBEE26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4EF5AD0F2EBD1C8E00F8E400 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -322,6 +410,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4E949BBB2EFC040D00FBEE26 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4E949BA62EFC040C00FBEE26 /* ShoppingLiveActivityExtension */;
+			targetProxy = 4E949BBA2EFC040D00FBEE26 /* PBXContainerItemProxy */;
+		};
 		4EF5AD192EBD1C8E00F8E400 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4EF5AD122EBD1C8E00F8E400 /* NotificationServiceExtension */;
@@ -330,6 +423,75 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4E949BBF2EFC040D00FBEE26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ShoppingLiveActivityExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ShoppingLiveActivity/Preview Content\"";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShoppingLiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShoppingLiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.4.2;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh.ShoppingLiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4E949BC02EFC040D00FBEE26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ShoppingLiveActivityExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ShoppingLiveActivity/Preview Content\"";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShoppingLiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShoppingLiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.4.2;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.danbarclay.keepfresh.ShoppingLiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		4EF5AD1D2EBD1C8E00F8E400 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -530,6 +692,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = KeepFresh;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "KeepFresh uses the camera to scan barcodes";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -577,6 +740,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = KeepFresh;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_NSCameraUsageDescription = "KeepFresh uses the camera to scan barcodes";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -608,6 +772,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4E949BBE2EFC040D00FBEE26 /* Build configuration list for PBXNativeTarget "ShoppingLiveActivityExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4E949BBF2EFC040D00FBEE26 /* Debug */,
+				4E949BC02EFC040D00FBEE26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4EF5AD1C2EBD1C8E00F8E400 /* Build configuration list for PBXNativeTarget "NotificationServiceExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -684,6 +857,10 @@
 		4EAF44BD2E8B3CFE000B5A6B /* Intelligence */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Intelligence;
+		};
+		4EDAB300306976FF00225305 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
 		};
 		4EEEBA782E806DFC0049511B /* Models */ = {
 			isa = XCSwiftPackageProductDependency;

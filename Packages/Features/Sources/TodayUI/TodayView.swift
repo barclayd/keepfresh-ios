@@ -2,7 +2,7 @@ import DesignSystem
 import Environment
 import Extensions
 import Models
-import Network
+import Networking
 import Router
 import SharedUI
 import SwiftData

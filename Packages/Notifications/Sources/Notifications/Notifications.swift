@@ -1,6 +1,6 @@
 import Foundation
 import Models
-import Network
+import Networking
 import Router
 import SwiftUI
 import UserNotifications

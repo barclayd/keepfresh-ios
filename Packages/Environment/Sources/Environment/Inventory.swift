@@ -1,7 +1,7 @@
 import DesignSystem
 import Extensions
 import Models
-import Network
+import Networking
 import Notifications
 import SwiftUI
 

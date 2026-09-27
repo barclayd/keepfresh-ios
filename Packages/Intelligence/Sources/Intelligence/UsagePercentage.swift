@@ -1,6 +1,6 @@
 import FoundationModels
 import Models
-import Network
+import Networking
 import SwiftUI
 
 public enum GenerationState {
