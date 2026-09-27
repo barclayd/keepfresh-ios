@@ -121,7 +121,8 @@ public struct AddInventoryItemView: View {
                     consumptionPredictionChangedAt: usageGenerator.percentagePrediction != nil ? Date() : nil),
             productId: productSearchItem.id, quantity: formState.quantity)
 
-        let temporaryInventoryItemId = (inventory.items.max(by: { $0.id < $1.id })?.id ?? 0) + 1
+        // Draft IDs must never collide with positive IDs assigned by the server.
+        let temporaryInventoryItemId = min(inventory.items.map(\.id).min() ?? 0, 0) - 1
 
         inventory.addItem(
             request: request,

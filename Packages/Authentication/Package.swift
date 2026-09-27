@@ -19,4 +19,5 @@ let package = Package(
                 .product(name: "Auth", package: "supabase-swift"),
                 .product(name: "Supabase", package: "supabase-swift"),
             ]),
+        .testTarget(name: "AuthenticationTests", dependencies: ["Authentication", .product(name: "Supabase", package: "supabase-swift")]),
     ])

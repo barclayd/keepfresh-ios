@@ -45,6 +45,8 @@ public final class Inventory {
 
     let api = KeepFreshAPI()
     private let cache = InventoryCache.shared
+    private var refreshGeneration = 0
+    private var pendingItemIds: Set<Int> = []
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [InventoryItem]] = [:]
     public private(set) var productCounts: [Int: Int] = [:]
@@ -101,15 +103,17 @@ public final class Inventory {
         Task { await cache.save(items) }
     }
 
-    private func mergeItems(local: [InventoryItem], server: [InventoryItem]) -> [InventoryItem] {
-        var serverById = Dictionary(uniqueKeysWithValues: server.map { ($0.id, $0) })
+    private func mergeItems(local: [InventoryItem], server: [InventoryItem], startingIds: Set<Int>) -> [InventoryItem] {
+        let removedIds = startingIds.subtracting(local.map(\.id))
+        var serverById = Dictionary(uniqueKeysWithValues: server.filter { !removedIds.contains($0.id) }.map { ($0.id, $0) })
         var result: [InventoryItem] = []
 
         for localItem in local {
             if let serverItem = serverById[localItem.id] {
                 result.append(serverItem.updatedAt > localItem.updatedAt ? serverItem : localItem)
                 serverById.removeValue(forKey: localItem.id)
-            } else {
+            } else if !startingIds.contains(localItem.id) || pendingItemIds.contains(localItem.id) {
+                // Keep additions made during this refresh, but drop stale saved entries.
                 result.append(localItem)
             }
         }
@@ -128,16 +132,25 @@ public final class Inventory {
     }
 
     public func fetchItems() async {
+        await fetchItems { try await self.api.getInventoryItems() }
+    }
+
+    func fetchItems(fetch: () async throws -> [InventoryItem]) async {
         if items.isEmpty {
             state = .loading
         }
 
+        refreshGeneration += 1
+        let generation = refreshGeneration
+        let startingIds = Set(items.map(\.id))
         do {
-            let serverItems = try await api.getInventoryItems()
+            let serverItems = try await fetch()
+            guard generation == refreshGeneration else { return }
             let localItems = items
-            items = mergeItems(local: localItems, server: serverItems)
+            items = mergeItems(local: localItems, server: serverItems, startingIds: startingIds)
             state = .loaded
         } catch {
+            guard generation == refreshGeneration else { return }
             if items.isEmpty {
                 state = .error
             }
@@ -157,21 +170,19 @@ public final class Inventory {
             repeating: InventoryItem(from: request, productSearchResult: product, category: category, id: inventoryItemId, icon: icon),
             count: request.quantity)
 
+        pendingItemIds.insert(inventoryItemId)
         items.append(contentsOf: newItems)
 
         Task {
+            defer { pendingItemIds.remove(inventoryItemId) }
             do {
                 let response = try await api.addInventoryItem(request)
 
-                if let inventoryItemId = response.inventoryItemId {
-                    guard !items.isEmpty else { return }
-                    items[items.count - 1].id = inventoryItemId
-                }
-
-                if let inventoryItemIds = response.inventoryItemIds {
-                    for quantity in 1...inventoryItemIds.count {
-                        items[items.count - quantity].id = inventoryItemIds[quantity - 1]
-                    }
+                // A refresh may have removed unrelated entries while this add was pending.
+                let newIds = response.inventoryItemIds ?? response.inventoryItemId.map { [$0] } ?? []
+                let indices = items.indices.filter { items[$0].id == inventoryItemId }
+                for (index, id) in zip(indices, newIds) {
+                    items[index].id = id
                 }
 
                 if let categorySuggestions {

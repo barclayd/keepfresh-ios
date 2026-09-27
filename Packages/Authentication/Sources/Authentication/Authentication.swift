@@ -13,12 +13,18 @@ public final class Authentication: Sendable {
             options: SupabaseClientOptions(auth: .init(storage: KeychainLocalStorage(), flowType: .pkce)))
     }
 
-    public func signInAnonymously() async throws {
-        if await (try? client.auth.session) != nil {
-            return
-        }
+    init(client: SupabaseClient) {
+        self.client = client
+    }
 
-        try await client.auth.signInAnonymously()
+    public func signInAnonymously() async throws {
+        do {
+            _ = try await client.auth.session
+        } catch AuthError.sessionMissing {
+            // Only a genuinely missing session should create a new identity.
+            // Network, refresh-token and server errors must preserve the existing account.
+            try await client.auth.signInAnonymously()
+        }
     }
 
     public func getAccessToken() async throws -> String? {
