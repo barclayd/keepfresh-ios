@@ -16,7 +16,7 @@ The app prepares 144-pixel PNG thumbnails using the existing `getGenmoji` image 
 
 `LiveActivityIntent` executes in the app process. Shopping cache writes are atomic and complete before the intent advances the activity. The running Shopping environment receives the persisted basket immediately; a relaunched app restores it from disk. Local shopping data and cached artwork use file protection until first authentication, so they remain available during the shopping session after the phone relocks. No push token or backend deployment is needed.
 
-The shared Models package exposes its intents through `AppIntentsPackage`, included by both the app and extension. The Network package still exports its existing product, but its Swift module is now `KeepFreshNetwork`, avoiding a collision with Apple's Network framework imported by App Intents. Clean existing Xcode build products once after this rename if a cached `Network.swiftmodule` causes a dependency-cycle diagnostic.
+The shared Models package exposes its intents through `AppIntentsPackage`, included by both the app and extension. The Network package still exports its existing product, but its Swift module is now `Networking`, avoiding a collision with Apple's Network framework imported by App Intents. Clean existing Xcode build products once after this rename if a cached `Network.swiftmodule` causes a dependency-cycle diagnostic.
 
 ## Validation
 

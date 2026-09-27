@@ -1,6 +1,6 @@
 import Foundation
 import Models
-import KeepFreshNetwork
+import Networking
 import Notifications
 import SwiftUI
 

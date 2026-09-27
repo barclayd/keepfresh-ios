@@ -2,7 +2,7 @@ import CodeScanner
 import DesignSystem
 import Environment
 import Models
-import KeepFreshNetwork
+import Networking
 import Router
 import SwiftUI
 

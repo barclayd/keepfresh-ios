@@ -1,5 +1,5 @@
 import Models
-import KeepFreshNetwork
+import Networking
 import SwiftUI
 
 @MainActor

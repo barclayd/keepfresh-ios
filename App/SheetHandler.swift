@@ -2,7 +2,7 @@ import BarcodeUI
 import DesignSystem
 import Environment
 import Models
-import KeepFreshNetwork
+import Networking
 import Notifications
 import Router
 import SearchUI

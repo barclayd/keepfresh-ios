@@ -1,6 +1,6 @@
 import Foundation
 import Models
-import KeepFreshNetwork
+import Networking
 
 @MainActor
 @Observable

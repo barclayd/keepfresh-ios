@@ -2,7 +2,7 @@ import DesignSystem
 import Environment
 import Extensions
 import Models
-import KeepFreshNetwork
+import Networking
 import Router
 import SharedUI
 import SwiftUI
