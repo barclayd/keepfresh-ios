@@ -146,9 +146,7 @@ public struct SearchView: View {
 
     @State private var search: Search?
 
-    public init() {
-        UIScrollView.appearance().bounces = false
-    }
+    public init() {}
 
     private func saveRecentSearch(text: String, recommendedStorageLocation: StorageLocation, icon: String) {
         let existingSearch = recentSearches.first(where: { $0.text.lowercased() == text.lowercased() })
@@ -229,7 +227,7 @@ public struct SearchView: View {
                 search = Search(onSaveSearch: saveRecentSearch)
             }
         }
-        .searchable(text: searchTextBinding)
+        .searchable(text: searchTextBinding, placement: .navigationBarDrawer(displayMode: .always))
         .scrollDismissesKeyboard(.immediately)
         .onSubmit(of: .search) {
             Task {
