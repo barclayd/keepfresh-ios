@@ -12,7 +12,13 @@
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:Packages/Environment",
+        "identifier" : "EnvironmentTests",
+        "name" : "EnvironmentTests"
+      }
+    }
   ],
   "version" : 1
 }

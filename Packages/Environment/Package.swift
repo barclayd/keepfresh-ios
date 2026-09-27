@@ -18,4 +18,7 @@ let package = Package(
         .target(
             name: "Environment",
             dependencies: ["Models", "Network", "Extensions", "DesignSystem", "Notifications"]),
+        .testTarget(
+            name: "EnvironmentTests",
+            dependencies: ["Environment", "Models"]),
     ])

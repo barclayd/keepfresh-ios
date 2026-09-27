@@ -8,6 +8,23 @@ public enum ShoppingMode {
     case initial, active, completed
 }
 
+public enum ShoppingCompletionError: LocalizedError, Equatable {
+    case itemNotFound
+    case itemNotSynced
+    case alreadyInProgress
+
+    public var errorDescription: String? {
+        switch self {
+        case .itemNotFound:
+            "This item is no longer on your shopping list. Refresh the list and try again."
+        case .itemNotSynced:
+            "This item hasn't finished saving to your shopping list. Please try again shortly."
+        case .alreadyInProgress:
+            "This item is already being added to your inventory."
+        }
+    }
+}
+
 @Observable
 @MainActor
 public final class Shopping {
@@ -35,6 +52,7 @@ public final class Shopping {
     let api = KeepFreshAPI()
     private let cache = ShoppingCache.shared
     private var tempIdCounter: Int = -1
+    private var completingItemIds: Set<Int> = []
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
     public var itemsWithoutStorageLocation: [ShoppingItem] {
@@ -578,38 +596,37 @@ public final class Shopping {
 
     public func markItemAsComplete(
         shoppingItemId: Int,
-        expiryDate: Date) async -> InventoryItem?
+        expiryDate: Date) async throws -> InventoryItem
     {
-        guard let index = findItem(id: shoppingItemId) else {
-            return nil
+        try await markItemAsComplete(
+            shoppingItemId: shoppingItemId,
+            expiryDate: expiryDate,
+            complete: { id, request in
+                try await self.api.completeShoppingItem(for: id, request)
+            })
+    }
+
+    // Keep the request injectable so failure and concurrent list changes can be verified without a live account.
+    func markItemAsComplete(
+        shoppingItemId: Int,
+        expiryDate: Date,
+        complete: (Int, CompleteShoppingItemRequest) async throws -> InventoryItem) async throws -> InventoryItem
+    {
+        guard findItem(id: shoppingItemId) != nil else {
+            throw ShoppingCompletionError.itemNotFound
         }
-
-        let shoppingItem = items[index]
-
-        items.remove(at: index)
-
-        do {
-            let inventoryItem = try await api.completeShoppingItem(for: shoppingItemId, CompleteShoppingItemRequest(expiryDate: expiryDate))
-
-            await PushNotifications.shared.requestPushNotifications()
-
-            return inventoryItem
-        } catch {
-            print("Adding inventory item failed with error: \(error)")
-
-            if let urlError = error as? URLError {
-                print("URL Error details: \(urlError.localizedDescription)")
-            }
-
-            if let httpError = error as? DecodingError {
-                print("Decoding error: \(httpError)")
-            }
-
-            print("Full error details: \(String(describing: error))")
-
-            items.insert(shoppingItem, at: index)
-
-            return nil
+        guard shoppingItemId > 0 else {
+            throw ShoppingCompletionError.itemNotSynced
         }
+        guard completingItemIds.insert(shoppingItemId).inserted else {
+            throw ShoppingCompletionError.alreadyInProgress
+        }
+        defer { completingItemIds.remove(shoppingItemId) }
+
+        let inventoryItem = try await complete(shoppingItemId, CompleteShoppingItemRequest(expiryDate: expiryDate))
+
+        // The list may have changed while awaiting the server. Remove by identity only after success.
+        items.removeAll { $0.id == shoppingItemId }
+        return inventoryItem
     }
 }

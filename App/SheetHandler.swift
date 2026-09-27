@@ -3,6 +3,7 @@ import DesignSystem
 import Environment
 import Models
 import Network
+import Notifications
 import Router
 import SearchUI
 import ShoppingUI
@@ -24,14 +25,13 @@ extension View {
 
             case let .addInventoryItemFromShopping(shoppingItem):
                 AddInventoryItemFromShoppingSheet(shoppingItem: shoppingItem, onAdd: { expiryDate in
-                    Task {
-                        let inventoryItem = await shopping.markItemAsComplete(shoppingItemId: shoppingItem.id, expiryDate: expiryDate)
-
-                        if let inventoryItem {
-                            inventory.items.append(inventoryItem)
-                        }
-                    }
+                    let inventoryItem = try await shopping.markItemAsComplete(shoppingItemId: shoppingItem.id, expiryDate: expiryDate)
+                    inventory.items.append(inventoryItem)
                     router.presentedSheet = nil
+
+                    Task {
+                        await PushNotifications.shared.requestPushNotifications()
+                    }
                 })
                 .presentationDetents(
                     [.custom(AdaptiveSmallDetent.self)])
