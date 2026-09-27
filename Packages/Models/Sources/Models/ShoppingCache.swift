@@ -2,17 +2,21 @@ import Foundation
 
 @MainActor
 public class ShoppingCache {
-    private(set) var items: [ShoppingItem] = []
+    public private(set) var items: [ShoppingItem] = []
+    public var onExternalChange: (@MainActor ([ShoppingItem]) -> Void)?
     private let fileName = "shoppingData.json"
+    private let persistenceURL: URL?
 
     public static let shared = ShoppingCache()
 
     private var fileURL: URL {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        persistenceURL ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent(fileName)
     }
 
-    public init() {}
+    public init(fileURL: URL? = nil) {
+        persistenceURL = fileURL
+    }
 
     public func load() -> [ShoppingItem] {
         if let fileData = try? Data(contentsOf: fileURL),
@@ -25,18 +29,14 @@ public class ShoppingCache {
     }
 
     public func save(_ newItems: [ShoppingItem]) async {
-        items = newItems
-        let dataToSave = newItems
-        let url = fileURL
+        do { try saveImmediately(newItems) }
+        catch { print("Failed to save shopping data: \(error)") }
+    }
 
-        // Serialize atomic writes so an older save cannot overwrite a refreshed cache.
-        do {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            let jsonData = try encoder.encode(dataToSave)
-            try jsonData.write(to: url, options: .atomic)
-        } catch {
-            print("Failed to save shopping data: \(error)")
-        }
+    /// Commit in order before accepting a lock-screen action or suspending the app.
+    public func saveImmediately(_ newItems: [ShoppingItem]) throws {
+        let jsonData = try JSONEncoder().encode(newItems)
+        try jsonData.write(to: fileURL, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        items = newItems
     }
 }

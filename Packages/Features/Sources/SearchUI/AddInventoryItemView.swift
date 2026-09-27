@@ -4,7 +4,7 @@ import Extensions
 import Foundation
 import Intelligence
 import Models
-import Network
+import KeepFreshNetwork
 import Router
 import SharedUI
 import SwiftUI

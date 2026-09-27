@@ -1,6 +1,6 @@
 import DesignSystem
 import Models
-import Network
+import KeepFreshNetwork
 import Router
 import SwiftData
 import SwiftUI

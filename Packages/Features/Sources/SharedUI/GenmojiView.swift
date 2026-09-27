@@ -1,6 +1,6 @@
 import DesignSystem
 import Models
-import Network
+import KeepFreshNetwork
 import SwiftData
 import SwiftUI
 
@@ -47,6 +47,7 @@ public struct GenmojiView: View {
                 predicate: #Predicate { $0.name == name })
 
             if let cached = try modelContext.fetch(descriptor).first {
+                try? ShoppingActivityImages.save(cached.imageData, named: name)
                 guard let uiImage = UIImage(data: cached.imageData) else {
                     throw NSError(
                         domain: "GenmojiView",
@@ -80,6 +81,8 @@ public struct GenmojiView: View {
                     code: -2,
                     userInfo: [NSLocalizedDescriptionKey: "Failed to create UIImage from genmoji"])
             }
+
+            try? ShoppingActivityImages.save(imageData, named: name)
 
             await MainActor.run {
                 genmojiImage = uiImage

@@ -1,6 +1,6 @@
 import Foundation
 import Models
-import Network
+import KeepFreshNetwork
 import Notifications
 import SwiftUI
 
@@ -54,6 +54,8 @@ public final class Shopping {
     private var refreshGeneration = 0
     private var tempIdCounter: Int = -1
     private var completingItemIds: Set<Int> = []
+    private var activityImageTask: Task<Void, Never>?
+    private var activityImageNames: Set<String> = []
 
     public private(set) var itemsByStorageLocation: [StorageLocation: [ShoppingItem]] = [:]
     public var itemsWithoutStorageLocation: [ShoppingItem] {
@@ -139,7 +141,8 @@ public final class Shopping {
     }
 
     public func startShoppingMode() {
-        guard shoppingMode == .initial else { return }
+        guard shoppingMode == .initial,
+              ShoppingActivityAttributes.ContentState(items: items).totalCount > 0 else { return }
 
         for index in items.indices where items[index].storageLocation != nil {
             if let categoryId = items[index].product?.category.id,
@@ -156,9 +159,13 @@ public final class Shopping {
         shoppingMode = .active
         shoppingModeStartDate = Date()
         saveItems()
+        ShoppingActivityController.shared.start(startedAt: shoppingModeStartDate!)
+        prepareActivityImages()
     }
 
     public func completeShoppingSession() {
+        ShoppingActivityController.shared.finish()
+        activityImageTask?.cancel()
         let pendingItemIds = Set(pendingItems.map(\.id))
         items.removeAll { pendingItemIds.contains($0.id) }
         shoppingModeStartDate = nil
@@ -166,6 +173,8 @@ public final class Shopping {
     }
 
     public func endShopWithoutSaving() {
+        ShoppingActivityController.shared.finish()
+        activityImageTask?.cancel()
         shoppingModeStartDate = nil
         resetShoppingModeItems()
         shoppingMode = .initial
@@ -182,6 +191,15 @@ public final class Shopping {
 
         loadShoppingModeStartDate()
         resumeShoppingMode()
+        cache.onExternalChange = { [weak self] items in
+            self?.items = items
+        }
+        if shoppingMode == .active {
+            Task { await ShoppingActivityController.shared.update() }
+            prepareActivityImages()
+        } else {
+            ShoppingActivityController.shared.finish()
+        }
     }
 
     private func loadShoppingModeStartDate() {
@@ -189,7 +207,7 @@ public final class Shopping {
     }
 
     private func resumeShoppingMode() {
-        guard hasPendingItems else { return }
+        guard hasPendingItems || shoppingModeStartDate != nil else { return }
         shoppingMode = .active
 
         guard shoppingModeStartDate == nil else { return }
@@ -215,11 +233,42 @@ public final class Shopping {
         }
         categoriesByStorageLocation = categoriesCache
 
-        Task { await cache.save(items) }
+        saveItems()
+        if shoppingMode == .active {
+            Task { await ShoppingActivityController.shared.update() }
+            if Set(items.compactMap({ $0.product?.category.icon })) != activityImageNames {
+                prepareActivityImages()
+            }
+        }
     }
 
     private func saveItems() {
-        Task { await cache.save(items) }
+        do { try cache.saveImmediately(items) }
+        catch { print("Failed to persist shopping basket: \(error)") }
+    }
+
+    /// Front-load artwork for the full list while the app has network access.
+    /// Picking up an item never waits for an image or for a server request.
+    public func prepareActivityImages() {
+        activityImageTask?.cancel()
+        var seen: Set<String> = []
+        let names = items.compactMap { $0.product?.category.icon }.filter { seen.insert($0).inserted }
+        activityImageNames = seen
+        activityImageTask = Task {
+            for name in names {
+                guard !Task.isCancelled else { return }
+                guard !ShoppingActivityImages.contains(name) else { continue }
+                do {
+                    let response = try await api.getGenmoji(name: name)
+                    guard !Task.isCancelled, let data = response.imageContentData else { continue }
+                    try ShoppingActivityImages.save(data, named: name)
+                    await ShoppingActivityController.shared.update()
+                } catch {
+                    // Use the matching storage symbol until artwork is available.
+                    continue
+                }
+            }
+        }
     }
 
     private func findItem(id: Int) -> Int? {

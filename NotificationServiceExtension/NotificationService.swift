@@ -1,5 +1,5 @@
 import Models
-import Network
+import KeepFreshNetwork
 import Notifications
 import UIKit
 import UserNotifications
