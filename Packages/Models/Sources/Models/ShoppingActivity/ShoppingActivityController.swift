@@ -22,7 +22,7 @@ public final class ShoppingActivityController {
             self.lastCollectedID = lastCollectedID
         }
 
-        /// Identity-bound actions remain safe when an older view is still on screen.
+        /// Use session and item IDs so delayed or repeated taps cannot collect the next item.
         public mutating func changeBasket(sessionID: String, itemID: Int, undo: Bool, items: inout [ShoppingItem]) -> Bool {
             guard id == sessionID, itemID > 0, let index = items.firstIndex(where: { $0.id == itemID }) else { return false }
             if undo {
