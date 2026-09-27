@@ -25,8 +25,8 @@ extension InventoryItem {
             NextBestAction(
                 label: "Mark as Open",
                 icon: "tin.open",
-                textColor: .blue600,
-                backgroundColor: .gray200,
+                textColor: .blue700,
+                backgroundColor: .blue200,
                 action: onOpen)
         case (.opened, .freezer):
             NextBestAction(
