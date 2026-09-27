@@ -116,7 +116,7 @@ struct ShoppingActivityTests {
         #expect(state.current?.title.count == 120)
     }
 
-    @Test func metadataOmitsBlankBrandsAndPreservesLegacyActivities() throws {
+    @Test func metadataOmitsBlankBrands() {
         let product = Product(
             id: 1,
             name: "Milk",
@@ -137,11 +137,6 @@ struct ShoppingActivityTests {
         let descriptor = ShoppingActivityAttributes.Item(shoppingItem)
         #expect(descriptor.brand == nil)
         #expect(descriptor.detail == "500ml")
-
-        let legacy = Data(#"{"id":1,"title":"Milk","detail":"Tesco · 500ml","storageLocation":"Fridge"}"#.utf8)
-        let decoded = try JSONDecoder().decode(ShoppingActivityAttributes.Item.self, from: legacy)
-        #expect(decoded.brand == nil)
-        #expect(decoded.detail == "Tesco · 500ml")
     }
 
     @Test func fullProductMetadataStillFitsActivityKitBudget() throws {

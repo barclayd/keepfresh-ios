@@ -6,7 +6,6 @@ public struct ShoppingActivityAttributes: ActivityAttributes, Sendable {
         public var id: Int
         public var title: String
         public var detail: String
-        // Optional so activities created before the visual refresh still decode.
         public var brand: String?
         public var storageLocation: StorageLocation?
         public var imageName: String?

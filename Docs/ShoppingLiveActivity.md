@@ -24,7 +24,7 @@ Run the KeepFresh scheme's PackageTests plan. Shopping Activity tests cover orde
 
 SwiftUI previews in `ShoppingLiveActivityLiveActivity.swift` cover storage palettes, same-category and cross-category next items, missing artwork, long names, the last item, completion, and expanded/compact/minimal Island presentations. Preview-only copies of the existing product artwork populate the same shared image cache; `DEVELOPMENT_ASSET_PATHS` excludes these fixtures from archive builds.
 
-The native refresh was built successfully on 27 September 2026. All 38 package tests passed on the PR branch, covering shopping Activity and completion, account/cache refresh, authentication, and history refresh. This includes legacy activity payload decoding and the payload budget with full product metadata. Xcode previews were visually inspected for Lock Screen, expanded, compact and minimal layouts, final-item and completion states, and large Dynamic Type. Locked-device interaction and Always-On still need physical-device verification.
+The native refresh was built successfully on 27 September 2026. All 38 package tests passed on the PR branch, covering shopping Activity and completion, account/cache refresh, authentication, and history refresh. This includes missing-brand handling and the payload budget with full product metadata. Xcode previews were visually inspected for Lock Screen, expanded, compact and minimal layouts, final-item and completion states, and large Dynamic Type. Locked-device interaction and Always-On still need physical-device verification.
 
 Before release, verify on an iPhone:
 
