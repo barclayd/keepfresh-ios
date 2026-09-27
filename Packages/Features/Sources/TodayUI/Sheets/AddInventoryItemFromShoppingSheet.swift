@@ -1,4 +1,5 @@
 import Models
+import Network
 import SharedUI
 import SwiftUI
 
@@ -42,14 +43,16 @@ func getRecommendedExpiryDate(shoppingItem: ShoppingItem) -> Date? {
 
 public struct AddInventoryItemFromShoppingSheet: View {
     @State private var expiryDate: Date
+    @State private var isAdding = false
+    @State private var errorMessage: String?
 
     var shoppingItem: ShoppingItem
 
-    let onAdd: (_ expiryDate: Date) -> Void
+    let onAdd: @MainActor (_ expiryDate: Date) async throws -> Void
 
     public init(
         shoppingItem: ShoppingItem,
-        onAdd: @escaping (_ expiryDate: Date) -> Void)
+        onAdd: @escaping @MainActor (_ expiryDate: Date) async throws -> Void)
     {
         self.shoppingItem = shoppingItem
         self.onAdd = onAdd
@@ -75,13 +78,36 @@ public struct AddInventoryItemFromShoppingSheet: View {
             Spacer()
 
             Button(action: {
-                onAdd(expiryDate)
+                guard !isAdding else { return }
+                isAdding = true
+                Task {
+                    defer { isAdding = false }
+                    do {
+                        try await onAdd(expiryDate)
+                    } catch {
+                        print("Completing shopping item \(shoppingItem.id) failed: \(String(reflecting: error))")
+                        if let apiError = error as? APIError,
+                           case let .httpError(statusCode, _) = apiError
+                        {
+                            errorMessage = "The server couldn't confirm the item was added (HTTP \(statusCode)). Refresh your inventory and shopping list before trying again."
+                        } else if error is DecodingError {
+                            errorMessage = "The server returned item details the app couldn't read. Refresh your inventory before trying again."
+                        } else {
+                            errorMessage = error.localizedDescription
+                        }
+                    }
+                }
             }) {
                 HStack(spacing: 10) {
-                    Image(systemName: shoppingItem.storageLocation!.iconFilled)
-                        .font(.system(size: 18))
-                        .frame(width: 20, alignment: .center)
-                    Text("Add")
+                    if isAdding {
+                        SwiftUI.ProgressView()
+                            .tint(.blue600)
+                    } else {
+                        Image(systemName: shoppingItem.storageLocation!.iconFilled)
+                            .font(.system(size: 18))
+                            .frame(width: 20, alignment: .center)
+                    }
+                    Text(isAdding ? "Adding…" : "Add")
                         .font(.headline)
                 }
                 .foregroundStyle(.blue600)
@@ -92,9 +118,19 @@ public struct AddInventoryItemFromShoppingSheet: View {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.green300))
             }
+            .disabled(isAdding)
 
         }.frame(maxWidth: .infinity)
             .padding(.horizontal, 20)
             .padding(.vertical, 20)
+            .interactiveDismissDisabled(isAdding)
+            .alert("Couldn't add to inventory", isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { if !$0 { errorMessage = nil } }))
+            {
+                Button("OK", role: .cancel) { errorMessage = nil }
+            } message: {
+                Text(errorMessage ?? "Please try again.")
+            }
     }
 }
