@@ -1,24 +1,36 @@
 {
-  "configurations" : [
+  "configurations": [
     {
-      "id" : "A48D26C9-318A-41CA-A52E-8635099A1F4E",
-      "name" : "Configuration 1",
-      "options" : {
-
-      }
+      "id": "A48D26C9-318A-41CA-A52E-8635099A1F4E",
+      "name": "Configuration 1",
+      "options": {}
     }
   ],
-  "defaultOptions" : {
-    "testTimeoutsEnabled" : true
+  "defaultOptions": {
+    "testTimeoutsEnabled": true
   },
-  "testTargets" : [
+  "testTargets": [
     {
-      "target" : {
-        "containerPath" : "container:Packages/Environment",
-        "identifier" : "EnvironmentTests",
-        "name" : "EnvironmentTests"
+      "target": {
+        "containerPath": "container:Packages/Environment",
+        "identifier": "EnvironmentTests",
+        "name": "EnvironmentTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Packages/Authentication",
+        "identifier": "AuthenticationTests",
+        "name": "AuthenticationTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Packages/Features",
+        "identifier": "SharedUITests",
+        "name": "SharedUITests"
       }
     }
   ],
-  "version" : 1
+  "version": 1
 }

@@ -51,6 +51,7 @@ public final class Shopping {
 
     let api = KeepFreshAPI()
     private let cache = ShoppingCache.shared
+    private var refreshGeneration = 0
     private var tempIdCounter: Int = -1
     private var completingItemIds: Set<Int> = []
 
@@ -229,11 +230,12 @@ public final class Shopping {
         items.first(where: { $0.product?.barcode == barcode })
     }
 
-    private func mergeItems(local: [ShoppingItem], server: [ShoppingItem]) -> [ShoppingItem] {
+    private func mergeItems(local: [ShoppingItem], server: [ShoppingItem], startingIds: Set<Int>) -> [ShoppingItem] {
+        let removedIds = startingIds.subtracting(local.map(\.id))
         let validLocal = local.filter { $0.id > 0 }
         let tempItems = local.filter { $0.id <= 0 }
 
-        var serverById = Dictionary(uniqueKeysWithValues: server.map { ($0.id, $0) })
+        var serverById = Dictionary(uniqueKeysWithValues: server.filter { !removedIds.contains($0.id) }.map { ($0.id, $0) })
         var result: [ShoppingItem] = []
 
         for localItem in validLocal {
@@ -245,7 +247,8 @@ public final class Shopping {
                     result.append(useServer ? serverItem : localItem)
                 }
                 serverById.removeValue(forKey: localItem.id)
-            } else {
+            } else if !startingIds.contains(localItem.id) {
+                // Keep additions made during this refresh, but drop stale saved entries.
                 result.append(localItem)
             }
         }
@@ -332,16 +335,25 @@ public final class Shopping {
     }
 
     public func fetchItems() async {
+        await fetchItems { try await self.api.getShoppingItems() }
+    }
+
+    func fetchItems(fetch: () async throws -> [ShoppingItem]) async {
         if items.isEmpty {
             state = .loading
         }
 
+        refreshGeneration += 1
+        let generation = refreshGeneration
+        let startingIds = Set(items.map(\.id))
         do {
-            let serverItems = try await api.getShoppingItems()
+            let serverItems = try await fetch()
+            guard generation == refreshGeneration else { return }
             let localItems = items
-            items = mergeItems(local: localItems, server: serverItems)
+            items = mergeItems(local: localItems, server: serverItems, startingIds: startingIds)
             state = .loaded
         } catch {
+            guard generation == refreshGeneration else { return }
             if items.isEmpty {
                 state = .error
             }

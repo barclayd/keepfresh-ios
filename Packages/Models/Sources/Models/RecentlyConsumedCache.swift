@@ -29,15 +29,14 @@ public class RecentlyConsumedCache {
         let dataToSave = newItems
         let url = fileURL
 
-        await Task.detached {
-            do {
-                let encoder = JSONEncoder()
-                encoder.outputFormatting = .prettyPrinted
-                let jsonData = try encoder.encode(dataToSave)
-                try jsonData.write(to: url, options: .atomic)
-            } catch {
-                print("Failed to save recently consumed data: \(error)")
-            }
-        }.value
+        // Serialize atomic writes so an older save cannot overwrite a refreshed cache.
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let jsonData = try encoder.encode(dataToSave)
+            try jsonData.write(to: url, options: .atomic)
+        } catch {
+            print("Failed to save recently consumed data: \(error)")
+        }
     }
 }

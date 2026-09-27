@@ -18,8 +18,8 @@ public actor APIClient {
         encoder.dateEncodingStrategy = .iso8601
     }
 
-    private func addAuthorizationHeader(to request: inout URLRequest) async {
-        if let token = try? await Authentication.shared.getAccessToken() {
+    private func addAuthorizationHeader(to request: inout URLRequest) async throws {
+        if let token = try await Authentication.shared.getAccessToken() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
     }
@@ -46,7 +46,7 @@ public actor APIClient {
         }
 
         var request = URLRequest(url: url)
-        await addAuthorizationHeader(to: &request)
+        try await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 
@@ -73,7 +73,7 @@ public actor APIClient {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(body)
-        await addAuthorizationHeader(to: &request)
+        try await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 
@@ -99,7 +99,7 @@ public actor APIClient {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(body)
-        await addAuthorizationHeader(to: &request)
+        try await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 
@@ -121,7 +121,7 @@ public actor APIClient {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        await addAuthorizationHeader(to: &request)
+        try await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 
@@ -147,7 +147,7 @@ public actor APIClient {
         request.httpMethod = "PATCH"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(body)
-        await addAuthorizationHeader(to: &request)
+        try await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 
@@ -166,7 +166,7 @@ public actor APIClient {
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        await addAuthorizationHeader(to: &request)
+        try await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 
@@ -188,7 +188,7 @@ public actor APIClient {
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        await addAuthorizationHeader(to: &request)
+        try await addAuthorizationHeader(to: &request)
 
         let (data, response) = try await session.data(for: request)
 

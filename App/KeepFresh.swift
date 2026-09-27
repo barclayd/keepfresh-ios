@@ -34,7 +34,12 @@ struct KeepFreshApp: App {
                 .environment(recentlyConsumed)
                 .modelContainer(for: [RecentSearch.self, GenmojiCache.self])
                 .task {
-                    try? await Authentication.shared.signInAnonymously()
+                    do {
+                        try await Authentication.shared.signInAnonymously()
+                    } catch {
+                        print("Unable to restore session: \(error)")
+                        return
+                    }
 
                     await withTaskGroup(of: Void.self) { group in
                         group.addTask { await inventory.fetchItems() }
